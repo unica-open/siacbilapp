@@ -1,0 +1,12 @@
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/ConsultaPrimaNotaIntegrataBaseAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/ConsultaPrimaNotaIntegrataBaseAction.java
+index 0bd150477..8d3f7b030 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/ConsultaPrimaNotaIntegrataBaseAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/ConsultaPrimaNotaIntegrataBaseAction.java
+@@ -283,6 +283,7 @@ public abstract class ConsultaPrimaNotaIntegrataBaseAction<M extends ConsultaPri
+ 		
+ 		// Imposto il parametro di rientro, si' da ricalcolare i dati
+ 		sessionHandler.setParametro(BilSessionParameter.RIENTRO, Boolean.TRUE);
++		sessionHandler.setParametro(BilSessionParameter.NON_PULIRE_MODEL, Boolean.TRUE);
+ 		impostaInformazioneSuccessoAzioneInSessionePerRedirezione();
+ 		return SUCCESS;
+ 	}

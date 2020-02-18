@@ -1,0 +1,608 @@
+Index: src/main/webapp/js/local/allegatoAtto/convalidaElenco_dettaglio.js
+===================================================================
+--- src/main/webapp/js/local/allegatoAtto/convalidaElenco_dettaglio.js	(revision 11822)
++++ src/main/webapp/js/local/allegatoAtto/convalidaElenco_dettaglio.js	(revision 11827)
+@@ -1,6 +1,8 @@
+ !function($) {
+     // Per lo sviluppo
+     "use strict";
++    var selectedDatas = {};
++    window.selectedDatas = selectedDatas;
+     var tabellaDaConvalidare = $("#tabellaSubdocumentiDaConvalidare");
+     var opts = {
+         bServerSide: false,
+@@ -34,51 +36,82 @@
+      */
+     function selezionaTutti() {
+         var isChecked = $(this).prop("checked");
+-        tabellaDaConvalidare.find("tbody")
++        var checkboxes = tabellaDaConvalidare.find("tbody")
+             .find("input[type='checkbox']")
+-                .prop("checked", isChecked)
+-                .first()
+-                    .trigger("change");
++            .prop("checked", isChecked)
++            .each(function(idx, el) {
++                selectedDatas[+el.value] = {isSelected: isChecked, row: $(this).closest("tr").clone()};
++            });
++        modificaTotali();
++    }
++    
++    function checkSingle() {
++        var $this = $(this);
++        selectedDatas[+$this.val()] = {isSelected: $this.prop("checked"), row: $this.closest("tr").clone()};
++        
++        modificaTotali();
+     }
+ 
+     /**
+      * Aggiorna i totali
+      */
+     function modificaTotali() {
+-        var checkedCheckboxes = tabellaDaConvalidare.find("input[type='checkbox']").filter(":checked");
+         var totSpese = 0;
+         var totEntrate = 0;
+         var defaultImporto = "0,00";
+         var numeroElementiSelezionati = 0;
+-        checkedCheckboxes.each(function() {
+-            var row = $(this).closest("tr");
+-            var spesa = row.find(".importoSpesa").html() || "-";
+-            var entrata = row.find(".importoEntrata").html() || "-";
+-            spesa = spesa.trim() === "-" ? defaultImporto : spesa.trim();
+-            entrata = entrata.trim() === "-" ? defaultImporto : entrata.trim();
++        var messaggio;
++        var i;
++        var row;
++        var spesa;
++        var entrata;
++        
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                row = selectedDatas[i].row;
++                spesa = row.find(".importoSpesa").html() || "-";
++                entrata = row.find(".importoEntrata").html() || "-";
++                spesa = spesa.trim() === "-" ? defaultImporto : spesa.trim();
++                entrata = entrata.trim() === "-" ? defaultImporto : entrata.trim();
+ 
+-            // Converto in numero
+-            spesa = parseFloat(parseLocalNum(spesa));
+-            entrata = parseFloat(parseLocalNum(entrata));
+-            // Aggiungo al totale
+-            totSpese += spesa;
+-            totEntrate += entrata;
+-            numeroElementiSelezionati += 1;
+-        });
+-        tabellaDaConvalidare.dataTable().fnDestroy();
++                // Converto in numero
++                spesa = parseFloat(parseLocalNum(spesa));
++                entrata = parseFloat(parseLocalNum(entrata));
++                // Aggiungo al totale
++                totSpese += spesa;
++                totEntrate += entrata;
++                numeroElementiSelezionati += 1;
++            }
++        }
+ 
+-        $("#totaleInConvalidaEntrata").html(totEntrate.formatMoney());
+-        $("#totaleInConvalidaSpesa").html(totSpese.formatMoney());
+-        var messaggio = numeroElementiSelezionati === 0 ? "In Convalida" :((numeroElementiSelezionati !=0  &&  numeroElementiSelezionati >1) ? "In Convalida ("+numeroElementiSelezionati+" elementi selezionati )" :"In Convalida ("+numeroElementiSelezionati+" elemento selezionato )") ;
++        $('[data-totale-in-convalida="entrata"]').html(totEntrate.formatMoney());
++        $('[data-totale-in-convalida="spesa"]').html(totSpese.formatMoney());
++        messaggio = numeroElementiSelezionati === 0 ? "In Convalida" :((numeroElementiSelezionati !=0  &&  numeroElementiSelezionati >1) ? "In Convalida ("+numeroElementiSelezionati+" elementi selezionati )" :"In Convalida ("+numeroElementiSelezionati+" elemento selezionato )") ;
+         $("#numeroElementiSelezionati").html(messaggio);
+         
+         
+         // Refresho la tabella
+-        tabellaDaConvalidare.dataTable($.extend(true, {}, opts, {oLanguage: {sZeroRecords: "Nessuna quota da convalidare disponibile"}}));
++        tabellaDaConvalidare.dataTable().fnDraw();
++        //tabellaDaConvalidare.dataTable($.extend(true, {}, opts, {oLanguage: {sZeroRecords: "Nessuna quota da convalidare disponibile"}}));
+     }
+ 
+     function submitForm() {
+-        $("#formConvalidaAllegatoAttoStep2").submit();
++        var formToSubmit = $('#formConvalidaAllegatoAttoStep2');
++        writeSelectedToForm(formToSubmit);
++        
++        // Invio il form
++        formToSubmit.submit();
++    }
++    
++    function writeSelectedToForm($form) {
++        var html = '';
++        var i;
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                html += '<input type="hidden" name="listaUid" value="' + i + '" />';
++            }
++        }
++        $form.html(html);
+     }
+ 
+     $(function() {
+@@ -86,7 +119,7 @@
+         $("#tabellaSubdocumentiNonConvalidabili").dataTable($.extend(true, {}, opts, {oLanguage: {sZeroRecords: "Nessuna quota non convalidabile"}}));
+ 
+         $("#pulsanteSelezionaTuttiDaConvalidare").substituteHandler("change", selezionaTutti);
+-        tabellaDaConvalidare.on("change", "input[type='checkbox']", modificaTotali)
++        tabellaDaConvalidare.on("change", "input[type='checkbox']", checkSingle)
+         // Invoco subito l'evento per aggiornare, eventualmente, i totali
+             .trigger("change");
+         $("#pulsanteConfermaModaleTipoConvalida").substituteHandler("click", submitForm);
+Index: src/main/webapp/js/local/allegatoAtto/convalidaElenco_step2.js
+===================================================================
+--- src/main/webapp/js/local/allegatoAtto/convalidaElenco_step2.js	(revision 11822)
++++ src/main/webapp/js/local/allegatoAtto/convalidaElenco_step2.js	(revision 11827)
+@@ -1,6 +1,8 @@
+ !function($) {
+     // Per lo sviluppo
+     "use strict";
++    var selectedDatas = {};
++    
+     var opts = {
+         bServerSide: false,
+         bPaginate: true,
+@@ -29,7 +31,7 @@
+                 .popover();
+         }
+     };
+-    var form = $("#formConvalidaAllegatoAttoStep2");
++    var form = $("#formConvalidaAllegatoAttoStep2_unused");
+ 
+     /**
+      * Costruisce le colonne base.
+@@ -125,13 +127,17 @@
+         var totaleEntrate = 0;
+         var nonValidatoSpese = 0;
+         var nonValidatoEntrate = 0;
+-        $('tbody', '#tabellaConvalidabili').find('input[type="checkbox"]:checked').each(function(idx, el) {
+-            var data = $(el).data('originalData');
+-            totaleSpese += (data.totaleQuoteSpese || 0);
+-            totaleEntrate += (data.totaleQuoteEntrate || 0);
+-            nonValidatoSpese += (data.totaleDaConvalidareSpesaNoCopertura || 0);
+-            nonValidatoEntrate += (data.totaleDaConvalidareEntrataNoCopertura || 0);
+-        });
++        var i;
++        var data;
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                data = selectedDatas[i].data;
++                totaleSpese += (data.totaleQuoteSpese || 0);
++                totaleEntrate += (data.totaleQuoteEntrate || 0);
++                nonValidatoSpese += (data.totaleDaConvalidareSpesaNoCopertura || 0);
++                nonValidatoEntrate += (data.totaleDaConvalidareEntrataNoCopertura || 0);
++            }
++        }
+         $('#totaleSpeseConvalidabili').html(totaleSpese.formatMoney());
+         $('#totaleEntrateConvalidabili').html(totaleEntrate.formatMoney());
+         $('#nonValidatoSpeseConvalidabili').html(nonValidatoSpese.formatMoney());
+@@ -157,7 +163,7 @@
+         columns.push({aTargets: [0], mData: function(source) {
+             return "<input type='checkbox' class='checkboxElenco' name='listaUid' value='" + source.uid + "'/>";
+         }, fnCreatedCell: function(nTd, sData, oData) {
+-            $('input', nTd).data('originalData', oData).substituteHandler('change', updateTotali);
++            $('input', nTd).data('originalData', oData);
+         }});
+ 
+         columns.push({aTargets: [9], mData: function(source) {
+@@ -167,7 +173,7 @@
+                 var self = $(this);
+                 $("#HIDDEN_uidElenco").val(self.data("uid"));
+                 // Impostare l'azione nel form e inviarlo
+-                $("#formConvalidaAllegatoAttoStep2").attr("action", "convalidaAllegatoAtto_ottieniDettaglioElenco.do")
++                form.attr("action", "convalidaAllegatoAtto_ottieniDettaglioElenco.do")
+                     .submit();
+             });
+         }});
+@@ -200,8 +206,11 @@
+         var $this = $(this);
+         var table = $this.closest("table");
+         var checkboxes = table.find("tbody").find("input[type='checkbox']");
++        var toCheck = $this.prop("checked");
+ 
+-        checkboxes.prop("checked", $this.prop("checked"));
++        checkboxes.prop("checked", toCheck).each(function(idx, el) {
++            selectedDatas[+el.value] = {isSelected: toCheck, data: $(el).data('originalData')};
++        });
+         updateTotali();
+     }
+ 
+@@ -211,19 +220,36 @@
+      * @param e (Event) l'evento scatenante
+      */
+     function convalidaElenco(e) {
++        var formToSubmit = $('#formConvalidaAllegatoAttoStep2');
++        writeSelectedToForm(formToSubmit);
++        
+         // Blocco l'evento
+         e.preventDefault();
++        
+         // Invio il form
+-        form.attr("action", "convalidaAllegatoAtto_convalidaElenco.do")
++        formToSubmit.attr("action", "convalidaAllegatoAtto_convalidaElenco.do")
+             .submit();
+     }
++    
++    function writeSelectedToForm($form) {
++        var html = '';
++        var i;
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                html += '<input type="hidden" name="listaUid" value="' + i + '" />';
++            }
++        }
++        $form.html(html);
++    }
+ 
+     /**
+      * Rifiuto degli elenchi selezionati.
+      */
+     function rifiutaElenco() {
++        var formToSubmit = $('#formConvalidaAllegatoAttoStep2');
++        writeSelectedToForm(formToSubmit);
+         // Invio il form
+-        form.attr("action", "convalidaAllegatoAtto_rifiutaElenco.do")
++        formToSubmit.attr("action", "convalidaAllegatoAtto_rifiutaElenco.do")
+             .submit();
+     }
+ 
+@@ -235,6 +261,17 @@
+         form.attr("action", "convalidaAllegatoAtto_rifiutaAtto.do")
+             .submit();
+     }
++    
++    function saveElenchi() {
++        var $this = $(this);
++        var isChecked;
++        if($this.attr('id') === 'checkboxSelezionaTutti') {
++            return;
++        }
++        isChecked = $this.prop('checked');
++        selectedDatas[+$this.val()] = {isSelected: isChecked, data: $this.data('originalData')};
++        updateTotali();
++    }
+ 
+     $(function() {
+         $.postJSON("convalidaAllegatoAtto_ottieniListeElenchi.do", {}, function(data) {
+@@ -246,6 +283,7 @@
+         $("#pulsanteConfermaModaleTipoConvalida").substituteHandler("click", convalidaElenco);
+         $("#pulsanteSiModaleRifiutaElenco").substituteHandler("click", rifiutaElenco);
+         $("#pulsanteSiModaleRifiutaAllegato").substituteHandler("click", rifiutaPerAnnullamentoAtto);
++        form.on('change', 'input[type="checkbox"]', saveElenchi);
+         updateTotali();
+     });
+ }(jQuery);
+\ No newline at end of file
+Index: src/main/webapp/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp
+===================================================================
+--- src/main/webapp/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp	(revision 11822)
++++ src/main/webapp/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp	(revision 11827)
+@@ -13,7 +13,7 @@
+ 	<div class="container-fluid">
+ 		<div class="row-fluid">
+ 			<div class="span12 contentPage">
+-				<s:form id="formConvalidaAllegatoAttoStep2" cssClass="form-horizontal" novalidate="novalidate" action="convalidaAllegatoAtto_convalidaSubdocumento" method="post">
++				<form id="formConvalidaAllegatoAttoStep2_unused" class="form-horizontal" novalidate="novalidate" method="post" onsubmit="return false">
+ 					<s:include value="/jsp/include/messaggi.jsp" />
+ 					<h3>Quote in convalida elenco <s:property value="elencoDocumentiAllegato.anno"/>/<s:property value="elencoDocumentiAllegato.numero"/></h3>
+ 					<fieldset class="form-horizontal">
+@@ -74,33 +74,11 @@
+ 										<td><s:property value="%{#sub.domStringDocumento}" escapeHtml="false"/></td>
+ 										<td><s:property value="%{#sub.domStringCapitolo}" escapeHtml="false"/></td>
+ 										<td><s:property value="%{#sub.domStringMovimento}" escapeHtml="false"/></td>
+-										<td>
+-											<s:if test="%{#sub.subdocumento.liquidazione != null}">
+-												<s:property value="%{#sub.subdocumento.liquidazione.annoLiquidazione}"/> - <s:property value="%{#sub.subdocumento.liquidazione.numeroLiquidazione.toPlainString()}"/>
+-											</s:if>
+-										</td>
+-										<td>
+-											<s:if test="%{#sub.subdocumento.liquidazione.distinta != null}">
+-												<a data-original-title="Info" href="#" data-trigger="hover" rel="popover" data-content="<s:property value="%{#sub.subdocumento.liquidazione.distinta.descrizione}"/>">
+-													<s:property value="%{#sub.subdocumento.liquidazione.distinta.codice}"/>
+-												</a>
+-											</s:if>
+-										</td>
+-										<td>
+-											<s:if test="%{#sub.subdocumento.contoTesoreria!= null}">
+-												<a data-original-title="Info" href="#" data-trigger="hover" rel="popover" data-content="<s:property value="%{#sub.subdocumento.contoTesoreria.descrizione}"/>">
+-													<s:property value="%{#sub.subdocumento.contoTesoreria.codice}"/>
+-												</a>
+-											</s:if>
+-										</td>
++										<td><s:property value="%{#sub.domStringLiquidazione}" escapeHtml="false"/></td>
++										<td><s:property value="%{#sub.domStringDistinta}" escapeHtml="false"/></td>
++										<td><s:property value="%{#sub.domStringContoTesoreria}" escapeHtml="false"/></td>
+ 										<!-- ***************************************JIRA-2911********************************************** -->
+-										<td>
+-											<s:if test="%{#sub.subdocumento.flagACopertura == true}">
+-												<a data-original-title="Info" href="#" data-trigger="hover" rel="popover" data-content="Contiene quote a copertura">
+-													<i class="icon-asterisk icon-2x">&nbsp;</i>
+-												</a>
+-											</s:if>
+-										</td>
++										<td><s:property value="%{#sub.domStringQuoteACopertura}" escapeHtml="false"/></td>
+ 										<!-- ***************************************JIRA-2911********************************************** -->
+ 										
+ 										<td>
+@@ -115,12 +93,12 @@
+ 										</td>
+ 										<td class="tab_Right importoEntrata">
+ 											<s:if test="isSubdocumentoEntrata">
+-												<s:property value="%{#sub.subdocumento.importo}"/>
++												<s:property value="%{#sub.importo}"/>
+ 											</s:if><s:else>-</s:else>
+ 										</td>
+ 										<td class="tab_Right importoSpesa">
+ 											<s:if test="isSubdocumentoSpesa">
+-												<s:property value="%{#sub.subdocumento.importo}"/>
++												<s:property value="%{#sub.importo}"/>
+ 											</s:if><s:else>-</s:else>
+ 										</td>
+ 									</tr>
+@@ -128,14 +106,14 @@
+ 							</tbody>
+ 							<tfoot>
+ 								<tr class="borderBottomLight">
+-									<th colspan="8">Totale</th>
++									<th colspan="11">Totale</th>
+ 									<th class="tab_Right"><s:property value="totaleEntrataDaConvalidareSubdocumenti"/></th>
+ 									<th class="tab_Right"><s:property value="totaleSpesaDaConvalidareSubdocumenti"/></th>
+ 								</tr>
+ 								<tr class="borderBottomLight">
+-									<th colspan="8" id ="numeroElementiSelezionati">In convalida</th>
+-									<th class="tab_Right" id="totaleInConvalidaEntrata">0,00</th>
+-									<th class="tab_Right" id="totaleInConvalidaSpesa">0,00</th>
++									<th colspan="11" id ="numeroElementiSelezionati">In convalida</th>
++									<th class="tab_Right" data-totale-in-convalida="entrata">0,00</th>
++									<th class="tab_Right" data-totale-in-convalida="spesa">0,00</th>
+ 								</tr>
+ 							</tfoot>
+ 						</table>
+@@ -177,41 +155,13 @@
+ 													<tr>
+ 														<td><s:property value="%{#sub.domStringSoggetto}" escapeHtml="false"/></td>
+ 														<td><s:property value="%{#sub.domStringDocumento}" escapeHtml="false"/></td>
+-														<td>
+-															<s:if test="%{#sub.subdocumento.flagConvalidaManuale == true}">
+-																MAN
+-															</s:if><s:elseif test="%{#sub.subdocumento.flagConvalidaManuale == false}">
+-																AUT
+-															</s:elseif>
+-														</td>
+-														<td>
+-															<s:if test="%{#sub.subdocumento.flagACopertura == true}">
+-																<a data-original-title="Info" href="#" data-trigger="hover" rel="popover" data-content="Contiene quote a copertura">
+-																	<i class="icon-asterisk icon-2x">&nbsp;</i>
+-																</a>
+-															</s:if>
+-														</td>
++														<td><s:property value="%{#sub.domStringConvalida}" escapeHtml="false"/></td>
++														<td><s:property value="%{#sub.domStringQuoteACopertura}" escapeHtml="false" /></td>
+ 														<td><s:property value="%{#sub.domStringCapitolo}" escapeHtml="false"/></td>
+ 														<td><s:property value="%{#sub.domStringMovimento}" escapeHtml="false"/></td>
+-														<td>
+-															<s:if test="%{#sub.subdocumento.liquidazione != null}">
+-																<s:property value="%{#sub.subdocumento.liquidazione.annoLiquidazione}"/> - <s:property value="%{#sub.subdocumento.liquidazione.numeroLiquidazione.toPlainString()}"/>
+-															</s:if>
+-														</td>
+-														<td>
+-															<s:if test="%{#sub.subdocumento.liquidazione.distinta != null}">
+-																<a data-original-title="Info" href="#" data-trigger="hover" rel="popover" data-content="<s:property value="%{#sub.subdocumento.liquidazione.distinta.descrizione}"/>">
+-																	<s:property value="%{#sub.subdocumento.liquidazione.distinta.codice}"/>
+-																</a>
+-															</s:if>
+-														</td>
+-														<td>
+-															<s:if test="%{#sub.subdocumento.contoTesoreria!= null}">
+-																<a data-original-title="Info" href="#" data-trigger="hover" rel="popover" data-content="<s:property value="%{#sub.subdocumento.contoTesoreria.descrizione}"/>">
+-																	<s:property value="%{#sub.subdocumento.contoTesoreria.codice}"/>
+-																</a>
+-															</s:if>
+-														</td>
++														<td><s:property value="%{#sub.domStringLiquidazione}" escapeHtml="false"/></td>
++														<td><s:property value="%{#sub.domStringDistinta}" escapeHtml="false"/></td>
++														<td><s:property value="%{#sub.domStringContoTesoreria}" escapeHtml="false"/></td>
+ 														<td>
+ 															<a data-original-title="Info" href="#" data-trigger="hover" rel="popover" data-content="importo Iva: <s:property value="%{#sub.importoIvaSplitReverse}"/>" >
+ 																<s:property value="%{#sub.ivaSplitReverse}"/>
+@@ -224,12 +174,12 @@
+ 														</td>
+ 														<td class="tab_Right">
+ 															<s:if test="isSubdocumentoEntrata">
+-																<s:property value="%{#sub.subdocumento.importo}"/>
++																<s:property value="%{#sub.importo}"/>
+ 															</s:if><s:else>-</s:else>
+ 														</td>
+ 														<td class="tab_Right">
+ 															<s:if test="isSubdocumentoSpesa">
+-																<s:property value="%{#sub.subdocumento.importo}"/>
++																<s:property value="%{#sub.importo}"/>
+ 															</s:if><s:else>-</s:else>
+ 														</td>
+ 													</tr>
+@@ -256,6 +206,8 @@
+ 					<s:include value="/jsp/allegatoAtto/convalida/modaleTipoConvalida.jsp" />
+ 					<s:include value="/jsp/allegatoAtto/convalida/allegato/modaleTotaliElenco.jsp" />
+ 
++				</form>
++				<s:form id="formConvalidaAllegatoAttoStep2" cssClass="hide" novalidate="novalidate" action="convalidaAllegatoAtto_convalidaSubdocumento" method="post">
+ 				</s:form>
+ 			</div>
+ 		</div>
+Index: src/main/webapp/jsp/allegatoAtto/convalida/allegato/step2.jsp
+===================================================================
+--- src/main/webapp/jsp/allegatoAtto/convalida/allegato/step2.jsp	(revision 11822)
++++ src/main/webapp/jsp/allegatoAtto/convalida/allegato/step2.jsp	(revision 11827)
+@@ -13,7 +13,7 @@
+ 	<div class="container-fluid">
+ 		<div class="row-fluid">
+ 			<div class="span12 contentPage">
+-				<s:form id="formConvalidaAllegatoAttoStep2" cssClass="form-horizontal" novalidate="novalidate" action="#" method="post">
++				<form id="formConvalidaAllegatoAttoStep2_unused" class="form-horizontal" novalidate="novalidate" action="#" method="post">
+ 					<s:include value="/jsp/include/messaggi.jsp" />
+ 					<s:hidden id="HIDDEN_uidElenco" name="elencoDocumentiAllegato.uid" />
+ 					<h3>Valuta atto contabile / allegato <s:property value="descrizioneCompletaAllegatoAtto" /></h3>
+@@ -129,6 +129,8 @@
+ 					<s:include value="/jsp/allegatoAtto/convalida/allegato/modaleRifiutaElenco.jsp" />
+ 					<s:include value="/jsp/allegatoAtto/convalida/allegato/modaleRifiutaAllegato.jsp" />
+ 
++				</form>
++				<s:form id="formConvalidaAllegatoAttoStep2" cssClass="hide" novalidate="novalidate" action="#" method="post">
+ 				</s:form>
+ 			</div>
+ 		</div>
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/convalida/elenco/ConvalidaAllegatoAttoElenchiAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/convalida/elenco/ConvalidaAllegatoAttoElenchiAction.java	(revision 11822)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/convalida/elenco/ConvalidaAllegatoAttoElenchiAction.java	(revision 11827)
+@@ -1,5 +1,12 @@
+ package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.convalida.elenco;
+ 
++import java.util.ArrayList;
++import java.util.List;
++
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
+ import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siaccorser.model.errore.ErroreCore;
+@@ -12,13 +19,6 @@
+ import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
+ import it.csi.siac.siacfin2ser.model.StatoOperativoElencoDocumenti;
+ 
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+ /**
+  * Classe di Action per la convalida dell'AllegatoAtto.
+  * 
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoSpesa.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoSpesa.java	(revision 11822)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoSpesa.java	(revision 11827)
+@@ -81,6 +81,46 @@
+ 		}
+ 		return new String[] {note, StringUtils.join(dettaglio, " - ")};
+ 	}
++	
++	@Override
++	public String getDomStringLiquidazione() {
++		if(subdocumento == null || subdocumento.getLiquidazione() == null) {
++			return "";
++		}
++		return new StringBuilder()
++				.append(subdocumento.getLiquidazione().getAnnoLiquidazione())
++				.append(" - ")
++				.append(subdocumento.getLiquidazione().getNumeroLiquidazione().toPlainString())
++				.toString();
++	}
++	
++	@Override
++	public String getDomStringDistinta() {
++		if(subdocumento == null || subdocumento.getLiquidazione() == null || subdocumento.getLiquidazione().getDistinta() == null) {
++			return "";
++		}
++		return new StringBuilder()
++				.append("<a data-original-title=\"Info\" href=\"#\" data-trigger=\"hover\" rel=\"popover\" data-content=\"")
++				.append(subdocumento.getLiquidazione().getDistinta().getDescrizione())
++				.append("\">")
++				.append(subdocumento.getLiquidazione().getDistinta().getCodice())
++				.append("</a>")
++				.toString();
++	}
++	
++	@Override
++	public String getDomStringContoTesoreria() {
++		if(subdocumento == null || subdocumento.getContoTesoreria() == null) {
++			return "";
++		}
++		return new StringBuilder()
++				.append("<a data-original-title=\"Info\" href=\"#\" data-trigger=\"hover\" rel=\"popover\" data-content=\"")
++				.append(subdocumento.getContoTesoreria().getDescrizione())
++				.append("\">")
++				.append(subdocumento.getContoTesoreria().getCodice())
++				.append("</a>")
++				.toString();
++	}
+ 
+ 	@Override
+ 	public int hashCode() {
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java	(revision 11822)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java	(revision 11827)
+@@ -410,6 +410,55 @@
+ 		
+ 		return result;
+ 	}
++	
++	/**
++	 * @return the domStringConvalida
++	 */
++	public String getDomStringConvalida() {
++		return subdocumento != null && Boolean.TRUE.equals(subdocumento.getFlagConvalidaManuale()) ? "MAN" : "AUT";
++	}
++	
++	/**
++	 * @return the domStringQuoteACopertura
++	 */
++	public String getDomStringQuoteACopertura() {
++		if(subdocumento == null || !Boolean.TRUE.equals(subdocumento.getFlagACopertura())) {
++			return "";
++		}
++		return "<a data-original-title=\"Info\" href=\"#\" data-trigger=\"hover\" rel=\"popover\" data-content=\"Contiene quote a copertura\"><i class=\"icon-asterisk icon-2x\">&nbsp;</i></a>";
++	}
++	
++	/**
++	 * @return the domStringLiquidazione
++	 */
++	public String getDomStringLiquidazione() {
++		return "";
++	}
++	
++	/**
++	 * @return the domStringDistinta
++	 */
++	public String getDomStringDistinta() {
++		return "";
++	}
++	
++	/**
++	 * @return the domStringContoTesoreria
++	 */
++	public String getDomStringContoTesoreria() {
++		return "";
++	}
++	
++	/**
++	 * @return the importo
++	 */
++	public BigDecimal getImporto() {
++		if(subdocumento == null) {
++			return BigDecimal.ZERO;
++		}
++		return subdocumento.getImporto();
++	}
++	
+ 	@Override
+ 	public int getUid() {
+ 		return subdocumento != null ? subdocumento.getUid() : 0;
+Index: docs/ReleaseNotes.txt
+===================================================================
+--- docs/ReleaseNotes.txt	(revision 11822)
++++ docs/ReleaseNotes.txt	(revision 11827)
+@@ -7,6 +7,9 @@
+ 
+ Funzionalita' rilasciate
+ --------------------------
++build 22/07/2016 versione 2.27.0
++ SIAC-3848
++
+ build 15/07/2016 versione 2.26.0
+  SIAC-3736 (funzionalita' UEB per le variazioni)
+  SIAC-3767 

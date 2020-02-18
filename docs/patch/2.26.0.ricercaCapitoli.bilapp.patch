@@ -1,0 +1,13 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/CapitoloUscitaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/CapitoloUscitaModel.java	(revision 11837)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/CapitoloUscitaModel.java	(working copy)
+@@ -536,7 +536,7 @@
+ 		missione = caricaClassificatoriDaSessione(sessionHandler, missione, BilSessionParameter.LISTA_MISSIONE);
+ 		programma = caricaClassificatoriDaSessione(sessionHandler, programma, BilSessionParameter.LISTA_PROGRAMMA);
+ 		classificazioneCofog = caricaClassificatoriDaSessione(sessionHandler, classificazioneCofog, BilSessionParameter.LISTA_CLASSIFICAZIONE_COFOG);
+-		titoloSpesa = caricaClassificatoriDaSessione(sessionHandler, titoloSpesa, BilSessionParameter.LISTA_TITOLO_SPESA);
++		titoloSpesa = caricaClassificatoriDaSessione(sessionHandler, titoloSpesa, BilSessionParameter.LISTA_TITOLO_SPESA_ORIGINALE);
+ 		macroaggregato = caricaClassificatoriDaSessione(sessionHandler, macroaggregato, BilSessionParameter.LISTA_MACROAGGREGATO);
+ 		
+ 		// Nuovi classificatori

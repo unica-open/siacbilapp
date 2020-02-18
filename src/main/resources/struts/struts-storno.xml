@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <package name="stornoUEB" extends="capitoloDefault" namespace="/">
+    
+        <!-- Azioni riferite al CDU GESC059 Inserisce Storno UEB -->
+            <!-- Redirezione nella pagina di inserimento -->
+        <action name="inserisciStornoUEB" class="inserisciStornoUEBAction">
+            <result name="success">/jsp/storniUEB/inserisciStorniUEB.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+            <!-- Inserimento -->
+        <action name="inserimentoStornoUEB" class="inserisciStornoUEBAction" method="inserisciCDU">
+            <result name="success">/jsp/storniUEB/inserisciStorniUEBDISABLED.jsp</result>
+            <result name="input">/jsp/storniUEB/inserisciStorniUEB.jsp</result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC060 Aggiorna Storno UEB -->
+            <!-- Redirezione nella pagina di aggiornamento -->
+        <action name="aggiornaStornoUEB" class="aggiornaStornoUEBAction">
+            <result name="success">/jsp/storniUEB/aggiornaStorniUEB.jsp</result>
+            <result name="input">/jsp/storniUEB/risultatiRicercaStorniUEB.jsp</result>
+        </action>
+            <!-- Aggiornamento -->
+        <action name="aggiornamentoStornoUEB" class="aggiornaStornoUEBAction" method="aggiornaCDU">
+            <result name="success">/jsp/storniUEB/aggiornaStorniUEBDISABLED.jsp</result>
+            <result name="input">/jsp/storniUEB/aggiornaStorniUEB.jsp</result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC061 Ricerca Storno UEB -->
+            <!-- Ingresso nella pagina di ricerca con operazioni -->
+        <action name="ricercaConOperazioniStornoUEB" class="ricercaStornoUEBAction">
+            <result name="success">/jsp/storniUEB/ricercaStorniUEB.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+            <!-- Ricerca con operazioni -->
+        <action name="effettuaRicercaConOperazioniStornoUEB" class="ricercaStornoUEBAction" method="ricercaConOperazioniCDU">
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaStornoUEB</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/storniUEB/ricercaStorniUEB.jsp</result>
+        </action>
+        
+        <!-- Ricerca con operazioni -->
+        <action name="risultatiRicercaStornoUEB" class="risultatiRicercaStornoUEBAction">
+            <result name="success">/jsp/storniUEB/risultatiRicercaStorniUEB.jsp</result>
+        </action>
+            <!-- Aggiorna -->
+            <!-- AGGIORNA -->
+        <action name="risultatiRicercaStornoUEBAggiorna" class="risultatiRicercaStornoUEBAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaStornoUEB</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+            <result name="input">/jsp/storniUEB/risultatiRicercaStorniUEB.jsp</result>
+        </action>
+        
+        <!-- Action AJAX per i risultati di ricerca sintetica capitolo uscita previsione -->
+        <action name="risultatiRicercaStornoUEBAjax" class="risultatiRicercaStornoUEBAjaxAction" method="execute">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+                
+    </package>
+</struts>

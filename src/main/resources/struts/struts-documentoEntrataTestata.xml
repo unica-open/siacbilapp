@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="testataDocumentoEntrata" extends="capitoloDefault" namespace="/">
+    
+    	<!-- ****************************************************************************************************** -->
+    	<!-- ************************************** Inserimento *************************************************** -->
+    	<!-- ****************************************************************************************************** -->
+    	
+    	<action name="inserisciTestataDocumentoEntrata" class="inserisciTestataDocumentoEntrataAction">
+    		<result name="success">/jsp/documento/testata/inserisciTestataDocumentoEntrata.jsp</result>
+    	</action>
+
+    	<action name="inserisciTestataDocumentoEntrataEnterStep2" class="inserisciTestataDocumentoEntrataAction" method="enterStep2">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">inserisciTestataDocumentoEntrataStep2</param>
+    			<param name="namespace">/</param>
+    		</result>
+    		<result name="input">/jsp/documento/testata/inserisciTestataDocumentoEntrata.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrataStep2" class="inserisciTestataDocumentoEntrataAction" method="step2">
+    		<result name="success">/jsp/documento/testata/inserisciTestataDocumentoEntrata_step2.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrataReturnToStep1" class="inserisciTestataDocumentoEntrataAction" method="back">
+    		<result name="success">/jsp/documento/testata/inserisciTestataDocumentoEntrata.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrataEnterStep3" class="inserisciTestataDocumentoEntrataAction" method="enterStep3">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">inserisciTestataDocumentoEntrataStep3</param>
+    			<param name="namespace">/</param>
+    		</result>
+    		<result name="input">/jsp/documento/testata/inserisciTestataDocumentoEntrata_step2.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrataStep3" class="inserisciTestataDocumentoEntrataAction" method="step3">
+    		<result name="success">/jsp/documento/testata/inserisciTestataDocumentoEntrata_step3.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrata_aggiorna" class="inserisciTestataDocumentoEntrataAction" method="aggiorna">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">aggiornaTestataDocumentoEntrata</param>
+    			<param name="namespace">/</param>
+    			<param name="uidDocumentoDaAggiornare">${uidDocumento}</param>
+    		</result>
+    		<result name="input">/jsp/documento/testata/inserisciTestataDocumentoEntrata_step3.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrata_ripeti" class="inserisciTestataDocumentoEntrataAction" method="ripeti">
+    		<result name="success">/jsp/documento/testata/inserisciTestataDocumentoEntrata_ripeti.jsp</result>
+    		<result name="input">/jsp/documento/testata/inserisciTestataDocumentoEntrata_step3.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrata_ripetiSalva" class="inserisciTestataDocumentoEntrataAction" method="ripetiSalva">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">inserisciTestataDocumentoEntrata_ripetiStep3</param>
+    			<param name="namespace">/</param>
+    		</result>
+    		<result name="input">/jsp/documento/testata/inserisciTestataDocumentoEntrata_ripeti.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciTestataDocumentoEntrata_ripetiStep3" class="inserisciTestataDocumentoEntrataAction" method="ripetiStep3">
+    		<result name="success">/jsp/documento/testata/inserisciTestataDocumentoEntrata_step3.jsp</result>
+    	</action>
+    	
+    	<!-- ****************************************************************************************************** -->
+    	<!-- ************************************** Aggiornamento ************************************************* -->
+    	<!-- ****************************************************************************************************** -->
+    	
+    	<action name="aggiornaTestataDocumentoEntrata" class="aggiornaTestataDocumentoEntrataAction">
+    		<result name="success">/jsp/documento/testata/aggiornaTestataDocumentoEntrata.jsp</result>
+    		<result name="input">/jsp/failure.jsp</result>
+    	</action>
+
+    	<action name="aggiornamentoTestataDocumentoEntrata_aggiornamentoAnagrafica" class="aggiornaTestataDocumentoEntrataAction" method="aggiornamentoAnagrafica">
+    		<result name="success">/jsp/documento/testata/aggiornaTestataDocumentoEntrata.jsp</result>
+    		<result name="input">/jsp/documento/testata/aggiornaTestataDocumentoEntrata.jsp</result>
+    	</action>
+    	
+    	<action name="aggiornamentoTestataDocumentoEntrata_ottieniListaQuote" class="aggiornaTestataDocumentoEntrataAction" method="ottieniListaQuoteEntrata">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="includeProperties">
+    				listaSubdocumentoEntrata.*,
+    				totaleQuote,
+    				importoDaAttribuire,
+    				totaleDaPagareQuote
+    			</param>
+    		</result>
+    	</action>
+   
+    	<action name="aggiornamentoTestataDocumentoEntrata_redirezioneInserimentoDocumentoIvaEntrata_documento" class="aggiornaTestataDocumentoEntrataAction" method="redirezioneInserimentoDocumentoIvaEntrata">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">inserisciDocumentoIvaEntrata</param>
+                <param name="uidDocumentoCollegato">${uidDocumentoDaAggiornare}</param>
+                <param name="tipoSubdocumentoIvaQuota">false</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornamentoTestataDocumentoEntrata_redirezioneInserimentoDocumentoIvaEntrata_quota" class="aggiornaTestataDocumentoEntrataAction" method="redirezioneInserimentoDocumentoIvaEntrata">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">inserisciDocumentoIvaEntrata</param>
+                <param name="uidDocumentoCollegato">${uidDocumentoDaAggiornare}</param>
+                <param name="uidQuotaDocumentoCollegato">${uidQuota}</param>
+                <param name="tipoSubdocumentoIvaQuota">true</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornamentoTestataDocumentoEntrata_redirezioneAggiornamentoDocumentoIvaEntrata_documento" class="aggiornaTestataDocumentoEntrataAction" method="redirezioneAggiornamentoDocumentoIvaEntrata">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">aggiornaDocumentoIvaEntrata</param>
+                <param name="uidSubdocumentoIva">${uidSubdocumentoIva}</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornamentoTestataDocumentoEntrata_redirezioneAggiornamentoDocumentoIvaEntrata_quota" class="aggiornaTestataDocumentoEntrataAction" method="redirezioneAggiornamentoDocumentoIvaEntrata">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">aggiornaDocumentoIvaEntrata</param>
+                <param name="uidSubdocumentoIva">${uidSubdocumentoIva}</param>
+                <param name="tipoSubdocumentoIvaQuota">true</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornamentoTestataDocumentoEntrata_ottieniQuoteRilevantiIva" class="aggiornaTestataDocumentoEntrataAction" method="ottieniQuoteRilevantiIva">
+    		<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			informazioni.*,
+        			listaQuoteRilevantiIva.*
+        		</param>
+	        </result>
+    	</action>
+    	
+    	<!-- ****************************************************************************************************** -->
+    	<!-- ************************************** Consultazione ************************************************* -->
+    	<!-- ****************************************************************************************************** -->
+    	
+<!--         <action name="consultaDocumentoEntrata" class="consultaDocumentoEntrataAction"> -->
+<!--         	<result name="success">/jsp/documento/consultaDocumentoEntrata.jsp</result> -->
+<!--         	<result name="input">/jsp/documento/consultaDocumentoEntrata.jsp</result>da inserire la pagina corretta in seguito -->
+<!--         </action> -->
+       
+<!--         <action name="consultaDocumentoEntrataOttieniListaDocumentiCollegati" class="consultaDocumentoEntrataAction" method="ottieniListaDocumentiCollegati"> -->
+<!--         	<result name="success" type="json"> -->
+<!--         		<param name="includeProperties"> -->
+<!--         			listaDocumentiCollegati.* -->
+<!--         		</param> -->
+<!--         	</result> -->
+<!--         </action>    -->
+        
+        <!-- ****************************************************************************************************** -->
+    	<!-- ******************************************** Ricerca ************************************************* -->
+    	<!-- ****************************************************************************************************** -->
+        
+        <action name="ricercaTestataDocumentoEntrata" class="ricercaTestataDocumentoEntrataAction">
+        	<result name="success">/jsp/documento/testata/ricercaTestataDocumentoEntrata.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="effettuaRicercaTestataDocumentoEntrata" class="ricercaTestataDocumentoEntrataAction" method="ricercaDocumento">
+            <result name="input">/jsp/documento/testata/ricercaTestataDocumentoEntrata.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">risultatiRicercaTestataDocumentoEntrata</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+      
+        <action name="risultatiRicercaTestataDocumentoEntrata" class="risultatiRicercaTestataDocumentoEntrataAction">
+            <result name="success">/jsp/documento/testata/risultatiRicercaTestataDocumentoEntrata.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+       <action name="risultatiRicercaTestataDocumentoEntrataAjax" class="risultatiRicercaTestataDocumentoEntrataAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+   
+   		<action name="risultatiRicercaTestataDocumentoEntrataAggiorna" class="risultatiRicercaTestataDocumentoEntrataAction" method="aggiorna">
+            <result name="input">/jsp/documento/testata/risultatiRicercaTestataDocumentoEntrata.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaTestataDocumentoEntrata</param>
+            	<param name="namespace">/</param>
+                <param name="uidDocumentoDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaTestataDocumentoEntrataAnnulla" class="risultatiRicercaTestataDocumentoEntrataAction" method="annulla">
+            <result name="success">/jsp/documento/testata/risultatiRicercaTestataDocumentoEntrata.jsp</result>
+            <result name="input">/jsp/documento/testata/risultatiRicercaTestataDocumentoEntrata.jsp</result>
+        </action>
+        
+        <action name="risultatiRicercaTestataDocumentoEntrataConsulta" class="risultatiRicercaTestataDocumentoEntrataAction" method="consulta">
+            <result name="input">/jsp/documento/testata/risultatiRicercaTestataDocumentoEntrata.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">consultaTestataDocumentoEntrata</param>
+            	<param name="namespace">/</param>
+                <param name="uidDocumento">${uidDaConsultare}</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaTestataDocumentoEntrataDettaglioQuote" class="risultatiRicercaTestataDocumentoEntrataAction" method="ottieniListaQuoteEntrata">
+	         <result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,totaleQuote</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+        </action>
+    </package>
+</struts>

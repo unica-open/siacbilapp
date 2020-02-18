@@ -1,0 +1,202 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(revision 14882)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(working copy)
+@@ -1213,6 +1213,14 @@
+ 	 * @param descrizioneAtto la descrizione da pre-pendere alla stringa
+ 	 */
+ 	public void popolaStringaProvvedimento(AttoAmministrativo attoAmministrativo, String descrizioneAtto) {
++		if(this.tipoAtto != null){
++			TipoAtto temp = new TipoAtto();
++			
++			temp.setCodice(this.tipoAtto.getCodice());
++			temp.setDescrizione(this.tipoAtto.getDescrizione());
++			attoAmministrativo.setTipoAtto(temp);
++		}
++		
+ 		setStringaProvvedimento(getStringDescrizioneAtto(attoAmministrativo, descrizioneAtto));
+ 	}
+ 	
+@@ -1222,6 +1230,13 @@
+ 	 * @param attoAmministrativo l'atto amministrativo da cui creare la stringa
+ 	 */
+ 	public void popolaStringaProvvedimentoAggiuntivo(AttoAmministrativo attoAmministrativo) {
++		if(this.tipoAttoAggiuntivo != null){
++			TipoAtto temp = new TipoAtto();
++			
++			temp.setCodice(this.tipoAttoAggiuntivo.getCodice());
++			temp.setDescrizione(this.tipoAttoAggiuntivo.getDescrizione());
++			attoAmministrativo.setTipoAtto(temp);
++		}
+ 		setStringaProvvedimentoAggiuntivo(getStringDescrizioneAtto(attoAmministrativo, "provvedimento variazione di bilancio"));
+ 	}
+ 
+@@ -1235,16 +1250,14 @@
+ 	protected String getStringDescrizioneAtto(AttoAmministrativo provvedimento, String prefissoDescrizione) {
+ 		StringBuilder sb = new StringBuilder();
+ 		String attoAmmTesto = prefissoDescrizione != null? prefissoDescrizione : "provvedimento";
+-		if(provvedimento != null && provvedimento.getTipoAtto() != null){
++		if(provvedimento != null){
+ 			sb.append(attoAmmTesto)
+ 				.append(" : ")
+ 				.append(provvedimento.getAnno())
+-				.append(" / ")
+-				.append(provvedimento.getNumero())
+-				.append(" / ")
+-				.append(provvedimento.getTipoAtto().getCodice())
+-				.append(" - ")
+-				.append(provvedimento.getTipoAtto().getDescrizione());
++				.append(provvedimento.getNumero() != 0 ? " / " : "")
++				.append(provvedimento.getNumero() != 0 ? provvedimento.getNumero() : "")
++				.append(provvedimento.getTipoAtto() != null ? " / " : "")
++				.append(provvedimento.getTipoAtto() != null ? provvedimento.getTipoAtto().getDescrizione() : "");
+ 			return sb.toString();
+ 		}
+ 		return sb.append("Nessun " + attoAmmTesto + " selezionato").toString();
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/provvedimento/ElementoProvvedimento.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/provvedimento/ElementoProvvedimento.java	(revision 14882)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/provvedimento/ElementoProvvedimento.java	(working copy)
+@@ -29,6 +29,8 @@
+ 	private String stato;
+ 	private int uidTipo;
+ 	private int uidStrutturaAmministrativoContabile;
++	//SIAC-4853
++	private String codiceTipo;
+ 	
+ 	
+ 	/** Costruttore vuoto di default */
+@@ -161,6 +163,20 @@
+ 		this.uidStrutturaAmministrativoContabile = uidStrutturaAmministrativoContabile;
+ 	}
+ 
++	/**
++	 * @return the codice tipo
++	 */
++	public String getCodiceTipo() {
++		return codiceTipo;
++	}
++	/**
++	 * 
++	 * @param codiceTipo the codice tipo to set
++	 */
++	public void setCodiceTipo(String codiceTipo) {
++		this.codiceTipo = codiceTipo;
++	}
++
+ 	@Override
+ 	public boolean equals(Object obj) {
+ 		if (this == obj) {
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/provvedimento/ElementoProvvedimentoFactory.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/provvedimento/ElementoProvvedimentoFactory.java	(revision 14882)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/provvedimento/ElementoProvvedimentoFactory.java	(working copy)
+@@ -43,6 +43,7 @@
+ 		String stato;
+ 		int uidTipo;
+ 		int uidStrutturaAmministrativoContabile;
++		String codiceTipo;
+ 		
+ 		
+ 		// Valorizzazione dei campi
+@@ -50,6 +51,7 @@
+ 		anno = provvedimento.getAnno() + "";
+ 		numero = provvedimento.getNumero() + "";
+ 		tipo = provvedimento.getTipoAtto().getDescrizione();
++		codiceTipo = provvedimento.getTipoAtto().getCodice();
+ 		oggetto = provvedimento.getOggetto();
+ 		stato = provvedimento.getStatoOperativo();
+ 		strutturaAmministrativoContabile = extractSAC(provvedimento);
+@@ -70,6 +72,7 @@
+ 		wrapper.setStato(stato);
+ 		wrapper.setUidTipo(uidTipo);
+ 		wrapper.setUidStrutturaAmministrativoContabile(uidStrutturaAmministrativoContabile);
++		wrapper.setCodiceTipo(codiceTipo);
+ 		
+ 		return wrapper;
+ 	}
+Index: src/main/webapp/js/local/provvedimento/ricercaProvvedimento_collapse.js
+===================================================================
+--- src/main/webapp/js/local/provvedimento/ricercaProvvedimento_collapse.js	(revision 14882)
++++ src/main/webapp/js/local/provvedimento/ricercaProvvedimento_collapse.js	(working copy)
+@@ -74,7 +74,9 @@
+                 }},
+                 {aTargets: [1], mData: defaultPerDataTable('anno')},
+                 {aTargets: [2], mData: defaultPerDataTable('numero')},
+-                {aTargets: [3], mData: defaultPerDataTable('tipo')},
++                {aTargets: [3], mData: function(source){
++                	return source.codiceTipo + ' - ' + source.tipo;
++                }},
+                 {aTargets: [4], mData: defaultPerDataTable('oggetto')},
+                 {aTargets: [5], mData: defaultPerDataTable('strutturaAmministrativoContabile')},
+                 {aTargets: [6], mData: defaultPerDataTable('stato')}
+@@ -103,6 +105,7 @@
+         // Valori per il check javascript
+         var annoProvvedimento = $('#annoProvvedimento' + this.suffix).val();
+         var numeroProvvedimento = $('#numeroProvvedimento' + this.suffix).val();
++        var tipoAtto = $('#tipoAtto' + this.suffix).val();
+         var uidTipoProvvedimento = $('#tipoAttoProvvedimento' + this.suffix).val();
+         var uidStrutturaAmministrativoContabile = $('#HIDDEN_StrutturaAmministrativoContabile' + this.suffix + 'Uid').val();
+         var oggettoDaInviare = {};
+@@ -142,6 +145,7 @@
+         oggettoDaInviare.attoAmministrativo.anno = annoProvvedimento;
+         oggettoDaInviare.attoAmministrativo.numero = numeroProvvedimento;
+         oggettoDaInviare.tipoAtto.uid = uidTipoProvvedimento;
++        oggettoDaInviare.tipoAtto.descrizione = tipoAtto;
+         oggettoDaInviare.attoAmministrativo.oggetto= $('#oggettoProvvedimento' + this.suffix).val();
+         oggettoDaInviare.strutturaAmministrativoContabile.uid = $('#HIDDEN_StrutturaAmministrativoContabile' + this.suffix + 'Uid').val();
+         
+@@ -186,6 +190,7 @@
+             // Dati del radio
+         var annoProvvedimento;
+         var numeroProvvedimento;
++        var tipoAtto;
+         var statoProvvedimento;
+         var obj;
+         var event;
+@@ -204,11 +209,13 @@
+         // Determino anno e numero del Provvedimento
+         annoProvvedimento = radioButton.parent().next().html();
+         numeroProvvedimento = radioButton.parent().next().next().html();
++        tipoAtto = radioButton.parent().next().next().next().html();
+         statoProvvedimento = radioButton.parent().siblings(':last').html();
+ 
+         $('#HIDDEN_uidProvvedimento' + this.suffix).val(valoreDelRadio);
+         $('#HIDDEN_uidProvvedimento' + this.suffix + 'Injettato').val(valoreDelRadio);
+         $('#HIDDEN_numeroProvvedimento' + this.suffix).val(numeroProvvedimento);
++        $('#HIDDEN_tipoAtto' + this.suffix).val(tipoAtto);
+         $('#HIDDEN_annoProvvedimento' + this.suffix).val(annoProvvedimento);
+         $('#HIDDEN_statoProvvedimento' + this.suffix).val(statoProvvedimento);
+         // Chiudo il collapse, qualora presente
+@@ -243,6 +250,7 @@
+         this.pulisciENascondiTabellaProvvedimento();
+ 
+         $('#HIDDEN_numeroProvvedimento' + this.suffix).val('');
++        $('#HIDDEN_tipoAtto' + this.suffix).val('');
+         $('#HIDDEN_annoProvvedimento' + this.suffix).val('');
+         $('#HIDDEN_statoProvvedimento' + this.suffix).val('');
+         $('#HIDDEN_StrutturaAmministrativoContabile' + this.suffix + 'Uid').val('');
+Index: src/main/webapp/jsp/provvedimento/formRicercaProvvedimento.jsp
+===================================================================
+--- src/main/webapp/jsp/provvedimento/formRicercaProvvedimento.jsp	(revision 14882)
++++ src/main/webapp/jsp/provvedimento/formRicercaProvvedimento.jsp	(working copy)
+@@ -88,5 +88,6 @@
+ <s:hidden id="HIDDEN_uidProvvedimento" name="uidProvvedimento" />
+ <s:hidden id="HIDDEN_uidProvvedimentoInjettato" name="attoAmministrativo.uid" />
+ <s:hidden id="HIDDEN_numeroProvvedimento" name="numeroProvvedimento" />
++<s:hidden id="HIDDEN_tipoAtto" name="tipoAtto.descrizione" />
+ <s:hidden id="HIDDEN_annoProvvedimento" name="annoProvvedimento" />
+ <s:hidden id="HIDDEN_statoProvvedimento" name="statoProvvedimento" />
+\ No newline at end of file
+Index: src/main/webapp/jsp/provvedimento/formRicercaProvvedimentoAggiuntivo.jsp
+===================================================================
+--- src/main/webapp/jsp/provvedimento/formRicercaProvvedimentoAggiuntivo.jsp	(revision 14882)
++++ src/main/webapp/jsp/provvedimento/formRicercaProvvedimentoAggiuntivo.jsp	(working copy)
+@@ -88,5 +88,6 @@
+ <s:hidden id="HIDDEN_uidProvvedimentoAggiuntivo" name="uidProvvedimentoAggiuntivo" />
+ <s:hidden id="HIDDEN_uidProvvedimentoAggiuntivoInjettato" name="attoAmministrativoAggiuntivo.uid" />
+ <s:hidden id="HIDDEN_numeroProvvedimentoAggiuntivo" name="numeroProvvedimentoAggiuntivo" />
++<s:hidden id="HIDDEN_tipoAttoAggiuntivo" name="tipoAttoAggiuntivo.descrizione" />
+ <s:hidden id="HIDDEN_annoProvvedimentoAggiuntivo" name="annoProvvedimentoAggiuntivo" />
+ <s:hidden id="HIDDEN_statoProvvedimentoAggiuntivo" name="statoProvvedimentoAggiuntivo" />
+\ No newline at end of file

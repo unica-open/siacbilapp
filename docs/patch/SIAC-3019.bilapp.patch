@@ -1,0 +1,198 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaEntrataModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaEntrataModel.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaEntrataModel.java	(working copy)
+@@ -241,11 +241,16 @@
+ 		sie.getRegistroIva().setTipoRegistroIva(tri);
+ 		
+ 		TipoEsigibilitaIva tei = tri.getTipoEsigibilitaIva();
+-		if(tei == TipoEsigibilitaIva.IMMEDIATA) {
+-			// Se l'esigibilt√† √® immediata, svuoto il campo del provvisorio
++		if(isRegistrazioneSenzaProtocollo()){
+ 			sie.setDataProtocolloProvvisorio(null);
++			sie.setNumeroProtocolloProvvisorio(null);
++			sie.setDataProtocolloDefinitivo(null);
++			sie.setNumeroProtocolloDefinitivo(null);
++		} else if(tei == TipoEsigibilitaIva.IMMEDIATA) {
++			// Se l'esigibilt‡ Ë immediata, svuoto il campo del provvisorio
++			sie.setDataProtocolloProvvisorio(null);
+ 		} else if(tei == TipoEsigibilitaIva.DIFFERITA) {
+-			// Se l'esigibilt√† √® differita, svuoto il campo del definitivo
++			// Se l'esigibilt‡ Ë differita, svuoto il campo del definitivo
+ 			sie.setDataProtocolloDefinitivo(null);
+ 		}
+ 		
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaModel.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaModel.java	(working copy)
+@@ -87,6 +87,7 @@
+ 	
+ 	//CR 3019
+ 	private boolean movimentoResiduo;
++	private boolean registrazioneSenzaProtocollo;
+ 	
+ 	/** Costruttore vuoto di default */
+ 	public GenericDocumentoIvaModel() {
+@@ -498,8 +499,22 @@
+ 	public void setMovimentoResiduo(boolean movimentoResiduo) {
+ 		this.movimentoResiduo = movimentoResiduo;
+ 	}
++	
++	/**
++	 * @return the registrazioneSenzaProtocollo
++	 */
++	public boolean isRegistrazioneSenzaProtocollo() {
++		return registrazioneSenzaProtocollo;
++	}
+ 
+ 	/**
++	 * @param registrazioneSenzaProtocollo the registrazioneSenzaProtocollo to set
++	 */
++	public void setRegistrazioneSenzaProtocollo(boolean registrazioneSenzaProtocollo) {
++		this.registrazioneSenzaProtocollo = registrazioneSenzaProtocollo;
++	}
++
++	/**
+ 	 * Ottiene il totale degli imponibili dei MovimentiIva.
+ 	 * 
+ 	 * @return il totale degli imponibili
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaSpesaModel.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/GenericDocumentoIvaSpesaModel.java	(working copy)
+@@ -245,12 +245,17 @@
+ 		sis.getRegistroIva().setTipoRegistroIva(tri);
+ 		
+ 		TipoEsigibilitaIva tei = tri.getTipoEsigibilitaIva();
+-		if(tei == TipoEsigibilitaIva.IMMEDIATA) {
+-			// Se l'esigibilt√† √® immediata, svuoto il campo del provvisorio
++		if(isRegistrazioneSenzaProtocollo()){
+ 			sis.setDataProtocolloProvvisorio(null);
+ 			sis.setNumeroProtocolloProvvisorio(null);
++			sis.setDataProtocolloDefinitivo(null);
++			sis.setNumeroProtocolloDefinitivo(null);
++		}else if(tei == TipoEsigibilitaIva.IMMEDIATA) {
++			// Se l'esigibilt‡ Ë immediata, svuoto il campo del provvisorio
++			sis.setDataProtocolloProvvisorio(null);
++			sis.setNumeroProtocolloProvvisorio(null);
+ 		} else if(tei == TipoEsigibilitaIva.DIFFERITA) {
+-			// Se l'esigibilt√† √® differita, svuoto il campo del definitivo
++			// Se l'esigibilt‡ Ë differita, svuoto il campo del definitivo
+ 			sis.setDataProtocolloDefinitivo(null);
+ 			sis.setNumeroProtocolloDefinitivo(null);
+ 		}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/InserisciDocumentoIvaEntrataModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/InserisciDocumentoIvaEntrataModel.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/InserisciDocumentoIvaEntrataModel.java	(working copy)
+@@ -37,6 +37,7 @@
+ 		
+ 		request.setBilancio(getBilancio());
+ 		request.setSubdocumentoIvaEntrata(creaSubdocumentoIvaEntrata());
++		request.setSenzaProtocollo(isRegistrazioneSenzaProtocollo());
+ 		
+ 		return request;
+ 	}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/InserisciDocumentoIvaSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/InserisciDocumentoIvaSpesaModel.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/InserisciDocumentoIvaSpesaModel.java	(working copy)
+@@ -39,6 +39,7 @@
+ 		request.setBilancio(getBilancio());
+ 		SubdocumentoIvaSpesa sis = creaSubdocumentoIvaSpesa();
+ 		request.setSubdocumentoIvaSpesa(sis);
++		request.setSenzaProtocollo(isRegistrazioneSenzaProtocollo());
+ 		
+ 		if(Boolean.TRUE.equals(getSubdocumentoIva().getFlagIntracomunitario())) {
+ 			impostaSubdocumentoIvaPerIntracomunitario(sis, new SubdocumentoIvaEntrata());
+Index: src/main/webapp/js/local/documentoIva/documentoIva.js
+===================================================================
+--- src/main/webapp/js/local/documentoIva/documentoIva.js	(revision 8806)
++++ src/main/webapp/js/local/documentoIva/documentoIva.js	(working copy)
+@@ -540,35 +540,35 @@
+         		$("#modaleMovimentoResiduo").modal("show");
+         	}else{
+         		 // Se non ho checkato il flag intracomunitario, effettuo il submit. Altrimenti apro il modale
+-        		var checkedFlag = $("#flagIntracomunitario" + suffix).prop("checked");
+-                if(checkedFlag) {
+-                    // Mostro il modale
+-                    $("#modaleDocumentoIntracomunitarioDocumento" + suffix).modal("show");
+-                } else {
+-                    // Invio il form
+-                    $(this).parents("form")
+-                        // Per sicurezza prendo solo il primo form che contiene l'elemento
+-                        .first()
+-                            .submit();
+-                }
++        		proseguiConSubmit(suffix);
+         	}
+         })
+         
++         $("#pulsanteProseguiSenzaProtocollo").on("click", function(){
++        	$("#HIDDEN_isSenzaProtocollo").val(true);
++        	proseguiConSubmit(suffix);
++        })
++        
+         $("#pulsanteProseguiMovimentoResiduo").on("click", function(){
+-        	var checkedFlag = $("#flagIntracomunitario" + suffix).prop("checked");
+-            if(checkedFlag) {
+-                // Mostro il modale
+-            	$("#modaleMovimentoResiduo").modal("hide");
+-                $("#modaleDocumentoIntracomunitarioDocumento" + suffix).modal("show");
+-            } else {
+-                // Invio il form
+-            	$(".pulsanteSalvaFormIva").parents("form")
+-                    // Per sicurezza prendo solo il primo form che contiene l'elemento
+-                    .first()
+-                        .submit();
+-            }
++        	$("#HIDDEN_isSenzaProtocollo").val(false);
++        	proseguiConSubmit(suffix);
+         });
+     };
++    
++    function proseguiConSubmit(suffix){
++    	var checkedFlag = $("#flagIntracomunitario" + suffix).prop("checked");
++        if(checkedFlag) {
++            // Mostro il modale
++        	$("#modaleMovimentoResiduo").modal("hide");
++            $("#modaleDocumentoIntracomunitarioDocumento" + suffix).modal("show");
++        } else {
++            // Invio il form
++        	$(".pulsanteSalvaFormIva").parents("form")
++                // Per sicurezza prendo solo il primo form che contiene l'elemento
++                .first()
++                    .submit();
++        }
++    }
+ 
+     exports.alertErrori = alertErrori;
+     exports.alertInformazioni = alertInformazioni;
+Index: src/main/webapp/jsp/documentoIva/inserisciDocumentoIva.jsp
+===================================================================
+--- src/main/webapp/jsp/documentoIva/inserisciDocumentoIva.jsp	(revision 8806)
++++ src/main/webapp/jsp/documentoIva/inserisciDocumentoIva.jsp	(working copy)
+@@ -22,7 +22,7 @@
+ 						<s:property value="documento.tipoDocumento.codice"/> <s:property value="documento.anno"/> - <s:property value="documento.numero" /> - 
+ 						<s:property value="documento.dataEmissione" /> - <s:property value="soggetto.codiceSoggetto"/> - <s:property value="soggetto.denominazione" />
+ 					</h4>
+-					
++					<s:hidden name="registrazioneSenzaProtocollo" id="HIDDEN_isSenzaProtocollo" />
+ 					<div id="datiAnagraficaDocumento" class="step-pane active">
+ 						<div class="accordion">
+ 							<div class="accordion-group">
+@@ -270,9 +270,11 @@
+ 							</div>
+ 						</div>
+ 						<div class="modal-footer">
+-							<button type="button" aria-hidden="true" data-dismiss="modal" class="btn">no, indietro</button>
++							<button type="button" class="btn btn-primary" id="pulsanteProseguiSenzaProtocollo">
++								no&nbsp;
++							</button>
+ 							<button type="button" class="btn btn-primary" id="pulsanteProseguiMovimentoResiduo">
+-								s&iacute;, prosegui&nbsp;
++								s&iacute;&nbsp;
+ 							</button>
+ 						</div>
+ 					</div>

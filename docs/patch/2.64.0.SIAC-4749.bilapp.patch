@@ -1,0 +1,25 @@
+Index: src/main/webapp/jsp/documento/aggiornamento/aggiornamentoDocumentoSpesa.jsp
+===================================================================
+--- src/main/webapp/jsp/documento/aggiornamento/aggiornamentoDocumentoSpesa.jsp	(revision 14698)
++++ src/main/webapp/jsp/documento/aggiornamento/aggiornamentoDocumentoSpesa.jsp	(working copy)
+@@ -294,13 +294,13 @@
+ 	<s:if test="datiFatturaPagataIncassataEditabili">
+ 		<div class="step-pane active" id="datiFatturaPagataIncassataPadre">
+ 			<div class="accordion" >
+-				<div class="accordion-group">
+-					<div class="accordion-heading">
+-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#datiFatturaPagataIncassataPadre" href="#datiFatturaPagataIncassataTab">
+-							Dati dattura pagata<span class="icon">&nbsp;</span>
+-						</a>
+-					</div>
+-					<div id="datiFatturaPagataIncassataTab" class="accordion-body collapse">
++				<div class="accordion-group">
++					<div class="accordion-heading">
++						<a class="accordion-toggle" data-toggle="collapse" data-parent="#datiFatturaPagataIncassataPadre" href="#datiFatturaPagataIncassataTab">
++							Dati fattura pagata<span class="icon">&nbsp;</span>
++						</a>
++					</div>
++					<div id="datiFatturaPagataIncassataTab" class="accordion-body collapse">
+ 						<div class="accordion-inner">
+ 							<fieldset class="form-horizontal">
+ 								<div class="control-group">

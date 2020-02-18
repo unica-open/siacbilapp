@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="registroComunicazioniPCC" extends="capitoloDefault" namespace="/">
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesa" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction">
+			<result name="success" type="redirectAction">consultaRegistroComunicazioniPCCSubdocumentoSpesa_enter</result>
+		</action>		
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesa_enter" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction" method="enter">
+			<result name="success">/jsp/registroComunicazioniPCC/consultaSubdocumentoSpesa.jsp</result>
+		</action>		
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesaInVisualizzazione" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction">
+			<result name="success">/jsp/registroComunicazioniPCC/consultaSubdocumentoSpesa_collapsePCC.jsp</result>
+		</action>
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesa_ottieniListaContabilizzazioni" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction" method="ottieniListaContabilizzazioni">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContabilizzazioni.*</param>
+			</result>
+		</action>
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesa_inserisciContabilizzazione" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction" method="inserisciContabilizzazione">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesa_ottieniCausaliPCCByStatoDebito" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction" method="ottieniCausaliPCCByStatoDebito">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaCausalePCC.*</param>
+			</result>
+		</action>
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesa_aggiornaContabilizzazione" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction" method="aggiornaContabilizzazione">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="consultaRegistroComunicazioniPCCSubdocumentoSpesa_eliminaContabilizzazione" class="consultaRegistroComunicazioniPCCSubdocumentoSpesaAction" method="eliminaContabilizzazione">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		
+	</package>
+</struts>

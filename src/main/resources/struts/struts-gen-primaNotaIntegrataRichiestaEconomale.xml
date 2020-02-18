@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="genPrimaNotaIntegrataRichiestaEconomale" extends="gengsaCommon" namespace="/">
+		<!-- RichiestaEconomale -->
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN" class="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_landOnPage</result>
+			<result name="input" type="redirectAction">risultatiRicercaRegistrazioneMovFinFIN</result>
+		</action>
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_landOnPage" class="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFINAction" method="landOnPage">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+		</action>
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_completeSalva" class="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFINAction" method="completeSalva">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataFIN_postInserimento</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_ottieniListaContiIniziale" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="ottieniListaContiIniziale">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_inserisciConto" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataFIN_eliminaConto" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN" class="completaRichiestaEconomaleInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_landOnPage</result>
+			<result name="input" type="redirectAction">risultatiRicercaRegistrazioneMovFinFIN</result>
+		</action>
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_landOnPage" class="completaRichiestaEconomaleInsPrimaNotaIntegrataFINAction" method="landOnPage">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+		</action>
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_completeSalva" class="completaRichiestaEconomaleInsPrimaNotaIntegrataFINAction" method="completeSalva">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataFIN_postInserimento</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_ottieniListaContiIniziale" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="ottieniListaContiIniziale">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_inserisciConto" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataFIN_eliminaConto" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+	</package>
+</struts>

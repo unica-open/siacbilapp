@@ -1,0 +1,53 @@
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/BaseInserisciAggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/BaseInserisciAggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java	(revision 10363)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/BaseInserisciAggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java	(revision 10364)
+@@ -131,7 +131,14 @@
+ 			
+ 			// Le liste possono tranquillamente essere null. Pertanto, per sicurezza fornisco come default una lista vuota
+ 			listaSedeSecondariaSoggetto = defaultingList(response.getListaSecondariaSoggetto());
+-			listaModalitaPagamentoSoggetto = defaultingList(response.getListaModalitaPagamentoSoggetto());
++			if (model.isGestioneHR() && model.getMaySearchHR() ) {
++				listaModalitaPagamentoSoggetto = defaultingList(response.getSoggetto().getModalitaPagamentoList());
++			
++			} else {
++				
++				listaModalitaPagamentoSoggetto = defaultingList(response.getListaModalitaPagamentoSoggetto());
++			}
++			//listaModalitaPagamentoSoggetto = defaultingList(response.getListaModalitaPagamentoSoggetto());
+ 			listaModalitaPagamentoSoggetto = impostaListaModalitaPagamentoSoggetto(listaModalitaPagamentoSoggetto);
+ 			
+ 			// Imposto in sessione
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/BaseInserisciAggiornaRendicontoAnticipoSpeseCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/BaseInserisciAggiornaRendicontoAnticipoSpeseCassaEconomaleAction.java	(revision 10363)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/BaseInserisciAggiornaRendicontoAnticipoSpeseCassaEconomaleAction.java	(revision 10364)
+@@ -116,7 +116,14 @@
+ 			
+ 			// Le liste possono tranquillamente essere null. Pertanto, per sicurezza fornisco come default una lista vuota
+ 			listaSedeSecondariaSoggetto = defaultingList(response.getListaSecondariaSoggetto());
+-			listaModalitaPagamentoSoggetto = defaultingList(response.getListaModalitaPagamentoSoggetto());
++			if (model.isGestioneHR() && model.getMaySearchHR() ) {
++				listaModalitaPagamentoSoggetto = defaultingList(response.getSoggetto().getModalitaPagamentoList());
++			
++			} else {
++				
++				listaModalitaPagamentoSoggetto = defaultingList(response.getListaModalitaPagamentoSoggetto());
++			}
++			//listaModalitaPagamentoSoggetto = defaultingList(response.getListaModalitaPagamentoSoggetto());
+ 			listaModalitaPagamentoSoggetto = impostaListaModalitaPagamentoSoggetto(listaModalitaPagamentoSoggetto);
+ 			
+ 			// Imposto in sessione
+Index: docs/ReleaseNotes.txt
+===================================================================
+--- docs/ReleaseNotes.txt	(revision 10363)
++++ docs/ReleaseNotes.txt	(revision 10364)
+@@ -7,6 +7,8 @@
+ 
+ Funzionalita' rilasciate
+ --------------------------
++build 05/02/2016 versione 2.3.0
++ SIAC-2927 (jira su CR)
+ 
+ build 29/01/2016 versione 2.2.0
+  SIAC-2911

@@ -1,0 +1,13 @@
+diff --git src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/MandatoDataAdapter.java src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/MandatoDataAdapter.java
+index bc82cbd..31859e8 100644
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/MandatoDataAdapter.java
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/MandatoDataAdapter.java
+@@ -39,7 +39,7 @@
+ 				),
+ 				
+ 				asList(
+-						new BaseDataInfo("Mandato", "{0,number,#}/{1,number,#}-{2}", "ord_numero", "ord_ts_code", "ord_desc"),
++						new BaseDataInfo("Mandato", "{0,number,#}/{1}-{2}", "ord_numero", "ord_ts_code", "ord_desc"),
+ 						new DateDataInfo("Data emissione", "ord_emissione_data"),
+ 						new BaseDataInfo("Creditore", "{0}-{1}","soggetto_code", "soggetto_desc"),
+ 						new BaseDataInfo("Cod. Mod. Pag.","{0}-{1}" ,"accredito_tipo_code", "accredito_tipo_desc"),

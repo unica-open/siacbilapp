@@ -1,0 +1,40 @@
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/BaseInserisciAggiornaContoPrimaNotaIntegrataAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/BaseInserisciAggiornaContoPrimaNotaIntegrataAction.java	(revision 14960)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/BaseInserisciAggiornaContoPrimaNotaIntegrataAction.java	(working copy)
+@@ -211,6 +211,7 @@
+ 		model.setIndiceConto(null);
+ 	}
+ 	
++	
+ 	/**
+ 	 * Aggiorna la singolaRiga
+ 	 * 
+@@ -237,15 +238,24 @@
+ 	}
+ 	
+ 	/**
++	 * Preparazione per il metodo {@link #aggiornaConto()}.
++	 */
++	public void prepareAggiornaContoDaClasseDiConciliazione() {
++		model.setImporto(null);
++		model.setContoDaSostituire(null);
++	}
++	
++	/**
+ 	 * Aggiornamento del conto dalla classe di conciliazione
+ 	 * @return una stringa corrispondente al risultato dell'invocazione
+ 	 */
+-	public String aggiornaContoDaClasseDiConciliazione() {
++	public String aggiornaContoDaClasseDiConciliazione() { 
+ 		int idx = model.getIndiceConto().intValue();
+ 		impostaDatiConto();
++		Conto contoDaImpostare = model.getContoDaSostituire();
+ 		ElementoScritturaPrimaNotaIntegrata elementoScrittura = model.getListaElementoScritturaPerElaborazione().get(idx);
+-		elementoScrittura.getContoTipoOperazione().setConto(model.getContoDaSostituire());
+-		elementoScrittura.getMovimentoDettaglio().setConto(model.getContoDaSostituire());
++		elementoScrittura.getContoTipoOperazione().setConto(contoDaImpostare);
++		elementoScrittura.getMovimentoDettaglio().setConto(contoDaImpostare);
+ 		model.getListaElementoScritturaPerElaborazione().set(idx, elementoScrittura);
+ 		ricalcolaTotali();
+ 		impostaInformazioneSuccesso();

@@ -1,0 +1,1979 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaAction.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaAction.java	(working copy)
+@@ -7,19 +7,24 @@
+ import org.springframework.stereotype.Component;
+ import org.springframework.web.context.WebApplicationContext;
+ 
++import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.model.dubbiaesigibilita.InserisciConfigurazioneStampaDubbiaEsigibilitaModel;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilitaResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaAnnoPrecedente;
++import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaAnnoPrecedenteResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilitaResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilitaResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaResponse;
+ import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
++import it.csi.siac.siacfin2ser.frontend.webservice.msg.AsyncServiceResponse;
+ 
+ /**
+  * Classe di action per la gestione della configurazioen delle stampe dei fondi a dubbia e difficile esazione
+@@ -145,5 +150,52 @@
+ 		
+ 		return SUCCESS;
+ 	}
++
++	@Override
++	protected void caricaDatiAnnoPrecedente() throws WebServiceInvocationFailureException {
++		final String methodName = "caricaDatiAnnoPrecedente";
++		if(!model.isAttributiBilancioPresenti()) {
++			log.debug(methodName, "Gli attributi non sono presenti: non permetto il caricamento");
++			model.setDatiAnnoPrecedentePresenti(false);
++			return;
++		}
++		
++		ControllaFondiDubbiaEsigibilitaAnnoPrecedente req = model.creaRequestControllaFondiDubbiaEsigibilitaAnnoPrecedente();
++		ControllaFondiDubbiaEsigibilitaAnnoPrecedenteResponse res = fondiDubbiaEsigibilitaService.controllaFondiDubbiaEsigibilitaAnnoPrecedente(req);
++		
++		if(res.hasErrori()) {
++			addErrori(res);
++			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
++		}
++		
++		Long numeroFondi = res.getNumeroFondiAnnoPrecedente();
++		log.debug(methodName, "Numero fondi anno precedente: " + numeroFondi);
++		model.setDatiAnnoPrecedentePresenti(numeroFondi != null && numeroFondi.longValue() > 0L);
++	}
++
++	/**
++	 * Preparazione per il metodo {@link #popolaDaAnnoPrecedente()}
++	 */
++	public void preparePopolaDaAnnoPrecedente() {
++		model.setIdOperazioneAsincrona(null);
++	}
++
++	@Override
++	public String popolaDaAnnoPrecedente() {
++		final String methodName = "popolaDaAnnoPrecedente";
++		
++		PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente req = model.creaRequestPopolaFondiDubbiaEsigibilitaDaAnnoPrecedente();
++		AsyncServiceResponse res = fondiDubbiaEsigibilitaService.popolaFondiDubbiaEsigibilitaDaAnnoPrecedenteAsync(wrapRequestToAsync(req, model.getAzioneRichiesta()));
++		
++		if(res.hasErrori()) {
++			addErrori(res);
++			log.info(methodName, createErrorInServiceInvocationString(req, res));
++			return INPUT;
++		}
++		log.debug(methodName, "Inizializzata operazione asincrona con id " + res.getIdOperazioneAsincrona());
++		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
++		
++		return SUCCESS;
++	}
+ 	
+ }
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaBaseAction.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaBaseAction.java	(working copy)
+@@ -48,6 +48,8 @@
+ 		try {
+ 			caricaListaTitoloEntrata();
+ 			caricaAttributiBilancio();
++			// SIAC-4469
++			caricaDatiAnnoPrecedente();
+ 		} catch(WebServiceInvocationFailureException wsife){
+ 			log.info(methodName, wsife.getMessage());
+ 			throw new GenericFrontEndMessagesException(wsife.getMessage(), wsife);
+@@ -139,6 +141,12 @@
+ 		AttributiBilancio attributiBilancio = response.getAttributiBilancio();
+ 		model.handleAttributiBilancio(attributiBilancio);
+ 	}
++	
++	/**
++	 * Carica i dati dall'anno precedente e imposta i flag corrispondenti se presenti
++	 * @throws WebServiceInvocationFailureException in caso di fallimento nell'invocazione del servizio
++	 */
++	protected abstract void caricaDatiAnnoPrecedente() throws WebServiceInvocationFailureException;
+ 
+ 	/**
+ 	 * Metodo che consente di ottenere la lista paginata degli accantonamenti presenti su database
+@@ -197,7 +205,7 @@
+ 	
+ 	/**
+ 	 * Metodo per la persistenza dell'accantonamento tramite il servizio {@link InserisceFondiDubbiaEsigibilita}
+-	 * @return il risultato dell'invocazione	 
++	 * @return il risultato dell'invocazione
+ 	 */
+ 	public abstract String salvaCapitoli();
+ 	
+@@ -219,6 +227,12 @@
+ 	public abstract String aggiornaAccantonamento();
+ 	
+ 	/**
++	 * Popolamento dei fondi a partire dagli equivalenti nell'anno precedente
++	 * @return il risultato dell'invocazione
++	 */
++	public abstract String popolaDaAnnoPrecedente();
++	
++	/**
+ 	 * Permette di ottenere i dati salvati nel model.
+ 	 * @return il risultato dell'invocazione
+ 	 */
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction.java	(working copy)
+@@ -7,19 +7,24 @@
+ import org.springframework.stereotype.Component;
+ import org.springframework.web.context.WebApplicationContext;
+ 
++import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.model.dubbiaesigibilita.InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoModel;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilitaRendicontoResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente;
++import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedenteResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilitaRendicontoResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilitaRendicontoResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaRendicontoResponse;
+ import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
++import it.csi.siac.siacfin2ser.frontend.webservice.msg.AsyncServiceResponse;
+ 
+ /**
+  * Classe di action per la gestione della configurazioen delle stampe dei fondi a dubbia e difficile esazione, rendiconto
+@@ -142,5 +147,52 @@
+ 		
+ 		return SUCCESS;
+ 	}
++
++	@Override
++	protected void caricaDatiAnnoPrecedente() throws WebServiceInvocationFailureException {
++		final String methodName = "caricaDatiAnnoPrecedente";
++		if(!model.isAttributiBilancioPresenti()) {
++			log.debug(methodName, "Gli attributi non sono presenti: non permetto il caricamento");
++			model.setDatiAnnoPrecedentePresenti(false);
++			return;
++		}
++		
++		ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente req = model.creaRequestControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente();
++		ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedenteResponse res = fondiDubbiaEsigibilitaService.controllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente(req);
++		
++		if(res.hasErrori()) {
++			addErrori(res);
++			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
++		}
++		
++		Long numeroFondi = res.getNumeroFondiAnnoPrecedente();
++		log.debug(methodName, "Numero fondi anno precedente: " + numeroFondi);
++		model.setDatiAnnoPrecedentePresenti(numeroFondi != null && numeroFondi.longValue() > 0L);
++	}
++
++	/**
++	 * Preparazione per il metodo {@link #popolaDaAnnoPrecedente()}
++	 */
++	public void preparePopolaDaAnnoPrecedente() {
++		model.setIdOperazioneAsincrona(null);
++	}
++
++	@Override
++	public String popolaDaAnnoPrecedente() {
++		final String methodName = "popolaDaAnnoPrecedente";
++		
++		PopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente req = model.creaRequestPopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente();
++		AsyncServiceResponse res = fondiDubbiaEsigibilitaService.popolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedenteAsync(wrapRequestToAsync(req, model.getAzioneRichiesta()));
++		
++		if(res.hasErrori()) {
++			addErrori(res);
++			log.info(methodName, createErrorInServiceInvocationString(req, res));
++			return INPUT;
++		}
++		log.debug(methodName, "Inizializzata operazione asincrona con id " + res.getIdOperazioneAsincrona());
++		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
++		
++		return SUCCESS;
++	}
+ 	
+ }
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaBaseModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaBaseModel.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaBaseModel.java	(working copy)
+@@ -34,6 +34,10 @@
+ 	private List<ElementoPianoDeiConti> listaElementoPianoDeiConti = new ArrayList<ElementoPianoDeiConti>();
+ 	private List<StrutturaAmministrativoContabile> listaStrutturaAmministrativoContabile = new ArrayList<StrutturaAmministrativoContabile>();
+ 	
++	// SIAC-4469
++	private boolean datiAnnoPrecedentePresenti;
++	private Integer idOperazioneAsincrona;
++	
+ 	/**
+ 	 * @return the attributiBilancio
+ 	 */
+@@ -133,6 +137,34 @@
+ 	}
+ 
+ 	/**
++	 * @return the datiAnnoPrecedentePresenti
++	 */
++	public boolean isDatiAnnoPrecedentePresenti() {
++		return datiAnnoPrecedentePresenti;
++	}
++
++	/**
++	 * @param datiAnnoPrecedentePresenti the datiAnnoPrecedentePresenti to set
++	 */
++	public void setDatiAnnoPrecedentePresenti(boolean datiAnnoPrecedentePresenti) {
++		this.datiAnnoPrecedentePresenti = datiAnnoPrecedentePresenti;
++	}
++
++	/**
++	 * @return the idOperazioneAsincrona
++	 */
++	public Integer getIdOperazioneAsincrona() {
++		return idOperazioneAsincrona;
++	}
++
++	/**
++	 * @param idOperazioneAsincrona the idOperazioneAsincrona to set
++	 */
++	public void setIdOperazioneAsincrona(Integer idOperazioneAsincrona) {
++		this.idOperazioneAsincrona = idOperazioneAsincrona;
++	}
++
++	/**
+ 	 * @return the actionOperazioneAttributi
+ 	 */
+ 	public abstract String getActionOperazioneAttributi();
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaModel.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaModel.java	(working copy)
+@@ -4,8 +4,10 @@
+ import java.util.List;
+ 
+ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilita;
++import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaAnnoPrecedente;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilita;
++import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
+ import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilitaModelDetail;
+@@ -158,6 +160,16 @@
+ 		request.setAccantonamentoFondiDubbiaEsigibilita(getAccantonamento());
+ 		return request;
+ 	}
++	
++	/**
++	 * Crea una request per il servizio di {@link ControllaFondiDubbiaEsigibilitaAnnoPrecedente}.
++	 * @return la request creata
++	 */
++	public ControllaFondiDubbiaEsigibilitaAnnoPrecedente creaRequestControllaFondiDubbiaEsigibilitaAnnoPrecedente() {
++		ControllaFondiDubbiaEsigibilitaAnnoPrecedente req = creaRequest(ControllaFondiDubbiaEsigibilitaAnnoPrecedente.class);
++		req.setBilancio(getBilancio());
++		return req;
++	}
+ 
+ 	/**
+ 	 * Rimozione dei capitoli dalla lista dei remporanei
+@@ -165,5 +177,14 @@
+ 	public void rimuoviCapitoliDaTemp() {
+ 		rimuoviCapitoliDaTemp(getListaAccantonamentoFondiDubbiaEsigibilitaTemp(), getListaAccantonamentoFondiDubbiaEsigibilitaSelezionati());
+ 	}
+-	
++
++	/**
++	 * Crea una request per il servizio di {@link PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente}.
++	 * @return la request creata
++	 */
++	public PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente creaRequestPopolaFondiDubbiaEsigibilitaDaAnnoPrecedente() {
++		PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente req = creaRequest(PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente.class);
++		req.setBilancio(getBilancio());
++		return req;
++	}
+ }
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoModel.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoModel.java	(working copy)
+@@ -5,8 +5,10 @@
+ import java.util.List;
+ 
+ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilitaRendiconto;
++import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilitaRendiconto;
++import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilitaRendiconto;
+ import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail;
+@@ -157,6 +159,16 @@
+ 		request.setAccantonamentoFondiDubbiaEsigibilitaRendiconto(getAccantonamento());
+ 		return request;
+ 	}
++	
++	/**
++	 * Crea una request per il servizio di {@link ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente}.
++	 * @return la request creata
++	 */
++	public ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente creaRequestControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente() {
++		ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente req = creaRequest(ControllaFondiDubbiaEsigibilitaRendicontoAnnoPrecedente.class);
++		req.setBilancio(getBilancio());
++		return req;
++	}
+ 
+ 	/**
+ 	 * Rimozione dei capitoli dalla lista dei remporanei
+@@ -179,4 +191,15 @@
+ 			getAttributiBilancio().setPercentualeAccantonamentoAnno2(BigDecimal.ZERO);
+ 		}
+ 	}
++
++	/**
++	 * Crea una request per il servizio di {@link PopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente}.
++	 * @return la request creata
++	 */
++	public PopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente creaRequestPopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente() {
++		PopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente req = creaRequest(PopolaFondiDubbiaEsigibilitaRendicontoDaAnnoPrecedente.class);
++		req.setBilancio(getBilancio());
++		return req;
++	}
++
+ }
+Index: src/main/resources/struts/struts-dubbiaEsigibilita.xml
+===================================================================
+--- src/main/resources/struts/struts-dubbiaEsigibilita.xml	(revision 13699)
++++ src/main/resources/struts/struts-dubbiaEsigibilita.xml	(working copy)
+@@ -68,5 +68,12 @@
+ 		<action name="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjax" class="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxAction">
+ 			<result name="success" type="dataTable" />
+ 		</action>
++		
++		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_popolaDaAnnoPrecedente" class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction" method="popolaDaAnnoPrecedente">
++			<result name="success" type="customJSON">
++				<param name="includeProperties">idOperazioneAsincrona</param>
++			</result>
++			<result name="input" type="customMessagesJSON" />
++		</action>
+ 	</package>
+ </struts>
+Index: src/main/resources/struts/struts-dubbiaEsigibilitaRendiconto.xml
+===================================================================
+--- src/main/resources/struts/struts-dubbiaEsigibilitaRendiconto.xml	(revision 13699)
++++ src/main/resources/struts/struts-dubbiaEsigibilitaRendiconto.xml	(working copy)
+@@ -69,5 +69,12 @@
+ 		<action name="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaRendicontoAjax" class="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaRendicontoAjaxAction">
+ 			<result name="success" type="dataTable" />
+ 		</action>
++		
++		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_popolaDaAnnoPrecedente" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="popolaDaAnnoPrecedente">
++			<result name="success" type="customJSON">
++				<param name="includeProperties">idOperazioneAsincrona</param>
++			</result>
++			<result name="input" type="customMessagesJSON" />
++		</action>
+ 	</package>
+ </struts>
+Index: src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js
+===================================================================
+--- src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js	(revision 13699)
++++ src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js	(working copy)
+@@ -1,76 +1,82 @@
+-;(function($, global) {
+-    "use strict";
++;(function($) {
++    'use strict';
+     // VARIABILI GENERICHE UTILIZZATE NELLO SCOPE
+-    var capitoliModaleSelezionati = {};
+-    var capitoliInTemp = {};
+-    var accantonamentiSelezionati = {};
++    var capitoliModaleSelezionati = [];
++    var capitoliInTemp = [];
++    var accantonamentiSelezionati = [];
+     var countAccantonamentiSelezionati = 0;
+     var baseOptionsDataTable = {
+-        bPaginate : true,
+-        bLengthChange : false,
+-        iDisplayLength : 5,
+-        bSort : false,
+-        bInfo : true,
+-        bAutoWidth : true,
+-        bFilter : false,
+-        bProcessing : true,
+-        bDestroy : true,
+-        oLanguage : {
+-            sInfo : "_START_ - _END_ di _MAX_ risultati",
+-            sInfoEmpty : "0 risultati",
+-            sProcessing : "Attendere prego...",
+-            sZeroRecords : "Nessun elemento disponibile",
+-            oPaginate : {
+-                sFirst : "inizio",
+-                sLast : "fine",
+-                sNext : "succ.",
+-                sPrevious : "prec.",
+-                sEmptyTable : "Nessun dato disponibile"
++        bPaginate: true,
++        bLengthChange: false,
++        iDisplayLength: 5,
++        bSort: false,
++        bInfo: true,
++        bAutoWidth: true,
++        bFilter: false,
++        bProcessing: true,
++        bDestroy: true,
++        oLanguage: {
++            sInfo: '_START_ - _END_ di _MAX_ risultati',
++            sInfoEmpty: '0 risultati',
++            sProcessing: 'Attendere prego...',
++            sZeroRecords: 'Nessun elemento disponibile',
++            oPaginate: {
++                sFirst: 'inizio',
++                sLast: 'fine',
++                sNext: 'succ.',
++                sPrevious: 'prec.',
++                sEmptyTable: 'Nessun dato disponibile'
+             }
+         }
+     };
+     var opzioniPaginazioneServerSide={
+         bServerSide:true,
+-        sServerMethod: "POST"
++        sServerMethod: 'POST'
+     };
++    var alertErrori = $('#ERRORI');
++    var alertInformazioni = $('#INFORMAZIONI');
++    var erroriModaleCapitolo = $('#ERRORI_MODALE_CAPITOLO');
+ 
+-
+     // FUNZIONI UTILITA
+     /**
+      * Apre la modale di selezione del capitolo
+-     * */
++     * @returns (jQuery) la modale
++     */
+     function apriModaleCapitoloDubbiaEsigibilita() {
+-        var $modale = $("#modaleGuidaCapitolo");
+-        $('#fieldsetRicercaGuidataCapitolo').find('select').val('');
++        var $modale = $('#modaleGuidaCapitolo');
++        $('#fieldsetRicercaGuidataCapitolo').find('select').val('').change();
++        $('#HIDDEN_ElementoPianoDeiContiUid').val('');
++        $('#HIDDEN_StrutturaAmministrativoContabileUid').val('');
+         $('#numeroCapitolo_modale').val('');
+         $('#numeroArticolo_modale').val('');
+-        if($('#HIDDEN_gestioneUEB').val() === "true"){
++        if($('#HIDDEN_gestioneUEB').val() === 'true'){
+             $('#numeroUEB_modale').val('');
+         }
+-        $modale.modal("show");
++        $('#divRisultatiRicercaCapitolo').slideUp();
++        erroriModaleCapitolo.slideUp();
++        $modale.modal('show');
++        return $modale;
+     }
+     /**
+      * Seleziona tutti i checkbox nella tabella indicata dall'attributo data-referred-table del pulsante chiamante.
+-     *
+-     * @returns i checkbox su cui si &eacute; agito.
++     * @returns (jQuery) i checkbox su cui si &eacute; agito.
+      */
+     function checkAllInTable() {
+         var $this = $(this);
+         var tableId = $this.data('referred-table');
+-        var isChecked = $this.prop("checked");
++        var isChecked = $this.prop('checked');
+         // Seleziono tutti i checkboxes e li rendo come il globale
+-        return $(tableId).find("tbody")
+-            .find("input[type='checkbox']").not(':disabled')
+-                .prop("checked", isChecked)
+-                .each(function(){
+-                    $(this).change();
++        return $(tableId).find('tbody')
++            .find('input[type="checkbox"]').not(':disabled')
++                .prop('checked', isChecked)
++                .each(function(idx, el){
++                    $(el).change();
+                 });
+     }
+-    /***
++    /**
+      * Pulisce la tabella indicata
+-     *
+-     * @param $tabella l'oggetto jQuery che wrappa la tabella
+-     * */
++     * @param $tabella (jQuery) l'oggetto jQuery che wrappa la tabella
++     */
+     function cleanDataTable($tabella){
+         var tabelleGiaInDataTable = $.fn.dataTable.fnTables(true);
+         if($(tabelleGiaInDataTable).filter($tabella).length > 0) {
+@@ -80,11 +86,14 @@
+     }
+     /**
+      * Ottiene il valore della percentuale di accantonamento correttamente formattato in modo null-safe
+-     * */
++     * @param $tr       (jQuery) la colonna
++     * @param selettore (string) il selettore da usare
++     * @returns (number) il valore della percentuale
++     */
+     function ottieniValorePercentualeAccantonamento(tr, selettore){
+         var valore;
+         if(!tr || !selettore){
+-            return +parseLocalNum("0.00");
++            return 0;
+         }
+         valore = tr.find(selettore).val();
+         if(!valore){
+@@ -95,7 +104,8 @@
+     }
+     /**
+      * Definisce quale tipo di media utilizzare (semplice o ponderata) e applica la funzione corrispondente
+-     * */
++     * @param e (Event) l'evento scatanante l'invocazione
++     */
+     function calcolaMedia(e) {
+         var tr = $(this).closest('tr');
+         var fnc = $('#mediaApplicataSemplice').is(':checked') ? calcolaMediaSemplice : calcolaMediaPonderata;
+@@ -115,62 +125,67 @@
+         }
+     }
+ 
++    /**
++     * Gestione del checkbox di selezione globale
++     * @param $tabella (jQuery) la tabella da considerare
++     */
+     function gestisciCheckedSelezionaTutti(tabella){
+-        var $checkboxes = tabella.find("tbody").find("input[type='checkbox']").not(':disabled');
++        var $checkboxes = tabella.find('tbody').find('input[type="checkbox"]').not(':disabled');
+         var $checkedCheckboxes = $checkboxes.filter(':checked');
+         var $selezionaTutti = tabella.find('.check-all');
+-        var method = ($checkboxes.length >0 &&($checkboxes.length === $checkedCheckboxes.length)? 'attr' : 'removeAttr');
++        var method = ($checkboxes.length > 0 &&($checkboxes.length === $checkedCheckboxes.length)? 'attr' : 'removeAttr');
+         $selezionaTutti[method]('checked', 'checked');
+     }
+     /**
+      * Calcola la media semplice degli uba nella tr
+-     * */
+-    function calcolaMediaSemplice(tr, ubaSel) {
+-        var sum = new BigNumber(0);
+-        var uba = tr.find(ubaSel);
+-        if(uba.length === 0) {
+-            return sum;
+-        }
+-
+-        uba.each(function() {
+-            var val = $(this).val();
+-            var num;
+-            if (val) {
+-                num = parseLocalNum(val) || 0;
+-                sum = sum.plus(new BigNumber(num));
+-            }
+-        });
+-
+-        return sum.dividedBy(uba.length);
++     * @param $tr    (jQuery) la riga
++     * @param ubaSel (string) l'UBA da selezionare
++     * @returns (BigNumber) la media
++     */
++    function calcolaMediaSemplice($tr, ubaSel) {
++        var uba = $tr.find(ubaSel);
++        var reducer = mediaReductor('0.2');
++        var sum = uba.get().reduce(reducer, new BigNumber(0));
++        return sum;
+     }
+     /**
+      * Calcola la media ponderata degli uba presenti nella tr
+-     * */
++     * @param $tr (jQuery) la riga
++     * @returns (BigNumber) la media
++     */
+     function calcolaMediaPonderata(tr) {
+-        var p2 = new BigNumber(0.35);
+-        var p3 = new BigNumber(0.1);
++        var reducer10 = mediaReductor('0.35');
++        var reducer432 = mediaReductor('0.1');
++        var uba432 = tr.find('input[data-uba=4], input[data-uba=3], input[data-uba=2]');
++        var uba10 = tr.find('input[data-uba=1], input[data-uba=0]');
+ 
+-        var sum = new BigNumber(0);
++        var sum432 = uba432.get().reduce(reducer432, new BigNumber(0));
++        var sum10 = uba10.get().reduce(reducer10, new BigNumber(0));
+ 
+-        tr.find('input[data-uba=4], input[data-uba=3], input[data-uba=2]').each(function() {
+-            var val = $(this).val();
+-            if (val) {
+-                sum = sum.plus(new BigNumber(parseLocalNum(val)).times(p3));
++        return sum432.plus(sum10);
++    }
++    /**
++     * Riduttore per la media
++     * @param multiplier (string)
++     * @returns (function(BigNumber, HTMLInputElement) => BigNumber) il riduttore
++     */
++    function mediaReductor(multiplier) {
++        var mult = new BigNumber(multiplier);
++        return function(acc, el) {
++            var value = el.value;
++            var num;
++            if(value) {
++                num = parseLocalNum(value) || 0;
++                acc = acc.plus(new BigNumber(num).times(mult));
+             }
+-        });
+-
+-        tr.find('input[data-uba=1], input[data-uba=0]').each(function() {
+-            var val = $(this).val();
+-            if (val) {
+-                sum = sum.plus(new BigNumber(parseLocalNum(val)).times(p2));
+-            }
+-        });
+-
+-        return sum;
++            return acc;
++        };
+     }
+     /**
+      * Applica la funzione di formattazione del numero se e solo se il type of dell'elemento di di tipo numero
+-     * **/
++     * @param el (any) l'elemento da formattare
++     * @returns (string) l'elemento formattato
++     */
+     function doFormatMoney(el) {
+         if(typeof el === 'number') {
+             return el.formatMoney();
+@@ -179,7 +194,11 @@
+     }
+     /**
+      * Crea la funzione che dataTable utilizza per creare un input di tipo testo in cui inserire gli uba e, se possibile, lo prepopola con i dati presenti nel source utilizzato da datatable
+-     * */
++     * @param fieldname (string)  il nome del campo
++     * @param data      (string)  i data-attribute
++     * @param disabled  (boolean) se il campo sia disabilitato
++     * @returns (function(any) => string) la funzione che genera il campo
++     */
+     function creaInput(fieldname, data, disabled) {
+         return function(source) {
+             return '<input type="text" class="input-small soloNumeri decimale text-right" name="' + fieldname + '" value="'  + doFormatMoney(source[fieldname]) + '" '
+@@ -186,9 +205,13 @@
+                 + data + ' ' + (disabled ? 'disabled' : '') + '/>';
+         };
+     }
+-    /***
++    /**
+      *  Crea la funzione che dataTable utilizza per creare un input di tipo testo in cui inserire gli uba e, se possibile, lo prepopola con i dati presenti nella variabile accantonamentiSelezionati
+-     * */
++     *  @param fieldname (string)  il nome del campo
++     * @param data      (string)  i data-attribute
++     * @param disabled  (boolean) se il campo sia disabilitato
++     * @returns (function(any) => string) la funzione che genera il campo
++     */
+     function creaInputTemp(fieldname, data, disabled) {
+         return function(source) {
+             var datum = accantonamentiSelezionati[source.capitolo.uid];
+@@ -199,7 +222,10 @@
+     }
+ 
+     /**
+-     * aggiorna la tabella di ricerca dopo avere effettuato il salvataggio di alcuni accantonamenti
++     * Aggiorna la tabella di ricerca dopo avere effettuato il salvataggio di alcuni accantonamenti
++     * @param $tabella (jQuery) la tabella da ricaricare
++     * @param url      (string) l'URL da invocare
++     * @returns (Promise) la promise relativa al calcolo della tabella
+      */
+     function ricaricaTabella(tabella, url){
+         var datatable, settings, obj;
+@@ -225,12 +251,13 @@
+ 
+     /**
+      * Ricerca il capitolo Entrata Previsione
++     * @param event (Event) l'evento scatenante l'invocazione
++     * @returns (Promise) la Promise collegata alla ricerca del capitolo
+      */
+     function ricercaCapitoliModale(event) {
+         var $form, arrayToSend;
+         var $spinner = $('#SPINNER_RicercaCapitolo');
+         // per prima cosa, disabilito il div
+-        // CapitoloEntrata.prototype.disabilitaElemento($('#formSelezionaEntitaDiPartenza_capitolo'));
+         var divRisultatiRicerca = $('#divRisultatiRicercaCapitolo').slideUp();
+         event.stopPropagation();
+         event.stopImmediatePropagation();
+@@ -240,11 +267,11 @@
+         arrayToSend = unqualify($form.serializeObject(), 1);
+         $spinner.addClass('activated');
+ 
+-        $.postJSON('selezionaCapitolo_capitoloEntrataPrevisioneFondiDubbiaEsigibilita.do', arrayToSend)
++        return $.postJSON('selezionaCapitolo_capitoloEntrataPrevisioneFondiDubbiaEsigibilita.do', arrayToSend)
+         .then(function(data) {
+             var errori = data.errori;
+ 
+-            if(impostaDatiNegliAlert(errori, $('#ERRORI_MODALE_CAPITOLO'), true, true)){
++            if(impostaDatiNegliAlert(errori, erroriModaleCapitolo, true, true)){
+                 return;
+             }
+             gestioneTabellaCapitoliModale();
+@@ -279,13 +306,11 @@
+                     return '<input type="checkbox" name="capitolo.uid" value="' + src.uid + '" '
+                         + (capitoliInTemp[src.uid] ? 'disabled="disabled"' : '') + (capitoliModaleSelezionati[src.uid] ? 'checked' : '') +'  />';
+                 }, fnCreatedCell: function(nTd, sData, oData) {
+-                    $('input', nTd).data('capitolo', oData).substituteHandler('change',function(){
++                    $('input', nTd).data('capitolo', oData).substituteHandler('change', function(){
+                         gestisciSelezioneCapitoliModale($(this), oData);
+                     });
+                 } },
+-                {aTargets: [1], mData: defaultPerDataTable('capitolo'), fnCreatedCell: function(nTd, sData, oData) {
+-                    $(nTd).addClass('tab_Right');
+-                } },
++                {aTargets: [1], mData: defaultPerDataTable('capitolo'), fnCreatedCell: setCssClass('tab_Right')},
+                 {aTargets: [2], mData: defaultPerDataTable('descrizione')},
+                 {aTargets: [3], mData: defaultPerDataTable('classificazione')},
+                 {aTargets: [4], mData: defaultPerDataTable('struttAmmResp')},
+@@ -293,7 +318,7 @@
+             ]
+         };
+ 
+-        var tabella = $("#risultatiRicercaCapitolo");
++        var tabella = $('#risultatiRicercaCapitolo');
+         var opzioniTabellaCapitoli = $.extend(true, {},baseOptionsDataTable, opzioniPaginazioneServerSide, opts );
+         if ( $.fn.DataTable.fnIsDataTable( tabella.get(0) ) ) {
+            tabella.dataTable().fnDestroy();
+@@ -300,43 +325,46 @@
+         }
+         tabella.dataTable(opzioniTabellaCapitoli);
+     }
++    /**
++     * Crea una funzione che imposta una classe CSS
++     * @param cssClass (string) la classe CSS da impostare
++     * @returns (function(Node) => any) la funzione che imposta la classe CSS
++     */
++    function setCssClass(cssClass) {
++        return function(nTd) {
++            nTd.className = cssClass;
++        };
++    }
+ 
++    /**
++     * Gestione della selezione del capitolo nella modale
++     * @param $checkbox (jQuery) il checkbox
++     * @param capitolo  (any)    il capitolo
++     */
+     function gestisciSelezioneCapitoliModale(checkbox, capitolo){
+-
+         if(!checkbox.is(':checked')) {
+             capitoliModaleSelezionati[capitolo.uid] = undefined;
+             return;
+         }
+-
+         capitoliModaleSelezionati[capitolo.uid] = {
+             capitolo: capitolo
+         };
+     }
+ 
++    /**
++     * Conferma dei capitoli nella modale
++     * @returns (Promise) la promise collegata alla conferma dei capitoli
++     */
+     function confermaCapitoliModale(){
+-        var obj = {listaCapitoloEntrataPrevisione: []};
+-        var j = 0;
+-        var i;
+-        for(i in capitoliModaleSelezionati) {
+-            if(Object.prototype.hasOwnProperty.call(capitoliModaleSelezionati, i) && capitoliModaleSelezionati[i] !== undefined && capitoliModaleSelezionati[i] !== null) {
+-                var elem = capitoliModaleSelezionati[i];
+-                obj.listaCapitoloEntrataPrevisione[j] = {
+-                    uid: elem.capitolo.uid,
+-                    annoCapitolo: elem.capitolo.annoCapitolo,
+-                    numeroCapitolo: elem.capitolo.numeroCapitolo,
+-                    numeroArticolo: elem.capitolo.numeroArticolo,
+-                    numeroUEB: elem.capitolo.numeroUEB || 1
+-                };
+-                j++;
+-            }
+-        }
++        var listaCapitoli = capitoliModaleSelezionati.filter(filterOutUndefined).map(mapToObject);
++        var obj = {listaCapitoloEntrataPrevisione: listaCapitoli};
+ 
+         $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_confermaCapitoli.do', projectToString(obj))
+         .then(function(data) {
+-            if (impostaDatiNegliAlert(data.errori, $('#ERRORI_MODALE_CAPITOLO'))) {
++            if (impostaDatiNegliAlert(data.errori, erroriModaleCapitolo)) {
+                 return;
+             }
+-            capitoliModaleSelezionati = {};
++            capitoliModaleSelezionati = [];
+             cleanDataTable($('#risultatiRicercaCapitolo'));
+             popolaTabellaTempCapitoli(data.listaAccantonamentoFondiDubbiaEsigibilitaTemp);
+             $('#divRisultatiRicercaCapitolo').addClass('hide');
+@@ -343,10 +371,34 @@
+             $('#modaleGuidaCapitolo').modal('hide');
+         });
+     }
+-//CAPITOLI -> ACCANTONAMENTI: tabella temporanea
+     /**
++     * Filtra gli elementi undefined
++     * @param el (any) l'elemento da controllare
++     * @returns (boolean) se l'elemento non e' undefined
++     */
++    function filterOutUndefined(el) {
++        return el !== undefined;
++    }
++    /**
++     * Mappa l'elemento in un altro elemento
++     * @param elem (any) l'elemento da mappare
++     * @return (any) l'elemento wrappato
++     */
++    function mapToObject(elem) {
++        return {
++            uid: elem.capitolo.uid,
++            annoCapitolo: elem.capitolo.annoCapitolo,
++            numeroCapitolo: elem.capitolo.numeroCapitolo,
++            numeroArticolo: elem.capitolo.numeroArticolo,
++            numeroUEB: elem.capitolo.numeroUEB || 1
++        };
++    }
++
++    // CAPITOLI -> ACCANTONAMENTI: tabella temporanea
++    /**
+      * Chiama la Action per ottenere la lista di capitoli selezionati nella modale
+-     * **/
++     * @returns (Promise) la promise legata al caricamento della lista
++     */
+     function leggiFondiDubbiaEsigibilita() {
+         var wrapper = $('#riepilogoCapitoliGiaAssociati_wrapper');
+         return $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_caricaListaAccantonamentoFondi.do', {})
+@@ -353,9 +405,12 @@
+         .then(function(data){
+             popolaDataTableRiepilogoCapitoli();
+         }).always(wrapper.overlay.bind(wrapper, 'hide'));
+-
+     }
+ 
++    /**
++     * Riporta i dati sui capitoli
++     * @returns (any) il risultato
++     */
+     function riportaSuCapitoli() {
+         var srcCap = $('#tempCapitoli tbody input:checked').first().closest('tr');
+         var trCap = $('#tempCapitoli tbody tr').not(srcCap);
+@@ -380,32 +435,30 @@
+         return false;
+     }
+ 
++    /**
++     * Salvataggio dei capitoli
++     * @returns (boolean) false per indicare di bloccare l'evento
++     */
+     function salvaCapitoli() {
+-        if (!$('#salvaCapitoli').hasClass('disabled')) {
+-            var obj = {listaAccantonamentoFondiDubbiaEsigibilitaSelezionati: []};
+-            var j = 0;
+-            var i;
+-            for(i in accantonamentiSelezionati) {
+-                if(Object.prototype.hasOwnProperty.call(accantonamentiSelezionati, i) && accantonamentiSelezionati[i] !== undefined && accantonamentiSelezionati[i] !== null) {
+-                    obj.listaAccantonamentoFondiDubbiaEsigibilitaSelezionati[j] = accantonamentiSelezionati[i];
+-                    j++;
+-                }
+-            }
++        var $salva = $('#salvaCapitoli');
++        if (!$salva.hasClass('disabled')) {
++            var listaAccantonamenti = accantonamentiSelezionati.filter(filterOutUndefined);
++            var obj = {listaAccantonamentoFondiDubbiaEsigibilitaRendicontoSelezionati: listaAccantonamenti};
+ 
+-            $('#salvaCapitoli').overlay('show');
+-            $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_salvaCapitoli.do", projectToString(obj))
++            $salva.overlay('show');
++            $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_salvaCapitoli.do', projectToString(obj))
+             .then(function(data) {
+-                if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
++                if(impostaDatiNegliAlert(data.errori, alertErrori)){
+                     return;
+                 }
+-                impostaDatiNegliAlert(["COR_INF_0006 - Operazione effettuata correttamente"],$('#INFORMAZIONI'));
+-                accantonamentiSelezionati = {};
++                impostaInformazioneSuccesso();
++                accantonamentiSelezionati = [];
+                 $('#riepilogoCapitoliGiaAssociati_wrapper').overlay('show');
+                 leggiFondiDubbiaEsigibilita();
+                 return leggiAccantonamentiTempNelModel();
+             }).always(function() {
+                 $('#msgElimina').modal('hide');
+-                $('#salvaCapitoli').overlay('hide');
++                $salva.overlay('hide');
+                 $('#riepilogoCapitoliGiaAssociati_wrapper').overlay('hide');
+             });
+         }
+@@ -412,10 +465,19 @@
+ 
+         return false;
+     }
++    /**
++     * Impostazione dell'informazione di successo
++     */
++    function impostaInformazioneSuccesso() {
++        impostaDatiNegliAlert(['COR_INF_0006 - Operazione effettuata correttamente'], $('#INFORMAZIONI'));
++    }
+ 
+     /**
+      * Popola opportunamente l'oggetto accantonamenti selezionati
+-     * **/
++     * @param nTd   (Node)   il td da considerare
++     * @param sData (string) il contenuto del td come stringa
++     * @param oData (any)    l'oggetto tramite cui si &eacute; popolato il td
++     */
+     function gestisciAccantonamentiSelezionati(nTd, sData, oData){
+         var uidCapitoloEntrataPrevisione = oData.capitolo.uid || 0;
+         var tr = $(nTd).closest('tr');
+@@ -444,20 +506,25 @@
+     }
+     /**
+      * associa l'handler gestisci accantonamenti (tabella temporanea)
+-     * */
++     * @return (function(Node, string, any) => any) la function da utilizzare per l'associazione dell'handler
++     */
+     function associaHandlerInputAccantonamenti() {
+         return function (nTd, sData, oData) {
+             //TODO: migliorare
+             if($(nTd).find('input[type="checkbox"]').length === 0){
+-                $(nTd).addClass("text-right");
++                $(nTd).addClass('text-right');
+             }
+-        $(nTd).find("input")
+-            .on("change", function() {
+-                gestisciAccantonamentiSelezionati(nTd, sData, oData);
+-            });
++            $(nTd).find('input')
++                .on('change', function() {
++                    gestisciAccantonamentiSelezionati(nTd, sData, oData);
++                });
+         };
+     }
+ 
++    /**
++     * Legge gli accantonamenti temporanei nel model
++     * @returns (Promise) la promise legata alla lettura dei temporanei
++     */
+     function leggiAccantonamentiTempNelModel(){
+         return $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_leggiListaTemp.do',{})
+         .then(function(data) {
+@@ -467,6 +534,10 @@
+ 
+     }
+ 
++    /**
++     * Popolamento della tabella dei temporanei
++     * @param list (any[]) la lista dei temporanei
++     */
+     function popolaTabellaTempCapitoli(listaAccantonamentoFondiDubbiaEsigibilitaTemp) {
+         var riscossioneVirtuosaChecked = $('#riscossioneVirtuosaTrue').is(':checked');
+         var tabella = $('#tabellaTempCapitoli');
+@@ -481,7 +552,7 @@
+             }, fnCreatedCell : associaHandlerInputAccantonamenti()},
+             {aTargets : [ 1 ], mData : function(source) {
+                 var capitolo = source.capitolo;
+-                var result = "";
++                var result = '';
+                 var stringaUEB = ($('HIDDEN_gestioneUEB').val() && capitolo.numeroUEB)? ('/' + capitolo.numeroUEB) : '';
+                 if(capitolo && capitolo.annoCapitolo && capitolo.numeroCapitolo && capitolo.numeroArticolo != undefined){
+                     result = capitolo.annoCapitolo + '/' + capitolo.numeroCapitolo + '/' + capitolo.numeroArticolo + stringaUEB;
+@@ -509,19 +580,19 @@
+ 
+         cleanDataTable(tabella);
+         datatableResult = tabella.dataTable(opzioniDataTable);
+-        datatableResult.$(".soloNumeri").allowedChars({numeric: true});
+-        datatableResult.$(".decimale").gestioneDeiDecimali();
++        datatableResult.$('.soloNumeri').allowedChars({numeric: true});
++        datatableResult.$('.decimale').gestioneDeiDecimali();
+         $('#tempCapitoli').removeClass('hide');
+         $('#pulsanteRiportaSuCapitoli').prop('disabled', listaAccantonamentoFondiDubbiaEsigibilitaTemp.length <= 1);
+     }
+ 
+-    //ACCANTONAMENTI: FUNZIONALITA? DI RIEPILOGO
+-
+-
+-
+-    /***
++    // ACCANTONAMENTI: FUNZIONALITA' DI RIEPILOGO
++    /**
+      * Chiama il servizio che aggiorna l'accantonamento
+-     * */
++     * @param oData (any)  i dati
++     * @param nTd   (Node) il td
++     * @returns (boolean) false per indicare il blocco dell'esecuzione dell'evento
++     */
+     function modificaAccantonamentoFondiDubbiaEsigibilita(oData, nTd) {
+ 
+         var tr = $(nTd).closest('tr');
+@@ -537,9 +608,9 @@
+             percentualeDelta: tr.find('input[name="percentualeDelta"]').val()
+         }, 'accantonamento');
+ 
+-        $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_aggiornaAccantonamento.do", projectToString(obj))
++        $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_aggiornaAccantonamento.do', projectToString(obj))
+             .then(function(data) {
+-                if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
++                if(impostaDatiNegliAlert(data.errori, alertErrori)){
+                     return;
+                 }
+                 impostaDatiNegliAlert(['COR_INF_0006 - Operazione effettuata correttamente'],$('#INFORMAZIONI'));
+@@ -552,13 +623,15 @@
+ 
+     /**
+      * Chiama il servizio che elimina un certo accantonamento
+-     * **/
++     * @param td               (Node) il td su cui &eacute; stata effettuata l'invocazione
++     * @param oggettoOriginale (any) l'oggetto da eliminare
++     */
+     function eliminaAccantonamentoFondiDubbiaEsigibilita(oggettoOriginale){
+-        var oggettoDaEliminare = qualify({uid: oggettoOriginale.uid}, "accantonamento");
++        var oggettoDaEliminare = qualify({uid: oggettoOriginale.uid}, 'accantonamento');
+ 
+-        $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_eliminaAccantonamento.do", oggettoDaEliminare)
++        $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_eliminaAccantonamento.do', oggettoDaEliminare)
+         .then(function(data) {
+-            impostaDatiNegliAlert(["COR_INF_0006 - Operazione effettuata correttamente"],$('#INFORMAZIONI'));
++            impostaDatiNegliAlert(['COR_INF_0006 - Operazione effettuata correttamente'],$('#INFORMAZIONI'));
+ 
+             $('#riepilogoCapitoliGiaAssociati_wrapper').overlay('show');
+             leggiFondiDubbiaEsigibilita();
+@@ -569,32 +642,49 @@
+ 
+     /**
+      * Apre la modale di conferma eliminazione di un accantonamento
+-     * */
+-    function apriModaleEliminazioneAccantonamentoFondiDubbiaEsigibilita(riga){
+-        var pulsanteEliminazione = $("#pulsanteSiModaleEliminazione");
+-        var oggettoOriginale = $('#riepilogoCapitoliGiaAssociati').dataTable().fnGetData(riga);
++     * @param td               (Node) il td su cui &eacute; stata effettuata l'invocazione
++     * @param oggettoOriginale (any)  l'oggetto originale
++     */
++    function apriModaleEliminazioneAccantonamentoFondiDubbiaEsigibilita(td, riga){
++        var $pulsanteEliminazione = $('#pulsanteSiModaleEliminazione');
+         // Clone dell'oggetto originale, per effettuare la chiamata
+         var oggettoDaEliminare = $.extend(true, {}, oggettoOriginale);
+-        var capitolo = oggettoOriginale.capitolo;
+ 
+-        var elementoSelezionato = $('#spanElementoSelezionatoModaleEliminazione');
+-        var descrizioneElementoSelezionato = '';
+-        var stringaUEB = ($('HIDDEN_gestioneUEB').val() && capitolo.numeroUEB)? ('/' + capitolo.numeroUEB) : '';
+-        if(capitolo && capitolo.annoCapitolo && capitolo.numeroCapitolo && capitolo.numeroArticolo !== undefined){
+-            descrizioneElementoSelezionato = capitolo.annoCapitolo + '/' + capitolo.numeroCapitolo + '/' + capitolo.numeroArticolo + stringaUEB;
+-        }
+-        elementoSelezionato.html(descrizioneElementoSelezionato);
++        var $elementoSelezionato = $('#spanElementoSelezionatoModaleEliminazione');
++        var descrizioneElementoSelezionato = calcolaStringaCapitolo(oggettoOriginale);
++
++        $elementoSelezionato.html(descrizioneElementoSelezionato);
+         $('#modaleEliminazione').modal('show');
+-        //        // Eliminazione
+-        pulsanteEliminazione.substituteHandler("click", function() {
++        // Eliminazione
++        $pulsanteEliminazione.substituteHandler('click', function() {
+             $('#modaleEliminazione').modal('hide');
+-            eliminaAccantonamentoFondiDubbiaEsigibilita(oggettoDaEliminare);
++            eliminaAccantonamentoFondiDubbiaEsigibilita(td, oggettoDaEliminare);
+         });
+     }
++    /**
++     * Calcola la stringa del capitolo
++     * @param obj (any) l'oggetto contenente il capitolo
++     * @returns (string) la stringa del capitolo
++     */
++    function calcolaStringaCapitolo(obj) {
++        var capitolo = obj.capitolo;
++        var descrizioneElementoSelezionato = '';
+ 
++        if(capitolo && capitolo.annoCapitolo && capitolo.numeroCapitolo && capitolo.numeroArticolo !== undefined){
++            descrizioneElementoSelezionato = capitolo.annoCapitolo + '/' + capitolo.numeroCapitolo + '/' + capitolo.numeroArticolo;
++            if($('HIDDEN_gestioneUEB').val() === 'true' && capitolo.numeroUEB) {
++                descrizioneElementoSelezionato += '/' + capitolo.numeroUEB;
++            }
++        }
++        return descrizioneElementoSelezionato;
++    }
++
+     /**
+      * Rende visibile il pulsante di modifica dell'accantonamento solo se il valore digitato e' diverso da quello presente su db
+-     * **/
++     * @param $input (jQuery) l'input
++     * @param oData  (any)    i dati
++     * @param nTd    (Node)   il td
++     */
+     function gestisciPulsanteModifica($input, oData, nTd){
+         var $tr = $(nTd).closest('tr');
+         var $inputs = $tr.find('input').not(':disabled');
+@@ -627,7 +717,9 @@
+     }
+     /**
+      * imposta la classe css sulla cella e associa all'input un handler per la gestione del pulsante di modifica
+-     * */
++     * @param classeCss (string) la classe CSS da impostare
++     * @returns (function(Node, string, any) => any) la funzione da utilizzare per legare le azioni
++     */
+     function impostaClasseCssEHanldlerSullaCella(classeCss){
+         return function(nTd, sData, oData){
+             var $input = $(nTd).addClass(classeCss).find('input');
+@@ -641,54 +733,40 @@
+ 
+     /***
+      * Popola la tabella di riepilogo dei capitoli
+-     * **/
++     */
+     function popolaDataTableRiepilogoCapitoli() {
+         var isRiscossioneVirtuosa = $('#riscossioneVirtuosaTrue').is(':checked');
+         var opzioniRiepilogo ={
+             sAjaxSource:'risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjax.do',
+             bAutoWidth : true,
+-            //sScrollX : '80%',
+             aoColumnDefs: [
+ 
+-                {aTargets : [ 0 ], mData : function(source) {
++                {aTargets: [0], mData: function(source) {
+                     var capitolo = source.capitolo;
+-                    var result = "";
+-                    var stringaUEB = ($('HIDDEN_gestioneUEB').val()==="true" && capitolo.numeroUEB)? ('/' + capitolo.numeroUEB) : '';
++                    var result = '';
++                    var stringaUEB = ($('HIDDEN_gestioneUEB').val()==='true' && capitolo.numeroUEB)? ('/' + capitolo.numeroUEB) : '';
+                     if(capitolo && capitolo.annoCapitolo && capitolo.numeroCapitolo && capitolo.numeroArticolo!= undefined){
+                         result = capitolo.annoCapitolo + '/' + capitolo.numeroCapitolo + '/' + capitolo.numeroArticolo + stringaUEB;
+                     }
+                     return result;
+                 }},
+-                {aTargets : [ 1 ], mData : creaInput('percentualeAccantonamentoFondi4', 'data-uba="4"', isRiscossioneVirtuosa),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
+-                {aTargets : [ 2 ], mData : creaInput('percentualeAccantonamentoFondi3', 'data-uba="3"'),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
+-                {aTargets : [ 3 ], mData : creaInput('percentualeAccantonamentoFondi2', 'data-uba="2"'),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
+-                {aTargets : [ 4 ], mData : creaInput('percentualeAccantonamentoFondi1', 'data-uba="1"'),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
+-                {aTargets : [ 5 ], mData : creaInput('percentualeAccantonamentoFondi', 'data-uba="0"', isRiscossioneVirtuosa),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
+-                {aTargets : [ 6 ], mData : creaInput('percentualeMediaAccantonamentoFondi', 'data-media', true),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
+-                {aTargets : [ 7 ], mData : creaInput('percentualeDelta', 'data-delta'),fnCreatedCell : function(nTd, sData, oData){
++                {aTargets: [1], mData: creaInput('percentualeAccantonamentoFondi4', 'data-uba="4"', isRiscossioneVirtuosa), fnCreatedCell: impostaClasseCssEHanldlerSullaCella('text-right')},
++                {aTargets: [2], mData: creaInput('percentualeAccantonamentoFondi3', 'data-uba="3"'), fnCreatedCell: impostaClasseCssEHanldlerSullaCella('text-right')},
++                {aTargets: [3], mData: creaInput('percentualeAccantonamentoFondi2', 'data-uba="2"'), fnCreatedCell: impostaClasseCssEHanldlerSullaCella('text-right')},
++                {aTargets: [4], mData: creaInput('percentualeAccantonamentoFondi1', 'data-uba="1"'), fnCreatedCell: impostaClasseCssEHanldlerSullaCella('text-right')},
++                {aTargets: [5], mData: creaInput('percentualeAccantonamentoFondi', 'data-uba="0"', isRiscossioneVirtuosa), fnCreatedCell: impostaClasseCssEHanldlerSullaCella('text-right')},
++                {aTargets: [6], mData: creaInput('percentualeMediaAccantonamentoFondi', 'data-media', true), fnCreatedCell: impostaClasseCssEHanldlerSullaCella('text-right')},
++                {aTargets: [7], mData: creaInput('percentualeDelta', 'data-delta'), fnCreatedCell : function(nTd, sData, oData){
+                     var $input = $(nTd).addClass('text-right').find('input');
+                     $input.on('change', gestisciPulsanteModifica.bind(undefined, $input, oData, nTd));
+                 }},
+-                {aTargets : [ 8 ], mData : function(source) {
+-                    return '<a data-accantonamento-uid="' + source.uid + '" href="" title="modifica le percentuali" role="button" class="fade modifica-accantonamento" data-toggle="modal">' +
+-                           '<i class="icon-pencil icon-2x"><span class="nascosto">modifica</span></i>' +
+-                           '</a>';
+-                }},
+-                {aTargets : [ 9 ], mData : function(source) {
+-                    return "<a data-accantonamento-uid='" + source.uid + "' href='#msgElimina' title='elimina' role='button' data-toggle='modal'>" +
+-                           "<i class='icon-trash icon-2x'><span class='nascosto'>elimina</span></i>" +
+-                           "</a>";
+-                }, fnCreatedCell : function(nTd, sData, oData, iRow) {
+-                    $(nTd).addClass("text-center")
+-                    .find("a")
+-                    .substituteHandler("click", function(e) {
+-                        e.preventDefault();
+-                        e.stopPropagation();
+-                        apriModaleEliminazioneAccantonamentoFondiDubbiaEsigibilita(iRow);
+-                        });
+-                    }
+-                }
+-                ],
++                {aTargets: [8], mData: creaPulsanteModificaAccantonamento},
++                {aTargets: [9], mData: creaPulsanteEliminaAccantonamento, fnCreatedCell: function(nTd, sData, oData, iRow) {
++                    $(nTd).addClass('text-center')
++                    .find('a')
++                    .eventPreventDefault('click', apriModaleEliminazioneAccantonamentoFondiDubbiaEsigibilita.bind(undefined, nTd, oData));
++                }}
++            ],
+             fnCreatedRow: function(nRow){
+                 var nTd = $(nRow).find('td').get(0);
+                 calcolaMedia.bind(nTd)();
+@@ -695,47 +773,145 @@
+             },
+             fnDrawCallback: dataTableDrawCallback
+         };
++        var opzioniDataTableRiepilogo = $.extend(true, {}, baseOptionsDataTable, opzioniPaginazioneServerSide, opzioniRiepilogo);
+ 
+-
+-        var opzioniDataTableRiepilogo = $.extend(true,{},baseOptionsDataTable, opzioniPaginazioneServerSide, opzioniRiepilogo);
+-
+         cleanDataTable($('#riepilogoCapitoliGiaAssociati'));
+         $('#riepilogoCapitoliGiaAssociati').dataTable(opzioniDataTableRiepilogo);
+     }
++    /**
++     * Creazione del pulsante di modifica accantonamento
++     * @param source (any) l'oggetto da cui ricavare i dati
++     * @returns (string) l'HTML del pulsante
++     */
++    function creaPulsanteModificaAccantonamento(source) {
++        return '<a data-accantonamento-uid="' + source.uid + '" href="" title="modifica le percentuali" role="button" class="fade modifica-accantonamento" data-toggle="modal">' +
++            '<i class="icon-pencil icon-2x"><span class="nascosto">modifica</span></i>' +
++            '</a>';
++    }
++    /**
++     * Creazione del pulsante di eliminazione accantonamento
++     * @param source (any) l'oggetto da cui ricavare i dati
++     * @returns (string) l'HTML del pulsante
++     */
++    function creaPulsanteEliminaAccantonamento(source) {
++        return '<a data-accantonamento-uid="' + source.uid + '" href="#msgElimina" title="elimina" role="button" data-toggle="modal">' +
++            '<i class="icon-trash icon-2x"><span class="nascosto">elimina</span></i>' +
++            '</a>';
++    }
+ 
++    /**
++     * Callback al termine della visualizzazione della tabella
++     * @param oSettings (any) i settings della tabella
++     */
+     function dataTableDrawCallback(oSettings) {
+         $('.soloNumeri', oSettings.nTable).allowedChars({numeric: true});
+         $('.decimale', oSettings.nTable).gestioneDeiDecimali();
+     }
+ 
+-    $(function() {
+-        $("#pulsanteApriModaleCapitoloDubbiaEsigibilita").on("click", apriModaleCapitoloDubbiaEsigibilita);
++    /**
++     * Popolamento dall'anno precedente
++     * @param e (Event) l'evento scatenante l'invocazione
++     */
++    function popolaDaAnnoPrecedente(e) {
++        var $button = $(e.target).overlay('show');
++        var async = new Async('inserisciConfigurazioneStampaDubbiaEsigibilita_popolaDaAnnoPrecedente.do', {}, popolaDaAnnoPrecedenteAsyncCallback($button),
++                'async/polling.do', popolaDaAnnoPrecedentePolling);
++        async.execute()
++            .fail(popolaDaAnnoPrecedenteFailCallback);
++    }
+ 
+-        $("#titoloEntrata").on("change", CapitoloEntrata.caricaTipologia);
+-        $("#tipologiaTitolo").on("change", CapitoloEntrata.caricaCategoria);
+-        $("#categoriaTipologiaTitolo").on("change", function() {
+-            $("#bottonePdC").attr('href','#PDCfin');
++    /**
++     * Callback di fallimento nel popolamento da anno precedente
++     * @param error (any) gli errori
++     * @returns (Promise) una promise rigettata
++     */
++    function popolaDaAnnoPrecedenteFailCallback(error) {
++        var jserror = error.errori !== undefined && error.errori.filter(function(el) {
++            return el instanceof Error;
++        })[0];
++        if(jserror) {
++            throw jserror;
++        }
++        impostaDatiNegliAlert(error.errori, alertErrori);
++        return $.Deferred().reject(error).promise();
++    }
++
++    /**
++     * Callback del popolamento da anno precedente
++     * @param $button (jQuery) il pulsante
++     * @returns (function(any) => any) la funzione da invocare come callback dell'esecuzione asincrona
++     */
++    function popolaDaAnnoPrecedenteAsyncCallback($button) {
++        return function(data) {
++            $button.overlay('hide');
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                throw Error('Errore nell\'invocazione del servizio');
++            }
++            // Disabilito il pulsante
++            $button.attr('disabled', 'disabled');
++            return {idOperazioneAsync: data.idOperazioneAsincrona};
++        }
++    }
++
++    /**
++     * Callback di polling del popolamento da anno precedente
++     * @param data (any) i dati dell'invocazione
++     * @returns boolean se proseguire con il popolamento
++     */
++    function popolaDaAnnoPrecedentePolling(data) {
++        data.stato && impostaDatiNegliAlert([data.messaggio], alertInformazioni);
++        return Async.checkConclusaOErrore(data.stato);
++    }
++
++    /**
++     * Completamento del polling
++     */
++    function popolaDaAnnoPrecedentePollingDone() {
++        $('#pulsantePopolaDaAnnoPrecedente').removeAttr('disabled');
++        leggiFondiDubbiaEsigibilita();
++    }
++    /**
++     * Timeout del polling
++     */
++    function popolaDaAnnoPrecedentePollingTimeout() {
++        impostaDatiNegliAlert(['Il risultato dell\'invocazione non &eacute; disponibile al termine del timeout del polling. Sar&agrave; disponibile in un prossimo caricamento della pagina'], alertInformazioni);
++    }
++
++    /**
++     * Inizializzazione
++     */
++    function init() {
++        $('#pulsanteApriModaleCapitoloDubbiaEsigibilita').on('click', apriModaleCapitoloDubbiaEsigibilita);
++
++        $('#titoloEntrata').on('change', CapitoloEntrata.caricaTipologia);
++        $('#tipologiaTitolo').on('change', CapitoloEntrata.caricaCategoria);
++        $('#categoriaTipologiaTitolo').on('change', function() {
++            $('#bottonePdC').attr('href','#PDCfin');
+             Capitolo.caricaPianoDeiConti(this, true);
+         });
+-        $("#bottonePdC").on("click", Capitolo.controllaPdC);
++        $('#bottonePdC').on('click', Capitolo.controllaPdC);
+ 
+-         $('#pulsanteRicercaCapitolo').substituteHandler("click", ricercaCapitoliModale);
++        $('#pulsanteRicercaCapitolo').substituteHandler('click', ricercaCapitoliModale);
+ 
+-         $('#pulsanteConfermaCapitoli').substituteHandler("click", confermaCapitoliModale);
+-         $('#pulsanteRiportaSuCapitoli').substituteHandler("click", riportaSuCapitoli);
+-         $('#salvaCapitoli').substituteHandler("click", salvaCapitoli);
++        $('#pulsanteConfermaCapitoli').substituteHandler('click', confermaCapitoliModale);
++        $('#pulsanteRiportaSuCapitoli').substituteHandler('click', riportaSuCapitoli);
++        $('#salvaCapitoli').substituteHandler('click', salvaCapitoli);
+ 
+-         /* Carica lo zTree relativo alla Struttura Amministrativo Contabile */
++        // Carica lo zTree relativo alla Struttura Amministrativo Contabile
+         Capitolo.caricaStrutturaAmministrativoContabile();
+ 
+         leggiFondiDubbiaEsigibilita();
+         leggiAccantonamentiTempNelModel();
+ 
+-     // Creo la funzionalita' di selezione multipla
+-        $(".check-all").change(checkAllInTable);
++        // Creo la funzionalita' di selezione multipla
++        $('.check-all').change(checkAllInTable);
+ 
+-         $('#tabellaTempCapitoli').on('change', 'input[data-uba]', calcolaMedia);
+-    });
++        $('#tabellaTempCapitoli').on('change', 'input[data-uba]', calcolaMedia);
++        // SIAC-4469
++        $('#pulsantePopolaDaAnnoPrecedente').removeAttr('disabled').substituteHandler('click', popolaDaAnnoPrecedente);
++        $(document).substituteHandler('pollingDone.async', popolaDaAnnoPrecedentePollingDone)
++            .substituteHandler('pollingTimeout.async', popolaDaAnnoPrecedentePollingTimeout);
++    }
+ 
+-
+-})(jQuery, this);
++    $(init);
++})(jQuery);
+Index: src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.js
+===================================================================
+--- src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.js	(revision 13699)
++++ src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.js	(working copy)
+@@ -33,6 +33,8 @@
+         bServerSide: true,
+         sServerMethod: 'POST'
+     };
++    var alertErrori = $('#ERRORI');
++    var alertInformazioni = $('#INFORMAZIONI');
+     var erroriModaleCapitolo = $('#ERRORI_MODALE_CAPITOLO');
+ 
+ 
+@@ -43,12 +45,16 @@
+      */
+     function apriModaleCapitoloDubbiaEsigibilita() {
+         var $modale = $('#modaleGuidaCapitolo');
+-        $('#fieldsetRicercaGuidataCapitolo').find('select').val('');
++        $('#fieldsetRicercaGuidataCapitolo').find('select').val('').change();
++        $('#HIDDEN_ElementoPianoDeiContiUid').val('');
++        $('#HIDDEN_StrutturaAmministrativoContabileUid').val('');
+         $('#numeroCapitolo_modale').val('');
+         $('#numeroArticolo_modale').val('');
+         if($('#HIDDEN_gestioneUEB').val() === 'true'){
+             $('#numeroUEB_modale').val('');
+         }
++        $('#divRisultatiRicercaCapitolo').slideUp();
++        erroriModaleCapitolo.slideUp();
+         $modale.modal('show');
+         return $modale;
+     }
+@@ -69,7 +75,7 @@
+                         $(this).change();
+                     });
+     }
+-    /***
++    /**
+      * Pulisce la tabella indicata
+      * @param $tabella (jQuery) l'oggetto jQuery che wrappa la tabella
+      */
+@@ -140,7 +146,9 @@
+     }
+     /**
+      * Calcola la media ponderata degli uba presenti nella tr
+-     * */
++     * @param $tr (jQuery) la riga
++     * @returns (BigNumber) la media
++     */
+     function calcolaMediaPonderata(tr) {
+         var reducer10 = mediaReductor('0.35');
+         var reducer432 = mediaReductor('0.1');
+@@ -147,10 +155,10 @@
+         var uba432 = tr.find('input[data-uba=4], input[data-uba=3], input[data-uba=2]');
+         var uba10 = tr.find('input[data-uba=1], input[data-uba=0]');
+ 
+-        var sum = uba432.get().reduce(reducer432, new BigNumber(0));
+-        sum = uba10.get().reduce(reducer10, sum);
++        var sum432 = uba432.get().reduce(reducer432, new BigNumber(0));
++        var sum10 = uba10.get().reduce(reducer10, new BigNumber(0));
+ 
+-        return sum;
++        return sum432.plus(sum10);
+     }
+     /**
+      * Riduttore per la media
+@@ -193,7 +201,7 @@
+                 + data + ' ' + (disabled ? 'disabled' : '') + '/>';
+         };
+     }
+-    /***
++    /**
+      * Crea la funzione che dataTable utilizza per creare un input di tipo testo in cui inserire gli uba e, se possibile, lo prepopola con i dati presenti nella variabile accantonamentiSelezionati
+      * @param fieldname (string)  il nome del campo
+      * @param data      (string)  i data-attribute
+@@ -330,7 +338,6 @@
+             capitoliModaleSelezionati[capitolo.uid] = undefined;
+             return;
+         }
+-
+         capitoliModaleSelezionati[capitolo.uid] = {
+             capitolo: capitolo
+         };
+@@ -424,14 +431,15 @@
+      * @returns (boolean) false per indicare di bloccare l'evento
+      */
+     function salvaCapitoli() {
+-        if (!$('#salvaCapitoli').hasClass('disabled')) {
++        var $salva = $('#salvaCapitoli');
++        if (!$salva.hasClass('disabled')) {
+             var listaAccantonamenti = accantonamentiSelezionati.filter(filterOutUndefined);
+             var obj = {listaAccantonamentoFondiDubbiaEsigibilitaRendicontoSelezionati: listaAccantonamenti};
+ 
+-            $('#salvaCapitoli').overlay('show');
++            $salva.overlay('show');
+             $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_salvaCapitoli.do', projectToString(obj))
+             .then(function(data) {
+-                if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
++                if(impostaDatiNegliAlert(data.errori, alertErrori)){
+                     return;
+                 }
+                 impostaInformazioneSuccesso();
+@@ -441,7 +449,7 @@
+                 return leggiAccantonamentiTempNelModel();
+             }).always(function() {
+                 $('#msgElimina').modal('hide');
+-                $('#salvaCapitoli').overlay('hide');
++                $salva.overlay('hide');
+                 $('#riepilogoCapitoliGiaAssociati_wrapper').overlay('hide');
+             });
+         }
+@@ -497,9 +505,9 @@
+                 $(nTd).addClass('text-right');
+             }
+             $(nTd).find('input')
+-            .on('change', function() {
+-                gestisciAccantonamentiSelezionati(nTd, sData, oData);
+-            });
++                .on('change', function() {
++                    gestisciAccantonamentiSelezionati(nTd, sData, oData);
++                });
+         };
+     }
+ 
+@@ -529,7 +537,7 @@
+                 var datum = accantonamentiSelezionati[source.capitolo.uid];
+                 capitoliInTemp[source.capitolo.uid] = true;
+                 var checked = datum && datum.checked ? 'checked' : '';
+-                return '<input type="checkbox" name="capitolo.uid" value="'+ source.capitolo.uid+'" ' + checked + '"/>';
++                return '<input type="checkbox" name="capitolo.uid" value="'+ source.capitolo.uid+'" ' + checked + '/>';
+             }, fnCreatedCell : associaHandlerInputAccantonamenti()},
+             {aTargets: [ 1 ], mData: calcolaStringaCapitolo},
+             {aTargets: [ 2 ], mData: creaInputTemp('percentualeAccantonamentoFondi4', 'data-uba="4"', riscossioneVirtuosaChecked), fnCreatedCell: associaHandlerInputAccantonamenti()},
+@@ -558,7 +566,7 @@
+         $('#pulsanteRiportaSuCapitoli').prop('disabled', list.length <= 1);
+     }
+ 
+-    //ACCANTONAMENTI: FUNZIONALITA? DI RIEPILOGO
++    //ACCANTONAMENTI: FUNZIONALITA' DI RIEPILOGO
+ 
+     /***
+      * Chiama il servizio che aggiorna l'accantonamento
+@@ -583,7 +591,7 @@
+         $tr.overlay('show');
+         $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_aggiornaAccantonamento.do', projectToString(obj))
+         .then(function(data) {
+-            if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
++            if(impostaDatiNegliAlert(data.errori, alertErrori)){
+                 return;
+             }
+             impostaInformazioneSuccesso();
+@@ -628,7 +636,7 @@
+ 
+         $elementoSelezionato.html(descrizioneElementoSelezionato);
+         $('#modaleEliminazione').modal('show');
+-        //        // Eliminazione
++        // Eliminazione
+         $pulsanteEliminazione.substituteHandler('click', function() {
+             $('#modaleEliminazione').modal('hide');
+             eliminaAccantonamentoFondiDubbiaEsigibilita(td, oggettoDaEliminare);
+@@ -722,8 +730,8 @@
+                 {aTargets: [6], mData: creaInput('percentualeMediaAccantonamentoFondi', 'data-media', true), fnCreatedCell : impostaClasseCssEHandlerSullaCella('text-right')},
+                 {aTargets: [7], mData: creaPulsanteModificaAccantonamento, fnCreatedCell: setCssClass('text-center')},
+                 {aTargets: [8], mData: creaPulsanteEliminaAccantonamento, fnCreatedCell: function(nTd, sData, oData) {
+-                    $(nTd).addClass("text-center")
+-                    .find("a")
++                    $(nTd).addClass('text-center')
++                    .find('a')
+                     .eventPreventDefault('click', apriModaleEliminazioneAccantonamentoFondiDubbiaEsigibilita.bind(undefined, nTd, oData));
+                 }}
+             ],
+@@ -770,26 +778,95 @@
+     }
+ 
+     /**
++     * Popolamento dall'anno precedente
++     * @param e (Event) l'evento scatenante l'invocazione
++     */
++    function popolaDaAnnoPrecedente(e) {
++        var $button = $(e.target).overlay('show');
++        var async = new Async('inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_popolaDaAnnoPrecedente.do', {}, popolaDaAnnoPrecedenteAsyncCallback($button),
++                'async/polling.do', popolaDaAnnoPrecedentePolling);
++        async.execute()
++            .fail(popolaDaAnnoPrecedenteFailCallback);
++    }
++
++    /**
++     * Callback di fallimento nel popolamento da anno precedente
++     * @param error (any) gli errori
++     * @returns (Promise) una promise rigettata
++     */
++    function popolaDaAnnoPrecedenteFailCallback(error) {
++        var jserror = error.errori !== undefined && error.errori.filter(function(el) {
++            return el instanceof Error;
++        })[0];
++        if(jserror) {
++            throw jserror;
++        }
++        impostaDatiNegliAlert(error.errori, alertErrori);
++        return $.Deferred().reject(error).promise();
++    }
++
++    /**
++     * Callback del popolamento da anno precedente
++     * @param $button (jQuery) il pulsante
++     * @returns (function(any) => any) la funzione da invocare come callback dell'esecuzione asincrona
++     */
++    function popolaDaAnnoPrecedenteAsyncCallback($button) {
++        return function(data) {
++            $button.overlay('hide');
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                throw Error('Errore nell\'invocazione del servizio');
++            }
++            // Disabilito il pulsante
++            $button.attr('disabled', 'disabled');
++            return {idOperazioneAsync: data.idOperazioneAsincrona};
++        }
++    }
++
++    /**
++     * Callback di polling del popolamento da anno precedente
++     * @param data (any) i dati dell'invocazione
++     * @returns boolean se proseguire con il popolamento
++     */
++    function popolaDaAnnoPrecedentePolling(data) {
++        data.stato && impostaDatiNegliAlert([data.messaggio], alertInformazioni);
++        return Async.checkConclusaOErrore(data.stato);
++    }
++
++    /**
++     * Completamento del polling
++     */
++    function popolaDaAnnoPrecedentePollingDone() {
++        $('#pulsantePopolaDaAnnoPrecedente').removeAttr('disabled');
++        leggiFondiDubbiaEsigibilita();
++    }
++    /**
++     * Timeout del polling
++     */
++    function popolaDaAnnoPrecedentePollingTimeout() {
++        impostaDatiNegliAlert(['Il risultato dell\'invocazione non &eacute; disponibile al termine del timeout del polling. Sar&agrave; disponibile in un prossimo caricamento della pagina'], alertInformazioni);
++    }
++
++    /**
+      * Inizializzazione
+      */
+     function init() {
+-        $("#pulsanteApriModaleCapitoloDubbiaEsigibilita").on("click", apriModaleCapitoloDubbiaEsigibilita);
++        $('#pulsanteApriModaleCapitoloDubbiaEsigibilita').on('click', apriModaleCapitoloDubbiaEsigibilita);
+ 
+-        $("#titoloEntrata").on("change", CapitoloEntrata.caricaTipologia);
+-        $("#tipologiaTitolo").on("change", CapitoloEntrata.caricaCategoria);
+-        $("#categoriaTipologiaTitolo").on("change", function() {
+-            $("#bottonePdC").attr('href','#PDCfin');
++        $('#titoloEntrata').on('change', CapitoloEntrata.caricaTipologia);
++        $('#tipologiaTitolo').on('change', CapitoloEntrata.caricaCategoria);
++        $('#categoriaTipologiaTitolo').on('change', function() {
++            $('#bottonePdC').attr('href','#PDCfin');
+             Capitolo.caricaPianoDeiConti(this, true);
+         });
+-        $("#bottonePdC").on("click", Capitolo.controllaPdC);
++        $('#bottonePdC').on('click', Capitolo.controllaPdC);
+ 
+-        $('#pulsanteRicercaCapitolo').substituteHandler("click", ricercaCapitoliModale);
++        $('#pulsanteRicercaCapitolo').substituteHandler('click', ricercaCapitoliModale);
+ 
+-        $('#pulsanteConfermaCapitoli').substituteHandler("click", confermaCapitoliModale);
+-        $('#pulsanteRiportaSuCapitoli').substituteHandler("click", riportaSuCapitoli);
+-        $('#salvaCapitoli').substituteHandler("click", salvaCapitoli);
++        $('#pulsanteConfermaCapitoli').substituteHandler('click', confermaCapitoliModale);
++        $('#pulsanteRiportaSuCapitoli').substituteHandler('click', riportaSuCapitoli);
++        $('#salvaCapitoli').substituteHandler('click', salvaCapitoli);
+ 
+-        /* Carica lo zTree relativo alla Struttura Amministrativo Contabile */
++        // Carica lo zTree relativo alla Struttura Amministrativo Contabile
+         Capitolo.caricaStrutturaAmministrativoContabile();
+ 
+         leggiFondiDubbiaEsigibilita();
+@@ -796,9 +873,13 @@
+         leggiAccantonamentiTempNelModel();
+ 
+         // Creo la funzionalita' di selezione multipla
+-        $(".check-all").change(checkAllInTable);
++        $('.check-all').change(checkAllInTable);
+ 
+         $('#tabellaTempCapitoli').on('change', 'input[data-uba]', calcolaMedia);
++        // SIAC-4469
++        $('#pulsantePopolaDaAnnoPrecedente').removeAttr('disabled').substituteHandler('click', popolaDaAnnoPrecedente);
++        $(document).substituteHandler('pollingDone.async', popolaDaAnnoPrecedentePollingDone)
++            .substituteHandler('pollingTimeout.async', popolaDaAnnoPrecedentePollingTimeout);
+     }
+ 
+     $(init);
+Index: src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp
+===================================================================
+--- src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp	(revision 13699)
++++ src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp	(working copy)
+@@ -1,5 +1,4 @@
+-<%@ page language="java" contentType="text/html; charset=UTF-8"
+-	pageEncoding="UTF-8"%>
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+ <%@ taglib uri="/struts-tags" prefix="s"%>
+ <%@ taglib uri="http://www.csi.it/taglibs/remincl-1.0" prefix="r"%>
+ 
+@@ -14,17 +13,13 @@
+ 		<div class="row-fluid">
+ 			<div class="span12 ">
+ 				<div class="contentPage">
+-					
+ 					<s:form  method="post" action="%{actionOperazioneAttributi}">
+-					
+ 						<s:include value="/jsp/include/messaggi.jsp" />
+ 						<s:hidden name="gestioneUEB" id="HIDDEN_gestioneUEB" data-maintain="" />
+ 						<h3>Configurazione Parametri di Stampa</h3>
+ 						<fieldset class="form-horizontal"> 
+-							<br>
+-							
+-									<s:hidden name="attributiBilancio.uid" />
+-							
++							<br />
++							<s:hidden name="attributiBilancio.uid" />
+ 							<div class="control-group">
+ 								<label class="control-label" for="accantonamento">Anno esercizio</label>
+ 								<div class="controls">
+@@ -33,94 +28,68 @@
+ 							</div>
+ 
+ 							<div class="control-group">
+-								<label class="control-label" for="accantonamento">Accantonamento
+-									graduale enti locali *</label>
++								<label class="control-label" for="accantonamento">Accantonamento graduale enti locali *</label>
+ 								<div class="controls">
+-									<label class="radio inline"><input type="radio"
+-										name="accantonamentoEnti" value="true"
+-										<s:if test='%{attributiBilancio.accantonamentoGraduale}'>checked</s:if> />S&igrave;</label>
+-									<label class="radio inline"><input type="radio"
+-										name="accantonamentoEnti" value="false"
+-										<s:if test='%{!attributiBilancio.accantonamentoGraduale}'>checked</s:if> />No</label>
+-										
+-										<s:if test='%{attributiBilancioPresenti}'><s:hidden name="attributiBilancio.accantonamentoGraduale" /></s:if>
++									<label class="radio inline">
++										<input type="radio" name="accantonamentoEnti" value="true" <s:if test='%{attributiBilancio.accantonamentoGraduale}'>checked</s:if> />S&igrave;
++									</label>
++									<label class="radio inline">
++										<input type="radio" name="accantonamentoEnti" value="false" <s:if test='%{!attributiBilancio.accantonamentoGraduale}'>checked</s:if> />No
++									</label>
++									<s:if test="attributiBilancioPresenti">
++										<s:hidden name="attributiBilancio.accantonamentoGraduale" />
++									</s:if>
+ 								</div>
+ 							</div>
+-							<!-- riepilogo -->
+-							
++							<%-- riepilogo --%>
++
+ 							<table summary="riepilogo incarichi" class="table table-hover table-bordered">
+ 								<tr>
+ 									<th width="20%">&nbsp;</th>
+-									<th width="27%" class="text-right"><s:property
+-											value="%{annoEsercizioInt + 0}" /></th>
+-									<th width="27%" class="text-right"><s:property
+-											value="%{annoEsercizioInt + 1}" /></th>
+-									<th width="26%" class="text-right"><s:property
+-											value="%{annoEsercizioInt + 2}" /></th>
++									<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 0}" /></th>
++									<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}" /></th>
++									<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}" /></th>
+ 								</tr>
+ 								<tr>
+ 									<th>Accantonamento graduale *</th>
+-									<td class="text-right tab_Right"><s:textfield
+-											id="valoreComplessivoProgetto"
+-											cssClass=" span6 soloNumeri decimale"
+-											name="attributiBilancio.percentualeAccantonamentoAnno"
+-											maxlength="20" /></td>
+-									<td class="text-right tab_Right"><s:textfield											
+-											id="valoreComplessivoProgetto"
+-											cssClass=" span6 soloNumeri decimale"
+-											name="attributiBilancio.percentualeAccantonamentoAnno1"
+-											maxlength="20" /></td>
+-									<td class="text-right tab_Right"><s:textfield
+-											id="valoreComplessivoProgetto"
+-											cssClass=" span6 soloNumeri decimale"
+-											name="attributiBilancio.percentualeAccantonamentoAnno2"
+-											maxlength="20" /></td>
++									<td class="text-right tab_Right"><s:textfield id="valoreComplessivoProgetto" cssClass=" span6 soloNumeri decimale" name="attributiBilancio.percentualeAccantonamentoAnno" maxlength="20" /></td>
++									<td class="text-right tab_Right"><s:textfield id="valoreComplessivoProgetto" cssClass=" span6 soloNumeri decimale" name="attributiBilancio.percentualeAccantonamentoAnno1" maxlength="20" /></td>
++									<td class="text-right tab_Right"><s:textfield id="valoreComplessivoProgetto" cssClass=" span6 soloNumeri decimale" name="attributiBilancio.percentualeAccantonamentoAnno2" maxlength="20" /></td>
+ 								</tr>
+ 							</table>
+-							
++
+ 							<div class="control-group">
+-								<label class="control-label" for="accantonamento">Riscossione
+-									virtuosa *</label>
++								<label class="control-label" for="accantonamento">Riscossione virtuosa *</label>
+ 								<div class="controls">
+-									<label class="radio inline"><input type="radio" id="riscossioneVirtuosaTrue"
+-										<s:if test='%{attributiBilancioPresenti}'>disabled</s:if>
+-										name="riscossioneVirtuosa" value="true"
+-										<s:if test='%{attributiBilancio.riscossioneVirtuosa}'>checked</s:if> />S&igrave;</label>
+-									<label class="radio inline"><input type="radio"  id="riscossioneVirtuosaFalse"
+-										<s:if test='%{attributiBilancioPresenti}'>disabled</s:if>
+-										name="riscossioneVirtuosa" value="false"
+-										<s:if test='%{! attributiBilancio.riscossioneVirtuosa}'>checked</s:if> />No</label>
+-										
+-										<s:if test='%{attributiBilancioPresenti}'><s:hidden name="attributiBilancio.riscossioneVirtuosa" /></s:if>
++									<label class="radio inline">
++										<input type="radio" id="riscossioneVirtuosaTrue" <s:if test="attributiBilancioPresenti">disabled</s:if> name="riscossioneVirtuosa" value="true" <s:if test='%{attributiBilancio.riscossioneVirtuosa}'>checked</s:if> />S&igrave;
++									</label>
++									<label class="radio inline">
++										<input type="radio"  id="riscossioneVirtuosaFalse" <s:if test="attributiBilancioPresenti">disabled</s:if> name="riscossioneVirtuosa" value="false" <s:if test='%{! attributiBilancio.riscossioneVirtuosa}'>checked</s:if> />No
++									</label>
++									<s:if test="attributiBilancioPresenti">
++										<s:hidden name="attributiBilancio.riscossioneVirtuosa" />
++									</s:if>
+ 								</div>
+ 							</div>
+-
+ 							<div class="control-group">
+-								<label class="control-label" for="accantonamento">Tipo
+-									media prescelta *</label>
++								<label class="control-label" for="accantonamento">Tipo media prescelta *</label>
+ 								<div class="controls">
+-									<label class="radio inline"><input type="radio"  id="mediaApplicataSemplice"
+-										<s:if test='%{attributiBilancioPresenti}'>disabled</s:if>
+-										name="mediaApplicata" value="SEMPLICE"
+-										<s:if test='%{"SEMPLICE".equals(attributiBilancio.mediaApplicata.name())}'>checked</s:if> />Semplice</label>
+-									<label class="radio inline"><input type="radio"   id="mediaApplicataPonderata"
+-										<s:if test='%{attributiBilancioPresenti}'>disabled</s:if>
+-										name="mediaApplicata" value="PONDERATA"
+-										<s:if test='%{"PONDERATA".equals(attributiBilancio.mediaApplicata.name())}'>checked</s:if> />Ponderata</label>
+-										
+-										<s:if test='%{attributiBilancioPresenti}'><s:hidden name="attributiBilancio.mediaApplicata.name()" /></s:if>
++									<label class="radio inline">
++										<input type="radio"  id="mediaApplicataSemplice" <s:if test="attributiBilancioPresenti">disabled</s:if> name="mediaApplicata" value="SEMPLICE" <s:if test='%{"SEMPLICE".equals(attributiBilancio.mediaApplicata.name())}'>checked</s:if> />Semplice
++									</label>
++									<label class="radio inline">
++										<input type="radio"   id="mediaApplicataPonderata" <s:if test="attributiBilancioPresenti">disabled</s:if> name="mediaApplicata" value="PONDERATA" <s:if test='%{"PONDERATA".equals(attributiBilancio.mediaApplicata.name())}'>checked</s:if> />Ponderata
++									</label>
++									<s:if test="attributiBilancioPresenti">
++										<s:hidden name="attributiBilancio.mediaApplicata" />
++									</s:if>
+ 								</div>
+ 							</div>
+-
+-
+ 							<div class="control-group">
+-								<label class="control-label" for="valoreComplessivoProgetto">Ultimo
+-									bilancio Approvato (UBA) *</label>
++								<label class="control-label" for="valoreComplessivoProgetto">Ultimo bilancio Approvato (UBA) *</label>
+ 								<div class="controls">
+-									<s:textfield id="valoreComplessivoProgetto"
+-										readonly="%{attributiBilancioPresenti}"
+-										cssClass="lbTextSmall span3 soloNumeri"
+-										name="attributiBilancio.ultimoAnnoApprovato" maxlength="20" />
++									<s:textfield id="valoreComplessivoProgetto" readonly="attributiBilancioPresenti" cssClass="lbTextSmall span3 soloNumeri" name="attributiBilancio.ultimoAnnoApprovato" maxlength="20" />
+ 								</div>
+ 							</div>
+ 
+@@ -127,23 +96,27 @@
+ 							<p class="margin-large">
+ 
+ 								<s:if test="attributiBilancioPresenti">
+-									<span id="SPAN_pulsanteApriModaleCapitoloDubbiaEsigibilita"
+-										class="radio guidata "> <a href="#"
+-										id="pulsanteApriModaleCapitoloDubbiaEsigibilita"
+-										class="btn btn-primary">ricerca capitoli</a>
++									<span id="SPAN_pulsanteApriModaleCapitoloDubbiaEsigibilita" class="radio guidata">
++										<a href="#" id="pulsanteApriModaleCapitoloDubbiaEsigibilita" class="btn btn-primary">ricerca capitoli</a>
+ 									</span>
+-									
+-									<span class="radio guidata"><s:submit cssClass="btn btn-primary pull-right"
+-										value="aggiorna attributi" /></span>
++									<span class="radio guidata">
++										<s:submit cssClass="btn btn-primary pull-right" value="aggiorna attributi" />
++									</span>
+ 								</s:if>
+ 								<s:else>
+-									<s:submit cssClass="btn btn-primary pull-right"
+-										value="salva e prosegui" />
++									<s:submit cssClass="btn btn-primary pull-right" value="salva e prosegui" />
+ 								</s:else>
++								<s:if test="datiAnnoPrecedentePresenti">
++									<span class="radio guidata">
++										<button type="button" class="btn btn-secondary" id="pulsantePopolaDaAnnoPrecedente">popola da anno precedente</button>
++									</span>
++								</s:if>
+ 							</p>
+ 
+-							<br/><br /><br />
+-							<!-- tab temp capitoli -->
++							<br/>
++							<br/>
++							<br/>
++							<%-- tab temp capitoli --%>
+ 							<div id="tempCapitoli" class="hide" role="grid">
+ 								<h4>Capitoli da associare all'accantonamento</h4>
+ 								<div class="dataTable-scroll-x">
+@@ -162,8 +135,8 @@
+ 												<th width="10%" class="text-right">&nbsp;&#37; MEDIA</th>
+ 												<th width="10" class="text-right">&nbsp;&#37; con delta</th>
+ 											</tr>
+-										</thead>	
+-										<tbody>		
++										</thead>
++										<tbody>
+ 										</tbody>
+ 									</table>
+ 								</div>
+@@ -170,22 +143,18 @@
+ 								<span class="radio guidata "> <a href="#"
+ 									id="salvaCapitoli" class="btn btn-primary disabled">salva capitoli</a>
+ 								</span>
+-								
+-								
+-								
+-
+ 								<span id="SPAN_pulsanteRiportaSuCapitoli" class="radio guidata ">
+ 									<button type="button" id="pulsanteRiportaSuCapitoli" disabled="disabled" class="btn btn-primary">riporta su tutti i capitoli</button>
+-								</span> 
++								</span>
+ 							</div>
+ 						</fieldset>
+-						<br />
++						<br/>
+ 						<div>
+ 							<h4>Capitoli nell'accantonamento</h4>
+ 							<div class="dataTable-scroll-x">
+ 								<table id="riepilogoCapitoliGiaAssociati" class="table table-hover dataTable">
+ 									<thead>
+-										<tr role="row">									
++										<tr role="row">
+ 											<th scope="col" width="24%">Capitolo</th>
+ 											<th scope="col" width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 4}" /></th>
+ 											<th scope="col" width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 3}" /></th>
+@@ -195,10 +164,10 @@
+ 											<th scope="col" width="10%" class="text-right">&nbsp;&#37; MEDIA</th>
+ 											<th scope="col" width="10%" class="text-right">&nbsp;&#37; con delta</th>
+ 											<th scope="col" width="3%" class="text-right">&nbsp;</th>
+-											<th scope="col" width="%3" class="text-right">&nbsp;</th>										
++											<th scope="col" width="%3" class="text-right">&nbsp;</th>
+ 										</tr>
+ 									</thead>
+-									<tbody></tbody>	
++									<tbody></tbody>
+ 								</table>
+ 							</div>
+ 						</div>
+@@ -206,7 +175,7 @@
+ 						<p class="margin-large">
+ 							<s:include value="/jsp/include/indietro.jsp" />
+ 	<%-- 					<s:reset cssClass="btn btn-link" value="annulla" /> --%>
+-						</p>					
++						</p>
+ 					</s:form>
+ 				</div>
+ 			</div>
+@@ -222,6 +191,7 @@
+ 
+ 	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
+ 	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
++	<script type="text/javascript" src="${jspath}async.js"></script>
+ 	<script type="text/javascript" src="${jspath}dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js"></script>
+ 
+ 
+Index: src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp
+===================================================================
+--- src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp	(revision 13699)
++++ src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp	(working copy)
+@@ -25,7 +25,7 @@
+ 							<s:hidden name="attributiBilancio.percentualeAccantonamentoAnno1" data-maintain="" />
+ 							<s:hidden name="attributiBilancio.percentualeAccantonamentoAnno2" data-maintain="" />
+ 							<s:hidden name="attributiBilancio.riscossioneVirtuosa" />
+-							<s:if test='%{attributiBilancioPresenti}'>
++							<s:if test="attributiBilancioPresenti">
+ 								<s:hidden name="attributiBilancio.mediaApplicata" />
+ 								<s:hidden name="attributiBilancio.ultimoAnnoApprovato" />
+ 							</s:if>
+@@ -41,11 +41,11 @@
+ 								<label class="control-label">Tipo media prescelta *</label>
+ 								<div class="controls">
+ 									<label class="radio inline">
+-										<input type="radio" id="mediaApplicataSemplice" <s:if test='%{attributiBilancioPresenti}'>disabled</s:if> name="attributiBilancio.mediaApplicata" value="SEMPLICE"
++										<input type="radio" id="mediaApplicataSemplice" <s:if test="attributiBilancioPresenti">disabled</s:if> name="attributiBilancio.mediaApplicata" value="SEMPLICE"
+ 											<s:if test='%{"SEMPLICE".equals(attributiBilancio.mediaApplicata.name())}'>checked</s:if> />Semplice
+ 									</label>
+ 									<label class="radio inline">
+-										<input type="radio" id="mediaApplicataPonderata" <s:if test='%{attributiBilancioPresenti}'>disabled</s:if> name="attributiBilancio.mediaApplicata" value="PONDERATA"
++										<input type="radio" id="mediaApplicataPonderata" <s:if test="attributiBilancioPresenti">disabled</s:if> name="attributiBilancio.mediaApplicata" value="PONDERATA"
+ 											<s:if test='%{"PONDERATA".equals(attributiBilancio.mediaApplicata.name())}'>checked</s:if> />Ponderata
+ 									</label>
+ 								</div>
+@@ -70,6 +70,11 @@
+ 								<s:else>
+ 									<s:submit cssClass="btn btn-primary pull-right" value="salva e prosegui" />
+ 								</s:else>
++								<s:if test="datiAnnoPrecedentePresenti">
++									<span class="radio guidata">
++										<button type="button" class="btn btn-secondary" id="pulsantePopolaDaAnnoPrecedente">popola da anno precedente</button>
++									</span>
++								</s:if>
+ 							</p>
+ 
+ 							<br/>
+@@ -144,6 +149,7 @@
+ 
+ 	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
+ 	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
++	<script type="text/javascript" src="${jspath}async.js"></script>
+ 	<script type="text/javascript" src="${jspath}dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.js"></script>
+ 
+ 

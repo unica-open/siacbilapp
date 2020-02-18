@@ -1,0 +1,73 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/CapitoloModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/CapitoloModel.java	(revision 11385)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/CapitoloModel.java	(working copy)
+@@ -9,6 +9,7 @@
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.ClassificatoreAggiornamento;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.ContaClassificatoriERestituisciSeSingolo;
++import it.csi.siac.siacbilser.frontend.webservice.msg.ContaMovimentiAssociatiACapitolo;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaAttributiModificabiliCapitolo;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaAttributiModificabiliCapitoloResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaClassificatoriModificabiliCapitolo;
+@@ -1758,15 +1759,35 @@
+ 	 * @return <code>true</code> se il classificatore &eacute; editabile; <code>false</code> in caso contrario.
+ 	 */
+ 	protected boolean isEditabile(boolean unico, boolean isMassivo, ControllaClassificatoriModificabiliCapitoloResponse response, TipologiaClassificatore... tipologie) {
++		final String methodName = "isEditabile";
++		
+ 		// Null-safety
+ 		if(tipologie == null || tipologie.length == 0) {
+-			return unico ^ isMassivo;
++			return false;
+ 		}
++		
++		
+ 		boolean modificabileClassificatore = false;
+ 		for(TipologiaClassificatore tipologia : tipologie) {
+ 			modificabileClassificatore = modificabileClassificatore || response.isModificabile(tipologia);
+ 		}
+-		return unico || modificabileClassificatore ^ isMassivo;
++		
++		//CR 3591
++		boolean modificabileClassificatoreMG = false;
++		for(TipologiaClassificatore tipologia : tipologie) {
++			modificabileClassificatoreMG = modificabileClassificatoreMG || response.isModificabilePerMovimentoGestione(tipologia);
++		}
++		
++		log.debug(methodName , "modificabileClassificatore:"+modificabileClassificatore + " modificabileClassificatoreMG:"+ modificabileClassificatoreMG +", isMassivo:"+isMassivo);
++		return modificabileClassificatore ^ (isMassivo && modificabileClassificatoreMG);
++		
++		//Tabella casi possibili:
++		//             false                 true         false                            -> false (ok)
++		//             false                 true         true                             -> true  (ok)
++		                                          
++        //             true                  false        true                             -> true  (ok)
++		//             true                  true         true                             -> false (ok)
++
+ 	}
+ 	
+ 	/**
+@@ -2052,4 +2073,22 @@
+ 		return new ParametriPaginazione(0, 10000);
+ 	}
+ 	
++	/**
++	 * chiama il servizio ContaMovimentiAssociatiACapitoloService 
++	 * @return la Request creata
++	 * CR-3591
++	 */
++	public ContaMovimentiAssociatiACapitolo creaRequestContaMovimentiAssociatiACapitolo(Capitolo<?, ?> capitolo) {
++		ContaMovimentiAssociatiACapitolo request = new ContaMovimentiAssociatiACapitolo();
++				
++		request.setDataOra(new Date());
++		// Il capitolo può essere nullo?
++		if(capitolo != null) {
++			request.setIdCapitolo(capitolo.getUid());
++		}
++		request.setRichiedente(getRichiedente());
++		
++		return request;
++	}
++	
+ }

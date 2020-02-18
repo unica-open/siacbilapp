@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cassaEconomale" extends="capitoloDefault" namespace="/">
+			<!-- START -->
+		<action name="cassaEconomaleStart" class="cassaEconomaleStartAction">
+			<result name="success">/jsp/cassaEconomale/startPage.jsp</result>
+			<result name="onlyOne" type="redirectAction">cassaEconomaleStartSelectCassa</result>
+		</action>
+		<action name="cassaEconomaleStartSelectCassa" class="cassaEconomaleStartAction" method="selectCassa">
+			<result name="success" type="redirectAction">cassaEconomaleStartFrontPage</result>
+			<result name="input">/jsp/cassaEconomale/startPage.jsp</result>
+		</action>
+		<action name="cassaEconomaleStartFrontPage" class="cassaEconomaleStartAction" method="frontPage">
+			<result name="success">/jsp/cassaEconomale/startPage.jsp</result>
+		</action>
+		
+			<!-- GESTIONE CASSA -->
+		<action name="cassaEconomaleCassaGestione" class="cassaEconomaleCassaGestioneAction">
+			<result name="success">/jsp/cassaEconomale/cassa/gestioneCassa.jsp</result>
+			<result name="input" type="redirectAction">cassaEconomaleStart</result>
+		</action>
+		<action name="cassaEconomaleCassaGestioneAggiornamento" class="cassaEconomaleCassaGestioneAction" method="aggiornamento">
+			<result name="success" type="redirectAction">cassaEconomaleCassaGestione</result>
+			<result name="input">/jsp/cassaEconomale/cassa/gestioneCassa.jsp</result>
+		</action>
+		<action name="cassaEconomaleCassaGestioneAnnulla" class="cassaEconomaleCassaGestioneAction" method="annulla">
+			<result name="success" type="redirectAction">cassaEconomaleStart</result>
+			<result name="input">/jsp/cassaEconomale/cassa/gestioneCassa.jsp</result>
+		</action>
+		
+			<!-- GESTIONE TABELLE -->
+		<action name="cassaEconomaleGestioneTabelleTipiOperazioniDiCassa" class="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction">
+			<result name="success">/jsp/cassaEconomale/tabelle/tipiOperazioniDiCassa.jsp</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaRicerca" class="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction" method="ricerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaInizioInserimento" class="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction" method="inizioInserimento">
+			<result name="success">/jsp/cassaEconomale/tabelle/collapseTipoOperazioneCassa.jsp</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaInserimento" class="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction" method="inserimento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+			<result name="input" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaInizioAggiornamento" class="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction" method="inizioAggiornamento">
+			<result name="success">/jsp/cassaEconomale/tabelle/collapseTipoOperazioneCassa.jsp</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAggiornamento" class="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction" method="aggiornamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+			<result name="input" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAnnullamento" class="cassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction" method="annullamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		
+		<action name="cassaEconomaleGestioneTabelleTipiGiustificativi" class="cassaEconomaleGestioneTabelleTipiGiustificativiAction">
+			<result name="success">/jsp/cassaEconomale/tabelle/tipiGiustificativo.jsp</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiGiustificativiRicerca" class="cassaEconomaleGestioneTabelleTipiGiustificativiAction" method="ricerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiGiustificativiInizioInserimento" class="cassaEconomaleGestioneTabelleTipiGiustificativiAction" method="inizioInserimento">
+			<result name="success">/jsp/cassaEconomale/tabelle/collapseTipoGiustificativo.jsp</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiGiustificativiInserimento" class="cassaEconomaleGestioneTabelleTipiGiustificativiAction" method="inserimento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+			<result name="input" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiGiustificativiInizioAggiornamento" class="cassaEconomaleGestioneTabelleTipiGiustificativiAction" method="inizioAggiornamento">
+			<result name="success">/jsp/cassaEconomale/tabelle/collapseTipoGiustificativo.jsp</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiGiustificativiAggiornamento" class="cassaEconomaleGestioneTabelleTipiGiustificativiAction" method="aggiornamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+			<result name="input" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleGestioneTabelleTipiGiustificativiAnnullamento" class="cassaEconomaleGestioneTabelleTipiGiustificativiAction" method="annullamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		
+			<!-- OPERAZIONI CASSA -->
+		<action name="cassaEconomaleOperazioniCassaGestione" class="cassaEconomaleOperazioniCassaGestioneAction">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/gestioneOperazioneCassa.jsp</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="cassaEconomaleOperazioniCassaGestioneRicerca" class="cassaEconomaleOperazioniCassaGestioneAction" method="ricerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleOperazioniCassaGestioneInizioInserimento" class="cassaEconomaleOperazioniCassaGestioneAction" method="inizioInserimento">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/collapseOperazioneCassa.jsp</result>
+		</action>
+		<action name="cassaEconomaleOperazioniCassaGestioneInserimento" class="cassaEconomaleOperazioniCassaGestioneAction" method="inserimento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+			<result name="input" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleOperazioniCassaGestioneInizioAggiornamento" class="cassaEconomaleOperazioniCassaGestioneAction" method="inizioAggiornamento">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/collapseOperazioneCassa.jsp</result>
+		</action>
+		<action name="cassaEconomaleOperazioniCassaGestioneAggiornamento" class="cassaEconomaleOperazioniCassaGestioneAction" method="aggiornamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+			<result name="input" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleOperazioniCassaGestioneAnnullamento" class="cassaEconomaleOperazioniCassaGestioneAction" method="annullamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleOperazioniCassaGestioneImportiCassa" class="cassaEconomaleOperazioniCassaGestioneAction" method="importiCassa">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+		</action>
+		
+		
+		
+			<!-- AJAX -->
+		<action name="risultatiRicercaTipoOperazioneCassaAjax" class="risultatiRicercaTipoOperazioneCassaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaTipoGiustificativoAjax" class="risultatiRicercaTipoGiustificativoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaOperazioneCassaAjax" class="risultatiRicercaOperazioneCassaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+	</package>
+</struts>

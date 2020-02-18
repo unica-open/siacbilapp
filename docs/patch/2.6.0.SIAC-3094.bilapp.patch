@@ -1,0 +1,17 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaSpesaAction.java	(revision 8991)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaSpesaAction.java	(working copy)
+@@ -113,11 +113,8 @@
+ 	}
+ 
+ 	private void controllaMovimentoResiduo(SubdocumentoSpesa subdocumento) {
+-		log.debug("controllaMovimentoResiduo", "subdoc uid: " + subdocumento.getUid() +", movimento anno: " + 
+-				subdocumento.getImpegno().getAnnoMovimento() + " e numero: " +subdocumento.getImpegno().getNumero() );
+-		log.debug("controllaMovimentoResiduo", "anno di bilancio: " + model.getBilancio().getAnno());
+ 		if(subdocumento.getImpegno() != null && subdocumento.getImpegno().getAnnoMovimento() < model.getBilancio().getAnno()){
+-			log.debug("controllaMovimentoResiduo", "movimento residuo!!!!!!!!!!!!!!!!!!");
++			log.debug("controllaMovimentoResiduo", "movimento residuo!");
+ 			model.setMovimentoResiduo(true);
+ 		}
+ 	}

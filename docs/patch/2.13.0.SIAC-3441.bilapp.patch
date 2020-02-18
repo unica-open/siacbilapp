@@ -1,0 +1,812 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneCodificheAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneCodificheAction.java	(revision 11141)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneCodificheAction.java	(working copy)
+@@ -68,6 +68,7 @@
+ import java.lang.reflect.Method;
+ import java.util.Date;
+ import java.util.List;
++import java.util.Map;
+ 
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.struts2.interceptor.validation.SkipValidation;
+@@ -380,6 +381,9 @@
+ 		// Ripopolamento dei campi
+ 		popolaNuovoDaVecchio(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
+ 		
++		CategoriaCapitolo categoria = ComparatorUtils.searchByUid(model.getSpecificaCodifiche().getListaCategoriaCapitolo(), elementoCapitoloCodifiche.getCategoriaCapitolo());
++		elementoCapitoloCodifiche.setCategoriaCapitolo(categoria);
++		
+ 		if(!elementoCapitoloCodifiche.validaCodifiche()) {
+ 			log.debug(methodName, "Non tutti i classificatori necessari sono stati inseriti");
+ 			addErrore(ErroreBil.NON_TUTTI_I_CAMPI_DI_UN_CAPITOLO_ASSOCIATO_AD_UNA_VARIAZIONE_SONO_STATI_VALORIZZATI.getErrore());
+@@ -502,6 +506,15 @@
+ 		// Ripopolamento dei campi
+ 		popolaNuovoDaVecchio(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
+ 		
++		CategoriaCapitolo categoria = ComparatorUtils.searchByUid(model.getSpecificaCodifiche().getListaCategoriaCapitolo(), elementoCapitoloCodifiche.getCategoriaCapitolo());
++		elementoCapitoloCodifiche.setCategoriaCapitolo(categoria);
++		
++		if(!elementoCapitoloCodifiche.validaCodifiche()) {
++			log.debug(methodName, "Non tutti i classificatori necessari sono stati inseriti");
++			addErrore(ErroreBil.NON_TUTTI_I_CAMPI_DI_UN_CAPITOLO_ASSOCIATO_AD_UNA_VARIAZIONE_SONO_STATI_VALORIZZATI.getErrore());
++			return SUCCESS;
++		}
++		
+ 		log.debug(methodName, "Ottengo l'indice del classificatore dalla lista");
+ 		log.debug(methodName, "la lista e' null? " + (listaElementoCapitoloCodifiche == null));
+ 		log.debug(methodName, "la lista e' vuota? " + (listaElementoCapitoloCodifiche != null ? listaElementoCapitoloCodifiche.isEmpty() : "NULL"));
+@@ -768,36 +781,48 @@
+ 	 */
+ 	private void popolaNuovoDaVecchio(ElementoCapitoloCodifiche elementoCapitoloCodifiche, ElementoCapitoloCodifiche elementoCapitoloCodificheOld) {
+ 		// Sono da controllare tutti i campi
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Missione.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Programma.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ClassificazioneCofog.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloSpesa.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Macroaggregato.class, true);
++		Map<TipologiaClassificatore, Boolean> mappaClassificatoriModificabili = model.getSpecificaCodifiche().getMappaClassificatoriModificabili();
+ 		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloEntrata.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipologiaTitolo.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, CategoriaTipologiaTitolo.class, true);
++		boolean pdcEditabile = mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC) || mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_I) ||
++				mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_II) || mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_III)
++				&& mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_IV) || mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_V);
+ 		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ElementoPianoDeiConti.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeEntrata.class, false);
++		boolean siopeSpesaEditabile = mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA_I) ||
++				mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA_II) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA_III);
++		
++		boolean siopeEntrataEditabile = mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA_I) ||
++				mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA_II) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA_III);
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Missione.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.MISSIONE));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Programma.class,  mappaClassificatoriModificabili.get(TipologiaClassificatore.PROGRAMMA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ClassificazioneCofog.class,  mappaClassificatoriModificabili.get(TipologiaClassificatore.CLASSIFICAZIONE_COFOG));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloSpesa.class,  mappaClassificatoriModificabili.get(TipologiaClassificatore.TITOLO_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Macroaggregato.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.MACROAGGREGATO));
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TITOLO_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipologiaTitolo.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TIPOLOGIA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, CategoriaTipologiaTitolo.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.CATEGORIA));
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ElementoPianoDeiConti.class, pdcEditabile);
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeSpesa.class, siopeSpesaEditabile);
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeEntrata.class, siopeEntrataEditabile);
+ 		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, StrutturaAmministrativoContabile.class, true);
+ 		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFinanziamento.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFondo.class, false);
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFinanziamento.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TIPO_FINANZIAMENTO));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFondo.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TIPO_FONDO));
+ 		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteEntrata.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioEntrata.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaEntrata.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PoliticheRegionaliUnitarie.class, false);
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteSpesa.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.RICORRENTE_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.RICORRENTE_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioSpesa.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.PERIMETRO_SANITARIO_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.PERIMETRO_SANITARIO_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaSpesa.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TRANSAZIONE_UE_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TRANSAZIONE_UE_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PoliticheRegionaliUnitarie.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.POLITICHE_REGIONALI_UNITARIE));
+ 		
++		controllaClassificatoriGenerici(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
++		
+ 		controllaCategoriaCapitolo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
+ 		
+-		controllaClassificatoriGenerici(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
+-		
+ 		// Imposto la lista dei sotto-elementi
+ 		elementoCapitoloCodifiche.setListaUidCapitolo(elementoCapitoloCodificheOld.getListaUidCapitolo());
+ 		
+@@ -841,9 +866,11 @@
+ 	 * @param nuovo        il nuovo wrapper
+ 	 * @param vecchio      il vecchio wrapper
+ 	 * @param clazz        la classe del campo
+-	 * @param obbligatorio se il campo sia obbligatorio o meno
++	 * @param editabile se il campo sia editabile o meno
+ 	 */
+-	private void controllaCampo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio, Class<?> clazz, boolean obbligatorio) {
++	private void controllaCampo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio, Class<?> clazz, boolean editabile) {
++		String methodName = "controllaCampo";
++		
+ 		String nomeCampo = clazz.getSimpleName();
+ 		Method metodoGet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "get" + nomeCampo);
+ 		Object campoNuovo = ReflectionUtils.invokeMethod(metodoGet, nuovo);
+@@ -853,14 +880,22 @@
+ 		
+ 		boolean campoNuovoNonPresente = !isPresentAsEntita(campoNuovo);
+ 		
+-		if(obbligatorio && campoNuovoNonPresente) {
++		log.debug(methodName, "nomeCampo : " + nomeCampo);
++		log.debug(methodName, nomeCampo + " - campoNuovoNonPresente: " + campoNuovoNonPresente);
++		log.debug(methodName, nomeCampo + " - campoVecchioPresente: " + isPresentAsEntita(campoVecchio));
++		
++		if(!editabile) {
+ 			// Era non editabile
+ 			ReflectionUtils.invokeMethod(metodoSet, nuovo, campoVecchio);
+-		} else if(!obbligatorio && campoNuovoNonPresente && isPresentAsEntita(campoVecchio)) {
++		} else if(campoNuovoNonPresente && isPresentAsEntita(campoVecchio)) {
+ 			// Era presente ma l'ho cancellato: imposto la data di fine validità
+ 			Entita entita = (Entita)campoVecchio;
+ 			entita.setDataFineValidita(new Date());
+ 			ReflectionUtils.invokeMethod(metodoSet, nuovo, entita);
++		}else if(!campoNuovoNonPresente){
++			Entita entita = (Entita)campoNuovo;
++			entita.setDataFineValidita(null);
++			ReflectionUtils.invokeMethod(metodoSet, nuovo, entita);
+ 		}
+ 	}
+ 	
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneCodificheAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneCodificheAction.java	(revision 11141)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneCodificheAction.java	(working copy)
+@@ -63,6 +63,7 @@
+ import java.lang.reflect.Method;
+ import java.util.Date;
+ import java.util.List;
++import java.util.Map;
+ 
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.struts2.interceptor.validation.SkipValidation;
+@@ -254,6 +255,9 @@
+ 		
+ 		log.debug(methodName, sb.toString());
+ 		
++		CategoriaCapitolo categoria = ComparatorUtils.searchByUid(model.getSpecificaCodifiche().getListaCategoriaCapitolo(), elementoCapitoloCodifiche.getCategoriaCapitolo());
++		elementoCapitoloCodifiche.setCategoriaCapitolo(categoria);
++		
+ 		if(!elementoCapitoloCodifiche.validaCodifiche()) {			
+ 			log.debug(methodName, "Non tutti i classificatori necessari sono stati inseriti");
+ 			addErrore(ErroreBil.NON_TUTTI_I_CAMPI_DI_UN_CAPITOLO_ASSOCIATO_AD_UNA_VARIAZIONE_SONO_STATI_VALORIZZATI.getErrore());
+@@ -278,6 +282,199 @@
+ 	}
+ 	
+ 	/**
++	 * Popola il nuovo wrapper a partire dal vecchio.
++	 * 
++	 * @param elementoCapitoloCodifiche    il nuovo wrapper
++	 * @param elementoCapitoloCodificheOld il vecchio wrapper
++	 */
++	private void popolaNuovoDaVecchio(ElementoCapitoloCodifiche elementoCapitoloCodifiche, ElementoCapitoloCodifiche elementoCapitoloCodificheOld) {
++		// Sono da controllare tutti i campi
++		Map<TipologiaClassificatore, Boolean> mappaClassificatoriModificabili = model.getSpecificaCodifiche().getMappaClassificatoriModificabili();
++		
++		boolean pdcEditabile = mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC) || mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_I) ||
++				mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_II) || mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_III)
++				|| mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_IV) || mappaClassificatoriModificabili.get(TipologiaClassificatore.PDC_V);
++		
++		boolean siopeSpesaEditabile = mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA_I) ||
++				mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA_II) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_SPESA_III);
++		
++		boolean siopeEntrataEditabile = mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA_I) ||
++				mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA_II) || mappaClassificatoriModificabili.get(TipologiaClassificatore.SIOPE_ENTRATA_III);
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Missione.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.MISSIONE));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Programma.class,  mappaClassificatoriModificabili.get(TipologiaClassificatore.PROGRAMMA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ClassificazioneCofog.class,  mappaClassificatoriModificabili.get(TipologiaClassificatore.CLASSIFICAZIONE_COFOG));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloSpesa.class,  mappaClassificatoriModificabili.get(TipologiaClassificatore.TITOLO_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Macroaggregato.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.MACROAGGREGATO));
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TITOLO_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipologiaTitolo.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TIPOLOGIA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, CategoriaTipologiaTitolo.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.CATEGORIA));
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ElementoPianoDeiConti.class, pdcEditabile);
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeSpesa.class, siopeSpesaEditabile);
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeEntrata.class, siopeEntrataEditabile);
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, StrutturaAmministrativoContabile.class, true);
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFinanziamento.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TIPO_FINANZIAMENTO));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFondo.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TIPO_FONDO));
++		
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteSpesa.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.RICORRENTE_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.RICORRENTE_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioSpesa.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.PERIMETRO_SANITARIO_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.PERIMETRO_SANITARIO_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaSpesa.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TRANSAZIONE_UE_SPESA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaEntrata.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.TRANSAZIONE_UE_ENTRATA));
++		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PoliticheRegionaliUnitarie.class, mappaClassificatoriModificabili.get(TipologiaClassificatore.POLITICHE_REGIONALI_UNITARIE));
++		
++		controllaClassificatoriGenerici(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
++		
++		controllaCategoriaCapitolo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
++		
++		// Imposto la lista dei sotto-elementi
++		elementoCapitoloCodifiche.setListaUidCapitolo(elementoCapitoloCodificheOld.getListaUidCapitolo());
++		
++		// Imposto i campi testuali e di anagrafica
++		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "uid", Integer.class);
++		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "annoCapitolo", Integer.class);
++		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "numeroCapitolo", Integer.class);
++		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "numeroArticolo", Integer.class);
++		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "descrizioneCapitolo", String.class);
++		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "tipoCapitolo", TipoCapitolo.class);
++		
++		// Imposto la denominazione
++		elementoCapitoloCodifiche.impostaDenominazioneCapitolo();
++		
++		model.getSpecificaCodifiche().setElementoCapitoloCodifiche(elementoCapitoloCodifiche);
++		model.getSpecificaCodifiche().popolaCodifiche();
++		
++		// Imposta la descrizione delle codifiche
++		elementoCapitoloCodifiche.impostaDescrizioneCodifiche();
++	}
++	
++	/**
++	 * Controlla la categoria del capitolo
++	 * 
++	 * @param nuovo   il nuovo wrapper
++	 * @param vecchio il vecchio wrapper
++	 */
++	private void controllaCategoriaCapitolo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio) {
++		CategoriaCapitolo nuovoCategoria = nuovo.getCategoriaCapitolo();
++		CategoriaCapitolo vecchioCategoria = vecchio.getCategoriaCapitolo();
++		
++		if(nuovoCategoria == null) {
++			// Era non editabile. Reimposto il vecchio valore
++			nuovo.setCategoriaCapitolo(vecchioCategoria);
++		}
++	}
++	
++	/**
++	 * Controlla cosa effettuare con un dato campo.
++	 * 
++	 * @param nuovo        il nuovo wrapper
++	 * @param vecchio      il vecchio wrapper
++	 * @param clazz        la classe del campo
++	 * @param editabile se il campo sia editabile o meno
++	 */
++	private void controllaCampo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio, Class<?> clazz, boolean editabile) {
++		String methodName = "controllaCampo";
++		String nomeCampo = clazz.getSimpleName();
++		Method metodoGet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "get" + nomeCampo);
++		Object campoNuovo = ReflectionUtils.invokeMethod(metodoGet, nuovo);
++		Object campoVecchio = ReflectionUtils.invokeMethod(metodoGet, vecchio);
++		
++		Method metodoSet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "set" + nomeCampo, clazz);
++		
++		boolean campoNuovoNonPresente = !isPresentAsEntita(campoNuovo);
++		
++		log.debug(methodName, "nomeCampo : " + nomeCampo);
++		log.debug(methodName, nomeCampo + " - campoNuovoNonPresente: " + campoNuovoNonPresente);
++		log.debug(methodName, nomeCampo + " - campoVecchioPresente: " + isPresentAsEntita(campoVecchio));
++		
++		if(!editabile) {
++			// Era non editabile
++			log.debug(methodName, "nell'if");
++			ReflectionUtils.invokeMethod(metodoSet, nuovo, campoVecchio);
++		} else if(campoNuovoNonPresente && isPresentAsEntita(campoVecchio)) {
++			// Era presente ma l'ho cancellato: imposto la data di fine validità
++			Entita entita = (Entita)campoVecchio;
++			entita.setDataFineValidita(new Date());
++			ReflectionUtils.invokeMethod(metodoSet, nuovo, entita);
++			log.debug(methodName, "nel primo else if");
++		} else if(!campoNuovoNonPresente){
++			Entita entita = (Entita)campoNuovo;
++			entita.setDataFineValidita(null);
++			ReflectionUtils.invokeMethod(metodoSet, nuovo, entita);
++			log.debug(methodName, "nel secondo else if");
++		}else {
++			log.debug(methodName, "nessuna delle precedenti!");
++		}
++		log.logXmlTypeObject(nuovo, "nuovo dopo controllo per il campo: " + nomeCampo);
++	}
++	
++	/**
++	 * Controlla se il campo &eacute; valorizzato come entita.
++	 * 
++	 * @param campo il campo da controllare
++	 * @return <code>true</code> se il campo &eacute; valorizzato; <code>false</code> in caso contrario
++	 */
++	private boolean isPresentAsEntita(Object campo) {
++		return campo != null && campo instanceof Entita && ((Entita)campo).getUid() != 0 ;
++	}
++	
++//	/**
++//	 * Controlla se il campo &eacute; valorizzato come entita.
++//	 * 
++//	 * @param campo il campo da controllare
++//	 * @return <code>true</code> se il campo &eacute; valorizzato; <code>false</code> in caso contrario
++//	 */
++//	private boolean isPresentAsEntitaValida(Object campo) {
++//		return campo != null && campo instanceof Entita && ((Entita)campo).getUid() != 0
++//				&& (((Entita)campo).getDataFineValidita() == null || ((Entita)campo).getDataFineValidita().after(new Date()));
++//	}
++	
++	/**
++	 * Controlla cosa effettuare con un classificatore generico.
++	 * 
++	 * @param nuovo   il nuovo wrapper
++	 * @param vecchio il vecchio wrapper
++	 */
++	private void controllaClassificatoriGenerici(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio) {
++		Date now = new Date();
++		for(int i = 1; i <= 15; i++) {
++			Method metodoGet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "getClassificatoreGenerico" + i);
++			Object campoNuovo = ReflectionUtils.invokeMethod(metodoGet, nuovo);
++			Object campoVecchio = ReflectionUtils.invokeMethod(metodoGet, vecchio);
++			if(campoNuovo == null && campoVecchio != null) {
++				// Era presente ma l'ho cancellato: imposto la data di fine validità
++				Entita entita = (Entita)campoVecchio;
++				entita.setDataFineValidita(now);
++				Method metodoSet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "setClassificatoreGenerico" + i, ClassificatoreGenerico.class);
++				ReflectionUtils.invokeMethod(metodoSet, nuovo, entita);
++			}
++		}
++	}
++	
++	/**
++	 * Imposta il campo nel nuovo wrapper.
++	 * 
++	 * @param nuovo     il nuovo wrapper
++	 * @param vecchio   il vecchio wrapper
++	 * @param nomeCampo il nome del campo
++	 * @param clazz     la classe del campo
++	 */
++	private void impostaIlCampo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio, String nomeCampo, Class<?> clazz) {
++		String nomeCampoCapitalizzato = StringUtils.capitalize(nomeCampo);
++		Method metodoGet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "get" + nomeCampoCapitalizzato);
++		Object campoNuovo = ReflectionUtils.invokeMethod(metodoGet, nuovo);
++		if(campoNuovo == null) {
++			Object campoVecchio = ReflectionUtils.invokeMethod(metodoGet, vecchio);
++			Method metodoSet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "set" + nomeCampoCapitalizzato, clazz);
++			ReflectionUtils.invokeMethod(metodoSet, nuovo, campoVecchio);
++		}
++	}
++	
++	/**
+ 	 * Ottiene uid e data fine validit&agrave; dell'entita fornita.
+ 	 * 
+ 	 * @param entita     l'entita di cui ottenere i dati
+@@ -381,7 +578,6 @@
+ 			log.warn(methodName, "Impossibile clonare: " + e.getMessage());
+ 			elementoDaAggiornare = elementoInLista;
+ 		}
+-		
+ 		// Svuoto l'elemento dal model
+ 		model.getSpecificaCodifiche().setElementoCapitoloCodifiche(elementoDaAggiornare);
+ 		
+@@ -404,6 +600,14 @@
+ 		// Ripopolamento dei campi
+ 		popolaNuovoDaVecchio(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
+ 		
++		CategoriaCapitolo categoria = ComparatorUtils.searchByUid(model.getSpecificaCodifiche().getListaCategoriaCapitolo(), elementoCapitoloCodifiche.getCategoriaCapitolo());
++		elementoCapitoloCodifiche.setCategoriaCapitolo(categoria);
++		if(!elementoCapitoloCodifiche.validaCodifiche()) {			
++			log.debug(methodName, "Non tutti i classificatori necessari sono stati inseriti");
++			addErrore(ErroreBil.NON_TUTTI_I_CAMPI_DI_UN_CAPITOLO_ASSOCIATO_AD_UNA_VARIAZIONE_SONO_STATI_VALORIZZATI.getErrore());
++			return SUCCESS;
++		}
++		
+ 		log.debug(methodName, "Ottengo l'indice del classificatore dalla lista");
+ 		int indice = ComparatorUtils.getIndexByUid(listaElementoCapitoloCodifiche, elementoCapitoloCodifiche);
+ 		
+@@ -673,159 +877,4 @@
+ 		addListaClassificatori(TipologiaClassificatore.CDC, response.getListaStrutturaAmmContabile());
+ 	}
+ 	
+-	/**
+-	 * Popola il nuovo wrapper a partire dal vecchio.
+-	 * 
+-	 * @param elementoCapitoloCodifiche    il nuovo wrapper
+-	 * @param elementoCapitoloCodificheOld il vecchio wrapper
+-	 */
+-	private void popolaNuovoDaVecchio(ElementoCapitoloCodifiche elementoCapitoloCodifiche, ElementoCapitoloCodifiche elementoCapitoloCodificheOld) {
+-		// Sono da controllare tutti i campi
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Missione.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Programma.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ClassificazioneCofog.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloSpesa.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, Macroaggregato.class, true);
+-		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TitoloEntrata.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipologiaTitolo.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, CategoriaTipologiaTitolo.class, true);
+-		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, ElementoPianoDeiConti.class, true);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, SiopeEntrata.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, StrutturaAmministrativoContabile.class, true);
+-		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFinanziamento.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TipoFondo.class, false);
+-		
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, RicorrenteEntrata.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PerimetroSanitarioEntrata.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaSpesa.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, TransazioneUnioneEuropeaEntrata.class, false);
+-		controllaCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, PoliticheRegionaliUnitarie.class, false);
+-		
+-		controllaClassificatoriGenerici(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
+-		
+-		controllaCategoriaCapitolo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld);
+-		
+-		// Imposto la lista dei sotto-elementi
+-		elementoCapitoloCodifiche.setListaUidCapitolo(elementoCapitoloCodificheOld.getListaUidCapitolo());
+-		
+-		// Imposto i campi testuali e di anagrafica
+-		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "uid", Integer.class);
+-		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "annoCapitolo", Integer.class);
+-		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "numeroCapitolo", Integer.class);
+-		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "numeroArticolo", Integer.class);
+-		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "descrizioneCapitolo", String.class);
+-		impostaIlCampo(elementoCapitoloCodifiche, elementoCapitoloCodificheOld, "tipoCapitolo", TipoCapitolo.class);
+-		
+-		// Imposto la denominazione
+-		elementoCapitoloCodifiche.impostaDenominazioneCapitolo();
+-		
+-		model.getSpecificaCodifiche().setElementoCapitoloCodifiche(elementoCapitoloCodifiche);
+-		model.getSpecificaCodifiche().popolaCodifiche();
+-		
+-		// Imposta la descrizione delle codifiche
+-		elementoCapitoloCodifiche.impostaDescrizioneCodifiche();
+-	}
+-	
+-	/**
+-	 * Controlla la categoria del capitolo
+-	 * 
+-	 * @param nuovo   il nuovo wrapper
+-	 * @param vecchio il vecchio wrapper
+-	 */
+-	private void controllaCategoriaCapitolo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio) {
+-		CategoriaCapitolo nuovoCategoria = nuovo.getCategoriaCapitolo();
+-		CategoriaCapitolo vecchioCategoria = vecchio.getCategoriaCapitolo();
+-		
+-		if(nuovoCategoria == null) {
+-			// Era non editabile. Reimposto il vecchio valore
+-			nuovo.setCategoriaCapitolo(vecchioCategoria);
+-		}
+-	}
+-	
+-	/**
+-	 * Controlla cosa effettuare con un dato campo.
+-	 * 
+-	 * @param nuovo        il nuovo wrapper
+-	 * @param vecchio      il vecchio wrapper
+-	 * @param clazz        la classe del campo
+-	 * @param obbligatorio se il campo sia obbligatorio o meno
+-	 */
+-	private void controllaCampo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio, Class<?> clazz, boolean obbligatorio) {
+-		String nomeCampo = clazz.getSimpleName();
+-		Method metodoGet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "get" + nomeCampo);
+-		Object campoNuovo = ReflectionUtils.invokeMethod(metodoGet, nuovo);
+-		Object campoVecchio = ReflectionUtils.invokeMethod(metodoGet, vecchio);
+-		
+-		Method metodoSet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "set" + nomeCampo, clazz);
+-		
+-		boolean campoNuovoNonPresente = !isPresentAsEntita(campoNuovo);
+-		
+-		if(obbligatorio && campoNuovoNonPresente) {
+-			// Era non editabile
+-			ReflectionUtils.invokeMethod(metodoSet, nuovo, campoVecchio);
+-		} else if(!obbligatorio && campoNuovoNonPresente && isPresentAsEntita(campoVecchio)) {
+-			// Era presente ma l'ho cancellato: imposto la data di fine validità
+-			Entita entita = (Entita)campoVecchio;
+-			entita.setDataFineValidita(new Date());
+-			ReflectionUtils.invokeMethod(metodoSet, nuovo, entita);
+-		}
+-	}
+-	
+-	/**
+-	 * Controlla se il campo &eacute; valorizzato come entita.
+-	 * 
+-	 * @param campo il campo da controllare
+-	 * @return <code>true</code> se il campo &eacute; valorizzato; <code>false</code> in caso contrario
+-	 */
+-	private boolean isPresentAsEntita(Object campo) {
+-		return campo != null && campo instanceof Entita && ((Entita)campo).getUid() != 0;
+-	}
+-	
+-	/**
+-	 * Controlla cosa effettuare con un classificatore generico.
+-	 * 
+-	 * @param nuovo   il nuovo wrapper
+-	 * @param vecchio il vecchio wrapper
+-	 */
+-	private void controllaClassificatoriGenerici(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio) {
+-		Date now = new Date();
+-		for(int i = 1; i <= 15; i++) {
+-			Method metodoGet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "getClassificatoreGenerico" + i);
+-			Object campoNuovo = ReflectionUtils.invokeMethod(metodoGet, nuovo);
+-			Object campoVecchio = ReflectionUtils.invokeMethod(metodoGet, vecchio);
+-			if(campoNuovo == null && campoVecchio != null) {
+-				// Era presente ma l'ho cancellato: imposto la data di fine validità
+-				Entita entita = (Entita)campoVecchio;
+-				entita.setDataFineValidita(now);
+-				Method metodoSet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "setClassificatoreGenerico" + i, ClassificatoreGenerico.class);
+-				ReflectionUtils.invokeMethod(metodoSet, nuovo, entita);
+-			}
+-		}
+-	}
+-	
+-	/**
+-	 * Imposta il campo nel nuovo wrapper.
+-	 * 
+-	 * @param nuovo     il nuovo wrapper
+-	 * @param vecchio   il vecchio wrapper
+-	 * @param nomeCampo il nome del campo
+-	 * @param clazz     la classe del campo
+-	 */
+-	private void impostaIlCampo(ElementoCapitoloCodifiche nuovo, ElementoCapitoloCodifiche vecchio, String nomeCampo, Class<?> clazz) {
+-		String nomeCampoCapitalizzato = StringUtils.capitalize(nomeCampo);
+-		Method metodoGet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "get" + nomeCampoCapitalizzato);
+-		Object campoNuovo = ReflectionUtils.invokeMethod(metodoGet, nuovo);
+-		if(campoNuovo == null) {
+-			Object campoVecchio = ReflectionUtils.invokeMethod(metodoGet, vecchio);
+-			Method metodoSet = ReflectionUtils.findMethod(ElementoCapitoloCodifiche.class, "set" + nomeCampoCapitalizzato, clazz);
+-			ReflectionUtils.invokeMethod(metodoSet, nuovo, campoVecchio);
+-		}
+-	}
+-	
+ }
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/capitolo/variazione/codifiche/ElementoCapitoloCodifiche.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/capitolo/variazione/codifiche/ElementoCapitoloCodifiche.java	(revision 11141)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/capitolo/variazione/codifiche/ElementoCapitoloCodifiche.java	(working copy)
+@@ -1,19 +1,6 @@
+ package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.codifiche;
+ 
+-import java.io.IOException;
+-import java.io.ObjectInputStream;
+-import java.io.Serializable;
+-import java.lang.reflect.Method;
+-import java.util.ArrayList;
+-import java.util.Collections;
+-import java.util.Date;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+-
+-import org.apache.commons.lang3.SerializationUtils;
+-import org.springframework.util.ReflectionUtils;
+-
++import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
+ import it.csi.siac.siacbilser.model.Capitolo;
+ import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+@@ -47,6 +34,20 @@
+ import it.csi.siac.siaccorser.model.TipoClassificatore;
+ import it.csi.siac.siaccorser.model.TipologiaClassificatore;
+ 
++import java.io.IOException;
++import java.io.ObjectInputStream;
++import java.io.Serializable;
++import java.lang.reflect.Method;
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.Date;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++
++import org.apache.commons.lang3.SerializationUtils;
++import org.springframework.util.ReflectionUtils;
++
+ /**
+  * Classe di wrap per il capitolo durante le fasi di variazione.
+  * 
+@@ -1204,7 +1205,12 @@
+ 	 * @return <code>true</code> se le codifiche sono valide; <code>false</code> altrimenti
+ 	 */
+ 	public boolean validaCodifiche() {
++		String methodName = "validaCodifiche";
+ 		boolean result;
++		if(!BilConstants.CODICE_CATEGORIA_CAPITOLO_STANDARD.getConstant().equals(categoriaCapitolo.getCodice())){
++			log.debug(methodName, "il tipo non e' STD, non evo validare");
++			return true;
++		}
+ 		if (TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE.equals(tipoCapitolo) || TipoCapitolo.CAPITOLO_ENTRATA_PREVISIONE.equals(tipoCapitolo)) {
+ 			result = validaCodificheEntrata();
+ 		} else {
+@@ -1241,7 +1247,7 @@
+ 	 */
+ 	private boolean validaCodifica(Codifica codifica) {
+ 		return codifica != null && codifica.getUid() != 0 && 
+-				(codifica.getDataFineValidita() == null || codifica.getDataFineValidita().after(now));
++				(codifica.getDataFineValidita() == null || codifica.getDataFineValidita().after(new Date()));
+ 	}
+ 	
+ 	/**
+Index: src/main/webapp/js/local/variazioni/aggiorna.codifiche.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/aggiorna.codifiche.js	(revision 11141)
++++ src/main/webapp/js/local/variazioni/aggiorna.codifiche.js	(working copy)
+@@ -317,7 +317,7 @@
+     // FIXME: togliere
+     var siope = elementoCapitoloCodifiche['siope' + tipoClassificatore];
+     var campoSiope = $('#siope' + tipoClassificatore + 'Capitolo' + tipoCapitolo);
+-    campoSiope.val(siope && siope.uid || '');
++    campoSiope.val(siope && siope.uid && !siope.dataFineValidita ? siope.uid : '');
+ 
+     var popolaSelect = function(idx, value) {
+         var temp = "<option value='" + value.uid + "' ";
+@@ -407,7 +407,7 @@
+     $.each(mappaClassificatori["RICORRENTE_" + tipoClassificatore.toUpperCase()], function(idx, value) {
+         var checkbox = $("<input/>").val(value.uid).attr("type", "radio").attr("name", "ricorrente" + tipoClassificatore + ".uid");
+         var label = $("<label/>").addClass("radio inline").html(checkbox).append("&nbsp;").append(value.descrizione);
+-        if(elementoCapitolo && elementoCapitolo.uid === value.uid) {
++        if(elementoCapitolo && elementoCapitolo.uid === value.uid && !elementoCapitolo.dataFineValidita) {
+             checkbox.attr("checked", "checked");
+         }
+         elementoDOM.append(label);
+@@ -515,7 +515,7 @@
+         spinner.removeClass("activated");
+         window.location.hash = "codificheNellaVariazione";
+         $("#divRicercaCapitolo").slideUp();
+-        $("#collapse_ricerca").collapse("hide");
++        $("#pulsanteRicercaCapitolo").click();
+     });
+ };
+ 
+Index: src/main/webapp/js/local/variazioni/variazioni.step3.codifiche.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/variazioni.step3.codifiche.js	(revision 11141)
++++ src/main/webapp/js/local/variazioni/variazioni.step3.codifiche.js	(working copy)
+@@ -228,7 +228,7 @@
+         $.each(mappaClassificatori["RICORRENTE_" + tipoClassificatore.toUpperCase()], function(idx, value) {
+             var checkbox = $("<input/>").val(value.uid).attr("type", "radio").attr("name", "ricorrente" + tipoClassificatore + ".uid");
+             var label = $("<label/>").addClass("radio inline").html(checkbox).append("&nbsp;").append(value.descrizione);
+-            if(elementoCapitolo && elementoCapitolo.uid === value.uid) {
++            if(elementoCapitolo && elementoCapitolo.uid === value.uid && !elementoCapitolo.dataFineValidita) {
+                 checkbox.attr("checked", "checked");
+             }
+             elementoDOM.append(label);
+Index: src/main/webapp/js/local/variazioni/ztree.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/ztree.js	(revision 11141)
++++ src/main/webapp/js/local/variazioni/ztree.js	(working copy)
+@@ -40,7 +40,7 @@
+         var uidChiamante = elementoCapitoloCodifiche ? elementoCapitoloCodifiche.elementoPianoDeiConti.uid : $("#elementoPianoDeiContiCapitolo" + Variazioni.ZTree.tipoCapitolo).val();
+         var oggettoPerChiamataAjax = {};
+ 
+-        if(elementoCapitoloCodifiche && elementoCapitoloCodifiche["siope" + tipoSiope]) {
++        if(elementoCapitoloCodifiche && elementoCapitoloCodifiche["siope" + tipoSiope] && !elementoCapitoloCodifiche["siope" + tipoSiope].dataFineValidita) {
+             $("#" + nomeCampo).val(elementoCapitoloCodifiche["siope" + tipoSiope].uid);
+         } else {
+             $("#" + nomeCampo).val("");
+@@ -254,12 +254,15 @@
+         var nomeCampo = "elementoPianoDeiContiCapitolo" + exports.tipoCapitolo;
+         var spinner = $("#" + nomeCampo + "Spinner");
+         var casoDiUscita = exports.tipoCapitolo === "Uscita";
++        if((casoDiUscita && !$("#macroaggregatoCapitoloUscita").val() ) || (!casoDiUscita && !$("#categoriaTipologiaTitoloCapitoloEntrata").val())){
++        	return;
++        }
+         var uidChiamante = elementoCapitoloCodifiche ?
+             (casoDiUscita ? elementoCapitoloCodifiche.macroaggregato.uid : elementoCapitoloCodifiche.categoriaTipologiaTitolo.uid) :
+             (casoDiUscita ? $("#macroaggregatoCapitoloUscita").val() : $("#categoriaTipologiaTitoloCapitoloEntrata").val());
+         var oggettoPerChiamataAjax = {};
+ 
+-        if(elementoCapitoloCodifiche) {
++        if(elementoCapitoloCodifiche && elementoCapitoloCodifiche.elementoPianoDeiConti && !elementoCapitoloCodifiche.elementoPianoDeiConti.dataFineValidita) {
+             $("#" + nomeCampo).val(elementoCapitoloCodifiche.elementoPianoDeiConti.uid);
+         } else {
+             $("#" + nomeCampo).val("");
+@@ -317,7 +320,7 @@
+         var spinner = $("#" + nomeCampo + "Spinner");
+         var oggettoPerChiamataAjax = {};
+ 
+-        if(elementoCapitoloCodifiche) {
++        if(elementoCapitoloCodifiche && elementoCapitoloCodifiche.strutturaAmministrativoContabile && !elementoCapitoloCodifiche.strutturaAmministrativoContabile.dataFineValidita) {
+             $("#" + nomeCampo).val(elementoCapitoloCodifiche.strutturaAmministrativoContabile.uid);
+         } else {
+             $("#" + nomeCampo).val("");
+Index: src/main/webapp/jsp/variazione/aggiornaVariazioneCodifiche.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/aggiornaVariazioneCodifiche.jsp	(revision 11141)
++++ src/main/webapp/jsp/variazione/aggiornaVariazioneCodifiche.jsp	(working copy)
+@@ -112,11 +112,11 @@
+ 									<span class="al">
+ 										<label class="radio inline" for="numeroCapitolo">Capitolo *</label>
+ 									</span>
+-									<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroCapitolo" required="true" maxlength="7" />
++									<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroCapitolo" required="true" maxlength="9" />
+ 									<span class="al">
+ 										<label class="radio inline" for="numeroArticolo">Articolo *</label>
+ 									</span>
+-									<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroArticolo" required="true" maxlength="7" />
++									<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroArticolo" required="true" maxlength="9" />
+ 									<a class="btn btn-primary" href="#" id="BUTTON_ricercaCapitolo">
+ 										<i class="icon-search icon"></i>&nbsp;cerca&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_CapitoloSorgente"></i>
+ 									</a>
+Index: src/main/webapp/jsp/variazione/aggiornaVariazioneImporti.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/aggiornaVariazioneImporti.jsp	(revision 11141)
++++ src/main/webapp/jsp/variazione/aggiornaVariazioneImporti.jsp	(working copy)
+@@ -140,11 +140,11 @@
+ 												<span class="al">
+ 													<label class="radio inline" for="numeroCapitolo">Capitolo *</label>
+ 												</span>
+-												<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaImporti.numeroCapitolo" required="true" maxlength="7" />
++												<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaImporti.numeroCapitolo" required="true" maxlength="9" />
+ 												<span class="al">
+ 													<label class="radio inline" for="numeroArticolo">Articolo *</label>
+ 												</span>
+-												<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2" name="specificaImporti.numeroArticolo" required="true" maxlength="7" />
++												<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2" name="specificaImporti.numeroArticolo" required="true" maxlength="9" />
+ 												<a class="btn btn-primary" href="#" id="pulsanteRicercaCapitolo">
+ 													<i class="icon-search icon"></i>&nbsp;cerca&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_CapitoloSorgente"></i>
+ 												</a>
+Index: src/main/webapp/jsp/variazione/aggiornaVariazioneImportiUEB.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/aggiornaVariazioneImportiUEB.jsp	(revision 11141)
++++ src/main/webapp/jsp/variazione/aggiornaVariazioneImportiUEB.jsp	(working copy)
+@@ -143,11 +143,11 @@
+ 													<span class="al">
+ 														<label class="radio inline" for="numeroCapitolo">Capitolo *</label>
+ 													</span>
+-													<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroCapitolo" required="true" maxlength="7" />
++													<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroCapitolo" required="true" maxlength="9" />
+ 													<span class="al">
+ 														<label class="radio inline" for="numeroArticolo">Articolo *</label>
+ 													</span>
+-													<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroArticolo" required="true" maxlength="7" />
++													<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroArticolo" required="true" maxlength="9" />
+ 													<a class="btn btn-primary" href="#" id="pulsanteRicercaCapitolo">
+ 														<i class="icon-search icon"></i>&nbsp;cerca&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_CapitoloSorgente"></i>
+ 													</a>
+Index: src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp	(revision 11141)
++++ src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp	(working copy)
+@@ -49,11 +49,11 @@
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroCapitolo">Capitolo *</label>
+ 										</span>
+-										<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaImporti.numeroCapitolo" required="true" maxlength="7" />
++										<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaImporti.numeroCapitolo" required="true" maxlength="9" />
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroArticolo">Articolo *</label>
+ 										</span>
+-										<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaImporti.numeroArticolo" required="true" maxlength="7" />
++										<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaImporti.numeroArticolo" required="true" maxlength="9" />
+ 										<a class="btn btn-primary" href="#" id="pulsanteRicercaCapitolo">
+ 											<i class="icon-search icon"></i>&nbsp;cerca&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_CapitoloSorgente"></i>
+ 										</a>
+Index: src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp	(revision 11141)
++++ src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp	(working copy)
+@@ -49,11 +49,11 @@
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroCapitolo">Capitolo *</label>
+ 										</span>
+-										<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroCapitolo" required="true" maxlength="7" />
++										<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroCapitolo" required="true" maxlength="9" />
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroArticolo">Articolo *</label>
+ 										</span>
+-										<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroArticolo" required="true" maxlength="7" />
++										<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2 soloNumeri" name="specificaUEB.numeroArticolo" required="true" maxlength="9" />
+ 										<a class="btn btn-primary" href="#" id="pulsanteRicercaCapitolo">
+ 											<i class="icon-search icon"></i>&nbsp;cerca&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_CapitoloSorgente"></i>
+ 										</a>
+Index: src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneCodifiche.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneCodifiche.jsp	(revision 11141)
++++ src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneCodifiche.jsp	(working copy)
+@@ -49,11 +49,11 @@
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroCapitolo">Capitolo *</label>
+ 										</span>
+-										<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroCapitolo" required="true" maxlength="7" />
++										<s:textfield id="numeroCapitolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroCapitolo" required="true" maxlength="9" />
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroArticolo">Articolo *</label>
+ 										</span>
+-										<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroArticolo" required="true" maxlength="7" />
++										<s:textfield id="numeroArticolo" cssClass="lbTextSmall span2" name="specificaCodifiche.numeroArticolo" required="true" maxlength="9" />
+ 										<a class="btn btn-primary" href="#" id="BUTTON_ricercaCapitolo">
+ 											<i class="icon-search icon"></i>&nbsp;cerca&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_CapitoloSorgente"></i>
+ 										</a>

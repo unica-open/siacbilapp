@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cespite" extends="capitoloDefault" namespace="/">
+		<!-- Inserimento -->
+		<action name="inserisciCespite" class="inserisciCespiteAction">
+			<result name="success">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+		</action>
+		<action name="inserisciCespite_salva" class="inserisciCespiteAction" method="salva">
+			<result name="input">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaCespite</param>
+				<param name="namespace">/</param>
+				<param name="uidCespite">${uidCespiteInserito}</param>
+			</result>
+			<result name="success_prima_nota" type="redirectAction">
+				<param name="actionName">aggiornaRegistroACespite</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${uidPrimaNota}</param>
+			</result>
+		</action>
+		<action name="inserisciCespite_copia" class="inserisciCespiteAction" method="copia">
+			<result name="input">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+			<result name="success">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+		</action>
+		<!-- Donazione/Rinvenimento -->
+		<action name="inserisciDonazioneRinvenimentoCespite" class="inserisciDonazioneRinvenimentoCespiteAction">
+			<result name="success">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+		</action>
+		<action name="inserisciDonazioneRinvenimentoCespite_salva" class="inserisciDonazioneRinvenimentoCespiteAction" method="salva">
+			<result name="input">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaCespite</param>
+				<param name="namespace">/</param>
+				<param name="uidCespite">${uidCespiteInserito}</param>
+			</result>
+		</action>
+		<action name="inserisciDonazioneRinvenimentoCespite_copia" class="inserisciDonazioneRinvenimentoCespiteAction" method="copia">
+			<result name="input">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+			<result name="success">jsp/cespiti/cespite/inserisciCespite.jsp</result>
+		</action>
+		<!-- Aggiorna -->
+		<action name="aggiornaCespite" class="aggiornaCespiteAction">
+			<result name="input">/jsp/failure.jsp</result>
+			<result name="success">/jsp/cespiti/cespite/aggiornaCespite.jsp</result>
+		</action>
+		<action name="aggiornaCespite_salva" class="aggiornaCespiteAction" method ="salva">
+			<result name="input">/jsp/cespiti/cespite/aggiornaCespite.jsp</result>
+			<result name="success">/jsp/cespiti/cespite/aggiornaCespite.jsp</result>
+			<result name="success_prima_nota" type="redirectAction">
+				<param name="actionName">aggiornaRegistroACespite</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${uidPrimaNota}</param>
+			</result>
+		</action>
+		<!-- Ricerca -->
+		<action name="ricercaCespite" class="ricercaCespiteAction">
+			<result name="input">/jsp/cespiti/cespite/ricercaCespite.jsp</result>
+			<result name="success">/jsp/cespiti/cespite/ricercaCespite.jsp</result>
+		</action>
+		<action name="ricercaCespite_effettuaRicerca" class="ricercaCespiteAction" method="effettuaRicerca">
+			<result name="input">/jsp/cespiti/cespite/ricercaCespite.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaCespite</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		<action name="ricercaCespite_effettuaRicercaModale" class="ricercaCespiteAction" method="effettuaRicercaModale">
+			<result name="input" type="customMessagesJSON"/>
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		<action name="risultatiRicercaCespite" class="risultatiRicercaCespiteAction">
+			<result name="success">/jsp/cespiti/cespite/risultatiRicercaCespite.jsp</result>
+		</action>
+		<action name="risultatiRicercaCespiteAjax" class="risultatiRicercaCespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="risultatiRicercaCespiteDaDismissioneAjax" class="risultatiRicercaCespiteDaDismissioneAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+
+		<action name="risultatiRicercaCespite_aggiorna" class="risultatiRicercaCespiteAction" method="aggiorna">
+			<result name="input">/jsp/cespiti/cespite/ricercaCespite.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaCespite</param>
+                <param name="namespace">/</param>
+                <param name="uidCespite">${uidCespite}</param>
+            </result>
+		</action>
+		
+		<action name="risultatiRicercaCespite_rivalutazioni" class="risultatiRicercaCespiteAction" method="rivalutazioni">
+			<result name="input">/jsp/cespiti/cespite/ricercaCespite.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">inserisciRivalutazioneCespite_enterStep3Directly</param>
+                <param name="namespace">/</param>
+                <param name="uidCespite">${uidCespite}</param>
+            </result>
+		</action>
+		<action name="risultatiRicercaCespite_svalutazioni" class="risultatiRicercaCespiteAction" method="svalutazioni">
+			<result name="input">/jsp/cespiti/cespite/ricercaCespite.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">inserisciSvalutazioneCespite_enterStep3Directly</param>
+                <param name="namespace">/</param>
+                <param name="uidCespite">${uidCespite}</param>
+            </result>
+		</action>
+		
+		<action name="risultatiRicercaCespite_dismissioni" class="risultatiRicercaCespiteAction" method="dismissioni">
+			<result name="success-inserisci" type="redirectAction">
+				<param name="actionName">inserisciDismissioneCespite</param>
+				<param name="namespace">/</param>
+				<param name="uidCespiteCollegamentoAutomatico">${uidCespite}</param>
+			</result>
+			<result name="success-aggiorna" type="redirectAction">
+				<param name="actionName">aggiornaDismissioneCespite</param>
+				<param name="namespace">/</param>
+				<param name="uidDismissioneCespite">${uidDismissioneCollegata}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaCespite_consulta" class="risultatiRicercaCespiteAction" method="consulta">
+			<result name="input">/jsp/cespiti/cespite/ricercaCespite.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">consultaCespite</param>
+                <param name="namespace">/</param>
+                <param name="uidCespite">${uidCespite}</param>
+            </result>
+		</action>
+		<action name="risultatiRicercaCespite_elimina" class="risultatiRicercaCespiteAction" method="elimina">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaCespite_annullaCespite" class="risultatiRicercaCespiteAction" method="annullaCespite">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="consultaCespite" class="consultaCespiteAction">
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaCespite</param>
+			</result>
+			<result name="success">/jsp/cespiti/cespite/consultaCespite.jsp</result>
+		</action>
+
+
+
+		<action name="consultaCespite_ottieniPianoAmmortamento" class="consultaCespiteAction" method="ottieniPianoAmmortamento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleImportoAmmortato</param>
+			</result>
+		</action>
+
+		<action name="consultaCespite_ottieniPrimeNoteAmmortamento" class="consultaCespiteAction" method="ottieniPrimeNoteAmmortamento">
+			<result name="input" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+		</action>
+
+		<action name="consultaCespite_ottieniPrimeNoteContabilitaGenerale" class="consultaCespiteAction" method="ottieniPrimeNoteContabilitaGenerale">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="consultaCespite_ottieniPrimeNoteDatiContabili" class="consultaCespiteAction" method="ottieniDatiFinanziari">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+		</action>
+
+		<action name="consultaCespite_ottieniDismissioni" class="consultaCespiteAction" method="ottieniDismissioni">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="consultaCespite_ottieniPrimeNoteDismissione" class="consultaCespiteAction" method="ottieniPrimeNoteDismissione">
+			<result name="input" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+		</action>
+		<action name="consultaCespite_ottieniRivalutazioni" class="consultaCespiteAction" method="ottieniRivalutazioni">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="consultaCespite_ottieniSvalutazioni" class="consultaCespiteAction" method="ottieniSvalutazioni">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="consultaCespite_ottieniPrimeNoteVariazione" class="consultaCespiteAction" method="ottieniPrimeNoteVariazione">
+			<result name="input" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+		</action>
+		<action name="consultaCespite_ottieniDonazioniRinvenimenti" class="consultaCespiteAction" method="ottieniDonazioniRinvenimenti">
+			<result name="input" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaPrimeNote.*</param>
+			</result>
+		</action>
+
+
+		<action name="risultatiRicercaScrittureRegistroAByCespiteAjax" class="risultatiRicercaScrittureRegistroAByCespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="consultaCespite_ottieniDatiFinanziari" class="consultaCespiteAction" method="ottieniDatiFinanziari">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/include/consulta_datiFinanziari_${tipoMovimento}.jsp</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+
+		<!-- Consultazione -->
+
+
+		<!-- Aggiornamento -->
+
+
+
+	</package>
+</struts>

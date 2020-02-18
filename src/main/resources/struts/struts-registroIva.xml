@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="registroIva" extends="capitoloDefault" namespace="/">
+		
+		<action name="inserisciRegistroIva" class="inserisciRegistroIvaAction">
+			<result name="success">/jsp/attivitaIva/registroIva/inserisciRegistroIva.jsp</result>
+		</action>
+		<action name="inserimentoRegistroIva" class="inserisciRegistroIvaAction" method="inserimento">
+			<result name="success">/jsp/attivitaIva/registroIva/inserisciRegistroIvaDisabled.jsp</result>
+			<result name="input">/jsp/attivitaIva/registroIva/inserisciRegistroIva.jsp</result>
+		</action>
+		<action name="inserisciRegistroIvaAggiornamento" class="inserisciRegistroIvaAction" method="aggiornamento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRegistroIva</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistroIva">${uidRegistroIva}</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaRegistroIva" class="aggiornaRegistroIvaAction">
+			<result name="success">/jsp/attivitaIva/registroIva/aggiornaRegistroIva.jsp</result>
+			<result name="input">/jsp/attivitaIva/registroIva/aggiornaRegistroIvaDisabled.jsp</result>
+		</action>
+		<action name="aggiornamentoRegistroIva" class="aggiornaRegistroIvaAction" method="aggiornamento">
+			<result name="success">/jsp/attivitaIva/registroIva/aggiornaRegistroIvaDisabled.jsp</result>
+			<result name="input">/jsp/attivitaIva/registroIva/aggiornaRegistroIva.jsp</result>
+		</action>
+		
+		<action name="ricercaRegistroIva" class="ricercaRegistroIvaAction">
+			<result name="success">/jsp/attivitaIva/registroIva/ricercaRegistroIva.jsp</result>
+		</action>
+		<action name="effettuaRicercaRegistroIva" class="ricercaRegistroIvaAction" method="ricerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistroIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/attivitaIva/registroIva/ricercaRegistroIva.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaRegistroIva" class="risultatiRicercaRegistroIvaAction">
+			<result name="success">/jsp/attivitaIva/registroIva/risultatiRicercaRegistroIva.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistroIvaAjax" class="risultatiRicercaRegistroIvaAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					sEcho,
+					iTotalRecords,
+					iTotalDisplayRecords,
+					iDisplayStart,
+					iDisplayLength,
+					aaData.*
+				</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistroIva_elimina" class="risultatiRicercaRegistroIvaAction" method="elimina">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistroIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/attivitaIva/registroIva/risultatiRicercaRegistroIva.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistroIva_aggiorna" class="risultatiRicercaRegistroIvaAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRegistroIva</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistroIva">${uidDaAggiornare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistroIva_bloccaRegistro" class="risultatiRicercaRegistroIvaAction" method="bloccaRegistro">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*
+				</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistroIva_sbloccaRegistro" class="risultatiRicercaRegistroIvaAction" method="sbloccaRegistro">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*
+				</param>
+			</result>
+		</action>		
+		<action name="risultatiRicercaRegistroIva_recuperaProtocollo" class="risultatiRicercaRegistroIvaAction" method="recuperaProtocollo">
+			<result name="success" type="redirectAction">
+				<param name="actionName">recuperaProtocolloRegistroIva</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistroIva">${uidRegistroSelezionato}</param>
+			</result>
+		</action>
+		<action name="recuperaProtocolloRegistroIva" class="recuperaProtocolloRegistroIvaAction">
+			<result name="success">/jsp/attivitaIva/registroIva/recuperaProtocolloRegistroIva.jsp</result>
+			<result name="input">/jsp/attivitaIva/registroIva/recuperaProtocolloRegistroIvaDISABLED.jsp</result>
+		</action>
+		<action name="recuperaProtocolloRegistroIva_recuperaProtocollo" class="recuperaProtocolloRegistroIvaAction" method="recuperaProtocollo">
+			<result name="success">/jsp/attivitaIva/registroIva/recuperaProtocolloRegistroIvaDISABLED.jsp</result>
+			<result name="input">/jsp/attivitaIva/registroIva/recuperaProtocolloRegistroIva.jsp</result>
+		</action>		
+		<action name="risultatiRicercaRegistroIva_allineaProtocolli" class="risultatiRicercaRegistroIvaAction" method="allineaProtocolli">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*
+				</param>
+			</result>
+		</action>	
+		
+		
+	</package>
+</struts>

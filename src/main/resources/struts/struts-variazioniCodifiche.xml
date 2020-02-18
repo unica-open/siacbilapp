@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="variazioniCodifiche" extends="capitoloDefault" namespace="/">
+        
+         <action name="risultatiRicercaVariazioniCodificheAjax" class="risultatiRicercaVariazioniCodificheAjaxAction">
+            <result name="success" type="json" >
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+           		<param name="enumAsBean">
+        			true
+        		</param>
+        	</result>
+        </action>
+               
+        <action name="consultaVariazioneCodifiche" class="consultaVariazioneCodificheAction">
+            <result name="success">/jsp/variazione/consultaVariazioneCodifiche.jsp</result>
+            <result name="input">/jsp/variazione/risultatiRicercaVariazione.jsp</result>
+        </action>
+                                  
+        <!-- CONSULTA CODIFICHE -->
+        <action name="consultaCodificheVariazione" class="risultatiRicercaVariazioneAction" method="consultaCodifiche">
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaVariazioneCodifiche</param>
+                <param name="namespace">/</param>
+                <param name="uidVariazione">${uidVariazioneDaConsultare}</param>
+            </result>
+        </action>
+        
+        <!-- Definisci Variazione - ingresso pagina definisci variazione importi -->
+        <action name="definisciVariazioneCodifiche" class="definisceVariazioneCodificheAction">
+            <result name="success">/jsp/variazione/definisceVariazioneCodifiche.jsp</result>
+            <result name="input">/jsp/variazione/definisceVariazioneCodifiche.jsp</result>
+        </action>
+          <!-- Definisci Variazione -->
+        <action name="effettuaDefinisciVariazioneCodifiche" class="definisceVariazioneCodificheAction" 
+                method="definisciVariazione">
+            <result name="success">/jsp/variazione/definisceVariazioneCodifiche.jsp</result>
+            <result name="input">/jsp/variazione/definisceVariazioneCodifiche.jsp</result>
+        </action>
+        
+        
+        
+            <!-- ******** Wizard inserimento ******** -->
+        <!-- STEP 2 -->
+        <action name="enterStep2InserimentoVariazioniCodifiche" class="inserisciVariazioneCodificheAction" method="enterStep2">
+            <result name="success">/jsp/variazione/step2/variazioneStep2Codifiche.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="esecuzioneStep2InserimentoVariazioniCodifiche" class="inserisciVariazioneCodificheAction" method="executeStep2">
+            <result name="input">/jsp/variazione/step2/variazioneStep2Codifiche.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">enterStep3InserimentoVariazioniCodifiche</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+        
+        <!-- STEP 3 -->
+        <action name="enterStep3InserimentoVariazioniCodifiche" class="inserisciVariazioneCodificheAction" method="enterStep3">
+            <result name="success">/jsp/variazione/step3/variazioneStep3_variazioneCodifiche.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="esecuzioneStep3InserimentoVariazioniCodifiche" class="inserisciVariazioneCodificheAction" method="executeStep3">
+            <result name="success" type="redirectAction">
+                <param name="actionName">enterStep4InserimentoVariazioniCodifiche</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/variazione/step3/variazioneStep3_variazioneCodifiche.jsp</result>
+        </action>
+        
+        <!-- STEP 4 -->
+        <action name="enterStep4InserimentoVariazioniCodifiche" class="inserisciVariazioneCodificheAction" method="enterStep4">
+            <result name="success">/jsp/variazione/step4/variazioneStep4.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <!-- #### Interazioni AJAX #### -->
+        <action name="controlloModificabilitaCaricamentoClassificatoriVariazioneCodifiche" class="inserisciVariazioneCodificheAction" method="controllaModificabilitaECaricaClassificatori">
+        	<result name="success" type="customJSON">
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.mappaClassificatoriModificabili.*,
+        			specificaCodifiche\.mappaAttributiModificabili.*,
+        			specificaCodifiche\.mappaDescrizioniModificabili.*,
+        			specificaCodifiche\.mappaClassificatori.*,
+        			specificaCodifiche\.listaCategoriaCapitolo.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="inserisciVariazioneCodifica" class="inserisciVariazioneCodificheAction" method="inserisciNellaVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="eliminaCapitoloVariazioneCodifiche" class="inserisciVariazioneCodificheAction" method="eliminaElementoVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornaCapitoloVariazioneCodifica" class="inserisciVariazioneCodificheAction" method="aggiornaElementoVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.elementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornamentoCapitoloVariazioneCodifica" class="inserisciVariazioneCodificheAction" method="aggiornamentoElementoVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="leggiCapitoliNellaVariazioneCodifiche" class="inserisciVariazioneCodificheAction" method="leggiCapitoliNellaVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- Aggiornamento -->
+        <action name="aggiornaVariazioneCodifiche" class="aggiornaVariazioneCodificheAction">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornamentoVariazioneCodifiche</param>
+            </result>
+        </action>
+        <action name="aggiornamentoVariazioneCodifiche" class="aggiornaVariazioneCodificheAction" method="enterPage">
+            <result name="success">/jsp/variazione/aggiornaVariazioneCodifiche.jsp</result>
+        </action>
+        <action name="salvaAggiornamentoVariazioneCodifiche" class="aggiornaVariazioneCodificheAction" method="salva">
+        	<result name="success">/jsp/variazione/aggiornaVariazioneCodificheDISABLED.jsp</result>
+        	<result name="input">/jsp/variazione/aggiornaVariazioneCodifiche.jsp</result>
+        </action>
+        <action name="annullaAggiornamentoVariazioneCodifiche" class="aggiornaVariazioneCodificheAction" method="annulla">
+        	<result name="success">/jsp/variazione/aggiornaVariazioneCodificheDISABLED.jsp</result>
+        	<result name="input">/jsp/variazione/aggiornaVariazioneCodifiche.jsp</result>
+        </action>
+        <action name="concludiAggiornamentoVariazioneCodifiche" class="aggiornaVariazioneCodificheAction" method="concludi">
+        	<result name="success">/jsp/variazione/aggiornaVariazioneCodificheDISABLED.jsp</result>
+        	<result name="input">/jsp/variazione/aggiornaVariazioneCodifiche.jsp</result>
+        </action>
+        
+        
+        <!-- #### Interazioni AJAX #### -->
+        <action name="controlloModificabilitaCaricamentoClassificatoriVariazioneCodifiche_aggiornamento" class="aggiornaVariazioneCodificheAction" method="controllaModificabilitaECaricaClassificatori">
+        	<result name="success" type="customJSON">
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.mappaClassificatoriModificabili.*,
+        			specificaCodifiche\.mappaAttributiModificabili.*,
+        			specificaCodifiche\.mappaDescrizioniModificabili.*,
+        			specificaCodifiche\.mappaClassificatori.*,
+        			specificaCodifiche\.listaCategoriaCapitolo.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="inserisciVariazioneCodifica_aggiornamento" class="aggiornaVariazioneCodificheAction" method="inserisciNellaVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="eliminaCapitoloVariazioneCodifiche_aggiornamento" class="aggiornaVariazioneCodificheAction" method="eliminaElementoVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornaCapitoloVariazioneCodifica_aggiornamento" class="aggiornaVariazioneCodificheAction" method="aggiornaElementoVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.elementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornamentoCapitoloVariazioneCodifica_aggiornamento" class="aggiornaVariazioneCodificheAction" method="aggiornamentoElementoVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="leggiCapitoliNellaVariazioneCodifiche_aggiornamento" class="aggiornaVariazioneCodificheAction" method="leggiCapitoliNellaVariazioneCodifica">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			messaggi.*,
+        			informazioni.*,
+        			specificaCodifiche\.listaElementoCapitoloCodifiche.*
+        		</param>
+        	</result>
+        </action>
+                
+    </package>
+</struts>

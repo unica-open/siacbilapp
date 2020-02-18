@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cespiteRegistroA" extends="capitoloDefault" namespace="/">
+		<!-- Ricerca -->
+		<action name="ricercaRegistroACespite" class="ricercaRegistroACespiteAction">
+			<result name="success">jsp/cespiti/registroa/ricercaRegistroA.jsp</result>
+		</action>
+		<action name="ricercaRegistroACespite_effettuaRicerca" class="ricercaRegistroACespiteAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaRegistroACespite</result>
+			<result name="input">jsp/cespiti/registroa/ricercaRegistroA.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistroACespite" class="risultatiRicercaRegistroACespiteAction">
+			<result name="success">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistroACespite_consulta" class="risultatiRicercaRegistroACespiteAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistroACespite</param>
+				<param name="primaNota.uid">${primaNota.primaNotaInventario.uid}</param>
+			</result>
+			<result name="input">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistroACespite_rifiuta" class="risultatiRicercaRegistroACespiteAction" method="rifiuta">
+			<result name="success">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+			<result name="input">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistroACespite_integra" class="risultatiRicercaRegistroACespiteAction" method="integra">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRegistroACespite</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.primaNotaInventario.uid}</param>
+			</result>
+			<result name="input">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistroACespite_aggiorna" class="risultatiRicercaRegistroACespiteAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRegistroACespite</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.primaNotaInventario.uid}</param>
+			</result>
+			<result name="input">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaRegistroACespite_verificaIntegraPossibilePrimaNotaRegistroA" class="risultatiRicercaRegistroACespiteAction" method="verificaIntegraPossibilePrimaNotaRegistroA">
+			<result name="input" type="customMessagesJSON"/>
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="risultatiRicercaRegistroACespite_verificaRifiutoPossibileSuPrimaNotaRegistroA" class="risultatiRicercaRegistroACespiteAction" method="verificaRifiutoPossibileSuPrimaNotaRegistroA">
+			<result name="input" type="customMessagesJSON"/>
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		
+		
+		
+		<action name="risultatiRicercaRegistroACespiteAjax" class="risultatiRicercaRegistroACespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<!-- Consultazione -->
+		<action name="consultaRegistroACespite" class="consultaRegistroACespiteAction">
+			<result name="success">jsp/cespiti/registroa/consultaRegistroA.jsp</result>
+			<result name="input">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+		</action>
+		<action name="consultaRegistroACespite_ottieniTabellaCespiti" class="consultaRegistroACespiteAction" method="ottieniTabellaCespiti">
+			<result name="success">jsp/cespiti/registroa/include/tabellaCespitiCollegatiRegistroA.jsp</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="consultaRegistroACespite_ottieniListaCespitiCollegati" class="consultaRegistroACespiteAction" method="ottieniListaCespitiCollegati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaCespitiCollegatiAMovimentoEP.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="risultatiRicercaMovimentoEPRegistroACespiteAjax" class="risultatiRicercaMovimentoEPRegistroACespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="risultatiRicercaMovimentoDettaglioRegistroACespiteAjax" class="risultatiRicercaMovimentoDettaglioRegistroACespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<!--  Aggiornamento -->
+		<action name="aggiornaRegistroACespite" class="aggiornaRegistroACespiteAction">
+			<result name="success">jsp/cespiti/registroa/aggiornaRegistroA.jsp</result>
+			<result name="input">jsp/cespiti/registroa/risultatiRicercaRegistroA.jsp</result>
+		</action>
+		<action name="aggiornaRegistroACespiteAjax" class="aggiornaRegistroACespiteAjaxAction">
+			<result name="success">jsp/cespiti/registroa/aggiorna.jsp</result>
+		</action>
+		<action name="aggiornaRegistroACespite_ottieniTabellaCespiti" class="aggiornaRegistroACespiteAction" method="ottieniTabellaCespiti">
+			<result name="success">jsp/cespiti/registroa/include/tabellaCespitiCollegatiRegistroA.jsp</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="aggiornaRegistroACespite_redirectToInserisciCespite" class="aggiornaRegistroACespiteAction" method="redirectToInserisciCespite">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciCespite</param>
+			</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="aggiornaRegistroACespite_redirectToAggiornaCespite" class="aggiornaRegistroACespiteAction" method="redirectToAggiornaCespite">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaCespite</param>
+				<param name="namespace">/</param>
+				<param name="uidCespite">${uidCespite}</param>
+			</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="aggiornaRegistroACespite_scollegaCespiteDaPrimaNota" class="aggiornaRegistroACespiteAction" method="scollegaCespiteDaPrimaNota">
+			<result name="success" type="customMessagesJSON"/>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="aggiornaRegistroACespite_ottieniListaCespitiCollegati" class="aggiornaRegistroACespiteAction" method="ottieniListaCespitiCollegati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaCespitiCollegatiAMovimentoEP.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		
+		<action name="aggiornaRegistroACespite_collegaCespiteEsistente" class="aggiornaRegistroACespiteAction" method="collegaCespiteEsistente">
+			<result name="success" type="customMessagesJSON"/>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="aggiornaRegistroACespite_aggiornaImportoCespite" class="aggiornaRegistroACespiteAction" method="aggiornaImportoCespite">
+			<result name="success" type="customMessagesJSON"/>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="aggiornaRegistroACespite_salva" class="aggiornaRegistroACespiteAction" method="salva">
+			<result name="success">jsp/cespiti/registroa/aggiornaRegistroA.jsp</result>
+			<result name="input">jsp/cespiti/registroa/aggiornaRegistroA.jsp</result>
+		</action>
+		
+	</package>
+</struts>

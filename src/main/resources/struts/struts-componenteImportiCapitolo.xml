@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <package name="componenteImportiCapitolo" extends="capitoloDefault" namespace="/">
+    	
+    	
+    	 <!-- Inserimento Stanziamenti -->
+        <action name="inserisciImportiStanziamentiUscPre" class="inserisciImportiStanziamentiUscPreAction">
+            <result name="success">/jsp/capUscitaPrevisione/inserisciImportiStanziamentiUscPre.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+    	
+    	<action name="aggiornaComponenteImportoCapitolo" class="aggiornaComponenteImportoCapitoloAction" >
+			<result name="success">/jsp/capUscitaPrevisione/aggiornaComponentiImportiCapitolo.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+		</action>
+        
+        
+         <action name="aggiornaComponenteImportoCapitolo_ricerca" class="aggiornaComponenteImportoCapitoloAction" method="ricerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				errori.*,
+				informazioni.*,
+				importiComponentiCapitolo.*,
+				competenzaComponenti.*,
+				residuoComponenti.*,
+				cassaComponenti.*,
+				annoEsercizioInt,
+				listaTipoComponenti.*,
+				fromPage</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		 <action name="aggiornaComponenteImportoCapitolo_elimina" class="aggiornaComponenteImportoCapitoloAction" method="elimina">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				errori.*,
+				informazioni.*,
+				importiComponentiCapitolo.*,
+				competenzaComponenti.*,
+				residuoComponenti.*,
+				cassaComponenti.*,
+				annoEsercizioInt,
+				listaTipoComponenti.*,
+				fromPage</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		 <action name="aggiornaComponenteImportoCapitolo_aggiornaComponenti" class="aggiornaComponenteImportoCapitoloAction" method="aggiornaComponenti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				errori.*,
+				informazioni.*,
+				importiComponentiCapitolo.*,
+				competenzaComponenti.*,
+				residuoComponenti.*,
+				cassaComponenti.*,
+				annoEsercizioInt,
+				listaTipoComponenti.*,
+				fromPage</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		
+		<action name="aggiornaComponenteImportoCapitolo_aggiornaResiduo" class="aggiornaComponenteImportoCapitoloAction" method="aggiornaResiduo">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				errori.*,
+				informazioni.*,
+				importiComponentiCapitolo.*,
+				competenzaComponenti.*,
+				residuoComponenti.*,
+				cassaComponenti.*,
+				annoEsercizioInt,
+				listaTipoComponenti.*,
+				fromPage</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		<action name="aggiornaComponenteImportoCapitolo_aggiornaCassa" class="aggiornaComponenteImportoCapitoloAction" method="aggiornaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				errori.*,
+				informazioni.*,
+				importiComponentiCapitolo.*,
+				competenzaComponenti.*,
+				residuoComponenti.*,
+				cassaComponenti.*,
+				annoEsercizioInt,
+				listaTipoComponenti.*,
+				fromPage</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+    	<action name="aggiornaComponenteImportoCapitolo_inserisciComponenti" class="aggiornaComponenteImportoCapitoloAction" method="inserisciComponente">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				errori.*,
+				informazioni.*,
+				importiComponentiCapitolo.*,
+				competenzaComponenti.*,
+				residuoComponenti.*,
+				cassaComponenti.*,
+				annoEsercizioInt,
+				listaTipoComponenti.*,
+				fromPage</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="aggiornaComponenteImportoCapitolo_ricercaTipoComponenti" class="aggiornaComponenteImportoCapitoloAction" method="ricercaTipoComponenteCapitolo">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				errori.*,
+				informazioni.*,
+				annoEsercizioInt,
+				listaTipoComponenti.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+    	
+    	
+    
+     </package>
+</struts>

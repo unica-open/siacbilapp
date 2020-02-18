@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cassaEconomaleRichiestePagamentoFatture" extends="capitoloDefault" namespace="/">
+			<!-- Inserimento -->
+		<action name="inserisciPagamentoFattureCassaEconomale" class="inserisciPagamentoFattureCassaEconomaleAction">
+			<result name="success" type="redirectAction">inserisciPagamentoFattureCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_step1" class="inserisciPagamentoFattureCassaEconomaleAction" method="step1">
+ 			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+<!--				<result name="success">/jsp/cassaEconomale/richieste/include/ricercaFattura.jsp</result>-->
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_copiaRichiesta" class="inserisciPagamentoFattureCassaEconomaleAction" method="copiaRichiesta">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		
+		<action name="inserisciPagamentoFattureCassaEconomale_associaFattura" class="inserisciPagamentoFattureCassaEconomaleAction" method="associaFattura">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, informazioni.*, descrizioneDellaSpesaProposta</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciPagamentoFattureCassaEconomale_inserisciDatiDocumento_selezionaDati" class="inserisciPagamentoFattureCassaEconomaleAction" method="selezionaDati">
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_ottieniFatturaAssociata" class="inserisciPagamentoFattureCassaEconomaleAction" method="ottieniFatturaAssociata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">documentoSpesa.*, listaSubdocumentoSpesa.*</param>
+			</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_annullaStep1" class="inserisciPagamentoFattureCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">inserisciPagamentoFattureCassaEconomale</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_completeStep1" class="inserisciPagamentoFattureCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">inserisciPagamentoFattureCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_step2" class="inserisciPagamentoFattureCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_backToStep1" class="inserisciPagamentoFattureCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="inserisciPagamentoFattureCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_caricaDettaglioPagamento" class="inserisciPagamentoFattureCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_selezionaIban" class="inserisciPagamentoFattureCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, richiestaEconomale\.movimento.*</param>
+			</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_annullaStep2" class="inserisciPagamentoFattureCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciPagamentoFattureCassaEconomale_step2</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="aggiornaPagamentoFattureCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_caricaDettaglioPagamento" class="aggiornaPagamentoFattureCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, lListaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_selezionaIban" class="aggiornaPagamentoFattureCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, richiestaEconomale\.movimento.*</param>
+			</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_completeStep2" class="inserisciPagamentoFattureCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">inserisciPagamentoFattureCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_step3" class="inserisciPagamentoFattureCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_completeStep3" class="inserisciPagamentoFattureCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciPagamentoFattureCassaEconomale_visualizzaImporti" class="inserisciPagamentoFattureCassaEconomaleAction" method="importiCassa">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_visualizzaImporti" class="aggiornaPagamentoFattureCassaEconomaleAction" method="importiCassa">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+		</action>
+			<!-- Ricerca -->
+		<action name="ricercaPagamentoFattureCassaEconomale" class="ricercaPagamentoFattureCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/include/ricerca.jsp</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="effettuaRicercaPagamentoFattureCassaEconomale" class="ricercaPagamentoFattureCassaEconomaleAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaPagamentoFattureCassaEconomale</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPagamentoFattureCassaEconomale" class="risultatiRicercaPagamentoFattureCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPagamentoFattureCassaEconomale_aggiorna" class="risultatiRicercaPagamentoFattureCassaEconomaleAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPagamentoFattureCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPagamentoFattureCassaEconomale_consulta" class="risultatiRicercaPagamentoFattureCassaEconomaleAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPagamentoFattureCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPagamentoFattureCassaEconomale_rendiconta" class="risultatiRicercaPagamentoFattureCassaEconomaleAction" method="rendiconta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">rendicontaPagamentoFattureCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPagamentoFattureCassaEconomale_annulla" class="risultatiRicercaPagamentoFattureCassaEconomaleAction" method="annulla">
+			<result name="success">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+			<!-- Consulta -->
+		<action name="consultaPagamentoFattureCassaEconomale" class="consultaPagamentoFattureCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/consulta.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+				<!-- Aggiorna -->
+		<action name="aggiornaPagamentoFattureCassaEconomale" class="aggiornaPagamentoFattureCassaEconomaleAction">
+			<result name="success" type="redirectAction">aggiornaPagamentoFattureCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_step1" class="aggiornaPagamentoFattureCassaEconomaleAction" method="step1">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_copiaRichiesta" class="aggiornaPagamentoFattureCassaEconomaleAction" method="copiaRichiesta">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_ottieniFatturaAssociata" class="aggiornaPagamentoFattureCassaEconomaleAction" method="ottieniFatturaAssociata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">documentoSpesa.*, listaSubdocumentoSpesa.*</param>
+			</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_associaFattura" class="aggiornaPagamentoFattureCassaEconomaleFatturaAction" method="associaFattura">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, informazioni.*, descrizioneDellaSpesaProposta</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_cercaFattura" class="aggiornaPagamentoFattureCassaEconomaleFatturaAction" method="cercaFattura">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_annullaStep1" class="aggiornaPagamentoFattureCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPagamentoFattureCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_completeStep1" class="aggiornaPagamentoFattureCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">aggiornaPagamentoFattureCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_step2" class="aggiornaPagamentoFattureCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_backToStep1" class="aggiornaPagamentoFattureCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_annullaStep2" class="aggiornaPagamentoFattureCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPagamentoFattureCassaEconomale_step2</param>
+			</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_completeStep2" class="aggiornaPagamentoFattureCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">aggiornaPagamentoFattureCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_step3" class="aggiornaPagamentoFattureCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="aggiornaPagamentoFattureCassaEconomale_completeStep3" class="aggiornaPagamentoFattureCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPagamentoFattureCassaEconomale_stampaRicevuta" class="risultatiRicercaPagamentoFattureCassaEconomaleAction" method="stampaRicevuta">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+		
+		<action name="risultatiRicercaPagamentoFattureCassaEconomaleAjax" class="risultatiRicercaPagamentoFattureCassaEconomaleAjaxAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+			</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gsaPrimaNotaIntegrata" extends="gengsaCommon" namespace="/">
+		
+		<action name="gestionePrimaNotaIntegrataGSA" class="gestionePrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">
+				<param name="actionName">${nomeAzioneRedirezione}</param>
+			</result>
+		</action>
+		
+			<!-- Ricerca --> 
+		<action name="ricercaPrimaNotaIntegrataGSA" class="ricercaPrimaNotaIntegrataGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp</result>
+		</action>
+		<action name="ricercaPrimaNotaIntegrataGSA_caricaListaClassi" class="ricercaPrimaNotaIntegrataGSAAction" method="caricaListaClassi">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClassi.*</param>
+			</result>
+		</action>
+		<action name="ricercaPrimaNotaIntegrataGSA_effettuaRicerca" class="ricercaPrimaNotaIntegrataGSAAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaIntegrataGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA" class="risultatiRicercaPrimaNotaIntegrataGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSAAjax" class="risultatiRicercaPrimaNotaIntegrataGSAAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPrimaNotaIntegrataGSA</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_annulla" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="annulla">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaIntegrataGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_consulta" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataGSA</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_valida" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="valida">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaIntegrataGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_ottieniListaPrimeNoteCollegate" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="ottieniListaPrimeNoteCollegate">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteCollegate.*
+				</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_collegaPrimaNota" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="collegaPrimaNota">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteCollegate.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_eliminaCollegamento" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="eliminaCollegamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteCollegate.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_aggiornaPrimaNotaDocumento" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNotaDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPrimaNotaIntegrataDocumentoGSA</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_gestioneRiscontiDocumento" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="gestioneRiscontiDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">gestioneRiscontiPrimaNotaIntegrataDocumentoGSA</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaIntegrataGSA_gestioneRateiDocumento" class="risultatiRicercaPrimaNotaIntegrataGSAAction" method="gestioneRateiDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">gestioneRateiPrimaNotaIntegrataDocumentoGSA</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		
+		<!-- Aggiornamento -->
+		<action name="aggiornaPrimaNotaIntegrataGSA" class="aggiornaPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaIntegrataGSA_enterPage</result>
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataGSA_enterPage" class="aggiornaPrimaNotaIntegrataGSAAction" method="enterPage">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.jsp</result>
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataGSA_aggiorna" class="aggiornaPrimaNotaIntegrataGSAAction" method="aggiorna">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+			<result name="ask" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataGSA_ottieniListaConti" class="aggiornaContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataGSA_aggiornaConto" class="aggiornaContoPrimaNotaIntegrataGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataGSA_eliminaConto" class="aggiornaContoPrimaNotaIntegrataGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataGSA_inserisciConto" class="aggiornaContoPrimaNotaIntegrataGSAAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataGSA_aggiornaSuccess" class="aggiornaPrimaNotaIntegrataGSAAction" method="aggiornaSuccess">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.jsp</result>
+		</action>
+				
+		<!-- Consultazione -->
+		<action name="consultaPrimaNotaIntegrataGSA" class="consultaPrimaNotaIntegrataGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/consulta.jsp</result>
+		</action>
+		<action name="consultaPrimaNotaIntegrataGSA_postInserimento" class="consultaPrimaNotaIntegrataGSAAction" method="postInserimento">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/consulta.jsp</result>
+		</action>
+		<action name="consultaPrimaNotaIntegrataGSA_valida" class="consultaPrimaNotaIntegrataGSAAction" method="valida">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataGSA</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/consulta.jsp</result>
+		</action>
+		<action name="consultaPrimaNotaIntegrataGSA_ottieniDatiFinanziari" class="consultaPrimaNotaIntegrataGSAAction" method="ottieniDatiFinanziari">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/include/consulta_datiFinanziari_${tipoMovimento}.jsp</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="risultatiRicercaDatiFinanziariPrimaNotaIntegrataGSAAjax" class="risultatiRicercaDatiFinanziariPrimaNotaIntegrataGSAAjaxAction" >
+			<result name="success" type="dataTable" />
+		</action>
+		
+			<!-- Ricerca validazione -->
+		<action name="ricercaValidazionePrimaNotaIntegrataGSA" class="ricercaValidazionePrimaNotaIntegrataGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricercaValidazione.jsp</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataGSA_caricaListaTipoEvento" class="ricercaValidazionePrimaNotaIntegrataGSAAction" method="caricaListaTipoEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataGSA_caricaListaClassi" class="ricercaValidazionePrimaNotaIntegrataGSAAction" method="caricaListaClassi">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClassi.*</param>
+			</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataGSA_caricaListaTitoli" class="ricercaValidazionePrimaNotaIntegrataGSAAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataGSA_effettuaRicerca" class="ricercaValidazionePrimaNotaIntegrataGSAAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaValidazionePrimaNotaIntegrataGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricercaValidazione.jsp</result>
+		</action>
+		<action name="risultatiRicercaValidazionePrimaNotaIntegrataGSA" class="risultatiRicercaValidazionePrimaNotaIntegrataGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicercaValidazione.jsp</result>
+		</action>
+		<action name="risultatiRicercaValidazionePrimaNotaIntegrataGSAAjax" class="risultatiRicercaValidazionePrimaNotaIntegrataGSAAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaValidazionePrimaNotaIntegrataGSA_validaTutto" class="risultatiRicercaValidazionePrimaNotaIntegrataGSAAction" method="validaTutto">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicercaValidazioneDisabled.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicercaValidazione.jsp</result>
+		</action>
+		
+	</package>
+</struts>

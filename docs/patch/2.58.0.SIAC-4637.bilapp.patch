@@ -1,0 +1,184 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneBaseAction.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneBaseAction.java	(working copy)
+@@ -168,18 +168,20 @@
+ 	 */
+ 	private boolean coerente(FaseBilancio faseBilancio, ApplicazioneVariazione applicazioneVariazione) {
+ 		boolean result = false;
+-		
+-		if(ApplicazioneVariazione.PREVISIONE.equals(applicazioneVariazione)) {
+-			// Previsione si può fare solo quando il bilancio è in PREVISIONE o in ESERCIZIO_PROVVISORIO
+-			result = FaseBilancio.PREVISIONE.equals(faseBilancio) || 
+-					FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio);
+-		} else if (ApplicazioneVariazione.GESTIONE.equals(applicazioneVariazione)) {
+-			// Gestione si può fare solo quando il bilancio è in ESERCIZIO_PROVVISORIO, GESTIONE o ASSESTAMENTO
+-			result = FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) || 
+-					FaseBilancio.GESTIONE.equals(faseBilancio) ||
+-					FaseBilancio.ASSESTAMENTO.equals(faseBilancio);
+-		} else {
+-			// Assestamento si può fare solo quando il bilancio è in ASSESTAMENTO
++		
++		if(ApplicazioneVariazione.PREVISIONE.equals(applicazioneVariazione)) {
++			// Previsione si può fare solo quando il bilancio è in PREVISIONE o in ESERCIZIO_PROVVISORIO
++			result = FaseBilancio.PREVISIONE.equals(faseBilancio) ||
++					FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio);
++		} else if (ApplicazioneVariazione.GESTIONE.equals(applicazioneVariazione)) {
++			// Gestione si può fare solo quando il bilancio è in ESERCIZIO_PROVVISORIO, GESTIONE o ASSESTAMENTO
++			// SIAC-4637: anche in PREDISPOSIZIONE_CONSUNTIVO
++			result = FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) ||
++					FaseBilancio.GESTIONE.equals(faseBilancio) ||
++					FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
++					FaseBilancio.ASSESTAMENTO.equals(faseBilancio);
++		} else {
++			// Assestamento si può fare solo quando il bilancio è in ASSESTAMENTO
+ 			result = FaseBilancio.ASSESTAMENTO.equals(faseBilancio);
+ 		}
+ 		
+@@ -200,15 +202,16 @@
+ 	@Override
+ 	protected void checkCasoDUsoApplicabile(String cdu) {
+ 		RicercaDettaglioBilancio request = model.creaRequestRicercaDettaglioBilancio();
+-		RicercaDettaglioBilancioResponse response = bilancioService.ricercaDettaglioBilancio(request);
+-		
+-		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
+-		boolean faseDiBilancioNonCompatibile = 
+-				FaseBilancio.CHIUSO.equals(faseBilancio) ||
+-				FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
+-				FaseBilancio.PLURIENNALE.equals(faseBilancio);
+-		
+-		if(faseDiBilancioNonCompatibile) {
++		RicercaDettaglioBilancioResponse response = bilancioService.ricercaDettaglioBilancio(request);
++		
++		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
++		// SIAC-4637
++		boolean faseDiBilancioNonCompatibile = 
++				FaseBilancio.CHIUSO.equals(faseBilancio) ||
++//				FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
++				FaseBilancio.PLURIENNALE.equals(faseBilancio);
++		
++		if(faseDiBilancioNonCompatibile) {
+ 			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
+ 		}
+ 	}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/DefinisceVariazioneBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/DefinisceVariazioneBaseAction.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/DefinisceVariazioneBaseAction.java	(working copy)
+@@ -50,25 +50,27 @@
+ 		caricaBilancio();
+ 		
+ 		FaseBilancio faseBilancio = model.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
+-		log.debug(methodName, "Fase bilancio: " + faseBilancio);
+-		log.debug(methodName, "Applicazione variazione: " + applicazioneVariazione);
+-		
+-		return
+-			// Previsione si può fare solo quando il bilancio è in PREVISIONE o in ESERCIZIO_PROVVISORIO
+-			("PREVISIONE".equalsIgnoreCase(applicazioneVariazione) && 
++		log.debug(methodName, "Fase bilancio: " + faseBilancio);
++		log.debug(methodName, "Applicazione variazione: " + applicazioneVariazione);
++		
++		// SIAC-4637: anche in PREDISPOSIZIONE_CONSUNTIVO
++		return
++			// Previsione si può fare solo quando il bilancio è in PREVISIONE o in ESERCIZIO_PROVVISORIO
++			("PREVISIONE".equalsIgnoreCase(applicazioneVariazione) && 
+ 					(FaseBilancio.PREVISIONE.equals(faseBilancio) ||
+-						FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio))) ||
+-				// Gestione si può fare solo quando il bilancio è in ESERCIZIO_PROVVISORIO, GESTIONE o ASSESTAMENTO			
+-				("GESTIONE".equalsIgnoreCase(applicazioneVariazione) &&
+-					(FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) || 
+-						FaseBilancio.GESTIONE.equals(faseBilancio) ||
+-						FaseBilancio.ASSESTAMENTO.equals(faseBilancio))) ||
+-						// Assestamento si può fare solo quando il bilancio è in ASSESTAMENTO
+-				("ASSESTAMENTO".equalsIgnoreCase(applicazioneVariazione) &&
+-						FaseBilancio.ASSESTAMENTO.equals(faseBilancio));
+-	}
+-	
+-	/**
++						FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio))) ||
++				// Gestione si può fare solo quando il bilancio è in ESERCIZIO_PROVVISORIO, GESTIONE o ASSESTAMENTO			
++				("GESTIONE".equalsIgnoreCase(applicazioneVariazione) &&
++					(FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) ||
++						FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
++						FaseBilancio.GESTIONE.equals(faseBilancio) ||
++						FaseBilancio.ASSESTAMENTO.equals(faseBilancio))) ||
++						// Assestamento si può fare solo quando il bilancio è in ASSESTAMENTO
++				("ASSESTAMENTO".equalsIgnoreCase(applicazioneVariazione) &&
++					FaseBilancio.ASSESTAMENTO.equals(faseBilancio));
++	}
++	
++	/**
+ 	 * Metodo per il caricamento dei dati relativi al bilancio.
+ 	 */
+ 	private void caricaBilancio() {
+@@ -90,15 +92,16 @@
+ 	@Override
+ 	protected void checkCasoDUsoApplicabile(String cdu) {
+ 		RicercaDettaglioBilancio request = model.creaRequestRicercaDettaglioBilancio();
+-		RicercaDettaglioBilancioResponse response = bilancioService.ricercaDettaglioBilancio(request);
+-		
+-		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
+-		boolean faseDiBilancioNonCompatibile = 
+-				FaseBilancio.CHIUSO.equals(faseBilancio) ||
+-				FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
+-				FaseBilancio.PLURIENNALE.equals(faseBilancio);
+-		
+-		if(faseDiBilancioNonCompatibile) {
++		RicercaDettaglioBilancioResponse response = bilancioService.ricercaDettaglioBilancio(request);
++		
++		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
++		// SIAC-4637
++		boolean faseDiBilancioNonCompatibile = 
++				FaseBilancio.CHIUSO.equals(faseBilancio) ||
++//				FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
++				FaseBilancio.PLURIENNALE.equals(faseBilancio);
++		
++		if(faseDiBilancioNonCompatibile) {
+ 			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
+ 		}
+ 	}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneBaseAction.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneBaseAction.java	(working copy)
+@@ -266,12 +266,13 @@
+ 			mappaFasiApplicazioni.put(faseBilancio, new ArrayList<ApplicazioneVariazione>());
+ 		}
+ 		
+-		mappaFasiApplicazioni.put(FaseBilancio.PREVISIONE, Arrays.asList(ApplicazioneVariazione.PREVISIONE));
+-		mappaFasiApplicazioni.put(FaseBilancio.ESERCIZIO_PROVVISORIO, Arrays.asList(ApplicazioneVariazione.PREVISIONE, ApplicazioneVariazione.GESTIONE));
+-		mappaFasiApplicazioni.put(FaseBilancio.GESTIONE, Arrays.asList(ApplicazioneVariazione.GESTIONE));
+-		
+-		
+-		// Tipo Applicazione
++		mappaFasiApplicazioni.put(FaseBilancio.PREVISIONE, Arrays.asList(ApplicazioneVariazione.PREVISIONE));
++		mappaFasiApplicazioni.put(FaseBilancio.ESERCIZIO_PROVVISORIO, Arrays.asList(ApplicazioneVariazione.PREVISIONE, ApplicazioneVariazione.GESTIONE));
++		mappaFasiApplicazioni.put(FaseBilancio.GESTIONE, Arrays.asList(ApplicazioneVariazione.GESTIONE));
++		mappaFasiApplicazioni.put(FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO, Arrays.asList(ApplicazioneVariazione.GESTIONE));
++		
++		
++		// Tipo Applicazione
+ 		log.debug(methodName, "Caricamento combo tipo applicazione");
+ 		List<ApplicazioneVariazione> listaTipoApplicazione = new ArrayList<ApplicazioneVariazione>();
+ 		listaTipoApplicazione.addAll(mappaFasiApplicazioni.get(model.getFaseBilancio()));
+@@ -336,13 +337,13 @@
+ 		RicercaDettaglioBilancio request = model.creaRequestRicercaDettaglioBilancio();
+ 		RicercaDettaglioBilancioResponse response = bilancioService.ricercaDettaglioBilancio(request);
+ 		
+-		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
+-		boolean faseDiBilancioNonCompatibile = 
+-				FaseBilancio.CHIUSO.equals(faseBilancio) ||
+-				FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
+-				FaseBilancio.PLURIENNALE.equals(faseBilancio);
+-		
+-		if(faseDiBilancioNonCompatibile) {
++		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
++		boolean faseDiBilancioNonCompatibile = 
++				FaseBilancio.CHIUSO.equals(faseBilancio) ||
++//				FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio) ||
++				FaseBilancio.PLURIENNALE.equals(faseBilancio);
++		
++		if(faseDiBilancioNonCompatibile) {
+ 			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
+ 		}
+ 	}

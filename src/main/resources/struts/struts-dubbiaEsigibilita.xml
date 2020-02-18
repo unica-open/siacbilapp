@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="dubbiaEsigibilita" extends="capitoloDefault" namespace="/">
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita" class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilita_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_enterPage" class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction" method="enterPage">
+			<result name="success">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_salvaAttributiBilancio" method="salvaAttributiBilancio"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilita</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_aggiornaAttributiBilancio" method="aggiornaAttributiBilancio"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilita_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_confermaCapitoli" method="confermaCapitoli"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,informazioni.*,listaAccantonamentoFondiDubbiaEsigibilitaTemp.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_leggiListaTemp" method="leggiListaTemp"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaAccantonamentoFondiDubbiaEsigibilitaTemp.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_salvaCapitoli" method="salvaCapitoli"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,informazioni.*,listaAccantonamentoFondiDubbiaEsigibilita.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_eliminaAccantonamento" method="eliminaAccantonamento"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,informazioni.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_aggiornaAccantonamento" method="aggiornaAccantonamento"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_caricaListaAccantonamentoFondi" method="caricaListaAccantonamentoFondi" class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjax" class="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_popolaDaAnnoPrecedente" class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction" method="popolaDaAnnoPrecedente">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">idOperazioneAsincrona</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_popolaDaAnnoPrecedenteGestione" class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction" method="popolaDaAnnoPrecedenteGestione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">idOperazioneAsincrona</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilita_annulla" class="inserisciConfigurazioneStampaDubbiaEsigibilitaAction" method="annulla">
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilita_enterPage</result>
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp</result>
+		</action>
+	</package>
+</struts>

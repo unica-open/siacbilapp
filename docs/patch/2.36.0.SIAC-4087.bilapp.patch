@@ -1,0 +1,14 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/tipoonere/AggiornaTipoOnereModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/tipoonere/AggiornaTipoOnereModel.java	(revision 12352)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/tipoonere/AggiornaTipoOnereModel.java	(working copy)
+@@ -735,8 +735,7 @@
+ 		tipoOnere.setUid(getUidTipoOnere());
+ 		request.setTipoOnere(tipoOnere);
+ 		
+-		request.setTipoOnereModelDetails(TipoOnereModelDetail.Attr, TipoOnereModelDetail.Causali,
+-			TipoOnereModelDetail.CausaliAccertamento,TipoOnereModelDetail.CausaliImpegno, TipoOnereModelDetail.Attivita);
++		request.setTipoOnereModelDetails(TipoOnereModelDetail.Attr, TipoOnereModelDetail.Causali, TipoOnereModelDetail.Attivita);
+ 		
+ 		return request;
+ 	}

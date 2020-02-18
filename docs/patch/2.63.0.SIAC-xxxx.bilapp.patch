@@ -1,0 +1,30 @@
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/entrata/GestioneModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataBaseAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/entrata/GestioneModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataBaseAction.java
+index aee5d08..9243721 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/entrata/GestioneModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataBaseAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/entrata/GestioneModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataBaseAction.java
+@@ -172,8 +172,8 @@
+ 	 */
+ 	private SubAccertamento findSubAccertamento(Accertamento impegno, ModificaMovimentoGestioneEntrata modificaMovimentoGestioneEntrata) {
+ 		final String methodName = "findSubAccertamento";
+-		if(impegno == null || impegno.getListaModificheMovimentoGestioneEntrata() == null) {
+-			log.warn(methodName, "ModificaMovimentoGestioneEntrata non reperibile dalla response per la registrazione " + model.getRegistrazioneMovFin().getUid());
++		if(impegno == null || impegno.getElencoSubAccertamenti() == null) {
++			log.warn(methodName, "SubAccertamento non reperibile dalla response per la registrazione " + model.getRegistrazioneMovFin().getUid());
+ 			return null;
+ 		}
+ 		if(modificaMovimentoGestioneEntrata.getSubAccertamento() == null) {
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/spesa/GestioneModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataBaseAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/spesa/GestioneModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataBaseAction.java
+index 7853a81..0a41bb0 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/spesa/GestioneModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataBaseAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/modificamovimentogestione/spesa/GestioneModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataBaseAction.java
+@@ -171,8 +171,8 @@
+ 	 */
+ 	private SubImpegno findSubImpegno(Impegno impegno, ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesa) {
+ 		final String methodName = "findSubImpegno";
+-		if(impegno == null || impegno.getListaModificheMovimentoGestioneSpesa() == null) {
+-			log.warn(methodName, "ModificaMovimentoGestioneSpesa non reperibile dalla response per la registrazione " + model.getRegistrazioneMovFin().getUid());
++		if(impegno == null || impegno.getElencoSubImpegni() == null) {
++			log.warn(methodName, "SubImpegno non reperibile dalla response per la registrazione " + model.getRegistrazioneMovFin().getUid());
+ 			return null;
+ 		}
+ 		if(modificaMovimentoGestioneSpesa.getSubImpegno() == null) {

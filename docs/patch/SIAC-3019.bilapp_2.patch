@@ -1,0 +1,43 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java	(working copy)
+@@ -441,7 +441,9 @@
+ 		boolean protocolloProvvisorio = model.getFlagProtocolloProvvisorio().booleanValue();
+ 		Date dataProtocollo = protocolloProvvisorio ? sis.getDataProtocolloProvvisorio() : sis.getDataProtocolloDefinitivo();
+ 		
+-		checkNotNull(dataProtocollo, "Data protocollo " + (protocolloProvvisorio ? "provvisorio" : "definitivo"));
++//		checkNotNull(dataProtocollo, "Data protocollo " + (protocolloProvvisorio ? "provvisorio" : "definitivo"));
++		//nel caso di registrazione senza protocollo la data non deve essere obbligatoria
++		checkCondition(dataProtocollo != null || sis.getNumeroProtocolloProvvisorio() == null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Data protocollo " + (protocolloProvvisorio ? "provvisorio" : "definitivo")));
+ 		checkCondition(dataProtocollo == null || (model.getDocumento().getDataEmissione() != null && !dataProtocollo.before(model.getDocumento().getDataEmissione())),
+ 				ErroreFin.DATA_REGIST_ANTECEDENTE_DATA_EMISSIONE_DOC.getErrore());
+ 		
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java	(working copy)
+@@ -486,7 +486,9 @@
+ 		Date dataProtocollo = protocolloProvvisorio ? sis.getDataProtocolloProvvisorio()
+ 				: sis.getDataProtocolloDefinitivo();
+ 
+-		checkNotNull(dataProtocollo, "Data protocollo " + (protocolloProvvisorio ? "provvisorio" : "definitivo"));
++//		checkNotNull(dataProtocollo, "Data protocollo " + (protocolloProvvisorio ? "provvisorio" : "definitivo"));
++		//nel caso di registrazione senza protocollo la data non deve essere obbligatoria
++		checkCondition(dataProtocollo != null || sis.getNumeroProtocolloProvvisorio() == null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Data protocollo " + (protocolloProvvisorio ? "provvisorio" : "definitivo")));
+ 		checkCondition(
+ 				dataProtocollo == null || (model.getDocumento().getDataEmissione() != null
+ 						&& !dataProtocollo.before(model.getDocumento().getDataEmissione())),
+Index: src/main/webapp/jsp/documentoIva/tabDatiIvaAggiornamento.jsp
+===================================================================
+--- src/main/webapp/jsp/documentoIva/tabDatiIvaAggiornamento.jsp	(revision 8806)
++++ src/main/webapp/jsp/documentoIva/tabDatiIvaAggiornamento.jsp	(working copy)
+@@ -163,7 +163,7 @@
+ 				<label for="dataProtocolloProvvisorioSubdocumentoIva_aggiornamento" class="radio inline">In data</label>
+ 			</span>
+ 			<s:textfield id="dataProtocolloProvvisorioSubdocumentoIva_aggiornamento" name="subdocumentoIva.dataProtocolloProvvisorio" data-date=""
+-				cssClass="lbTextSmall span2 datepicker" placeholder="%{'data'}" data-original-value="%{subdocumentoIva.dataProtocolloProvvisorio.getTime()}" />
++				cssClass="lbTextSmall span2 datepicker" placeholder="%{'data'}" data-original-value="%{subdocumentoIva.dataProtocolloProvvisorio.getTime()}" disabled="%{subdocumentoIva.numeroProtocolloProvvisorio == null}"/>
+ 		</div>
+ 	</div>
+ 	<div class="control-group <s:if test='flagProtocolloProvvisorio'>hide</s:if>" id="gruppoProtocolloDefinitivo_aggiornamento">

@@ -1,0 +1,78 @@
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRicercaRichiestaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRicercaRichiestaEconomaleAction.java	(revision 13946)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRicercaRichiestaEconomaleAction.java	(working copy)
+@@ -162,14 +162,14 @@
+ 				|| checkCampoValorizzato(richiestaEconomale.getStatoOperativoRichiestaEconomale(), "Stato")
+ 				|| checkPresenzaIdEntita(model.getClassificatoreGenerico1())
+ 				|| checkPresenzaIdEntita(model.getClassificatoreGenerico2())
+-				|| checkPresenzaIdEntita(model.getClassificatoreGenerico3());
+-		
+-		// Se ho entrambe le date, la data da non deve essere successiva la data a
+-		checkCondition(dataCreazioneDa == null || dataCreazioneA == null || !dataCreazioneDa.after(dataCreazioneA), ErroreCore.FORMATO_NON_VALIDO.getErrore("Data creazione", "la data di creazione da non puo' essere successiva alla data da creazione a"));
+-		checkCondition(dataMovimentoDa == null || dataMovimentoA == null || !dataMovimentoDa.after(dataMovimentoA), ErroreCore.FORMATO_NON_VALIDO.getErrore("Data creazione", "la data del movimento da non puo' essere successiva alla data del movimento a"));
+-		
+-		if(!ricercaValida) {
+-			addErrore(ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
++				|| checkPresenzaIdEntita(model.getClassificatoreGenerico3());
++		
++		// Se ho entrambe le date, la data da non deve essere successiva la data a
++		checkCondition(dataCreazioneDa == null || dataCreazioneA == null || !dataCreazioneDa.after(dataCreazioneA), ErroreCore.FORMATO_NON_VALIDO.getErrore("Data operazione", "la data di creazione da non puo' essere successiva alla data da creazione a"));
++		checkCondition(dataMovimentoDa == null || dataMovimentoA == null || !dataMovimentoDa.after(dataMovimentoA), ErroreCore.FORMATO_NON_VALIDO.getErrore("Data operazione", "la data del movimento da non puo' essere successiva alla data del movimento a"));
++		
++		if(!ricercaValida) {
++			addErrore(ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
+ 		}
+ 	}
+ 	
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/BaseRicercaRichiestaEconomaleModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/BaseRicercaRichiestaEconomaleModel.java	(revision 13946)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/BaseRicercaRichiestaEconomaleModel.java	(working copy)
+@@ -128,13 +128,13 @@
+ 		request.setParametriPaginazione(creaParametriPaginazione());
+ 		
+ 		// SIAC-4497
+-		request.setDataCreazioneDa(getDataCreazioneDa());
+-		request.setDataCreazioneA(getDataCreazioneA());
+-		// SIAC-4552
+-		request.setDataCreazioneDa(getDataCreazioneDa());
+-		request.setDataCreazioneA(getDataCreazioneA());
+-		
+-		return request;
+-	}
++		request.setDataCreazioneDa(getDataCreazioneDa());
++		request.setDataCreazioneA(getDataCreazioneA());
++		// SIAC-4552
++		request.setDataMovimentoDa(getDataMovimentoDa());
++		request.setDataMovimentoA(getDataMovimentoA());
++		
++		return request;
++	}
+ 	
+ }
+Index: src/main/webapp/jsp/cassaEconomale/richieste/include/ricerca.jsp
+===================================================================
+--- src/main/webapp/jsp/cassaEconomale/richieste/include/ricerca.jsp	(revision 13946)
++++ src/main/webapp/jsp/cassaEconomale/richieste/include/ricerca.jsp	(working copy)
+@@ -52,13 +52,13 @@
+ 									<label class="control-label" for="numeroMovimentoMovimentoRichiestaEconomale">Numero movimento</label>
+ 									<div class="controls">
+ 										<s:textfield id="numeroMovimentoMovimentoRichiestaEconomale" name="richiestaEconomale.movimento.numeroMovimento" cssClass="span2 soloNumeri" />
+-									</div>
+-								</div>
+-								<div class="control-group">
+-									<label class="control-label">Data movimento</label>
+-									<div class="controls">
+-										<span class="alRight">
+-											<label class="radio inline" for="dataMovimentoDa">Da</label>
++									</div>
++								</div>
++								<div class="control-group">
++									<label class="control-label">Data operazione</label>
++									<div class="controls">
++										<span class="alRight">
++											<label class="radio inline" for="dataMovimentoDa">Da</label>
+ 										</span>
+ 										<s:textfield id="dataMovimentoDa" name="dataMovimentoDa" cssClass="span2 datepicker" />
+ 										<span class="alRight">

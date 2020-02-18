@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cassaEconomaleRichiesteAnticipoSpesePerMissioneRendiconto" extends="capitoloDefault" namespace="/">
+		<!-- Inserimento -->
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction">
+			<result name="success" type="redirectAction">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">risultatiRicercaAnticipoSpesePerMissioneCassaEconomale</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_step1" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="step1">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_ottieniListaGiustificativi" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="ottieniListaGiustificativi">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleImportiGiustificativi, importoDaRestituire, importoDaIntegrare, listaGiustificativo.*</param>
+			</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_addGiustificativo" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="addGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_removeGiustificativo" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="removeGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_updateGiustificativo" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="updateGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_escludiPagamento" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="escludiPagamento">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneTotale" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneTotale">
+			<result name="success" type="chain">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneAltroUfficio" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneAltroUfficio">
+			<result name="success" type="chain">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_annullaStep1" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_step2" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step2.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_backToStep1" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, rendicontoRichiesta\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_caricaDettaglioPagamento" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, rendicontoRichiesta\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_selezionaIban" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, rendicontoRichiesta\.movimento.*</param>
+			</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_annullaStep2" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_step2</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep2" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step2.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_step3" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step3.jsp</result>
+		</action>
+		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep3" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stream">
+                <param name="contentType">${contentType}</param>
+                <param name="contentLength">${contentLength}</param>
+                <param name="inputName">inputStream</param>
+                <param name="contentDisposition">filename="${fileName}"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step3.jsp</result>
+		</action>
+	
+		<!-- Consultazione -->
+		<action name="consultaRendicontoAnticipoSpesePerMissioneCassaEconomale" class="consultaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/consulta.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+		<!-- Aggiornamento -->
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction">
+			<result name="success" type="redirectAction">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">risultatiRicercaAnticipoSpesePerMissioneCassaEconomale</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_step1" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="step1">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_ottieniListaGiustificativi" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="ottieniListaGiustificativi">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleImportiGiustificativi, importoDaRestituire, importoDaIntegrare, listaGiustificativo.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_addGiustificativo" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="addGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_removeGiustificativo" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="removeGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_updateGiustificativo" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="updateGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_escludiPagamento" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="escludiPagamento">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneTotale" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneTotale">
+			<result name="success" type="chain">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneAltroUfficio" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneAltroUfficio">
+			<result name="success" type="chain">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_annullaStep1" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale</param>
+				<param name="rendicontoRichiesta.uid">${uidRendiconto}</param>
+			</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_step2" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step2.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_backToStep1" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, rendicontoRichiesta\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_caricaDettaglioPagamento" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, rendicontoRichiesta\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_selezionaIban" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, rendicontoRichiesta\.movimento.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_annullaStep2" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_step2</param>
+			</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep2" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step2.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_step3" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step3.jsp</result>
+		</action>
+		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep3" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stream">
+                <param name="contentType">${contentType}</param>
+                <param name="contentLength">${contentLength}</param>
+                <param name="inputName">inputStream</param>
+                <param name="contentDisposition">filename="${fileName}"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step3.jsp</result>
+		</action>
+		
+	</package>
+</struts>

@@ -1,0 +1,1353 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreBilServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreBilServiceCachedImpl.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreBilServiceCachedImpl.java	(working copy)
+@@ -1,5 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.context.annotation.Primary;
++import org.springframework.stereotype.Component;
++
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService;
+@@ -42,10 +46,6 @@
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaClassificatore;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaClassificatoreResponse;
+ 
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.context.annotation.Primary;
+-import org.springframework.stereotype.Component;
+-
+ /**
+  * Cached version of {@link ClassificatoreBilService}.
+  * 
+@@ -75,12 +75,12 @@
+ 	}
+ 
+ 	@Override
+-	public LeggiClassificatoriByTipoElementoBilResponse leggiClassificatoriByTipoElementoBil(LeggiClassificatoriByTipoElementoBil req) {		
++	public LeggiClassificatoriByTipoElementoBilResponse leggiClassificatoriByTipoElementoBil(LeggiClassificatoriByTipoElementoBil req) {
+ 		return cachedServiceExecutor.executeService(req, new LeggiClassificatoriByTipoElementoBilExecutor(classificatoreBilService), new LeggiClassificatoriByTipoElementoBilKeyAdapter());
+ 	}
+ 
+ 	@Override
+-	public LeggiClassificatoriGenericiByTipoElementoBilResponse leggiClassificatoriGenericiByTipoElementoBil(LeggiClassificatoriGenericiByTipoElementoBil req) {		
++	public LeggiClassificatoriGenericiByTipoElementoBilResponse leggiClassificatoriGenericiByTipoElementoBil(LeggiClassificatoriGenericiByTipoElementoBil req) {
+ 		return cachedServiceExecutor.executeService(req, new LeggiClassificatoriGenericiByTipoElementoBilExecutor(classificatoreBilService), new LeggiClassificatoriGenericiByTipoElementoBilKeyAdapter());
+ 	}
+ 
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/BaseKeyAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/BaseKeyAdapter.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/BaseKeyAdapter.java	(working copy)
+@@ -3,11 +3,6 @@
+ import it.csi.siac.siaccorser.model.Entita;
+ import it.csi.siac.siaccorser.model.ServiceRequest;
+ 
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-import org.apache.commons.lang3.StringUtils;
+-
+ /**
+  * Base for key adapters for {@link ServiceRequest}s.
+  * 
+@@ -50,6 +45,17 @@
+ 	}
+ 	
+ 	/**
++	 * Computes the default key for an {@link Enum}.
++	 * 
++	 * @param enumeration the entita whose key is to be computed.
++	 * 
++	 * @return the key corresponding to the entita
++	 */
++	protected <E extends Enum<E>> String computeEnumKey(E enumeration) {
++		return enumeration != null ? enumeration.name() : DEFAULT_NULL_VALUE;
++	}
++	
++	/**
+ 	 * Computes the default key for a possibly <code>null</code> object.
+ 	 * 
+ 	 * @param obj the object whose key is to be computed.
+@@ -59,19 +65,5 @@
+ 	protected String computeNullableKey(Object obj) {
+ 		return obj != null ? obj.toString() : DEFAULT_NULL_VALUE;
+ 	}
+-	
+-	/**
+-	 * Computes the default key for a set of possible <code>null</code> objects.
+-	 * 
+-	 * @param objs the objects whose key is to be computed
+-	 * @return the key corresponding to the objects
+-	 */
+-	protected String computeNullableKeys(Object... objs) {
+-		List<String> list = new ArrayList<String>();
+-		for(Object obj : objs) {
+-			list.add(computeNullableKey(obj));
+-		}
+-		return StringUtils.join(list, DEFAULT_SEPARATOR);
+-	}
+ 
+ }
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/LeggiClassificatoriByRelazioneKeyAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/LeggiClassificatoriByRelazioneKeyAdapter.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/LeggiClassificatoriByRelazioneKeyAdapter.java	(working copy)
+@@ -11,10 +11,12 @@
+  *
+  */
+ public class LeggiClassificatoriByRelazioneKeyAdapter extends BaseKeyAdapter<LeggiClassificatoriByRelazione> {
++	/** Il separatore della chiave */
++	private static final String SEPARATOR = "_";
+ 
+ 	@Override
+ 	public String computeNotNullKey(LeggiClassificatoriByRelazione req) {
+-		return computeNullableKeys(req.getEnte(), req.getIdClassif(), req.getAnno());
++		return computeEntitaKey(req.getEnte()) + SEPARATOR + computeNullableKey(req.getIdClassif());
+ 	}
+ 	
+ }
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/ListeKeyAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/ListeKeyAdapter.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/ListeKeyAdapter.java	(working copy)
+@@ -36,7 +36,7 @@
+ 			Arrays.sort(tipiListas);
+ 			for(TipiLista tipiLista : tipiListas) {
+ 				sb.append(DEFAULT_SEPARATOR)
+-					.append(computeNullableKey(tipiLista));
++					.append(computeEnumKey(tipiLista));
+ 			}
+ 		}
+ 		return sb.toString();
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/RicercaTipoDocumentoKeyAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/RicercaTipoDocumentoKeyAdapter.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/keyadapter/RicercaTipoDocumentoKeyAdapter.java	(working copy)
+@@ -14,7 +14,7 @@
+ 
+ 	@Override
+ 	public String computeNotNullKey(RicercaTipoDocumento req) {
+-		return computeEntitaKey(req.getEnte()) + "_" + computeNullableKey(req.getTipoFamDoc());
++		return computeEntitaKey(req.getEnte()) + "_" + computeEnumKey(req.getTipoFamDoc());
+ 	}
+ 	
+ }
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/classificatori/TitoloSpesaCofogByProgrammaAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/classificatori/TitoloSpesaCofogByProgrammaAjaxAction.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/classificatori/TitoloSpesaCofogByProgrammaAjaxAction.java	(working copy)
+@@ -1,50 +0,0 @@
+-package it.csi.siac.siacbilapp.frontend.ui.action.ajax.classificatori;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericClassificatoriByRelazioneAjaxAction;
+-import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByRelazioneResponse;
+-import it.csi.siac.siaccorser.model.TipologiaClassificatore;
+-
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+-
+-/**
+- * Classe per il caricamento <em>AJAX</em> della lista Titolo.
+- * 
+- * @author Nazha Ahmad
+- * @version 1.0.0 01/07/2016
+- */
+-@Component
+-@Scope(WebApplicationContext.SCOPE_REQUEST)
+-public class TitoloSpesaCofogByProgrammaAjaxAction extends GenericClassificatoriByRelazioneAjaxAction {
+-
+-	/**
+-	 * Per la Serializzazione 
+-	 */
+-	private static final long serialVersionUID = -4569567642370889748L;
+-
+-	@Override
+-	protected void impostaLaResponseInSessione(LeggiClassificatoriByRelazioneResponse response) {
+-      sessionHandler.setParametro(BilSessionParameter.LISTA_TITOLO_SPESA, response.getClassificatoriTitoloSpesa());
+-      sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICAZIONE_COFOG, response.getClassificatoriClassificazioneCofog());
+-	
+-	}
+-
+-	@Override
+-	protected void impostaPerInjezioneInVariazione(LeggiClassificatoriByRelazioneResponse response) {
+-		injettaInVariazione(TipologiaClassificatore.TITOLO_SPESA, response.getClassificatoriTitoloSpesa());
+-		injettaInVariazione(TipologiaClassificatore.CLASSIFICAZIONE_COFOG, response.getClassificatoriClassificazioneCofog());
+-
+-	}
+-
+-	@Override
+-	protected void injettaResponseNelModel(LeggiClassificatoriByRelazioneResponse response) {
+-		model.setListaClassificazioneCofog(response.getClassificatoriClassificazioneCofog());
+-		model.setListaTitoloSpesa(response.getClassificatoriTitoloSpesa());
+-		
+-
+-	}
+-	
+-}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/generic/GenericClassificatoriByRelazioneAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/generic/GenericClassificatoriByRelazioneAjaxAction.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/generic/GenericClassificatoriByRelazioneAjaxAction.java	(working copy)
+@@ -1,34 +0,0 @@
+-package it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic;
+-
+-import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByRelazione;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByRelazioneResponse;
+-
+-import org.springframework.beans.factory.annotation.Autowired;
+-
+-
+-/**
+- * Classe per il caricamento <em>AJAX</em> del classificatori tramite id del padre.
+- * 
+- * @author Nazha Ahmad
+- * @version 1.0.0 01/07/2016
+- *
+- */
+-public abstract class GenericClassificatoriByRelazioneAjaxAction extends GenericClassificatoriAjaxAction<LeggiClassificatoriByRelazione, LeggiClassificatoriByRelazioneResponse> {
+-	
+-	/** Per la serializzazione */
+-	private static final long serialVersionUID = -8945626895107730019L;
+-	
+-	@Autowired private transient ClassificatoreBilService classificatoreBilService;
+-	
+-	@Override
+-	protected LeggiClassificatoriByRelazione definisciRequest(Integer id) {
+-		return model.creaRequestLeggiClassificatoriByRelazione(id); 
+-	}
+-
+-	@Override
+-	protected LeggiClassificatoriByRelazioneResponse ottieniResponse(LeggiClassificatoriByRelazione request) {
+-		return classificatoreBilService.leggiClassificatoriByRelazione(request);
+-	}
+-
+-}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/CapitoloUscitaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/CapitoloUscitaAction.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/CapitoloUscitaAction.java	(working copy)
+@@ -1,5 +1,7 @@
+ package it.csi.siac.siacbilapp.frontend.ui.action.commons;
+ 
++import java.util.List;
++
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloUscitaModel;
+ import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+@@ -12,12 +14,16 @@
+ import it.csi.siac.siacbilser.model.ClassificazioneCofog;
+ import it.csi.siac.siacbilser.model.Macroaggregato;
+ import it.csi.siac.siacbilser.model.Missione;
++import it.csi.siac.siacbilser.model.PerimetroSanitarioSpesa;
++import it.csi.siac.siacbilser.model.PoliticheRegionaliUnitarie;
+ import it.csi.siac.siacbilser.model.Programma;
++import it.csi.siac.siacbilser.model.RicorrenteSpesa;
++import it.csi.siac.siacbilser.model.TipoFinanziamento;
++import it.csi.siac.siacbilser.model.TipoFondo;
+ import it.csi.siac.siacbilser.model.TitoloSpesa;
++import it.csi.siac.siacbilser.model.TransazioneUnioneEuropeaSpesa;
+ import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
+ 
+-import java.util.List;
+-
+ /**
+  * Superclasse per la action del Capitolo di Uscita.
+  * <br>
+@@ -67,14 +73,41 @@
+ 	 */
+ 	protected void caricaListaClassificatoriGerarchici(BilConstants codiceTipoElementoBilancio) {
+ 		final String methodName = "caricaListaClassificatoriGerarchici";
+-
++		
+ 		/* Classificatori gerarchici - Primo livello */
+-		log.debug(methodName, "Caricamento delle liste dei classificatori gerarchici: Missione");
+-
+-		LeggiClassificatoriByTipoElementoBilResponse response = ottieniResponseLeggiClassificatoriByTipoElementoBil(codiceTipoElementoBilancio.getConstant());
++		log.debug(methodName, "Caricamento delle liste dei classificatori gerarchici: Missione e Titolo Spesa");
++		
++		/* Missione */
++		List<Missione> listaMissione = sessionHandler.getParametro(BilSessionParameter.LISTA_MISSIONE);
++		/* Titolo Spesa */
++		List<TitoloSpesa> listaTitoloSpesa = sessionHandler.getParametro(BilSessionParameter.LISTA_TITOLO_SPESA);
++		
++		/* Boolean per il controllo della necessita' di caricamento delle liste da servizio */
++		boolean almenoUnaListaNulla = listaMissione == null || listaTitoloSpesa == null;
++		
++		if(almenoUnaListaNulla) {
++			log.debug(methodName, "Caricamento id missione e titolo di spesa da servizio");
++			/* NOTA: la scelta di utilizzare CODICE_MISSIONE e' arbitraria, potrei utilizzare CODICE_TITOLO_SPESA */
++			LeggiClassificatoriByTipoElementoBilResponse response = ottieniResponseLeggiClassificatoriByTipoElementoBil(codiceTipoElementoBilancio.getConstant());
++			
++			/* Imposto in sessione le liste */
++			sessionHandler.setParametro(BilSessionParameter.LISTA_MISSIONE, response.getClassificatoriMissione());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_TITOLO_SPESA, response.getClassificatoriTitoloSpesa());
++			
++			/* Liste derivate */
++			sessionHandler.setParametro(BilSessionParameter.LISTA_PROGRAMMA, null);
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICAZIONE_COFOG, null);
++			sessionHandler.setParametro(BilSessionParameter.LISTA_MACROAGGREGATO, null);
++			sessionHandler.setParametro(BilSessionParameter.LISTA_ELEMENTO_PIANO_DEI_CONTI, null);
++			
++			/* Imposto le liste nella variabile locale */
++			listaMissione = response.getClassificatoriMissione();
++			listaTitoloSpesa = response.getClassificatoriTitoloSpesa();
++		}
+ 		/* Imposto le liste nel model */
+-		model.setListaMissione(response.getClassificatoriMissione());
+-		sessionHandler.setParametro(BilSessionParameter.LISTA_MISSIONE, response.getClassificatoriMissione());
++		model.setListaMissione(listaMissione);
++		model.setListaTitoloSpesa(listaTitoloSpesa);
++		
+ 		/* Liste derivate */
+ 		/* Programma */
+ 		List<Programma> listaProgramma = sessionHandler.getParametro(BilSessionParameter.LISTA_PROGRAMMA);
+@@ -87,12 +120,6 @@
+ 		if (listaClassificazioneCofog != null && !listaProgramma.isEmpty()) {
+ 			model.setListaClassificazioneCofog(listaClassificazioneCofog);
+ 		}
+-
+-		/* Titolo */
+-		List<TitoloSpesa> listaTitoloSpesa = sessionHandler.getParametro(BilSessionParameter.LISTA_TITOLO_SPESA);
+-		if (listaTitoloSpesa != null && !listaTitoloSpesa.isEmpty()) {
+-			model.setListaTitoloSpesa(listaTitoloSpesa);
+-		}
+ 			
+ 		/* Macroaggregato */
+ 		List<Macroaggregato> listaMacroaggregato = sessionHandler.getParametro(BilSessionParameter.LISTA_MACROAGGREGATO);
+@@ -107,35 +134,123 @@
+ 	 */
+ 	protected void caricaListaClassificatoriGenerici(BilConstants codiceTipoElementoBilancio) {
+ 		final String methodName = "caricaListaClassificatoriGenerici";
++		
++		boolean almenoUnaListaNulla;
+ 		/* Classificatori generici */
+-		log.debug(methodName, "Caricamento delle liste dei classificatori generici: Tipo Finanziamento, Tipo Fondo e Generici con relativi Labels");
+-		/* NOTA: la scelta di utilizzo di CODICE_TIPO_FINANZIAMENTO e' arbitraria */
+-		LeggiClassificatoriGenericiByTipoElementoBilResponse response = ottieniResponseLeggiClassificatoriGenericiByTipoElementoBil(codiceTipoElementoBilancio.getConstant());
++		log.debug(methodName, "Caricamento delle liste dei classificatori generici: Tipo Finanziamento, Tipo Fondo " +
++				"e Generici con relativi Labels");
+ 		
+-		/* impostazione in locale delle liste */
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico1 = response.getClassificatoriGenerici1();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico2 = response.getClassificatoriGenerici2();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico3 = response.getClassificatoriGenerici3();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico4 = response.getClassificatoriGenerici4();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico5 = response.getClassificatoriGenerici5();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico6 = response.getClassificatoriGenerici6();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico7 = response.getClassificatoriGenerici7();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico8 = response.getClassificatoriGenerici8();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico9 = response.getClassificatoriGenerici9();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico10 = response.getClassificatoriGenerici10();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico11 = response.getClassificatoriGenerici31();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico12 = response.getClassificatoriGenerici32();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico13 = response.getClassificatoriGenerici33();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico14 = response.getClassificatoriGenerici34();
+-		List<ClassificatoreGenerico> listaClassificatoreGenerico15 = response.getClassificatoriGenerici35();
+-
++		/* Tipo Finanziamento */
++		List<TipoFinanziamento> listaTipoFinanziamento = sessionHandler.getParametro(BilSessionParameter.LISTA_TIPO_FINANZIAMENTO);
++		/* Tipo Fondo */
++		List<TipoFondo> listaTipoFondo = sessionHandler.getParametro(BilSessionParameter.LISTA_TIPO_FONDO);
++		/* Ricorrente Spesa */
++		List<RicorrenteSpesa> listaRicorrenteSpesa = sessionHandler.getParametro(BilSessionParameter.LISTA_RICORRENTE_SPESA);
++		/* Perimetro Sanitario Spesa */
++		List<PerimetroSanitarioSpesa> listaPerimetroSanitarioSpesa = sessionHandler.getParametro(BilSessionParameter.LISTA_PERIMETRO_SANITARIO_SPESA);
++		/* Transazione Unione Europea Spesa */
++		List<TransazioneUnioneEuropeaSpesa> listaTransazioneUnioneEuropeaSpesa = sessionHandler.getParametro(BilSessionParameter.LISTA_TRANSAZIONE_UNIONE_EUROPEA_SPESA);
++		/* Politiche Regionali Unitarie */
++		List<PoliticheRegionaliUnitarie> listaPoliticheRegionaliUnitarie = sessionHandler.getParametro(BilSessionParameter.LISTA_POLITICHE_REGIONALI_UNITARIE);
++		/* Classificatori Generici */
++		List<ClassificatoreGenerico> listaClassificatoreGenerico1 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_1);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico2 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_2);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico3 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_3);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico4 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_4);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico5 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_5);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico6 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_6);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico7 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_7);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico8 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_8);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico9 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_9);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico10 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_10);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico11 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_31);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico12 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_32);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico13 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_33);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico14 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_34);
++		List<ClassificatoreGenerico> listaClassificatoreGenerico15 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_35);
++		
++		/* Boolean per il controllo della necessita' di caricamento delle liste da servizio */
++		almenoUnaListaNulla = listaTipoFinanziamento == null
++				|| listaTipoFondo == null
++				|| listaRicorrenteSpesa == null
++				|| listaPerimetroSanitarioSpesa == null
++				|| listaTransazioneUnioneEuropeaSpesa == null
++				|| listaPoliticheRegionaliUnitarie == null
++				|| listaClassificatoreGenerico1 == null
++				|| listaClassificatoreGenerico2 == null
++				|| listaClassificatoreGenerico3 == null
++				|| listaClassificatoreGenerico4 == null
++				|| listaClassificatoreGenerico5 == null
++				|| listaClassificatoreGenerico6 == null
++				|| listaClassificatoreGenerico7 == null
++				|| listaClassificatoreGenerico8 == null
++				|| listaClassificatoreGenerico9 == null
++				|| listaClassificatoreGenerico10 == null
++				|| listaClassificatoreGenerico11 == null
++				|| listaClassificatoreGenerico12 == null
++				|| listaClassificatoreGenerico13 == null
++				|| listaClassificatoreGenerico14 == null
++				|| listaClassificatoreGenerico15 == null;
++		
++		if(almenoUnaListaNulla) {
++			log.debug(methodName, "Caricamento delle liste di classificatori generici da servizio");
++			/* NOTA: la scelta di utilizzo di CODICE_TIPO_FINANZIAMENTO e' arbitraria */
++			LeggiClassificatoriGenericiByTipoElementoBilResponse response =
++					ottieniResponseLeggiClassificatoriGenericiByTipoElementoBil(codiceTipoElementoBilancio.getConstant());
++			
++			/* Impostazione in sessione delle liste */
++			sessionHandler.setParametro(BilSessionParameter.LISTA_TIPO_FINANZIAMENTO, response.getClassificatoriTipoFinanziamento());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_TIPO_FONDO, response.getClassificatoriTipoFondo());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_RICORRENTE_SPESA, response.getClassificatoriRicorrenteSpesa());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_PERIMETRO_SANITARIO_SPESA, response.getClassificatoriPerimetroSanitarioSpesa());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_TRANSAZIONE_UNIONE_EUROPEA_SPESA, response.getClassificatoriTransazioneUnioneEuropeaSpesa());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_POLITICHE_REGIONALI_UNITARIE, response.getClassificatoriPoliticheRegionaliUnitarie());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_1, response.getClassificatoriGenerici1());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_2, response.getClassificatoriGenerici2());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_3, response.getClassificatoriGenerici3());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_4, response.getClassificatoriGenerici4());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_5, response.getClassificatoriGenerici5());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_6, response.getClassificatoriGenerici6());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_7, response.getClassificatoriGenerici7());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_8, response.getClassificatoriGenerici8());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_9, response.getClassificatoriGenerici9());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_10, response.getClassificatoriGenerici10());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_31, response.getClassificatoriGenerici31());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_32, response.getClassificatoriGenerici32());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_33, response.getClassificatoriGenerici33());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_34, response.getClassificatoriGenerici34());
++			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_35, response.getClassificatoriGenerici35());
++			
++			/* impostazione in locale delle liste */
++			listaTipoFinanziamento = response.getClassificatoriTipoFinanziamento();
++			listaTipoFondo = response.getClassificatoriTipoFondo();
++			listaRicorrenteSpesa = response.getClassificatoriRicorrenteSpesa();
++			listaPerimetroSanitarioSpesa = response.getClassificatoriPerimetroSanitarioSpesa();
++			listaTransazioneUnioneEuropeaSpesa = response.getClassificatoriTransazioneUnioneEuropeaSpesa();
++			listaPoliticheRegionaliUnitarie = response.getClassificatoriPoliticheRegionaliUnitarie();
++			listaClassificatoreGenerico1 = response.getClassificatoriGenerici1();
++			listaClassificatoreGenerico2 = response.getClassificatoriGenerici2();
++			listaClassificatoreGenerico3 = response.getClassificatoriGenerici3();
++			listaClassificatoreGenerico4 = response.getClassificatoriGenerici4();
++			listaClassificatoreGenerico5 = response.getClassificatoriGenerici5();
++			listaClassificatoreGenerico6 = response.getClassificatoriGenerici6();
++			listaClassificatoreGenerico7 = response.getClassificatoriGenerici7();
++			listaClassificatoreGenerico8 = response.getClassificatoriGenerici8();
++			listaClassificatoreGenerico9 = response.getClassificatoriGenerici9();
++			listaClassificatoreGenerico10 = response.getClassificatoriGenerici10();
++			listaClassificatoreGenerico11 = response.getClassificatoriGenerici31();
++			listaClassificatoreGenerico12 = response.getClassificatoriGenerici32();
++			listaClassificatoreGenerico13 = response.getClassificatoriGenerici33();
++			listaClassificatoreGenerico14 = response.getClassificatoriGenerici34();
++			listaClassificatoreGenerico15 = response.getClassificatoriGenerici35();
++		}
+ 		/* Impostazione nel model delle liste */
+-		model.setListaTipoFinanziamento(response.getClassificatoriTipoFinanziamento());
+-		model.setListaTipoFondo(response.getClassificatoriTipoFondo());
+-		model.setListaRicorrenteSpesa(response.getClassificatoriRicorrenteSpesa());
+-		model.setListaPerimetroSanitarioSpesa(response.getClassificatoriPerimetroSanitarioSpesa());
+-		model.setListaTransazioneUnioneEuropeaSpesa(response.getClassificatoriTransazioneUnioneEuropeaSpesa());
+-		model.setListaPoliticheRegionaliUnitarie(response.getClassificatoriPoliticheRegionaliUnitarie());
++		model.setListaTipoFinanziamento(listaTipoFinanziamento);
++		model.setListaTipoFondo(listaTipoFondo);
++		model.setListaRicorrenteSpesa(listaRicorrenteSpesa);
++		model.setListaPerimetroSanitarioSpesa(listaPerimetroSanitarioSpesa);
++		model.setListaTransazioneUnioneEuropeaSpesa(listaTransazioneUnioneEuropeaSpesa);
++		model.setListaPoliticheRegionaliUnitarie(listaPoliticheRegionaliUnitarie);
+ 		model.setListaClassificatoreGenerico1(listaClassificatoreGenerico1);
+ 		model.setListaClassificatoreGenerico2(listaClassificatoreGenerico2);
+ 		model.setListaClassificatoreGenerico3(listaClassificatoreGenerico3);
+@@ -183,20 +298,13 @@
+ 			sessionHandler.setParametro(BilSessionParameter.LISTA_PROGRAMMA, response.getClassificatoriProgramma());
+ 			model.setListaProgramma(response.getClassificatoriProgramma());
+ 		}
+-		/* Classificazione Cofog e Titolo */
++		/* Classificazione Cofog */
+ 		if(model.getProgramma() != null && model.getProgramma().getUid() != 0) {
+-			log.debug(methodName, "Carico la lista dei Cofog e titolo da servizio");
++			log.debug(methodName, "Carico la lista dei Cofog da servizio");
+ 			LeggiClassificatoriByRelazione request = model.creaRequestLeggiClassificatoriByRelazione(model.getProgramma().getUid());
+ 			LeggiClassificatoriByRelazioneResponse response = classificatoreBilService.leggiClassificatoriByRelazione(request);
+-		
+-			//COFOG
+ 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICAZIONE_COFOG, response.getClassificatoriClassificazioneCofog());
+ 			model.setListaClassificazioneCofog(response.getClassificatoriClassificazioneCofog());
+-			
+-			//TITOLO
+-		    sessionHandler.setParametro(BilSessionParameter.LISTA_TITOLO_SPESA, response.getClassificatoriTitoloSpesa());
+-			model.setListaTitoloSpesa(response.getClassificatoriTitoloSpesa());
+-
+ 		}
+ 		/* Macroaggregato */
+ 		if(model.getTitoloSpesa() != null && model.getTitoloSpesa().getUid() != 0) {
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/GenericBilancioModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/GenericBilancioModel.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/GenericBilancioModel.java	(working copy)
+@@ -243,7 +243,6 @@
+ 		request.setEnte(ente);
+ 		request.setIdClassif(idPadre);
+ 		request.setRichiedente(richiedente);
+-		request.setAnno(getAnnoEsercizioInt());
+ 		return request;
+ 	}
+ 
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/ajax/ClassificatoriAjaxModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/ajax/ClassificatoriAjaxModel.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/ajax/ClassificatoriAjaxModel.java	(working copy)
+@@ -7,7 +7,6 @@
+ import it.csi.siac.siacbilser.model.Macroaggregato;
+ import it.csi.siac.siacbilser.model.Programma;
+ import it.csi.siac.siacbilser.model.TipologiaTitolo;
+-import it.csi.siac.siacbilser.model.TitoloSpesa;
+ import it.csi.siac.siacfin2ser.model.AttivitaOnere;
+ import it.csi.siac.siacfin2ser.model.Causale770;
+ import it.csi.siac.siacfin2ser.model.CodiceSommaNonSoggetta;
+@@ -56,9 +55,6 @@
+ 	private List<ClassificazioneCofog> listaClassificazioneCofog = new ArrayList<ClassificazioneCofog>();
+ 	/** Lista dei Macroaggregati per il popolamento del tag relativo */
+ 	private List<Macroaggregato> listaMacroaggregato = new ArrayList<Macroaggregato>();
+-	/** Lista dei Titoli Di Spesa **/
+-	private List<TitoloSpesa> listaTitoloSpesa = new ArrayList<TitoloSpesa>();
+-
+ 	
+ 	/* ENTRATA */	
+ 	/** Lista delle Tipologie Titolo per il popolamento del tag relativo */
+@@ -294,22 +290,7 @@
+ 			.append(this.id, other.id)
+ 			.isEquals();
+ 	}
+-
+ 	
+-	/**
+-	 * @return the listaTitoloSpesa
+-	 */
+-	public List<TitoloSpesa> getListaTitoloSpesa() {
+-		return listaTitoloSpesa;
+-	}
+-
+-	/**
+-	 * @param listaTitoloSpesa the listaTitoloSpesa to set
+-	 */
+-	public void setListaTitoloSpesa(List<TitoloSpesa> listaTitoloSpesa) {
+-		this.listaTitoloSpesa = listaTitoloSpesa;
+-	}
+-
+ 	@Override
+ 	public int hashCode() {
+ 		return new HashCodeBuilder()
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/action/ajax/capitolo/TitoloSpesaAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/action/ajax/capitolo/TitoloSpesaAjaxAction.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/action/ajax/capitolo/TitoloSpesaAjaxAction.java	(working copy)
+@@ -29,7 +29,7 @@
+ 	protected void impostaListaDaResponse(LeggiClassificatoriByTipoElementoBilResponse response){
+ 		model.setListaTitoloSpesa(response.getClassificatoriTitoloSpesa());
+ 		// Imposto la lista in sessione
+-		sessionHandler.setParametro(BilSessionParameter.LISTA_TITOLO_SPESA, response.getClassificatoriTitoloSpesa());
++		sessionHandler.setParametro(BilSessionParameter.LISTA_TITOLO_ENTRATA, response.getClassificatoriTitoloEntrata());
+ 	}
+ 	
+ 
+Index: src/main/java/it/csi/siac/siacgenapp/frontend/ui/model/registrazionemovfin/RisultatiRicercaRegistrazioneMovFinFINModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/model/registrazionemovfin/RisultatiRicercaRegistrazioneMovFinFINModel.java	(revision 11811)
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/model/registrazionemovfin/RisultatiRicercaRegistrazioneMovFinFINModel.java	(working copy)
+@@ -289,8 +289,6 @@
+ 		request.setIdClassif(Integer.valueOf(uidElementoPianoDeiConti));
+ 		request.setFromAToB(false);
+ 		request.setEnte(getEnte());
+-		request.setAnno(getAnnoEsercizioInt());
+-
+ 		return request;
+ 		
+ 	}
+Index: src/main/resources/struts/struts-classificatori-ajax.xml
+===================================================================
+--- src/main/resources/struts/struts-classificatori-ajax.xml	(revision 11811)
++++ src/main/resources/struts/struts-classificatori-ajax.xml	(working copy)
+@@ -88,17 +88,7 @@
+             </result>
+         </action>
+         
+-        <!-- Caricamento AJAX della lista Titolo Spesa e COFOG-->
+-        <action name="titoloSpesaCofogByProgrammaAjax" class="titoloSpesaCofogByProgrammaAjaxAction">
+-            <result type="json">
+-            	<param name="ignoreHierarchy">false</param>
+-                <param name="includeProperties">
+-                	errori.*,
+-                    listaTitoloSpesa.*,
+-                    listaClassificazioneCofog.*
+-                </param>
+-            </result>
+-        </action>
++        
+         <!-- ENTRATA -->
+         
+         <!-- Caricamento AJAX della lista delle Tipologie Titolo -->
+Index: src/main/webapp/js/local/capitolo/capitolo.js
+===================================================================
+--- src/main/webapp/js/local/capitolo/capitolo.js	(revision 11811)
++++ src/main/webapp/js/local/capitolo/capitolo.js	(working copy)
+@@ -296,7 +296,7 @@
+ 
+                 impostaZTree("treePDC", zTreeSettings, listaElementoPianoDeiConti);
+                 // Se il bottone è disabilitato, lo si riabiliti
+-                if (options.attr("disabled") === "disabled" && isListaElementoPianoDeiContiNonVuota) {
++                if (options.attr("disabled") === "disabled") {
+                     options.removeAttr("disabled");
+                 }
+ 
+Index: src/main/webapp/js/local/capitolo/capitoloUscita.js
+===================================================================
+--- src/main/webapp/js/local/capitolo/capitoloUscita.js	(revision 11811)
++++ src/main/webapp/js/local/capitolo/capitoloUscita.js	(working copy)
+@@ -1,6 +1,6 @@
+ var CapitoloUscita = (function() {
+     var exports = {};
+-/*
++
+     /**
+      * Validazione del form. <br>
+      * La funzione sar&agrave; richiamata quando sar&agrave; necessario validare
+@@ -49,7 +49,7 @@
+      * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+      */
+     exports.caricaListaClassificatoriGerarchici = function (gestionePrevisione) {
+-        var selects = $("#missione").overlay("show");
++        var selects = $("#missione,#titoloSpesa").overlay("show");
+         return $.postJSON("capUscita" + gestionePrevisione + "/caricaListaClassificatoriGerarchiciCapitoloUscita" + gestionePrevisione + ".do")
+         .then(function (data) {
+             var errori = data.errori;
+@@ -59,6 +59,7 @@
+             }
+ 
+             caricaSelectCodifiche($("#missione"), data.listaMissione).change();
++            caricaSelectCodifiche($("#titoloSpesa"), data.listaTitoloSpesa).change();
+         }).always(selects.overlay.bind(selects, "hide"));
+     };
+     
+@@ -134,13 +135,6 @@
+         }).always(selects.overlay.bind(selects, 'hide'));
+     };
+     
+-    
+-    function pulisciDisabilitaCampi(){
+-        $("#classificazioneCofog").val("").attr("disabled", "disabled");
+-        $("#titoloSpesa").val("").attr("disabled", "disabled");
+-        $("#macroaggregato").val("").attr("disabled", "disabled");
+-        $("#bottonePdC").attr("disabled", "disabled");
+-    }
+     /**
+      * Carica i dati nella select del Programma da chiamata AJAX.
+      * 
+@@ -147,147 +141,53 @@
+      * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+      */
+     exports.caricaProgramma = function () {
+-		/* Ottiene l'UID dalla select */
+-		var idMissione = $("#missione").val();
+-		// Pulisco i campi
+-		pulisciDisabilitaCampi();
+-		var selectProgramma = $("#programma").overlay("show");
+-		return $.postJSON("ajax/programmaAjax.do", {
+-			"id" : idMissione
+-		}).then(function(data) {
+-			/* La lista dei programmi ottenuta dalla chiamata */
+-			var listaProgramma = (data.listaProgramma);
+-			/* La lista degli errori */
+-			var errori = (data.errori);
+-			/* La select in cui dovranno essere posti i dati */
+-			var selectProgramma = $("#programma");
+-			var titoloSpesa = $("#titoloSpesa");
+-			var macroaggregato = $("#macroaggregato");
+-			/*
+-			 * La select per il classificatore Cofog. Serve per un controllo
+-			 * sulla disabilitazione
+-			 */
+-			var cofog = $("#classificazioneCofog");
++        /* Ottiene l'UID dalla select */
++        var idMissione = $("#missione").val();
++        // Pulisco la combo della classificazione cofog
++        $("#classificazioneCofog").val("");
+ 
+-			/* Pulisci l'eventuale lista presente */
+-			selectProgramma.find('option').remove().end();
++        return $.postJSON(
++            "ajax/programmaAjax.do",
++            {"id" : idMissione},
++            function (data) {
++                /* La lista dei programmi ottenuta dalla chiamata */
++                var listaProgramma = (data.listaProgramma);
++                /* La lista degli errori */
++                var errori = (data.errori);
++                /* La select in cui dovranno essere posti i dati */
++                var selectProgramma = $("#programma");
++                /*
++                 * La select per il classificatore Cofog. Serve per un controllo
++                 * sulla disabilitazione
++                 */
++                var cofog = $("#classificazioneCofog");
+ 
+-			// Se vi sono degli errori, esco subito
+-			if (errori.length > 0) {
+-				selectProgramma.attr("disabled", "disabled");
+-				return;
+-			}
+-			/*
+-			 * Controlla che i select Cofog,titolo.macroaggregato sia
+-			 * disabilitato. In caso contrario, li disabilito
+-			 */
+-			if (cofog.attr("disabled") !== "disabled") {
+-				cofog.attr("disabled", "disabled");
+-			}
++                /* Pulisci l'eventuale lista presente */
++                selectProgramma.find('option').remove().end();
+ 
+-			if (titoloSpesa.attr("disabled") !== "disabled") {
+-				titoloSpesa.attr("disabled", "disabled");
+-			}
+-
+-			if (macroaggregato.attr("disabled") !== "disabled") {
+-				macroaggregato.attr("disabled", "disabled").off("click");
+-			}
+-
+-			caricaSelectCodifiche(selectProgramma, listaProgramma).change();
+-		}).always(selectProgramma.overlay.bind(selectProgramma, "hide"));
+-	};
+-
+-    /**
+-	 * Carica i dati nella select del Cofog da chiamata AJAX.
+-	 * 
+-	 * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+-	 */
+-    exports.caricaCofogTitolo = function () {
+-        exports.caricaTitoloCofog();
++                // Se vi sono degli errori, esco subito
++                if(errori.length > 0) {
++                    selectProgramma.attr("disabled", "disabled");
++                    return;
++                }
++                /*
++                 * Controlla che il select Cofog sia disabilitato. In caso
++                 * contrario, lo disabilita
++                 */
++                if (cofog.attr("disabled") !== "disabled") {
++                    cofog.attr("disabled", "disabled");
++                }
++                
++                caricaSelectCodifiche(selectProgramma, listaProgramma).change();
++            }
++        );
+     };
+ 
+     /**
+-	 * Carica il codice del tipo di Cofog nel campo hidden corrispondente
+-	 */
+-    exports.caricaCodiceCofog = function() {
+-        var codice = $(this).find("option:selected")
+-                .data("codiceTipo");
+-        var hiddenField = $("#codiceTipoClassificatoreClassificazioneCofog");
+-        if(hiddenField.length) {
+-            // Se ho il campo, allora scrivo il valore
+-            hiddenField.val(codice);
+-        }
+-    };
+-  
+-    /**
+-     * Carica i dati nella select del Cofog e del titolo in unica chiamata AJAX.
++     * Carica i dati nella select del Cofog da chiamata AJAX.
+      * 
+      * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+      */
+-    exports.caricaTitoloCofog = function () {
+-		        var idProgramma = $("#programma").val();
+-		$("#macroaggregato").val("").attr("disabled", "disabled");
+-		$("#bottonePdC").attr("disabled", "disabled");
+-		// non funge l'overlay se inserisco piu di una select ...
+-		var selectTitolo = $('#titoloSpesa').overlay("show");
+-		var selectCofog = $('#classificazioneCofog').overlay("show");
+-
+-		return $
+-				.postJSON("ajax/titoloSpesaCofogByProgrammaAjax.do", {
+-					"id" : idProgramma
+-				})
+-				.then(
+-						function(data) {
+-							// TITOLO SPESA
+-							var listaTitoloSpesa = data.listaTitoloSpesa;
+-							var errori = data.errori;
+-							var selectTitolo = $("#titoloSpesa");
+-
+-							// COFOG
+-							var listaClassificazioneCofog = data.listaClassificazioneCofog;
+-							var selectCofog = $("#classificazioneCofog");
+-
+-							var macroaggregato = $("#macroaggregato");
+-							selectCofog.find('option').remove().end();
+-							selectTitolo.find('option').remove().end();
+-
+-							if (errori.length > 0) {
+-								selectCofog.attr("disabled", "disabled");
+-								selectTitolo.attr("disabled", "disabled");
+-								return;
+-							}
+-
+-							if (selectTitolo.attr("disabled") !== "disabled") {
+-								selectTitolo.attr("disabled", "disabled");
+-							}
+-
+-							if (selectCofog.attr("disabled") !== "disabled") {
+-								selectCofog.attr("disabled", "disabled");
+-							}
+-							// carica la select dei cofog
+-							caricaSelectCodifiche(
+-									selectCofog,
+-									listaClassificazioneCofog,
+-									function(val) {
+-										return ' data-codice-tipo="'
+-												+ val.tipoClassificatore.codice
+-												+ '"';
+-									}).change();
+-
+-							// carica la select dei titoli
+-							caricaSelectCodifiche(selectTitolo,
+-									listaTitoloSpesa).change();
+-
+-						}).always(
+-						selectTitolo.overlay.bind(selectTitolo, "hide"),
+-						selectCofog.overlay.bind(selectCofog, "hide"));
+-    };
+-
+-    /**
+-	 * Carica i dati nella select del Cofog da chiamata AJAX.
+-	 * 
+-	 * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+-	 */
+     exports.caricaCofog = function () {
+         var idProgramma = $("#programma").val();
+         return $.postJSON(
+@@ -311,6 +211,18 @@
+         );
+     };
+ 
++    /**
++     * Carica il codice del tipo di Cofog nel campo hidden corrispondente
++     */
++    exports.caricaCodiceCofog = function() {
++        var codice = $(this).find("option:selected")
++                .data("codiceTipo");
++        var hiddenField = $("#codiceTipoClassificatoreClassificazioneCofog");
++        if(hiddenField.length) {
++            // Se ho il campo, allora scrivo il valore
++            hiddenField.val(codice);
++        }
++    };
+ 
+     /**
+      * Carica i dati nella select del Macroaggregato da chiamata AJAX.
+@@ -320,37 +232,35 @@
+     exports.caricaMacroaggregato = function () {
+         var idTitoloSpesa = $("#titoloSpesa").val();
+ 
+-		        // Pulisco il valore dei campi riferentesi all'elemento del piano dei
+-		// conti
+-		$("#HIDDEN_ElementoPianoDeiContiUid").val("");
+-		$("#HIDDEN_ElementoPianoDeiContiStringa").val("");
+-		$("#SPAN_ElementoPianoDeiConti").html(
+-				"Nessun P.d.C. finanziario selezionato");
+-		$("#bottonePdC").attr("disabled", "disabled");
+-		var select = $("#macroaggregato").overlay("show");
+-		// Effettuo la chiamata JSON
+-		return $.postJSON("ajax/macroaggregatoAjax.do", {
+-			"id" : idTitoloSpesa
+-		}).then(
+-				function(data) {
+-					var listaMacroaggregato = (data.listaMacroaggregato);
+-					var errori = data.errori;
+-					var selectMacroaggregato = $("#macroaggregato");
+-					var bottonePdC = $("#bottonePdC");
++        // Pulisco il valore dei campi riferentesi all'elemento del piano dei
++        // conti
++        $("#HIDDEN_ElementoPianoDeiContiUid").val("");
++        $("#HIDDEN_ElementoPianoDeiContiStringa").val("");
++        $("#SPAN_ElementoPianoDeiConti").html("Nessun P.d.C. finanziario selezionato");
+ 
+-					selectMacroaggregato.find('option').remove().end();
+-					if (errori.length > 0) {
+-						selectMacroaggregato.attr("disabled", "disabled");
+-						return;
+-					}
+-					if (bottonePdC.attr("disabled") !== "disabled") {
+-						bottonePdC.attr("disabled", "disabled");
+-					}
++        // Effettuo la chiamata JSON
++        return $.postJSON(
++            "ajax/macroaggregatoAjax.do",
++            {"id" : idTitoloSpesa},
++            function (data) {
++                var listaMacroaggregato = (data.listaMacroaggregato);
++                var errori = data.errori;
++                var selectMacroaggregato = $("#macroaggregato");
++                var bottonePdC = $("#bottonePdC");
+ 
+-					caricaSelectCodifiche(selectMacroaggregato,
+-							listaMacroaggregato).change();
+-				}).always(select.overlay.bind(select, "hide"));
+-	};
++                selectMacroaggregato.find('option').remove().end();
++                if(errori.length > 0) {
++                    selectMacroaggregato.attr("disabled", "disabled");
++                    return;
++                }
++                if (bottonePdC.attr("disabled") !== "disabled") {
++                    bottonePdC.attr("disabled", "disabled");
++                }
++                
++                caricaSelectCodifiche(selectMacroaggregato, listaMacroaggregato).change();
++            }
++        );
++    };
+ 
+     return exports;
+ }());
+\ No newline at end of file
+Index: src/main/webapp/js/local/capitoloUscitaGestione/aggiorna.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaGestione/aggiorna.js	(revision 11811)
++++ src/main/webapp/js/local/capitoloUscitaGestione/aggiorna.js	(working copy)
+@@ -34,7 +34,7 @@
+ 
+         // Lego le azioni
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
++        $("#programma").on("change", CapitoloUscita.caricaCofog);
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+         $("#macroaggregato").on("change", function() {
+             Capitolo.caricaPianoDeiConti(this, false);
+Index: src/main/webapp/js/local/capitoloUscitaGestione/inserisci.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaGestione/inserisci.js	(revision 11811)
++++ src/main/webapp/js/local/capitoloUscitaGestione/inserisci.js	(working copy)
+@@ -16,7 +16,7 @@
+ 
+         // Lego le azioni
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
++        $("#programma").on("change", CapitoloUscita.caricaCofog);
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+         $macroaggregato.on("change", Capitolo.caricaPianoDeiConti.bind(null, $macroaggregato));
+         $("#bottonePdC").on("click", Capitolo.controllaPdC);
+Index: src/main/webapp/js/local/capitoloUscitaGestione/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaGestione/ricerca.js	(revision 11811)
++++ src/main/webapp/js/local/capitoloUscitaGestione/ricerca.js	(working copy)
+@@ -17,7 +17,7 @@
+         
+         // Lego le azioni
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
++        $("#programma").on("change", CapitoloUscita.caricaCofog);
+         $("#classificazioneCofog").on("change", CapitoloUscita.caricaCodiceCofog);
+ 
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+Index: src/main/webapp/js/local/capitoloUscitaPrevisione/aggiorna.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaPrevisione/aggiorna.js	(revision 11811)
++++ src/main/webapp/js/local/capitoloUscitaPrevisione/aggiorna.js	(working copy)
+@@ -34,7 +34,7 @@
+ 
+         // Lego le azioni agli elementi
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
++        $("#programma").on("change", CapitoloUscita.caricaCofog);
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+         $("#macroaggregato").on("change", function() {
+             Capitolo.caricaPianoDeiConti(this, false);
+Index: src/main/webapp/js/local/capitoloUscitaPrevisione/inserisci.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaPrevisione/inserisci.js	(revision 11811)
++++ src/main/webapp/js/local/capitoloUscitaPrevisione/inserisci.js	(working copy)
+@@ -14,7 +14,7 @@
+ 
+         // Lego le azioni agli elementi
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
++        $("#programma").on("change", CapitoloUscita.caricaCofog);
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+         $("#macroaggregato").on("change", function() {
+             Capitolo.caricaPianoDeiConti(this, false);
+Index: src/main/webapp/js/local/capitoloUscitaPrevisione/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaPrevisione/ricerca.js	(revision 11811)
++++ src/main/webapp/js/local/capitoloUscitaPrevisione/ricerca.js	(working copy)
+@@ -17,7 +17,7 @@
+         
+         // Lego le azioni
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
++        $("#programma").on("change", CapitoloUscita.caricaCofog);
+         $("#classificazioneCofog").on("change", CapitoloUscita.caricaCodiceCofog);
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+         $("#macroaggregato").on("change", function() {
+Index: src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGest.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGest.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGest.jsp	(working copy)
+@@ -138,18 +138,14 @@
+ 										</div>
+ 										<%-- Secondo gruppo collegato --%>
+ 										<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>
++											<label for="titoloSpesa" class="control-label">Titolo *</label>
+ 											<div class="controls">
+-												<s:select list="listaTitoloSpesa" name="titoloSpesa.uid" id="titoloSpesa" cssClass="span10"
+-												   required="required" disabled="%{titoloSpesa == null || titoloSpesa.uid == 0}"
+-												   listKey="uid" listValue="%{codice + ' - ' + descrizione}" headerKey="" headerValue="" />
+-												<input type="hidden" value="${titoloSpesa.uid}"/>
++												<s:select list="listaTitoloSpesa" id="titoloSpesa" name="titoloSpesa.uid" required="true" cssClass="span10"
++													headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="%{!titoloSpesaEditabile}"
++													data-original-uid="%{titoloSpesa.uid}" />
++												<s:if test="!titoloSpesaEditabile">
++													<s:hidden name="titoloSpesa.uid" />
++												</s:if>
+ 											</div>
+ 										</div>
+ 										<div class="control-group">
+Index: src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGestMassivo.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGestMassivo.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGestMassivo.jsp	(working copy)
+@@ -139,16 +139,10 @@
+ 								<%-- Secondo gruppo collegato --%>
+ 								<s:if test="titoloSpesaEditabile">
+ 									<div class="control-group">
+-										<label for="titoloSpesa" class="control-label">Titolo *
+-											<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-												<i class="icon-info-sign">&nbsp;
+-													<span class="nascosto">selezionare prima il Programma</span>
+-												</i>
+-											</a>
+-										</label>
++										<label for="titoloSpesa" class="control-label">Titolo *</label>
+ 										<div class="controls">
+ 											<s:select list="listaTitoloSpesa" id="titoloSpesa" name="titoloSpesa.uid" required="true" cssClass="span10"
+-												headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="%{titoloSpesa == null || titoloSpesa.uid == 0}"
++												headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}"
+ 												data-original-uid="%{titoloSpesa.uid}" />
+ 										</div>
+ 									</div>
+Index: src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGestMassivoDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGestMassivoDISABLED.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaGestione/aggiornaCapUscGestMassivoDISABLED.jsp	(working copy)
+@@ -110,13 +110,7 @@
+ 								<%-- Secondo gruppo collegato --%>
+ 								<s:if test="titoloSpesaEditabile">
+ 									<div class="control-group">
+-										<label for="titoloSpesa" class="control-label">Titolo *
+-											<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-												<i class="icon-info-sign">&nbsp;
+-													<span class="nascosto">selezionare prima il Programma</span>
+-												</i>
+-											</a>
+-										</label>
++										<label for="titoloSpesa" class="control-label">Titolo *</label>
+ 										<div class="controls">
+ 											<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10" required="required" headerKey="" headerValue="" listKey="uid"
+ 												listValue="%{codice + '-' + descrizione}" disabled="true" />
+Index: src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGest.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGest.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGest.jsp	(working copy)
+@@ -180,17 +180,14 @@
+ 								</div>
+ 								<%-- Secondo gruppo collegato --%>
+ 								<div class="control-group">
+-									<label for="titoloSpesa" class="control-label">Titolo *
+-										<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-											<i class="icon-info-sign">&nbsp;
+-												<span class="nascosto">selezionare prima il Programma</span>
+-											</i>
+-										</a>
+-									</label>
++									<label for="titoloSpesa" class="control-label">Titolo *</label>
+ 									<div class="controls">
+-										<s:select list="listaTitoloSpesa" name="titoloSpesa.uid" id="titoloSpesa" cssClass="span10"
+-										   required="required" disabled="%{titoloSpesa == null || titoloSpesa.uid == 0}"
+-										   listKey="uid" listValue="%{codice + ' - ' + descrizione}" headerKey="" headerValue="" />
++										<select id="titoloSpesa" class="span10" name="titoloSpesa.uid" required="required" >
++											<option value=""></option>
++											<s:iterator value="listaTitoloSpesa" var="tit">
++												<option value="${uid}" <s:if test="%{#tit.uid == titoloSpesa.uid}">selected</s:if>>${codice}-${descrizione}</option>
++											</s:iterator>
++										</select>
+ 										<input type="hidden" value="${titoloSpesa.uid}"/>
+ 									</div>
+ 								</div>
+@@ -551,7 +548,6 @@
+ 								<s:a action="annullaInserisciCapUscitaGestione" cssClass="btn btn-secondary">annulla</s:a>
+ 								<s:submit cssClass="btn btn-primary pull-right" value="salva"/>
+ 							</p>
+-							<s:hidden name ="daVariazione"/>
+ 						</form>
+ 						<s:include value="/jsp/cap/modaleCompilazioneGuidataSIOPE.jsp">
+ 							<s:param name="ricercaUrl">ricercaClassificatoreGerarchico_siopeSpesa.do</s:param>
+Index: src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp	(working copy)
+@@ -137,13 +137,7 @@
+ 										</div>
+ 										<%-- Secondo gruppo collegato --%>
+ 										<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>		
++											<label for="Titolo" class="control-label">Titolo *</label>
+ 											<div class="controls">
+ 												<select id="Titolo" class="span10" disabled="disabled">
+ 													<option value="${titoloSpesa.uid}" selected="selected">
+Index: src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGest.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGest.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGest.jsp	(working copy)
+@@ -106,14 +106,8 @@
+ 											</div>
+ 										</div>
+ 										<div class="control-group">
+-										<label for="titoloSpesa" class="control-label">Titolo *
+-											<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-												<i class="icon-info-sign">&nbsp;
+-													<span class="nascosto">selezionare prima il Programma</span>
+-												</i>
+-											</a>
+-										</label>	
+-										<div class="controls">
++											<label for="titoloSpesa" class="control-label">Titolo</label>
++											<div class="controls">
+ 												<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 													headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+ 											</div>
+Index: src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGestMassivo.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGestMassivo.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGestMassivo.jsp	(working copy)
+@@ -98,13 +98,7 @@
+ 										</s:if>
+ 										<s:if test="titoloSpesaEditabile">
+ 											<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>
++												<label for="titoloSpesa" class="control-label">Titolo</label>
+ 												<div class="controls">
+ 													<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 														headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+Index: src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrev.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrev.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrev.jsp	(working copy)
+@@ -131,13 +131,7 @@
+ 										</div>
+ 										<%-- Secondo gruppo collegato --%>
+ 										<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>
++											<label for="titoloSpesa" class="control-label">Titolo *</label>
+ 											<div class="controls">
+ 												<s:select list="listaTitoloSpesa" id="titoloSpesa" name="titoloSpesa.uid" required="true" cssClass="span10"
+ 													headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="%{!titoloSpesaEditabile}"
+Index: src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivo.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivo.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivo.jsp	(working copy)
+@@ -140,16 +140,10 @@
+ 								<%-- Secondo gruppo collegato --%>
+ 								<s:if test="titoloSpesaEditabile">
+ 									<div class="control-group">
+-										<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Titolo" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Titolo</span>
+-													</i>
+-												</a>
+-										</label>
++										<label for="titoloSpesa" class="control-label">Titolo *</label>
+ 										<div class="controls">
+ 											<s:select list="listaTitoloSpesa" id="titoloSpesa" name="titoloSpesa.uid" required="true" cssClass="span10"
+-												headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}"  disabled="%{titoloSpesa == null || titoloSpesa.uid == 0}"
++												headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}"
+ 												data-original-uid="%{titoloSpesa.uid}" />
+ 										</div>
+ 									</div>
+@@ -159,8 +153,8 @@
+ 								<s:if test="macroaggregatoEditabile">
+ 									<div class="control-group">
+ 										<label for="macroaggregato" class="control-label">Macroaggregato *
+-											<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-												<i class="icon-info-sign">&nbsp; <span class="nascosto">selezionare prima il Programma</span></i>
++											<a class="tooltip-test" title="selezionare prima il Titolo" href="#">
++												<i class="icon-info-sign">&nbsp; <span class="nascosto">selezionare prima il Titolo</span></i>
+ 											</a>
+ 										</label>
+ 										<div class="controls">
+Index: src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivoDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivoDISABLED.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivoDISABLED.jsp	(working copy)
+@@ -109,14 +109,8 @@
+ 								<%-- Secondo gruppo collegato --%>
+ 								<s:if test="titoloSpesaEditabile">
+ 									<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
++										<label for="titoloSpesa" class="control-label">Titolo *</label>
++										<div class="controls">
+ 											<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10" required="required" headerKey="" headerValue="" listKey="uid"
+ 												listValue="%{codice + '-' + descrizione}" disabled="true" />
+ 										</div>
+Index: src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp	(working copy)
+@@ -157,19 +157,16 @@
+ 								</div>
+ 								<%-- Secondo gruppo collegato --%>
+ 								<div class="control-group">
+-										<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-										</label>
+-										<div class="controls">
+-											<s:select list="listaTitoloSpesa" name="titoloSpesa.uid" id="titoloSpesa" cssClass="span10"
+-											   required="required" disabled="%{titoloSpesa == null || titoloSpesa.uid == 0}"
+-											   listKey="uid" listValue="%{codice + ' - ' + descrizione}" headerKey="" headerValue="" />
+-											<input type="hidden" value="${titoloSpesa.uid}"/>
+-										</div>
++									<label for="titoloSpesa" class="control-label">Titolo *</label>
++									<div class="controls">
++										<select id="titoloSpesa" class="span10" name="titoloSpesa.uid" required="required" >
++											<option value=""></option>
++											<s:iterator value="listaTitoloSpesa" var="tit">
++												<option value="${uid}" <s:if test="%{#tit.uid == titoloSpesa.uid}">selected</s:if>>${codice}-${descrizione}</option>
++											</s:iterator>
++										</select>
++										<input type="hidden" value="${titoloSpesa.uid}"/>
++									</div>
+ 								</div>
+ 								<div class="control-group">
+ 									<label for="macroaggregato" class="control-label">Macroaggregato *
+@@ -525,7 +522,6 @@
+ 								<s:a action="annullaInserisciCapUscitaPrevisione" cssClass="btn btn-secondary">annulla</s:a>
+ 								<s:submit cssClass="btn btn-primary pull-right" value="salva"/>
+ 							</p>
+-							<s:hidden name ="daVariazione"/>
+ 						</form>
+ 						<s:include value="/jsp/cap/modaleCompilazioneGuidataSIOPE.jsp">
+ 							<s:param name="ricercaUrl">ricercaClassificatoreGerarchico_siopeSpesa.do</s:param>
+Index: src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp	(working copy)
+@@ -136,13 +136,7 @@
+ 										</div>
+ 										<%-- Secondo gruppo collegato --%>
+ 										<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>
++											<label for="Titolo" class="control-label">Titolo *</label>
+ 											<div class="controls">
+ 												<select id="Titolo" class="span10" disabled="disabled">
+ 													<option value="${titoloSpesa.uid}" selected="selected">
+Index: src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp	(working copy)
+@@ -104,14 +104,8 @@
+ 											</div>
+ 										</div>
+ 										<div class="control-group">
+-										<label for="titoloSpesa" class="control-label">Titolo *
+-											<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-												<i class="icon-info-sign">&nbsp;
+-													<span class="nascosto">selezionare prima il Programma</span>
+-												</i>
+-											</a>
+-										</label>				
+-										<div class="controls">
++											<label for="titoloSpesa" class="control-label">Titolo</label>
++											<div class="controls">
+ 												<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 													headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+ 											</div>
+Index: src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp	(revision 11811)
++++ src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp	(working copy)
+@@ -98,14 +98,8 @@
+ 										</s:if>
+ 										<s:if test="titoloSpesaEditabile">
+ 											<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo *
+-												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>									
+-											<div class="controls">
++												<label for="titoloSpesa" class="control-label">Titolo</label>
++												<div class="controls">
+ 													<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 														headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+ 												</div>

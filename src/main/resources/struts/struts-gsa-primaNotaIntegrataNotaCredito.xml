@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gsaPrimaNotaIntegrataNotaCredito" extends="gengsaCommon" namespace="/">
+			
+			<!-- Completa -->
+			<!-- Spesa -->
+		<action name="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA" class="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaSubdocumentoSpesaSubdocumentoSpesaInsPrimaNotaIntegrataGSA" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1" class="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_enterDettaglio" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="dettaglio">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
+			</result>
+		</action> 
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+			<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_eliminaConto" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaConto" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazione" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazione">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_backToStep1" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1</result>
+		</action>
+		
+		
+			<!--Validazione-->
+			<!--Spesa-->
+		<action name="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA" class="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaSubdocumentoSpesaInsPrimaNotaIntegrataGSA" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1" class="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_enterDettaglio" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="dettaglio">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_backToStep1" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
+			</result>
+		</action> 
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_eliminaConto" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaConto" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazione" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazione">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoSpesaInsPrimaNotaIntegrataGSA_step1
+			</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+				
+		
+			<!-- Completa -->
+			<!-- 	Entrata -->
+		<action name="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA" class="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaSubdocumentoEntrataSubdocumentoEntrataInsPrimaNotaIntegrataGSA" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1" class="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_enterDettaglio" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="dettaglio">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_backToStep1" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1</result>
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
+			</result>
+		</action> 
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="ccompletaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_eliminaConto" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaConto" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazione" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazione">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		
+		
+			<!-- 	Validazione -->
+			<!-- 	Entrata -->
+			
+		<action name="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA" class="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataSubdocumentoEntrataInsPrimaNotaIntegrataGSA" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+			</result>
+		</action>
+		<action name="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1" class="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_enterDettaglio" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_dettaglio" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="dettaglio">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_backToStep1" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
+			</result>
+		</action> 
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_eliminaConto" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaConto" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazione" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazione">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_inserisciPrimaNota" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_aggiornaPrimaNota" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaValidaNotaCreditoEntrataInsPrimaNotaIntegrataGSA_step1
+			</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		
+	</package>
+</struts>

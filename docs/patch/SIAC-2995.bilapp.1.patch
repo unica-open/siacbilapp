@@ -1,0 +1,30 @@
+Index: src/main/webapp/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step1.jsp
+===================================================================
+--- src/main/webapp/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step1.jsp	(revision 10444)
++++ src/main/webapp/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step1.jsp	(revision 10448)
+@@ -74,9 +74,10 @@
+ 								<div class="control-group">
+ 									<label class="control-label" for="flagPagamentoRitenutaSuFattura">Pagamento ritenuta</label>
+ 									<div class="controls">
+-											<s:if test="%{isAutomatica}">
+-												<s:hidden name="richiestaEconomale.flagPagamentoRitenutaSuFattura" />
++											<s:if test="%{automatica}">
++												<s:hidden name="richiestaEconomale.flagPagamentoRitenutaSuFattura" id="HIDDEN_flagPagamentoRitenutaSuFattura" />
+ 											</s:if>
++											
+ 										  <s:checkbox id="flagPagamentoRitenutaSuFattura" name="richiestaEconomale.flagPagamentoRitenutaSuFattura" disabled="automatica"/>
+ 										  <span class="alRight"><label class="radio inline">Documento di riferimento: <s:property value="descrizioneFatturaRiferimento" /></label></span>
+ 										
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/AggiornaPagamentoCassaEconomaleModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/AggiornaPagamentoCassaEconomaleModel.java	(revision 10444)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/AggiornaPagamentoCassaEconomaleModel.java	(revision 10448)
+@@ -65,7 +65,7 @@
+ 		getRichiestaEconomale().setGiustificativi(getListaGiustificativo());
+ 		getRichiestaEconomale().setImpegno(getMovimentoGestione());
+ 		getRichiestaEconomale().setSubImpegno(impostaEntitaFacoltativa(getSubMovimentoGestione()));
+-		
++		getRichiestaEconomale().setSubdocumenti(getListaSubdocumentoSpesa());
+ 		// Popolo i classificatori
+ 		getRichiestaEconomale().getClassificatoriGenerici().clear();
+ 		addClassificatoreIfSelected(getRichiestaEconomale(), getClassificatoreGenerico1());

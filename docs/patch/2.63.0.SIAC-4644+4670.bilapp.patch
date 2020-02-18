@@ -1,0 +1,1174 @@
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RicercaPrimaNotaIntegrataBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RicercaPrimaNotaIntegrataBaseAction.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RicercaPrimaNotaIntegrataBaseAction.java	(working copy)
+@@ -1,15 +1,13 @@
+ package it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata;
+ 
+-import java.util.ArrayList;
+-import java.util.Arrays;
+-import java.util.Date;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
++import java.util.ArrayList;
++import java.util.Arrays;
++import java.util.Date;
++import java.util.List;
++
++import org.apache.commons.lang3.StringUtils;
++import org.springframework.beans.factory.annotation.Autowired;
+ 
+-import org.apache.commons.lang3.StringUtils;
+-import org.springframework.beans.factory.annotation.Autowired;
+-
+ import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
+ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
+ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
+@@ -20,17 +18,17 @@
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.RicercaPrimaNotaIntegrataBaseModel;
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
+-import it.csi.siac.siacbilapp.frontend.ui.exception.ParamValidationException;
+-import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
+-import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+-import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
+-import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
+-import it.csi.siac.siacbilser.model.errore.ErroreBil;
+-import it.csi.siac.siaccorser.model.errore.ErroreCore;
+-import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+-import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
++import it.csi.siac.siacbilapp.frontend.ui.exception.ParamValidationException;
++import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
++import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
++import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
++import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
++import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
++import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
++import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggetto;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggettoResponse;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
+@@ -291,12 +289,13 @@
+ 	protected abstract BilSessionParameter getBilSessionParameterRisultati();
+ 
+ 	/**
+-	 * Validazione per il metodo {@link #effettuaRicerca()}.
+-	 */
+-	public void validateEffettuaRicerca() {
+-		checkNotNull(model.getPrimaNota(), "Prima nota", true);
+-		
+-		boolean ricercaValida = checkPresenzaIdEntita(model.getTipoEvento())
++	 * Validazione per il metodo {@link #effettuaRicerca()}.
++	 */
++	public void validateEffettuaRicerca() {
++		final String methodName = "validateEffettuaRicerca";
++		checkNotNull(model.getPrimaNota(), "Prima nota", true);
++		
++		boolean ricercaValida = checkPresenzaIdEntita(model.getTipoEvento())
+ 			|| checkPresenzaIdEntita(model.getEvento())
+ 			|| checkPresenzaIdEntita(model.getCausaleEP())
+ 			|| checkCampoValorizzato(model.getPrimaNota().getNumero(), "numero prima nota")
+@@ -312,13 +311,14 @@
+ 			|| checkCampoValorizzato(model.getDataRegistrazioneDefinitivaA(), "data registrazione a")
+ 			|| checkCampoValorizzato(model.getDataRegistrazioneProvvisoriaDa(), "data registrazione provvisoria da")
+ 			|| checkCampoValorizzato(model.getDataRegistrazioneProvvisoriaA(), "data registrazione provvisoria a")
+-			|| checkCondizioneValida(model.getSoggetto() != null && StringUtils.isNotBlank(model.getSoggetto().getCodiceSoggetto()), "soggetto")
+-			|| checkCondizioneValida(model.getAttoAmministrativo() != null
+-				&& model.getAttoAmministrativo().getAnno() != 0
+-				&& (model.getAttoAmministrativo().getNumero() != 0 || (model.getAttoAmministrativo().getTipoAtto() != null && model.getAttoAmministrativo().getTipoAtto().getUid() != 0)), "provvedimento");
+-		
+-		ricercaValida = checkConto() || ricercaValida;
+-		ricercaValida = checkPianoDeiConti() || ricercaValida;
++			|| checkCondizioneValida(model.getSoggetto() != null && StringUtils.isNotBlank(model.getSoggetto().getCodiceSoggetto()), "soggetto")
++			|| checkCondizioneValida(model.getAttoAmministrativo() != null
++				&& model.getAttoAmministrativo().getAnno() != 0
++				&& model.getAttoAmministrativo().getNumero() != 0
++				&& model.getAttoAmministrativo().getTipoAtto() != null && model.getAttoAmministrativo().getTipoAtto().getUid() != 0, "provvedimento");
++		
++		ricercaValida = checkConto() || ricercaValida;
++		ricercaValida = checkPianoDeiConti() || ricercaValida;
+ 		ricercaValida = checkDateRegistrazione(model.getDataRegistrazioneDefinitivaDa(), model.getDataRegistrazioneDefinitivaA(), "data registrazione definitiva") || ricercaValida;
+ 		ricercaValida = checkDateRegistrazione(model.getDataRegistrazioneProvvisoriaDa(), model.getDataRegistrazioneProvvisoriaA(), "data registrazione provvisoria") || ricercaValida;
+ 		
+@@ -329,14 +329,18 @@
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("anno o numero movimento", ": i campi devono essere entrambi valorizzati o entrambi non valorizzati"));
+ 		checkCondition(model.getNumeroSubmovimento() == null || model.getNumeroSubmovimento() == 0 || (model.getAnnoMovimento() != null && StringUtils.isNotBlank(model.getNumeroMovimento())),
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("numero submovimento", ": valorizzare anche anno e numero movimento"));
+-		checkCondition(model.getImportoDocumentoDa() == null || model.getImportoDocumentoA() == null || model.getImportoDocumentoA().compareTo(model.getImportoDocumentoDa()) >= 0,
+-				ErroreCore.FORMATO_NON_VALIDO.getErrore("importi da/a", "l'importo a non puo' essere inferiore all'importo da"));
+-		
+-		checkSoggetto();
+-		checkAttoAmministrativo();
+-		
+-		if (hasErrori()) {
+-			model.impostoDatiNelModel();
++		checkCondition(model.getImportoDocumentoDa() == null || model.getImportoDocumentoA() == null || model.getImportoDocumentoA().compareTo(model.getImportoDocumentoDa()) >= 0,
++				ErroreCore.FORMATO_NON_VALIDO.getErrore("importi da/a", "l'importo a non puo' essere inferiore all'importo da"));
++		
++		try {
++			checkSoggetto();
++			checkAttoAmministrativo();
++		} catch(ParamValidationException pve) {
++			log.info(methodName, "Errore di validazione dei campi: " + pve.getMessage());
++		}
++		
++		if (hasErrori()) {
++			model.impostoDatiNelModel();
+ 		}
+ 		
+ 		
+@@ -365,71 +369,64 @@
+ 	/**
+ 	 * Controlli per l'atto amministrativo
+ 	 */
+-	private void checkAttoAmministrativo() {
+-		final String methodName = "checkAttoAmministrativo";
+-		AttoAmministrativo aa = model.getAttoAmministrativo();
+-		if(aa == null || aa.getAnno() == 0 || (aa.getNumero() == 0 && (aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0))) {
+-			log.debug(methodName, "Atto amministrativo non presente");
+-			model.setAttoAmministrativo(null);
+-			return;
+-		}
+-		RicercaProvvedimento req = model.creaRequestRicercaProvvedimento();
+-		RicercaProvvedimentoResponse res = provvedimentoService.ricercaProvvedimento(req);
+-		if(res.hasErrori()) {
++	private void checkAttoAmministrativo() {
++		final String methodName = "checkAttoAmministrativo";
++		AttoAmministrativo aa = model.getAttoAmministrativo();
++		if(aa == null) {
++			log.debug(methodName, "Atto amministrativo non presente");
++			return;
++		}
++		checkCondition((aa.getAnno() != 0 && aa.getNumero() != 0 && aa.getTipoAtto() != null && aa.getTipoAtto().getUid() != 0)
++				|| (aa.getAnno() == 0 && aa.getNumero() == 0 && (aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0)),
++			ErroreCore.VALORE_NON_VALIDO.getErrore("Provvedimento", ": e' necessario specificare anno, numero e tipo per effettuare la ricerca"), true);
++		
++		// SIAC-4644, modifica: anche il tipo di atto deve essere obbligatorio
++		if(aa == null || aa.getAnno() == 0 || aa.getNumero() == 0 || aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0) {
++			log.debug(methodName, "Atto amministrativo non presente");
++			model.setAttoAmministrativo(null);
++			return;
++		}
++		// Prendo il tipoAtto
++		TipoAtto ta = ComparatorUtils.searchByUid(model.getListaTipoAtto(), aa.getTipoAtto());
++		aa.setTipoAtto(ta);
++		
++		RicercaProvvedimento req = model.creaRequestRicercaProvvedimento();
++		RicercaProvvedimentoResponse res = provvedimentoService.ricercaProvvedimento(req);
++		if(res.hasErrori()) {
+ 			addErrori(res);
+-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+-			return;
+-		}
+-		Map<Boolean, Long> mapSac = countProvvedimentiByPresenzaSac(res.getListaAttiAmministrativi());
+-		try {
+-			// Deve esistere un unico provvedimento
+-			StringBuilder identificativo = new StringBuilder()
+-					.append("identificativo: ")
+-					.append(aa.getAnno());
+-			if(aa.getNumero() != 0) {
+-				identificativo.append("/")
+-					.append(aa.getNumero());
+-			}
+-			if(aa.getTipoAtto() != null && aa.getTipoAtto().getUid() != 0) {
+-				identificativo.append("/")
+-					.append(aa.getTipoAtto().getCodice());
+-			}
+-			
+-			// Controllo le SAC: deve esserci al piu' un provvedimento senza SAC
+-			warnCondition(mapSac.get(Boolean.FALSE).longValue() != 1L || mapSac.get(Boolean.TRUE).longValue() == 0L,
+-					ErroreBil.PROVVEDIMENTI_UGUALI_CON_SAC_DIVERSE.getErrore(identificativo.toString()),
+-					true);
+-			checkUnicoAttoAmministrativo(res.getListaAttiAmministrativi(), aa.getStrutturaAmmContabile(), true);
+-		} catch (ParamValidationException pve) {
+-			log.debug(methodName, pve.getMessage());
+-			return;
+-		}
+-		model.setAttoAmministrativo(res.getListaAttiAmministrativi().get(0));
+-	}
+-	
++			log.info(methodName, createErrorInServiceInvocationString(req, res));
++			return;
++		}
++		List<AttoAmministrativo> sacs = filterSac(res.getListaAttiAmministrativi(), aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0);
++		try {
++			// Controllo le SAC: deve esserci al piu' un provvedimento senza SAC
++			checkUnicoAttoAmministrativo(sacs, aa.getStrutturaAmmContabile(), true);
++		} catch (ParamValidationException pve) {
++			log.debug(methodName, pve.getMessage());
++			return;
++		}
++		model.setAttoAmministrativo(sacs.get(0));
++	}
++	
++	/**
++	 * Filtra gli atti tramite le sac
++	 * @param atti gli atti da filtrare
++	 * @param sacNull se la struttura sia null
++	 */
++	private List<AttoAmministrativo> filterSac(List<AttoAmministrativo> atti, boolean sacNull) {
++		if(!sacNull) {
++			return atti;
++		}
++		List<AttoAmministrativo> res = new ArrayList<AttoAmministrativo>();
++		for(AttoAmministrativo aa : atti) {
++			if(aa != null && (aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0)) {
++				res.add(aa);
++			}
++		}
++		return res;
++	}
++
+ 	/**
+-	 * Conta i provvedimenti con e senza SAC
+-	 * @param listaAttiAmministrativi la lista degli atti
+-	 * @return una mappa che associa alla presenza dei SAC il numero degli atti corrispondenti
+-	 */
+-	private Map<Boolean, Long> countProvvedimentiByPresenzaSac(Iterable<AttoAmministrativo> listaAttiAmministrativi) {
+-		long with = 0L;
+-		long without = 0L;
+-		for (AttoAmministrativo aa : listaAttiAmministrativi) {
+-			if(aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0) {
+-				without++;
+-			} else {
+-				with++;
+-			}
+-		}
+-		
+-		Map<Boolean, Long> res = new HashMap<Boolean, Long>();
+-		res.put(Boolean.TRUE, Long.valueOf(with));
+-		res.put(Boolean.FALSE, Long.valueOf(without));
+-		return res;
+-	}
+-
+-	/**
+ 	 * Controllo per il Conto.
+ 	 * 
+ 	 * @return <code>true</code> se il conto &eacute; stato valorizzato in modo valido; <code>false</code> altrimenti 
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/RicercaPrimaNotaIntegrataBaseModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/RicercaPrimaNotaIntegrataBaseModel.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/RicercaPrimaNotaIntegrataBaseModel.java	(working copy)
+@@ -9,12 +9,13 @@
+ 
+ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
+ import it.csi.siac.siacattser.model.AttoAmministrativo;
+-import it.csi.siac.siacattser.model.TipoAtto;
+-import it.csi.siac.siacattser.model.ric.RicercaAtti;
+-import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiElementoPianoDeiContiByCodiceAndAnno;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
+-import it.csi.siac.siacbilser.model.Ambito;
++import it.csi.siac.siacattser.model.TipoAtto;
++import it.csi.siac.siacattser.model.ric.RicercaAtti;
++import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
++import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
++import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiElementoPianoDeiContiByCodiceAndAnno;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
++import it.csi.siac.siacbilser.model.Ambito;
+ import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
+ import it.csi.siac.siacbilser.model.TitoloEntrata;
+ import it.csi.siac.siacbilser.model.TitoloSpesa;
+@@ -523,23 +524,20 @@
+ 	 */
+ 	public String getDescrizioneCompletaAttoAmministrativo() {
+ 		if(attoAmministrativo == null || attoAmministrativo.getAnno() == 0 || attoAmministrativo.getNumero() == 0
+-				|| attoAmministrativo.getTipoAtto() == null || attoAmministrativo.getTipoAtto().getUid() == 0) {
+-			return "";
+-		}
+-		return new StringBuilder()
+-				.append(attoAmministrativo.getTipoAtto().getDescrizione())
+-				.append(" - ")
+-				.append(attoAmministrativo.getAnno())
+-				.append(" - ")
+-				.append(attoAmministrativo.getNumero())
+-				.append(" - ")
+-				.append(attoAmministrativo.getOggetto())
+-				.toString();
+-	}
+-
+-	/* **** Requests **** */
+-	
+-	/**
++				|| attoAmministrativo.getTipoAtto() == null || attoAmministrativo.getTipoAtto().getUid() == 0) {
++			return "";
++		}
++		List<String> chunks = new ArrayList<String>();
++		CollectionUtil.addIfNotNullNorEmpty(chunks, attoAmministrativo.getTipoAtto().getDescrizione());
++		CollectionUtil.addIfNotNullNorEmpty(chunks, Integer.toString(attoAmministrativo.getAnno()));
++		CollectionUtil.addIfNotNullNorEmpty(chunks, Integer.toString(attoAmministrativo.getNumero()));
++		CollectionUtil.addIfNotNullNorEmpty(chunks, attoAmministrativo.getOggetto());
++		return StringUtils.join(chunks, " - ");
++	}
++	
++	/* **** Requests **** */
++	
++	/**
+ 	 * Crea una request per il servizio di {@link RicercaSinteticaConto}.
+ 	 * 
+ 	 * @return la request creata
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/collections/CollectionUtil.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/collections/CollectionUtil.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/collections/CollectionUtil.java	(working copy)
+@@ -1,11 +1,12 @@
+ package it.csi.siac.siacbilapp.frontend.ui.util.collections;
+ 
+-import java.util.ArrayList;
+-import java.util.Collection;
+-import java.util.Iterator;
+-
+-import org.apache.commons.lang3.StringUtils;
+-
++import java.util.ArrayList;
++import java.util.Collection;
++import java.util.Iterator;
++import java.util.List;
++
++import org.apache.commons.lang3.StringUtils;
++
+ import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
+ import it.csi.siac.siaccorser.model.paginazione.ListaPaginataImpl;
+ 
+@@ -350,7 +351,21 @@
+ 		listaPaginata.setTotaleElementi(totalRecords);
+ 		listaPaginata.setPaginaCorrente(pageNumber);
+ 		
+-		return listaPaginata;
+-	}
+-	
+-}
++		return listaPaginata;
++	}
++	
++	/**
++	 * Rewraps an iterable source in a list, to prevent any unsupported operations on the given iterable
++	 * @param <T> the iterable type
++	 * @param iterable the iterable source
++	 * @return the list rewrapping the iterable source's content
++	 */
++	public static <T> List<T> rewrap(Iterable<T> iterable) {
++		List<T> res = new ArrayList<T>();
++		for(T t : iterable) {
++			res.add(t);
++		}
++		return res;
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/spesa/AggiornaDocumentoSpesaAnagraficaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/spesa/AggiornaDocumentoSpesaAnagraficaAction.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/spesa/AggiornaDocumentoSpesaAnagraficaAction.java	(working copy)
+@@ -125,6 +125,7 @@
+ 		if(d.getFatturaFEL() != null) {
+ 			d.getFatturaFEL().setIdFattura(null);
+ 		}
++		d.setStrutturaAmministrativoContabile(null);
+ 		
+ 		model.setOldArrotondamento(null);
+ 		model.setOldNetto(null);
+Index: src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java	(working copy)
+@@ -1,15 +1,13 @@
+ package it.csi.siac.siacgenapp.frontend.ui.action.primanotaintegrata;
+ 
+ import java.util.ArrayList;
+-import java.util.Arrays;
+-import java.util.Calendar;
+-import java.util.Date;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+-
+-import org.apache.commons.lang3.StringUtils;
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import java.util.Arrays;
++import java.util.Calendar;
++import java.util.Date;
++import java.util.List;
++
++import org.apache.commons.lang3.StringUtils;
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.context.annotation.Scope;
+ import org.springframework.stereotype.Component;
+@@ -40,13 +38,12 @@
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
+-import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
+-import it.csi.siac.siacbilser.model.TitoloEntrata;
+-import it.csi.siac.siacbilser.model.TitoloSpesa;
+-import it.csi.siac.siacbilser.model.errore.ErroreBil;
+-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+-import it.csi.siac.siaccorser.model.errore.ErroreCore;
+-import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
++import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
++import it.csi.siac.siacbilser.model.TitoloEntrata;
++import it.csi.siac.siacbilser.model.TitoloSpesa;
++import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
++import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+ import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggetto;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggettoResponse;
+@@ -423,13 +420,17 @@
+ 			|| checkCampoValorizzato(model.getPrimaNota().getNumero(), "numero prima nota")
+ 			|| checkCampoValorizzato(model.getAnnoMovimento(), "anno movimento")
+ 			|| checkCampoValorizzato(model.getNumeroMovimento(), "numero movimento")
+-			|| checkCampoValorizzato(model.getNumeroSubmovimento(), "numero submovimento")
+-			|| checkStringaValorizzata(model.getPrimaNota().getDescrizione(), "descrizione")
+-			|| checkCampoValorizzato(model.getDataRegistrazioneDa(), "data registrazione da")
+-			|| checkCampoValorizzato(model.getDataRegistrazioneA(), "data registrazione a");
+-		
+-		ricercaValida = checkConto() || ricercaValida;
+-		ricercaValida = checkPianoDeiConti() || ricercaValida;
++			|| checkCampoValorizzato(model.getNumeroSubmovimento(), "numero submovimento")
++			|| checkStringaValorizzata(model.getPrimaNota().getDescrizione(), "descrizione")
++			|| checkCampoValorizzato(model.getDataRegistrazioneDa(), "data registrazione da")
++			|| checkCampoValorizzato(model.getDataRegistrazioneA(), "data registrazione a")
++			|| checkCondizioneValida(model.getAttoAmministrativo() != null
++				&& model.getAttoAmministrativo().getAnno() != 0
++				&& model.getAttoAmministrativo().getNumero() != 0
++				&& model.getAttoAmministrativo().getTipoAtto() != null && model.getAttoAmministrativo().getTipoAtto().getUid() != 0, "provvedimento");;
++		
++		ricercaValida = checkConto() || ricercaValida;
++		ricercaValida = checkPianoDeiConti() || ricercaValida;
+ 		ricercaValida = checkDateRegistrazione() || ricercaValida;
+ 		
+ 		checkCondition(ricercaValida, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
+@@ -512,73 +513,66 @@
+ 	/**
+ 	 * Controlli per l'atto amministrativo
+ 	 */
+-	private void checkAttoAmministrativo() {
+-		final String methodName = "checkAttoAmministrativo";
+-		AttoAmministrativo aa = model.getAttoAmministrativo();
+-		if(aa == null || aa.getAnno() == 0 || (aa.getNumero() == 0 && (aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0))) {
+-			log.debug(methodName, "Atto amministrativo non presente");
+-			model.setAttoAmministrativo(null);
+-			return;
+-		}
+-		RicercaProvvedimento req = model.creaRequestRicercaProvvedimento();
+-		RicercaProvvedimentoResponse res = provvedimentoService.ricercaProvvedimento(req);
+-		if(res.hasErrori()) {
++	private void checkAttoAmministrativo() {
++		final String methodName = "checkAttoAmministrativo";
++		AttoAmministrativo aa = model.getAttoAmministrativo();
++		if(aa == null) {
++			log.debug(methodName, "Atto amministrativo non presente");
++			return;
++		}
++		checkCondition((aa.getAnno() != 0 && aa.getNumero() != 0 && aa.getTipoAtto() != null && aa.getTipoAtto().getUid() != 0)
++				|| (aa.getAnno() == 0 && aa.getNumero() == 0 && (aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0)),
++			ErroreCore.VALORE_NON_VALIDO.getErrore("Provvedimento", ": e' necessario specificare anno, numero e tipo per effettuare la ricerca"), true);
++		
++		// SIAC-4644, modifica: anche il tipo di atto deve essere obbligatorio
++		if(aa == null || aa.getAnno() == 0 || aa.getNumero() == 0 || aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0) {
++			log.debug(methodName, "Atto amministrativo non presente");
++			model.setAttoAmministrativo(null);
++			return;
++		}
++		// Prendo il tipoAtto
++		TipoAtto ta = ComparatorUtils.searchByUid(model.getListaTipoAtto(), aa.getTipoAtto());
++		aa.setTipoAtto(ta);
++		
++		RicercaProvvedimento req = model.creaRequestRicercaProvvedimento();
++		RicercaProvvedimentoResponse res = provvedimentoService.ricercaProvvedimento(req);
++		if(res.hasErrori()) {
+ 			addErrori(res);
+-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+-			return;
+-		}
+-		Map<Boolean, Long> mapSac = countProvvedimentiByPresenzaSac(res.getListaAttiAmministrativi());
+-		try {
+-			// Deve esistere un unico provvedimento
+-			StringBuilder identificativo = new StringBuilder()
+-					.append("identificativo: ")
+-					.append(aa.getAnno());
+-			if(aa.getNumero() != 0) {
+-				identificativo.append("/")
+-					.append(aa.getNumero());
+-			}
+-			if(aa.getTipoAtto() != null && aa.getTipoAtto().getUid() != 0) {
+-				identificativo.append("/")
+-					.append(aa.getTipoAtto().getCodice());
+-			}
+-			
+-			// Controllo le SAC: deve esserci al piu' un provvedimento senza SAC
+-			warnCondition(mapSac.get(Boolean.FALSE).longValue() != 1L || mapSac.get(Boolean.TRUE).longValue() == 0L,
+-					ErroreBil.PROVVEDIMENTI_UGUALI_CON_SAC_DIVERSE.getErrore(identificativo.toString()),
+-					true);
+-			checkUnicoAttoAmministrativo(res.getListaAttiAmministrativi(), aa.getStrutturaAmmContabile(), true);
+-		} catch (ParamValidationException pve) {
+-			log.debug(methodName, pve.getMessage());
+-			return;
+-		}
+-		model.setAttoAmministrativo(res.getListaAttiAmministrativi().get(0));
+-	}
+-	
+-	/**
+-	 * Conta i provvedimenti con e senza SAC
+-	 * @param listaAttiAmministrativi la lista degli atti
+-	 * @return una mappa che associa alla presenza dei SAC il numero degli atti corrispondenti
+-	 */
+-	private Map<Boolean, Long> countProvvedimentiByPresenzaSac(Iterable<AttoAmministrativo> listaAttiAmministrativi) {
+-		long with = 0L;
+-		long without = 0L;
+-		for (AttoAmministrativo aa : listaAttiAmministrativi) {
+-			if(aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0) {
+-				without++;
+-			} else {
+-				with++;
+-			}
+-		}
+-		
+-		Map<Boolean, Long> res = new HashMap<Boolean, Long>();
+-		res.put(Boolean.TRUE, Long.valueOf(with));
+-		res.put(Boolean.FALSE, Long.valueOf(without));
+-		return res;
+-	}
+-
+-	/**
+-	 * Controllo per il Conto.
+-	 * 
++			log.info(methodName, createErrorInServiceInvocationString(req, res));
++			return;
++		}
++		List<AttoAmministrativo> sacs = filterSac(res.getListaAttiAmministrativi(), aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0);
++		try {
++			// Controllo le SAC: deve esserci al piu' un provvedimento senza SAC
++			checkUnicoAttoAmministrativo(sacs, aa.getStrutturaAmmContabile(), true);
++		} catch (ParamValidationException pve) {
++			log.debug(methodName, pve.getMessage());
++			return;
++		}
++		model.setAttoAmministrativo(sacs.get(0));
++	}
++	
++	/**
++	 * Filtra gli atti tramite le sac
++	 * @param atti gli atti da filtrare
++	 * @param sacNull se la struttura sia null
++	 */
++	private List<AttoAmministrativo> filterSac(List<AttoAmministrativo> atti, boolean sacNull) {
++		if(!sacNull) {
++			return atti;
++		}
++		List<AttoAmministrativo> res = new ArrayList<AttoAmministrativo>();
++		for(AttoAmministrativo aa : atti) {
++			if(aa != null && (aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0)) {
++				res.add(aa);
++			}
++		}
++		return res;
++	}
++	
++	/**
++	 * Controllo per il Conto.
++	 * 
+ 	 * @return <code>true</code> se il conto &eacute; stato valorizzato in modo valido; <code>false</code> altrimenti 
+ 	 */
+ 	private boolean checkConto() {
+Index: src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js	(revision 14597)
++++ src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js	(working copy)
+@@ -36,15 +36,15 @@
+             obj[mapTipoElencoEntrataSpesa[tipoElenco]] = true;
+         }
+         obj.tipoCausale = 'Integrata';
+-
+-        // Scateno l'overlay
+-        select.overlay("show");
+-        $.postJSON("ricercaTipoEventoByEntrataSpesa.do", obj, function(data) {
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-            	
+-                if (!!tipoEventoDaRicerca.val()) {
+-                    $("#tipoEvento").val(tipoEventoDaRicerca.val()).change();
+-                    tipoEventoDaRicerca.val("");
++
++        // Scateno l'overlay
++        select.overlay("show");
++        $.postJSON("ricercaTipoEventoByEntrataSpesa.do", obj)
++        .then(function(data) {
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                if (!!tipoEventoDaRicerca.val()) {
++                    $("#tipoEvento").val(tipoEventoDaRicerca.val()).change();
++                    tipoEventoDaRicerca.val("");
+                 }
+                 return;
+             }
+@@ -55,16 +55,13 @@
+                 tipoEventoDaRicerca.val("");
+             }
+             // Lancio l'evento di change
+-            if(mayTriggerChange) {
+-            	select.change();
+-            }
+-        }).always(function() {
+-    		
+-            select.overlay("hide");
+-        });
+-    }
+-
+-    /**
++            if(mayTriggerChange) {
++            	select.change();
++            }
++        }).always(select.overlay.bind(select, "hide"));
++    }
++
++    /**
+      * Caricamento degli eventi.
+      */
+     function caricaEvento(mayTriggerChange) {
+@@ -85,13 +82,14 @@
+             }
+             return;
+         }
+-
+-        // Attivo l'overlay
+-        selectEvento.overlay("show");
+-        $.postJSON("ricercaEventoByTipoEvento.do", {'tipoEvento.uid': tipoEvento}, function(data) {
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-            	if (!!eventoDaRicerca.val()) {
+-            		selectEvento.val(eventoDaRicerca.val());
++
++        // Attivo l'overlay
++        selectEvento.overlay("show");
++        $.postJSON("ricercaEventoByTipoEvento.do", {'tipoEvento.uid': tipoEvento})
++        .then(function(data) {
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++            	if (!!eventoDaRicerca.val()) {
++            		selectEvento.val(eventoDaRicerca.val());
+                     if (tipoEventoDaRicerca.val()=="") {
+                     	//lo azzero solamente se e' azzerato anche l'altro 
+                     	eventoDaRicerca.val("");
+@@ -100,23 +98,19 @@
+                 return;
+             }
+             // Non ho errori: carico la select
+-            caricaSelect(selectEvento, data.listaEvento, true);
+-            impostaValoreOld(selectEvento, data.listaEvento, !!eventoDaRicerca.val() ? eventoDaRicerca.val() :oldValue);
+-            if (!!eventoDaRicerca.val() && (tipoEventoDaRicerca.val()=="")) {
+-            	//lo azzero solamente se e' azzerato anche l'altro 
+-            	eventoDaRicerca.val("");
+-        }
+-            // Tolgo il disabled
+-            selectEvento.removeAttr("disabled")
+-                .change();
+-        }).always(function() {
+-        	
+-            
+-            selectEvento.overlay("hide");
+-        });
+-    }
+-
+-    /**
++            caricaSelect(selectEvento, data.listaEvento, true);
++            impostaValoreOld(selectEvento, data.listaEvento, !!eventoDaRicerca.val() ? eventoDaRicerca.val() :oldValue);
++            if (!!eventoDaRicerca.val() && (tipoEventoDaRicerca.val()=="")) {
++                // lo azzero solamente se e' azzerato anche l'altro
++                eventoDaRicerca.val("");
++            }
++            // Tolgo il disabled
++            selectEvento.removeAttr("disabled")
++                .change();
++        }).always(selectEvento.overlay.bind(selectEvento, "hide"));
++    }
++
++    /**
+      * Abilita o disabilita la gestione dell'evento finanziario
+      */
+     function gestisciMovimentoFinanziario() {
+@@ -131,13 +125,14 @@
+         if(!uid) {
+             selectCausale.val('').attr('disabled', true);
+             selectCausale.overlay('hide');            
+-            return;
+-        }
+-
+-        $.postJSON('ricercaCausaleEPByEvento_ricercaMinima.do', {'evento.uid': uid, 'ambito': ambito, 'tipoCausale': 'Integrata'}, function(data) {
+-            var str = '<option></option>';
+-            var uidOld = caricaOld ? $('#hidden_uidCausale').val() : '';
+-            if(!data || impostaDatiNegliAlert(data.errori, alertErrori)) {
++            return;
++        }
++
++        $.postJSON('ricercaCausaleEPByEvento_ricercaMinima.do', {'evento.uid': uid, 'ambito': ambito, 'tipoCausale': 'Integrata'})
++        .then(function(data) {
++            var str = '<option></option>';
++            var uidOld = caricaOld ? $('#hidden_uidCausale').val() : '';
++            if(!data || impostaDatiNegliAlert(data.errori, alertErrori)) {
+             	
+                 return;
+             }
+@@ -149,16 +144,13 @@
+                 }
+                 s += '>' + val.codice + ' - ' + val.descrizione + '</option>';
+                 str += s;
+-            });
+-            
+-            selectCausale.html(str).removeAttr('disabled');
+-        }).always(function() {
+-        	
+-            selectCausale.overlay('hide');
+-        });
+-        
+-    }
+-
++            });
++            
++            selectCausale.html(str).removeAttr('disabled');
++        }).always(selectCausale.overlay.bind(selectCausale, 'hide'));
++        
++    }
++
+     /**
+      * Caricamento delle liste dei titoli.
+      */
+@@ -199,13 +191,14 @@
+         .then(function(data) {
+             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+                 return $.Deferred().reject().promise();
+-            }
+-            caricaSelect(select, data.listaTipoEvento, true, setDataAttributeDocumento);
+-            preselezionaDatiDerivatiTipoElenco();
+-        }).then(innerCallback)
+-        .always(select.overlay.bind(select, 'hide'));
+-        selectEvento.removeAttr("disabled").change();
+-    }
++            }
++            caricaSelect(select, data.listaTipoEvento, true, setDataAttributeDocumento);
++            preselezionaDatiDerivatiTipoElenco();
++        })
++        .then(innerCallback)
++        .always(select.overlay.bind(select, 'hide'));
++        selectEvento.removeAttr("disabled").change();
++    }
+ 
+     /**
+      * Aggiunge il data-attribute relativo al documento
+@@ -296,16 +289,20 @@
+     function changeTipoEvento() {
+         preselezionaDatiDerivatiTipoElenco()
+         caricaEvento(true);
+-    }
+-    function preselezionaDatiDerivatiTipoElenco() {
+-        var selectedOption = $('option:selected', '#tipoEvento');
+-        $('#asteriskDataRegistrazione')[selectedOption.data('documento') ? 'show' : 'hide']();
+-        // SIAC-4644
+-        $('#importoDocumentoDa, #importoDocumentoA, #codiceSoggetto, #annoProvvedimento, #numeroProvvedimento, #tipoAttoProvvedimento, #pulsanteDelesezionaStrutturaAmministrativoContabile')
+-            [selectedOption.val() === '' ? 'prop' : 'removeProp']('disabled', true);
+-        $('#pulsanteApriModaleProvvedimento, #pulsanteApriModaleSoggetto')[selectedOption.val() === '' ? 'addClass' : 'removeClass']('hide');
+-    }
+-
++    }
++    function preselezionaDatiDerivatiTipoElenco() {
++        var selectedOption = $('option:selected', '#tipoEvento');
++        var tipoDocumento = !!selectedOption.data('documento');
++        $('#asteriskDataRegistrazione')[selectedOption.data('documento') ? 'show' : 'hide']();
++        // SIAC-4644
++        $('#codiceSoggetto, #annoProvvedimento, #numeroProvvedimento, #tipoAttoProvvedimento, #pulsanteDelesezionaStrutturaAmministrativoContabile')
++            [selectedOption.val() === '' ? 'prop' : 'removeProp']('disabled', true);
++        // SIAC-4644, modifica
++        $('#importoDocumentoDa, #importoDocumentoA')[tipoDocumento ? 'removeProp' : 'prop']('disabled', true);
++        $('#containerImportoDocumento')[tipoDocumento ? 'slideDown' : 'slideUp']();
++        $('#pulsanteApriModaleProvvedimento, #pulsanteApriModaleSoggetto')[selectedOption.val() === '' ? 'addClass' : 'removeClass']('hide');
++    }
++
+     /**
+      * Gestione del change per il codice soggetto
+      * @returns (Promise) la promise relativa al caricamento del soggetto
+Index: src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.js	(revision 14597)
++++ src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.js	(working copy)
+@@ -35,13 +35,14 @@
+         if(tipoElenco) {
+             obj[mapTipoElencoEntrataSpesa[tipoElenco]] = true;
+         }
+-
+-        // Scateno l'overlay
+-        select.overlay("show");
+-        $.postJSON("ricercaTipoEventoByEntrataSpesa.do", obj, function(data) {
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-            	if (!!tipoEventoDaRicerca.val()) {
+-                    $("#tipoEvento").val(tipoEventoDaRicerca.val()).change();
++
++        // Scateno l'overlay
++        select.overlay("show");
++        $.postJSON("ricercaTipoEventoByEntrataSpesa.do", obj)
++        .then(function(data) {
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++            	if (!!tipoEventoDaRicerca.val()) {
++                    $("#tipoEvento").val(tipoEventoDaRicerca.val()).change();
+                     tipoEventoDaRicerca.val("");
+                 }
+                 return;
+@@ -51,15 +52,13 @@
+             impostaValoreOld(select, data.listaTipoEvento, !!tipoEventoDaRicerca.val()? tipoEventoDaRicerca.val() : oldValue);
+             if (!!tipoEventoDaRicerca.val()) {
+                 tipoEventoDaRicerca.val("");
+-            }
+-            // Lancio l'evento di change
+-            select.change();
+-        }).always(function() {
+-            select.overlay("hide");
+-        });
+-    }
+-
+-    /**
++            }
++            // Lancio l'evento di change
++            select.change();
++        }).always(select.overlay.bind(select, "hide"));
++    }
++
++    /**
+      * Caricamento degli eventi.
+      */
+     function caricaEvento() {
+@@ -78,13 +77,14 @@
+                 .change();
+             return;
+         }
+-
+-        // Attivo l'overlay
+-        selectEvento.overlay("show");
+-        $.postJSON("ricercaEventoByTipoEvento.do", {'tipoEvento.uid': tipoEvento}, function(data) {
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-            	if (!!eventoDaRicerca.val()) {
+-            		selectEvento.val(eventoDaRicerca.val());
++
++        // Attivo l'overlay
++        selectEvento.overlay("show");
++        $.postJSON("ricercaEventoByTipoEvento.do", {'tipoEvento.uid': tipoEvento})
++        .then(function(data) {
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++            	if (!!eventoDaRicerca.val()) {
++            		selectEvento.val(eventoDaRicerca.val());
+                     if (tipoEventoDaRicerca.val()=="") {
+                     	//lo azzero solamente se è azzerato anche l'altro 
+                     	eventoDaRicerca.val("");
+@@ -99,15 +99,13 @@
+                 	//lo azzero solamente se è azzerato anche l'altro 
+                 	eventoDaRicerca.val("");
+             }
+-            // Tolgo il disabled
+-            selectEvento.removeAttr("disabled")
+-                .change();
+-        }).always(function() {
+-            selectEvento.overlay("hide");
+-        });
+-    }
+-
+-    /**
++            // Tolgo il disabled
++            selectEvento.removeAttr("disabled")
++                .change();
++        }).always(selectEvento.overlay.bind(selectEvento, "hide"));
++    }
++
++    /**
+      * Abilita o disabilita la gestione dell'evento finanziario
+      */
+     function gestisciMovimentoFinanziario() {
+@@ -122,13 +120,14 @@
+         if(!uid) {
+             selectCausale.val('').attr('disabled', true);
+             selectCausale.overlay('hide');
+-            return;
+-        }
+-
+-        $.postJSON('ricercaCausaleEPByEvento_ricercaMinima.do', {'evento.uid': uid, 'ambito': ambito, 'tipoCausale': 'Integrata'}, function(data) {
+-            var str = '<option></option>';
+-            var uidOld = caricaOld ? $('#hidden_uidCausale').val() : '';
+-            if(!data || impostaDatiNegliAlert(data.errori, alertErrori)) {
++            return;
++        }
++
++        $.postJSON('ricercaCausaleEPByEvento_ricercaMinima.do', {'evento.uid': uid, 'ambito': ambito, 'tipoCausale': 'Integrata'})
++        .then(function(data) {
++            var str = '<option></option>';
++            var uidOld = caricaOld ? $('#hidden_uidCausale').val() : '';
++            if(!data || impostaDatiNegliAlert(data.errori, alertErrori)) {
+                 return;
+             }
+ 
+@@ -138,80 +137,63 @@
+                     s += ' selected';
+                 }
+                 s += '>' + val.codice + ' - ' + val.descrizione + '</option>';
+-                str += s;
+-            });
+-            selectCausale.html(str).removeAttr('disabled');
+-        }).always(function() {
+-            selectCausale.overlay('hide');
+-        });
+-    }
+-
+-//    /**
+-//     * Caricamento delle liste dei titoli.
+-//     */
+-//    function caricaListaTitolo() {
+-//        var selectEntrataGSA = $('#titoloEntrataGSA');
+-//        var selectSpesaGSA = $('#titoloSpesaGSA');
+-//        var selectEntrata = $('#titoloEntrata');
+-//        var selectSpesa = $('#titoloSpesa');
+-//
+-//        var selects = selectEntrata.add(selectSpesa).add(selectEntrataGSA).add(selectSpesaGSA);
+-//        // Se sono gia' popolate, non ricarico
+-//        if(selectHasOptions(selectEntrata, 1) && selectHasOptions(selectSpesa, 1) && selectHasOptions(selectEntrataGSA, 1) && selectHasOptions(selectSpesaGSA, 1)) {
+-//            return;
+-//        }
+-//        selects.overlay('show');
+-//        $.postJSON('ricercaPrimaNotaIntegrataGSA_caricaListaTitoli.do')
+-//        .then(function(data) {
+-//            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-//                return;
+-//            }
+-//            // Caricamento della select
+-//            caricaSelect(selectEntrata, data.listaTitoloEntrata, true);
+-//            caricaSelect(selectEntrataGSA, data.listaTitoloEntrata, true);
+-//            caricaSelect(selectSpesa, data.listaTitoloSpesa, true);
+-//            caricaSelect(selectSpesaGSA, data.listaTitoloSpesa, true);
+-//        }).always(selects.overlay.bind(selects, 'hide'));
+-//    }
+-
+-    /**
+-     * Caricamento delle liste del tipo evento.
+-     */
++                str += s;
++            });
++            selectCausale.html(str).removeAttr('disabled');
++        }).always(selectCausale.overlay.bind(selectCausale, 'hide'));
++    }
++
++    /**
++     * Caricamento delle liste del tipo evento.
++     */
+     function caricaListaTipoEvento(callback) {
+         var select = $('#tipoEvento').overlay('show');
+         var innerCallback = callback && typeof callback === 'function' ? callback : $.noop;
+         $.postJSON('ricercaPrimaNotaIntegrataGSA_caricaListaTipoEvento.do')
+         .then(function(data) {
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-                return $.Deferred().reject().promise();
+-            }
+-            caricaSelect(select, data.listaTipoEvento, true);
+-            preselezionaDatiDerivatiTipoElenco();
+-        }).then(innerCallback)
+-        .always(select.overlay.bind(select, 'hide'));
+-    }
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                return $.Deferred().reject().promise();
++            }
++            caricaSelect(select, data.listaTipoEvento, true, setDataAttributeDocumento);
++            preselezionaDatiDerivatiTipoElenco();
++        })
++        .then(innerCallback)
++        .always(select.overlay.bind(select, 'hide'));
++    }
++
++    /**
++     * Aggiunge il data-attribute relativo al documento
++     * @param tipoEvento (object) il tipo di evento
++     * @return (string) la stringa da aggiungere nella option se necessario
++     */
++    function setDataAttributeDocumento(tipoEvento) {
++        return tipoEvento && (tipoEvento.codice === 'DE' || tipoEvento.codice === 'DS') ? ' data-documento="true"' : '';
++    }
++
++    /**
++     * Caricamento della select tramite la lista fornita.
++     *
++     * @param select           (jQuery)   la select da popolare
++     * @param list             (Array)    la lista tramite cui popolare la select
++     * @param addEmptyOption   (Boolean)  se aggiungere una option vuota (optional - default - false)
++     * @param operation        (Function) l'operazione da operare sull'elemento per comporre dati aggiuntivi sulla option (optional - default - $.noop)
++     * @return (jQuery) la select su cui si e' agito
++     */
++    function caricaSelect(select, list, addEmptyOption, operation) {
++        var defaultOperation = operation && typeof operation === 'function' ? operation : $.noop;
++        var initialValue = !!addEmptyOption
++            ? '<option value=""></option>'
++            : '';
++        var str = list.reduce(function(acc, val) {
++            var tmp = '<option value="' + val.uid + '"';
++            tmp += defaultOperation(val);
++            tmp += '>' + val.codice + ' - ' + val.descrizione + '</option>';
++            return acc + tmp;
++        }, initialValue);
++        return select.html(str);
++    }
+ 
+     /**
+-     * Caricamento della select tramite la lista fornita.
+-     *
+-     * @param select           (jQuery)  la select da popolare
+-     * @param list             (Array)   la lista tramite cui popolare la select
+-     * @param addEmptyOption   (Boolean) se aggiungere una option vuota (optional - default - false)
+-     * @param emptyOptionValue (String)  il valore da impostare per l'opzione vuota (optional - default - '')
+-     * @param emptyOptionText  (String)  il testo da impostare per l'opzione vuota (optional - default - '')
+-     * @return (jQuery) la select su cui si e' agito
+-     */
+-    function caricaSelect(select, list, addEmptyOption, emptyOptionValue, emptyOptionText) {
+-        var initialValue = !!addEmptyOption
+-            ? '<option value="' + (emptyOptionValue || '') + '">' + (emptyOptionText || '') + '</option>'
+-            : '';
+-        var str = list.reduce(function(acc, val) {
+-            return acc + '<option value="' + val.uid + '">' + val.codice + ' - ' + val.descrizione + '</option>';
+-        }, initialValue);
+-        return select.html(str);
+-    }
+-
+-    /**
+      * Caricamento delle liste della classe.
+      */
+     function caricaListaClasse() {
+@@ -249,15 +231,19 @@
+     function changeTipoEvento() {
+         preselezionaDatiDerivatiTipoElenco();
+         caricaEvento();
+-    }
+-    function preselezionaDatiDerivatiTipoElenco() {
+-        var selectedOption = $('option:selected', '#tipoEvento');
+-        // SIAC-4644
+-        $('#importoDocumentoDa, #importoDocumentoA, #codiceSoggetto, #annoProvvedimento, #numeroProvvedimento, #tipoAttoProvvedimento, #pulsanteDelesezionaStrutturaAmministrativoContabile')
+-            [selectedOption.val() === '' ? 'prop' : 'removeProp']('disabled', true);
+-        $('#pulsanteApriModaleProvvedimento, #pulsanteApriModaleSoggetto')[selectedOption.val() === '' ? 'addClass' : 'removeClass']('hide');
+-    }
+-
++    }
++    function preselezionaDatiDerivatiTipoElenco() {
++        var selectedOption = $('option:selected', '#tipoEvento');
++        var tipoDocumento = !!selectedOption.data('documento');
++        // SIAC-4644
++        $('#codiceSoggetto, #annoProvvedimento, #numeroProvvedimento, #tipoAttoProvvedimento, #pulsanteDelesezionaStrutturaAmministrativoContabile')
++            [selectedOption.val() === '' ? 'prop' : 'removeProp']('disabled', true);
++        // SIAC-4644, modifica
++        $('#importoDocumentoDa, #importoDocumentoA')[tipoDocumento ? 'removeProp' : 'prop']('disabled', true);
++        $('#containerImportoDocumento')[tipoDocumento ? 'slideDown' : 'slideUp']();
++        $('#pulsanteApriModaleProvvedimento, #pulsanteApriModaleSoggetto')[selectedOption.val() === '' ? 'addClass' : 'removeClass']('hide');
++    }
++
+     /**
+      * Gestione del change per il codice soggetto
+      * @returns (Promise) la promise relativa al caricamento del soggetto
+@@ -277,26 +263,18 @@
+         var selectEvento = $("#evento");
+ 
+         radioTipoElenco.change(filtraTipoEvento);
+-        selectTipoEvento.change(changeTipoEvento);
+-        selectEvento.change(caricaCausaleEP.bind(selectEvento, false));
+-
+-        // Invoco i change se ho selezionato i valori
+-//        if(checkedRadioTipoElenco.length) {
+-//            checkedRadioTipoElenco.change();
+-//        } else if(selectTipoEvento.val()) {
+-//            selectTipoEvento.change();
+-//        }
+-
+-        caricaCausaleEP(true);
+-        Conto.inizializza(undefined, undefined, "#codiceConto", '#descrizioneConto', "#pulsanteCompilazioneGuidataConto");
+-        Provvedimento.inizializzazione("", "#annoProvvedimento", "#numeroProvvedimento", "#tipoAttoProvvedimento", "#treeStruttAmm",
+-                "#HIDDEN_StrutturaAmministrativoContabileUid", "#HIDDEN_statoProvvedimento", "#SPAN_InformazioniProvvedimento");
+-        $('#codiceSoggetto').change(handleChangeCodiceSoggetto);
+-
+-//        caricaListaTitolo();
+-        caricaListaClasse();
+-        caricaListaTipoEvento(function() {
+-            if(checkedRadioTipoElenco.length) {
++        selectTipoEvento.change(changeTipoEvento);
++        selectEvento.change(caricaCausaleEP.bind(selectEvento, false));
++
++        caricaCausaleEP(true);
++        Conto.inizializza(undefined, undefined, "#codiceConto", '#descrizioneConto', "#pulsanteCompilazioneGuidataConto");
++        Provvedimento.inizializzazione("", "#annoProvvedimento", "#numeroProvvedimento", "#tipoAttoProvvedimento", "#treeStruttAmm",
++                "#HIDDEN_StrutturaAmministrativoContabileUid", "#HIDDEN_statoProvvedimento", "#SPAN_InformazioniProvvedimento");
++        $('#codiceSoggetto').change(handleChangeCodiceSoggetto);
++
++        caricaListaClasse();
++        caricaListaTipoEvento(function() {
++            if(checkedRadioTipoElenco.length) {
+                 checkedRadioTipoElenco.change();
+             } else if(selectTipoEvento.val()) {
+                 selectTipoEvento.change();
+Index: src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp	(revision 14597)
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp	(working copy)
+@@ -122,13 +122,13 @@
+ 								<div class="control-group">
+ 									<label class="control-label" for="descrizionePrimaNota">Descrizione</label>
+ 									<div class="controls">
+-										<s:textfield id="descrizionePrimaNota" name="primaNota.descrizione" cssClass="span9" />
+-									</div>
+-								</div>
+-								<div class="control-group">
+-									<label class="control-label">
+-										Importo
+-										<a href="#" class="tooltip-test" data-original-title="selezionare il Tipo evento">
++										<s:textfield id="descrizionePrimaNota" name="primaNota.descrizione" cssClass="span9" />
++									</div>
++								</div>
++								<div class="control-group hide" id="containerImportoDocumento">
++									<label class="control-label">
++										Importo
++										<a href="#" class="tooltip-test" data-original-title="selezionare il Tipo evento">
+ 											<i class="icon-info-sign">&nbsp;<span class="nascosto">selezionare il Tipo evento</span></i>
+ 										</a>
+ 									</label>
+Index: src/main/webapp/jsp/documento/aggiornamento/aggiornamentoDocumentoSpesa.jsp
+===================================================================
+--- src/main/webapp/jsp/documento/aggiornamento/aggiornamentoDocumentoSpesa.jsp	(revision 14597)
++++ src/main/webapp/jsp/documento/aggiornamento/aggiornamentoDocumentoSpesa.jsp	(working copy)
+@@ -152,9 +152,9 @@
+ 					</div>
+ 				</div>
+ 
+-				<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid" name="documento.strutturaAmministrativoContabile.uid" />
+-				<s:hidden id="HIDDEN_StrutturaAmministrativoContabileCodice" name="documento.strutturaAmministrativoContabile.codice" />
+-				<s:hidden id="HIDDEN_StrutturaAmministrativoContabileDescrizione" name="documento.strutturaAmministrativoContabile.descrizione" />
++				<s:hidden id="HIDDEN_StrutturaAmministrativoContabile_DocUid" name="documento.strutturaAmministrativoContabile.uid" />
++				<s:hidden id="HIDDEN_StrutturaAmministrativoContabile_DocCodice" name="documento.strutturaAmministrativoContabile.codice" />
++				<s:hidden id="HIDDEN_StrutturaAmministrativoContabile_DocDescrizione" name="documento.strutturaAmministrativoContabile.descrizione" />
+ 			</div>
+ 		</div>
+ 		<div class="control-group">
+Index: src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp
+===================================================================
+--- src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp	(revision 14597)
++++ src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp	(working copy)
+@@ -114,13 +114,13 @@
+ 								<div class="control-group">
+ 									<label class="control-label" for="descrizionePrimaNota">Descrizione</label>
+ 									<div class="controls">
+-										<s:textfield id="descrizionePrimaNota" name="primaNota.descrizione" cssClass="span9" />
+-									</div>
+-								</div>
+-								<div class="control-group">
+-									<label class="control-label">
+-										Importo
+-										<a href="#" class="tooltip-test" data-original-title="selezionare il Tipo evento">
++										<s:textfield id="descrizionePrimaNota" name="primaNota.descrizione" cssClass="span9" />
++									</div>
++								</div>
++								<div class="control-group hide" id="containerImportoDocumento">
++									<label class="control-label">
++										Importo
++										<a href="#" class="tooltip-test" data-original-title="selezionare il Tipo evento">
+ 											<i class="icon-info-sign">&nbsp;<span class="nascosto">selezionare il Tipo evento</span></i>
+ 										</a>
+ 									</label>

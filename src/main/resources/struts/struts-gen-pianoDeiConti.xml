@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="pianoDeiContiFIN" extends="capitoloDefault" namespace="/">
+		
+		<!-- RICERCA -->
+		
+		<action name="ricercaPianoDeiContiFIN" class="ricercaPianoDeiContiFINAction">
+			<result name="success" type="redirectAction">ricercaPianoDeiContiFIN_landOnPage</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_landOnPage" class="ricercaPianoDeiContiFINAction" method="landOnPage">
+			<result name="success">/jsp/contabilitaGenerale/pianoDeiConti/ricercaPianoDeiContiFIN.jsp</result>
+		</action>
+		
+		
+		<action name="ricercaPianoDeiContiFIN_effettuaRicerca" class="ricercaPianoDeiContiFINAction" method = "effettuaRicerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*, 
+					conto.*, 
+					figliPresenti, 
+					isGestioneConsentita,
+					gerarchiaConti.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_ottieniPianoDeiConti" class="ricercaPianoDeiContiFINAction" method = "ottieniPianoDeiConti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*, 
+					conto.*, 
+					figliPresenti, 
+					isGestioneConsentita,
+					gerarchiaConti.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_effettuaRicercaFigli" class="ricercaPianoDeiContiFINAction" method = "effettuaRicercaFigli">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_inserisciFiglio" class="ricercaPianoDeiContiFINAction" method="inserisciFiglio">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciFiglioPianoDeiContiFIN</param>
+				<param name="uidConto">${uidConto}</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_aggiorna" class="ricercaPianoDeiContiFINAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPianoDeiContiFIN</param>
+				<param name="uidConto">${uidConto}</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_consulta" class="ricercaPianoDeiContiFINAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPianoDeiContiFIN</param>
+				<param name="uidConto">${uidConto}</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_annulla" class="ricercaPianoDeiContiFINAction" method="annulla">
+			<result name="success">/jsp/contabilitaGenerale/pianoDeiConti/ricercaPianoDeiContiFIN.jsp</result>
+            <result name="input">/jsp/contabilitaGenerale/pianoDeiConti/ricercaPianoDeiContiFIN.jsp</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiFIN_elimina" class="ricercaPianoDeiContiFINAction" method="elimina">
+			<result name="success">/jsp/contabilitaGenerale/pianoDeiConti/ricercaPianoDeiContiFIN.jsp</result>
+            <result name="input">/jsp/contabilitaGenerale/pianoDeiConti/ricercaPianoDeiContiFIN.jsp</result>
+		</action>
+		
+		<!-- INSERISCI -->
+		
+		<action name="inserisciFiglioPianoDeiContiFIN" class="inserisciFiglioPianoDeiContiFINAction">
+
+			 <result name="success">/jsp/contabilitaGenerale/pianoDeiConti/inserisciFiglioPianoDeiContiFIN.jsp</result>
+			<result name="input" type="redirectAction">ricercaPianoDeiContiFIN_landOnPage</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiFIN_ottieniListaCodiceBilancio" class="inserisciFiglioPianoDeiContiFINAction" method="ottieniListaCodiceBilancio">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaCodiceBilancio.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiFIN_ottieniListaClassiCompleta" class="inserisciFiglioPianoDeiContiFINAction" method="ottieniListaClassiCompleta">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiFIN_ottieniListaClassiAmmortamento" class="inserisciFiglioPianoDeiContiFINAction" method="ottieniListaClassiAmmortamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiFIN_inserimento" class="inserisciFiglioPianoDeiContiFINAction" method="inserimento">
+			<result name="success">/jsp/contabilitaGenerale/pianoDeiConti/riepilogoDatiFIN.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/pianoDeiConti/inserisciFiglioPianoDeiContiFIN.jsp</result>
+		</action>
+		
+		<!-- AGGIORNA -->
+		
+		<action name="aggiornaPianoDeiContiFIN" class="aggiornaPianoDeiContiFINAction">
+			<result name="success">/jsp/contabilitaGenerale/pianoDeiConti/aggiornaPianoDeiContiFIN.jsp</result>
+			<result name="input" type="redirectAction">ricercaPianoDeiConti_landOnPage</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiFIN_ottieniListaCodiceBilancio" class="aggiornaPianoDeiContiFINAction" method="ottieniListaCodiceBilancio">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaCodiceBilancio.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiFIN_ottieniListaClassiCompleta" class="aggiornaPianoDeiContiFINAction" method="ottieniListaClassiCompleta">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiFIN_ottieniListaClassiAmmortamento" class="aggiornaPianoDeiContiFINAction" method="ottieniListaClassiAmmortamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiFIN_aggiornamento" class="aggiornaPianoDeiContiFINAction" method="aggiornamento">
+			<result name="success">/jsp/contabilitaGenerale/pianoDeiConti/riepilogoDatiFIN.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/pianoDeiConti/aggiornaPianoDeiContiFIN.jsp</result>
+		</action>
+		
+		<!-- CONSULTA -->
+		
+		<action name="consultaPianoDeiContiFIN" class="consultaPianoDeiContiFINAction">
+			<result name="success">/jsp/contabilitaGenerale/pianoDeiConti/consultaPianoDeiContiFIN.jsp</result>
+			<result name="input" type="redirectAction">ricercaPianoDeiContiFIN_landOnPage</result>
+		</action>
+		
+		<!-- AJAX -->
+		<action name="risultatiRicercaPianoDeiContiAjax" class="risultatiRicercaPianoDeiContiAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		
+		
+		<!-- compilazione guidata  ricerca conto -->
+		
+		<action name="ricercaConto_effettuaRicercaModale" class="ricercaContoAction" method = "effettuaRicercaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*, 
+					conto.*
+				</param>
+			</result>
+		</action>
+				
+		<action name="risultatiRicercaContoAjax" class="risultatiRicercaContoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action> 
+		
+	</package>
+</struts>

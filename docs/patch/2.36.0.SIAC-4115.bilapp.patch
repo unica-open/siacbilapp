@@ -1,0 +1,35 @@
+Index: src/main/webapp/js/local/allegatoAtto/associaMovimento_step2.js
+===================================================================
+--- src/main/webapp/js/local/allegatoAtto/associaMovimento_step2.js	(revision 12373)
++++ src/main/webapp/js/local/allegatoAtto/associaMovimento_step2.js	(working copy)
+@@ -482,8 +482,8 @@
+     	var url = "associaMovimentoAllegatoAtto_calcolaDisponibilitaGiaImpegnataImpegno.do";
+     	var impegno = e.impegno;
+     	var subimpegno = e.subimpegno;
+-    	var disponibile = !!subimpegno.numero ? subimpegno.disponibilitaLiquidare : impegno.disponibilitaLiquidare;
+-    	var obj = {uidMovimento:impegno.uid, numeroSubmovimento:subimpegno.numero};
++    	var disponibile = subimpegno && subimpegno.numero ? subimpegno.disponibilitaLiquidare : impegno.disponibilitaLiquidare;
++    	var obj = {uidMovimento:impegno.uid, numeroSubmovimento: subimpegno ? subimpegno.numero : null};
+     	showDisponibile(url,obj,disponibile);
+     }
+     
+@@ -491,8 +491,8 @@
+     	var url = "associaMovimentoAllegatoAtto_calcolaDisponibilitaGiaImpegnataAccertamento.do";
+     	var accertamento = e.accertamento;
+     	var subaccertamento = e.subaccertamento;
+-    	var disponibile = !!subaccertamento.numero ? subaccertamento.disponibilitaIncassare : accertamento.disponibilitaIncassare;
+-    	var obj = {uidMovimento:accertamento.uid, numeroSubmovimento:subaccertamento.numero};
++    	var disponibile = subaccertamento && subaccertamento.numero ? subaccertamento.disponibilitaIncassare : accertamento.disponibilitaIncassare;
++    	var obj = {uidMovimento:accertamento.uid, numeroSubmovimento: subaccertamento ? subaccertamento.numero : null};
+     	showDisponibile(url,obj,disponibile);
+     }
+     
+@@ -500,7 +500,7 @@
+      * Visualizza il campo relativo al disponibile.
+      */
+     function showDisponibile(url, obj, disponibile) {
+-    	var disponibilita = disponibile;
++    	var disponibilita = disponibile || 0;
+     	$.postJSON(url, obj)
+     	.then(function(data){
+     		disponibilita = disponibilita-data.totaleGiaImpegnato;

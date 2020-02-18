@@ -1,0 +1,80 @@
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/InserisciPagamentoCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/InserisciPagamentoCassaEconomaleAction.java	(revision 10466)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/InserisciPagamentoCassaEconomaleAction.java	(revision 10468)
+@@ -115,6 +115,8 @@
+ 	 */
+ 	public String completeStep2() {
+ 		final String methodName = "completeStep2";
++		log.debug(methodName, "Soggetto della richiesta " + model.getRichiestaEconomale().getSoggetto());
++		
+ 		InserisceRichiestaEconomale request = model.creaRequestInserisceRichiestaEconomale();
+ 		logServiceRequest(request);
+ 		InserisceRichiestaEconomaleResponse response = richiestaEconomaleService.inserisceRichiestaEconomalePagamento(request);
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleAction.java	(revision 10466)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleAction.java	(revision 10468)
+@@ -22,6 +22,7 @@
+ import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggetto;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggettoResponse;
+ import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
++import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+ 
+ import java.math.BigDecimal;
+ import java.util.List;
+@@ -179,7 +180,25 @@
+ 		checkNotNullNorEmpty(re.getDescrizioneDellaRichiesta(), "Descrizione della spesa");
+ 	}
+ 	
++	/**
++	 * Impostazione dei dati del soggetto nella richiesta economale.
++	 * 
++	 * @param richiestaEconomale la richiesta da popolare
++	 * @param soggetto           il soggetto tramite cui popolare la richiesta
++	 */
+ 	@Override
++	protected void impostazioneDatiSoggetto(RichiestaEconomale richiestaEconomale, Soggetto soggetto) {
++		richiestaEconomale.setSoggetto(soggetto);
++		
++		// Spiattello i dati sulla richiesta economale
++		//richiestaEconomale.setMatricola(soggetto.getMatricola());
++		richiestaEconomale.setCodiceBeneficiario(soggetto.getCodiceSoggetto());
++		richiestaEconomale.setNome(soggetto.getNome());
++		richiestaEconomale.setCognome(soggetto.getCognome());
++		richiestaEconomale.setCodiceFiscale(soggetto.getCodiceFiscale());
++	}
++	
++	@Override
+ 	protected boolean isValidTipoRichiestaEconomale(RichiestaEconomale richiestaEconomale) {
+ 		return richiestaEconomale != null
+ 			&& richiestaEconomale.getTipoRichiestaEconomale() != null
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/InserisciPagamentoCassaEconomaleModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/InserisciPagamentoCassaEconomaleModel.java	(revision 10466)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/InserisciPagamentoCassaEconomaleModel.java	(revision 10468)
+@@ -64,7 +64,7 @@
+ 		request.setRichiestaEconomale(getRichiestaEconomale());
+ 		
+ 		// Lotto P
+-		popolaDatiHR();
++		//popolaDatiHR();
+ 		
+ 		return request;
+ 	}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleModel.java	(revision 10466)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleModel.java	(revision 10468)
+@@ -70,7 +70,10 @@
+ 	public void setUidValutaEuro(Integer uidValutaEuro) {
+ 		this.uidValutaEuro = uidValutaEuro;
+ 	}
+-
++	@Override
++	public Boolean getMaySearchHR() {
++		return Boolean.FALSE;
++	}
+ 	/**
+ 	 * @return the giustificativo
+ 	 */

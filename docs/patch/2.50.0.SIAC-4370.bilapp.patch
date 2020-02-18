@@ -1,0 +1,73 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/AggiornaDocumentoIvaEntrataModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/AggiornaDocumentoIvaEntrataModel.java	(revision 12999)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/AggiornaDocumentoIvaEntrataModel.java	(working copy)
+@@ -3,6 +3,7 @@
+ import java.math.BigDecimal;
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Calendar;
+ import java.util.Date;
+ import java.util.List;
+ 
+@@ -660,15 +661,19 @@
+ 		RegistroIva ri = getSubdocumentoIva().getRegistroIva();
+ 		GruppoAttivitaIva gai = ri.getGruppoAttivitaIva();
+ 		TipoChiusura tc = gai.getTipoChiusura();
++		Date dataProtocollo = StatoSubdocumentoIva.PROVVISORIO.equals(getSubdocumentoIva().getStatoSubdocumentoIva())
++				? getSubdocumentoIva().getDataProtocolloProvvisorio()
++				: getSubdocumentoIva().getDataProtocolloDefinitivo();
+ 		
++		Calendar cal = Calendar.getInstance();
++		cal.setTime(dataProtocollo);
++		int anno = cal.get(Calendar.YEAR);
++		
+ 		StampaIva stampaIva = new StampaIva();
+-		stampaIva.setAnnoEsercizio(getAnnoEsercizioInt());
++		stampaIva.setAnnoEsercizio(Integer.valueOf(anno));
+ 		stampaIva.setEnte(getEnte());
+ 		stampaIva.setListaRegistroIva(Arrays.asList(ri));
+ 		
+-		Date dataProtocollo = StatoSubdocumentoIva.PROVVISORIO.equals(getSubdocumentoIva().getStatoSubdocumentoIva())
+-				? getSubdocumentoIva().getDataProtocolloProvvisorio()
+-				: getSubdocumentoIva().getDataProtocolloDefinitivo();
+ 		
+ 		stampaIva.setPeriodo(Periodo.byDateAndTipoChiusura(dataProtocollo, tc));
+ 		stampaIva.setTipoStampaIva(TipoStampaIva.REGISTRO);
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/AggiornaDocumentoIvaSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/AggiornaDocumentoIvaSpesaModel.java	(revision 12999)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documentoiva/AggiornaDocumentoIvaSpesaModel.java	(working copy)
+@@ -3,6 +3,7 @@
+ import java.math.BigDecimal;
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Calendar;
+ import java.util.Date;
+ import java.util.List;
+ 
+@@ -617,16 +618,19 @@
+ 		RegistroIva ri = getSubdocumentoIva().getRegistroIva();
+ 		GruppoAttivitaIva gai = ri.getGruppoAttivitaIva();
+ 		TipoChiusura tc = gai.getTipoChiusura();
++		Date dataProtocollo = StatoSubdocumentoIva.PROVVISORIO.equals(getSubdocumentoIva().getStatoSubdocumentoIva())
++				? getSubdocumentoIva().getDataProtocolloProvvisorio()
++				: getSubdocumentoIva().getDataProtocolloDefinitivo();
+ 		
++		Calendar cal = Calendar.getInstance();
++		cal.setTime(dataProtocollo);
++		int anno = cal.get(Calendar.YEAR);
++		
+ 		StampaIva stampaIva = new StampaIva();
+-		stampaIva.setAnnoEsercizio(getAnnoEsercizioInt());
++		stampaIva.setAnnoEsercizio(Integer.valueOf(anno));
+ 		stampaIva.setEnte(getEnte());
+ 		stampaIva.setListaRegistroIva(Arrays.asList(ri));
+ 		
+-		Date dataProtocollo = StatoSubdocumentoIva.PROVVISORIO.equals(getSubdocumentoIva().getStatoSubdocumentoIva())
+-			? getSubdocumentoIva().getDataProtocolloProvvisorio()
+-			: getSubdocumentoIva().getDataProtocolloDefinitivo();
+-		
+ 		stampaIva.setPeriodo(Periodo.byDateAndTipoChiusura(dataProtocollo, tc));
+ 		stampaIva.setTipoStampaIva(TipoStampaIva.REGISTRO);
+ 		

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="emissioneOrdinativi" extends="capitoloDefault" namespace="/">
+			<!-- INCASSO -->
+		<action name="emissioneOrdinativiIncasso" class="emissioneOrdinativiIncassoAction">
+			<result>/jsp/ordinativi/incasso/step1.jsp</result>
+		</action>
+
+
+		<action name="emissioneOrdinativiIncassoElenco_completeStep1" class="emissioneOrdinativiIncassoElencoAction" method="completeStep1">
+			<result name="success" type="redirectAction">emissioneOrdinativiIncassoElenco_step2</result>
+			<result name="input">/jsp/ordinativi/incasso/step1.jsp</result>
+		</action>
+		
+		<action name="emissioneOrdinativiIncassoQuota_completeStep1" class="emissioneOrdinativiIncassoQuotaAction" method="completeStep1">
+			<result name="success" type="redirectAction">emissioneOrdinativiIncassoQuota_step2</result>
+			<result name="input">/jsp/ordinativi/incasso/step1.jsp</result>
+		</action>
+
+		<action name="emissioneOrdinativiIncassoProvvisorioCassa_completeStep1" class="emissioneOrdinativiIncassoProvvisorioCassaAction" method="completeStep1">
+			<result name="success" type="redirectAction">emissioneOrdinativiIncassoProvvisorioCassa_step2</result>
+			<result name="input">/jsp/ordinativi/incasso/step1.jsp</result>
+		</action>
+
+
+
+		
+		<action name="emissioneOrdinativiIncassoElenco_step2" class="emissioneOrdinativiIncassoElencoAction" method="step2">
+			<result>/jsp/ordinativi/incasso/step2Elenco.jsp</result>
+		</action>
+
+		<action name="emissioneOrdinativiIncassoQuota_step2" class="emissioneOrdinativiIncassoQuotaAction" method="step2">
+			<result>/jsp/ordinativi/incasso/step2Quota.jsp</result>
+		</action>
+
+		<action name="emissioneOrdinativiIncassoProvvisorioCassa_step2" class="emissioneOrdinativiIncassoProvvisorioCassaAction" method="step2">
+			<result>/jsp/ordinativi/incasso/step2QuotaPdc.jsp</result>
+		</action>
+
+
+
+		<action name="emissioneOrdinativiIncassoElenco_completeStep2" class="emissioneOrdinativiIncassoElencoAction" method="completeStep2">
+			<result name="success">/jsp/ordinativi/incasso/step2ElencoDisabled.jsp</result>
+			<result name="input">/jsp/ordinativi/incasso/step2Elenco.jsp</result>
+		</action>
+
+		<action name="emissioneOrdinativiIncassoQuota_completeStep2" class="emissioneOrdinativiIncassoQuotaAction" method="completeStep2">
+			<result name="success">/jsp/ordinativi/incasso/step2QuotaDisabled.jsp</result>
+			<result name="input">/jsp/ordinativi/incasso/step2Quota.jsp</result>
+		</action>
+		
+		<action name="emissioneOrdinativiIncassoProvvisorioCassa_completeStep2" class="emissioneOrdinativiIncassoProvvisorioCassaAction" method="completeStep2">
+			<result name="success">/jsp/ordinativi/incasso/step2QuotaPdcDisabled.jsp</result>
+			<result name="input">/jsp/ordinativi/incasso/step2QuotaPdc.jsp</result>
+		</action>
+		
+		
+		
+		<action name="emissioneOrdinativiIncassoProvvisorioCassa_backToStep1" class="emissioneOrdinativiIncassoProvvisorioCassaAction" method="backToStep1">
+			<result>/jsp/ordinativi/incasso/step1.jsp</result>
+		</action>
+
+		<action name="emissioneOrdinativiIncassoQuota_backToStep1" class="emissioneOrdinativiIncassoQuotaAction" method="backToStep1">
+			<result>/jsp/ordinativi/incasso/step1.jsp</result>
+		</action>
+
+		<action name="emissioneOrdinativiIncassoElenco_backToStep1" class="emissioneOrdinativiIncassoElencoAction" method="backToStep1">
+			<result>/jsp/ordinativi/incasso/step1.jsp</result>
+		</action>		
+
+
+
+		<action name="emissioneOrdinativiIncassoElenco_ottieniIdsElementiElaborati" class="emissioneOrdinativiIncassoElencoAction" method="ottieniIdsElementiElaborati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">uidsElenchiElaborati.*</param>
+			</result>
+		</action>
+
+		<action name="emissioneOrdinativiIncassoQuota_ottieniIdsElementiElaborati" class="emissioneOrdinativiIncassoElencoAction" method="ottieniIdsElementiElaborati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">uidsElaborati.*</param>
+			</result>
+		</action>
+		
+		<action name="emissioneOrdinativiIncassoProvvisoriCassa_ottieniIdsElementiElaborati" class="emissioneOrdinativiIncassoElencoAction" method="ottieniIdsElementiElaborati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">uidsElaborati.*</param>
+			</result>
+		</action>
+		
+		
+		
+		
+		<!-- PAGAMENTO -->
+		<action name="emissioneOrdinativiPagamento" class="emissioneOrdinativiPagamentoAction">
+			<result>/jsp/ordinativi/pagamento/step1.jsp</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoElenco_completeStep1" class="emissioneOrdinativiPagamentoElencoAction" method="completeStep1">
+			<result name="success" type="redirectAction">emissioneOrdinativiPagamentoElenco_step2</result>
+			<result name="input">/jsp/ordinativi/pagamento/step1.jsp</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoQuota_completeStep1" class="emissioneOrdinativiPagamentoQuotaAction" method="completeStep1">
+			<result name="success" type="redirectAction">emissioneOrdinativiPagamentoQuota_step2</result>
+			<result name="input">/jsp/ordinativi/pagamento/step1.jsp</result>
+		</action>
+		
+		<action name="emissioneOrdinativiPagamentoElenco_step2" class="emissioneOrdinativiPagamentoElencoAction" method="step2">
+			<result>/jsp/ordinativi/pagamento/step2Elenco.jsp</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoElenco_completeStep2" class="emissioneOrdinativiPagamentoElencoAction" method="completeStep2">
+			<result name="success">/jsp/ordinativi/pagamento/step2ElencoDisabled.jsp</result>
+			<result name="input">/jsp/ordinativi/pagamento/step2Elenco.jsp</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoQuota_step2" class="emissioneOrdinativiPagamentoQuotaAction" method="step2">
+			<result>/jsp/ordinativi/pagamento/step2Quota.jsp</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoQuota_completeStep2" class="emissioneOrdinativiPagamentoQuotaAction" method="completeStep2">
+			<result name="success">/jsp/ordinativi/pagamento/step2QuotaDisabled.jsp</result>
+			<result name="input">/jsp/ordinativi/pagamento/step2Quota.jsp</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoElenco_controllaDisponibilitaDiCassaCapitoli" class="emissioneOrdinativiPagamentoQuotaAction" method="controllaDisponibilitaDiCassaCapitoli">
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="emissioneOrdinativiPagamentoQuota_controllaDisponibilitaDiCassaCapitoli" class="emissioneOrdinativiPagamentoQuotaAction" method="controllaDisponibilitaDiCassaCapitoli">
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="emissioneOrdinativiPagamentoQuota_ottieniIdsElementiElaborati" class="emissioneOrdinativiPagamentoQuotaAction" method="ottieniIdsElementiElaborati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">uidsElaborati.*</param>
+			</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoQuota_backToStep1" class="emissioneOrdinativiPagamentoQuotaAction" method="backToStep1">
+			<result>/jsp/ordinativi/pagamento/step1.jsp</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoElenco_ottieniIdsElementiElaborati" class="emissioneOrdinativiPagamentoElencoAction" method="ottieniIdsElementiElaborati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">uidsElenchiElaborati.*</param>
+			</result>
+		</action>
+		<action name="emissioneOrdinativiPagamentoElenco_backToStep1" class="emissioneOrdinativiPagamentoElencoAction" method="backToStep1">
+			<result>/jsp/ordinativi/pagamento/step1.jsp</result>
+		</action>		
+		<!-- action name="emissioneOrdinativiPagamento" class="emissioneOrdinativiPagamentoAction">
+			<result>/jsp/ordinativi/pagamento/step1.jsp</result>
+		</action> -->
+	</package>
+</struts>

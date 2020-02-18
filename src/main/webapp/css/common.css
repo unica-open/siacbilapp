@@ -1,0 +1,300 @@
+/*
+*SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+*SPDX-License-Identifier: EUPL-1.2
+*/
+@CHARSET "UTF-8";
+
+/*
+ * Classi per il dataTable
+ */
+.dataTable {
+    /* Per evitare che una nuova chiamata al dataTables riformatti la dimensione della tabella */
+    width: 100% !important;
+    /* Impedisce il floating della tabella */
+    clear: both;
+}
+
+.dataTable-scroll-x{
+	overflow-x:auto;
+}
+
+.table-accordion {
+    width: 100%;
+}
+
+.table-accordion thead {
+    display: none;
+}
+
+/*
+ * Classi per lo spinner
+ */
+
+/* Impostazioni base dello spinner */
+.spinner {
+    /* Disposto inline */
+    display: inline-block;
+    /* Trasparente */
+    opacity: 0;
+    /* Larghezza automatica */
+    width: auto;
+    /* Nascosto, ma occupa comunque spazio (si' da evitare spostamenti del layout) */
+    visibility: hidden;
+
+    -webkit-transition: opacity 0.25s;
+    -moz-transition:    opacity 0.25s;
+    -o-transition:      opacity 0.25s;
+    transition:         opacity 0.25s;
+    
+    /* Dovrebbe bloccare la vibrazione dell'icona */
+    -webkit-filter: blur(0px);
+    filter:         blur(0px);
+}
+
+/* Impostazioni per quando lo spinner e' attivo */
+/* NOTA: la versione .active e' DEPRECATA (collisione con le classi di Bootstrap) */
+.spinner.active, .spinner.activated {
+    /* Per far si' che il cursore del puntatore si modifichi qualora passi sull'elemento */
+    cursor: progress;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Impostazioni per quando lo spinner è attivo */
+.add-on .spinner.active, .add-on .spinner.active {
+    /* Per far sì che il cursore del puntatore si modifichi qualora passi sull'elemento */
+    background-color: inherit;
+}
+
+.typeahead.dropdown-menu > .active > a, .typeahead.dropdown-menu > .active > a:hover, .typeahead.dropdown-menu > .active > a:focus {
+    background-color: #428bca;
+}
+
+/* Allineamento del testo a destra */
+.text-right, .table th.text-right, .table td.text-right {
+    text-align: right;
+}
+
+/* Wrapping del whitespace */
+.whitespace-pre {
+    white-space: pre;
+}
+
+/* Imposta il popover in cima alla pila */
+.popover.in {
+    /* Giusto sopra il modale */
+    z-index: 1060;
+}
+
+/* Trasforma in upper case */
+.uppercase {
+    text-transform: uppercase;
+}
+
+/* If the accordion is disabled, we shall not show the pointer for the cursor */
+.accordion-toggle.disabled, .accordion-toggle[disabled] {
+    cursor: default;
+}
+
+.disableCas .trailing:hover {
+    cursor: default;
+}
+
+/* Per ovviare ai problemi di overflow del collapse. Necessario controllare in ogni dove che non si rompa nulla */
+.collapse.in {
+    position: inherit;
+}
+
+/* Per evitare che il modale di bootbox sia alla stessa altezza del modale di bootstrap */
+.bootbox.modal {
+    z-index: 1060;
+}
+
+/* Per evitare che il backdrop di bootbox sia sotto il modale di bootstrap */
+.bootbox.modal + .modal-backdrop {
+    z-index: 1055;
+}
+
+/* Per gestire gli h3 come fossero degli elementi inline, o elementi come fossero degli h3 a meno del font */
+.h3 {
+    display: inline-block;
+    font-size: 21px;
+}
+
+.input-right{
+    text-align:right
+}
+
+/* Per gestire l'allineamento a sinistra delle azioni anche in nel thead */
+.table.tab_left thead td.tab_Right ul li {
+    text-align: left;
+}
+
+.typeahead.dropdown-menu {
+    visibility: visible;
+}
+
+.form-submitted input, .form-submitted input:hover,
+.form-submitted button, .form-submitted button:hover,
+.form-submitted select, .form-submitted select:hover,
+.form-submitted textarea, .form-submitted textarea:hover,
+.form-submitted a.btn, .form-submitted a.btn {
+    background-image: none;
+    box-shadow: none;
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.table td.row-small {
+    height: 5px;
+    padding: 0;
+}
+
+.row-fluid .span2p5 {
+    width: 19.148936170212765%;
+    *width: 19.09574468%;
+}
+
+.table td.span2p5, .table th.span2p5 {
+    float: none;
+    width: 164px;
+    margin-left: 0
+}
+
+.table tr.row-slim-bottom th, .table tr.row-slim-bottom td {
+    padding-bottom: 0;
+}
+
+.table tr.row-slim-top th, .table tr.row-slim-top td {
+    padding-top: 0;
+}
+
+.form-horizontal label.control-label.control-label-inherit {
+    text-align: inherit;
+    width: inherit;
+}
+
+.margin10-0 {
+    margin:10px 0;
+}
+
+.tooltip-left > .tooltip > .tooltip-inner {
+    text-align: left;
+}
+
+.no-margin-left {
+    margin-left: 0 !important;
+}
+
+thead.tablehead-show {
+	display: table-header-group;
+}
+
+li.gotopage > input {
+	width: 25px;
+	display: inline;
+	text-align: right;
+}
+
+span.green-text {
+	color: #26ae11
+}
+
+span.yellow-text {
+	color: #e6c71dcc
+}
+
+/**classe per background componenti competenza SIAC-6881**/
+td.componenti-competenza{
+    background-color: #e1e0e087;
+    vertical-align: middle;
+}
+
+td.componenti-competenza-dett{
+    background-color: #e1e0e087;
+    vertical-align: middle;
+}
+
+th.stanziamenti-titoli {
+    text-align: left;
+    vertical-align: middle;
+    background-color:#778899;
+}
+
+.componentiRowFirst{
+	 background-color:#778899;
+}
+.componentiRowOther{
+	 background-color:#a3aebd;
+}
+.componentiCompetenzaRow{
+    background-color:rgb(215,215,215);
+}
+.componentiCompetenzaRow-stanziamento{
+   background-color:rgb(200,200,200);
+}
+
+/*classi per uniformare tabella con riga SIAC-6881*/
+.custom-td-components {
+    padding-bottom: 0px !important;;
+    padding-right: 0px !important;
+    margin-top: -6px !important;;
+    padding-top: 0px !important;;
+    padding-left: 0px !important;;
+}
+
+.custom-table-components {
+    border-bottom-width: 0px;
+	border-right-width: 0px;
+	position: relative;
+	bottom: -6px;
+	margin-top: -6px;
+	margin-right: 1px;
+    margin-left: 0px;
+    background: white !important;
+}
+
+input.custom-new-component{
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    /*padding: 10px;*/
+    box-sizing: border-box;
+}
+.middle-chapter{
+    vertical-align: middle !important;
+}
+/***** Input number without arrows****/
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+/********/
+
+/**CSS Classes for default components in CapUscGest**/
+/**
+#.previsione-default{
+#    background-color:rgb(80, 71, 98);
+#}
+**/
+
+.previsione-default{
+    background-color:#D9D9D9;
+}
+.previsione-default-stanziamento{
+	background-color:#D0D0D0;
+}
+
+
+table#tabellaStanziamentiTotaliComponenti tbody tr.previsione-default:hover td{
+    background-color:#71658a;;
+    opacity: 0.6;
+}

@@ -1,0 +1,412 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/AttoDiLeggeServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/AttoDiLeggeServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/AttoDiLeggeServiceCachedImpl.java	(working copy)
+@@ -1,6 +1,7 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
+ import it.csi.siac.siacattser.frontend.webservice.AttoDiLeggeService;
+ import it.csi.siac.siacattser.frontend.webservice.msg.AggiornaAttoDiLegge;
+@@ -13,6 +14,7 @@
+ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaAttoDiLeggeResponse;
+ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaTipiAttoDiLegge;
+ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaTipiAttoDiLeggeResponse;
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaTipiAttoDiLeggeExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaTipiAttoDiLeggeKeyAdapter;
+@@ -24,8 +26,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class AttoDiLeggeServiceCachedImpl implements AttoDiLeggeService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/BilancioServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/BilancioServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/BilancioServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaDettaglioBilancioExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaDettaglioBilancioKeyAdapter;
+@@ -16,8 +18,8 @@
+  * @version 1.0.0 - 09/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class BilancioServiceCachedImpl implements BilancioService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreBilServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreBilServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreBilServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,10 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.context.annotation.Primary;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiClassificatoriBilByIdPadreExecutor;
+@@ -46,9 +49,9 @@
+  * @version 1.0.0 - 30/09/2014
+  *
+  */
+-//@Component
+-//@CachedService
+-//@Primary
++@Component
++@CachedService
++@Primary
+ public class ClassificatoreBilServiceCachedImpl implements ClassificatoreBilService {
+ 	
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ClassificatoreServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,10 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.context.annotation.Primary;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiStrutturaAmministrativoContabileExecutor;
+@@ -20,9 +17,9 @@
+  * @version 1.0.0 - 30/09/2014
+  *
+  */
+-//@Component
+-//@CachedService
+-//@Primary
++@Component
++@CachedService
++@Primary
+ public class ClassificatoreServiceCachedImpl implements ClassificatoreService {
+ 	
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/DocumentoIvaServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/DocumentoIvaServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/DocumentoIvaServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaAliquotaIvaExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaAttivitaIvaExecutor;
+@@ -32,8 +34,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class DocumentoIvaServiceCachedImpl implements DocumentoIvaService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/DocumentoServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/DocumentoServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/DocumentoServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaAttivitaOnereExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaCausale770Executor;
+@@ -60,8 +62,8 @@
+  * @version 1.0.0 - 30/09/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class DocumentoServiceCachedImpl implements DocumentoService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/GenericServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/GenericServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/GenericServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.ListaComunePerNomeExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.ListaComuniExecutor;
+@@ -34,8 +36,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class GenericServiceCachedImpl implements GenericService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/PreDocumentoEntrataServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/PreDocumentoEntrataServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/PreDocumentoEntrataServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.stereotype.Component;
+ 
+-import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiContiCorrenteExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiTipiCausaleEntrataExecutor;
+@@ -50,8 +52,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class PreDocumentoEntrataServiceCachedImpl implements PreDocumentoEntrataService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/PreDocumentoSpesaServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/PreDocumentoSpesaServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/PreDocumentoSpesaServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiContiTesoreriaExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiTipiCausaleSpesaExecutor;
+@@ -50,8 +52,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class PreDocumentoSpesaServiceCachedImpl implements PreDocumentoSpesaService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ProgettoServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ProgettoServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ProgettoServiceCachedImpl.java	(working copy)
+@@ -1,9 +1,7 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaTipiAmbitoExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaTipiAmbitoKeyAdapter;
+@@ -70,8 +72,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class ProgettoServiceCachedImpl implements ProgettoService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ProvvedimentoServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ProvvedimentoServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/ProvvedimentoServiceCachedImpl.java	(working copy)
+@@ -1,6 +1,7 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
+ import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
+ import it.csi.siac.siacattser.frontend.webservice.msg.AggiornaProvvedimento;
+@@ -13,6 +14,7 @@
+ import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimentoResponse;
+ import it.csi.siac.siacattser.frontend.webservice.msg.VerificaAnnullabilitaProvvedimento;
+ import it.csi.siac.siacattser.frontend.webservice.msg.VerificaAnnullabilitaProvvedimentoResponse;
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.TipiProvvedimentoExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.TipiProvvedimentoKeyAdapter;
+@@ -24,8 +26,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class ProvvedimentoServiceCachedImpl implements ProvvedimentoService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/SoggettoServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/SoggettoServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/SoggettoServiceCachedImpl.java	(working copy)
+@@ -1,8 +1,10 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
+ import it.csi.siac.siacattser.frontend.webservice.AttoDiLeggeService;
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.ListeGestioneSoggettoExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.ListeGestioneSoggettoKeyAdapter;
+@@ -53,8 +55,8 @@
+  * @version 1.0.0 - 02/10/2014
+  * 
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class SoggettoServiceCachedImpl implements SoggettoService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/VariazioneDiBilancioServiceCachedImpl.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/VariazioneDiBilancioServiceCachedImpl.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/VariazioneDiBilancioServiceCachedImpl.java	(working copy)
+@@ -1,7 +1,9 @@
+ package it.csi.siac.siacbilapp.frontend.serviceclient.delegate;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Component;
+ 
++import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaTipoVariazioneExecutor;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaTipoVariazioneKeyAdapter;
+@@ -42,8 +44,8 @@
+  * @version 1.0.0 - 02/10/2014
+  *
+  */
+-//@Component
+-//@CachedService
++@Component
++@CachedService
+ public class VariazioneDiBilancioServiceCachedImpl implements VariazioneDiBilancioService {
+ 
+ 	@Autowired
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/cache/CachedServiceExecutor.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/cache/CachedServiceExecutor.java	(revision 10869)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/serviceclient/delegate/cache/CachedServiceExecutor.java	(working copy)
+@@ -17,6 +17,10 @@
+ import javax.annotation.PostConstruct;
+ import javax.annotation.PreDestroy;
+ 
++import org.springframework.beans.factory.config.BeanDefinition;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.exception.CachedServiceExecutorException;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.rollingpolicy.CacheRollingPolicy;
+ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.rollingpolicy.DefaultCacheRollingPolicy;
+@@ -37,8 +41,8 @@
+  * @version 1.1.0 - 06/10/2014 - Use of {@link SoftReference}s for cached values
+  * 
+  */
+-//@Component
+-//@Scope(BeanDefinition.SCOPE_SINGLETON)
++@Component
++@Scope(BeanDefinition.SCOPE_SINGLETON)
+ public class CachedServiceExecutor {
+ 	
+ 	private final LogUtil log = new LogUtil(this.getClass());
+Index: src/main/resources/spring/serviceClientContext.xml
+===================================================================
+--- src/main/resources/spring/serviceClientContext.xml	(revision 10869)
++++ src/main/resources/spring/serviceClientContext.xml	(working copy)
+@@ -89,8 +89,7 @@
+ 
+ 
+     <!-- @@@@@@ Classificatori @@@@@@ -->
+-    <!--bean id="classificatoreBilService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean"-->
+-    <bean id="classificatoreBilService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
++    <bean id="classificatoreBilService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService" />
+         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ClassificatoreBilService?wsdl" />
+         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+@@ -98,7 +97,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/ClassificatoreBilService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
+-        <!--qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" /-->
++        <qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" />
+     </bean>
+ 
+     <!-- @@@@@@ Atti @@@@@@ -->
+@@ -468,8 +467,7 @@
+         <property name="advices" value="${service.proxy.advices}" />
+     </bean>
+ 
+-    <!--bean id="classificatoreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean"-->
+-    <bean id="classificatoreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
++    <bean id="classificatoreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService" />
+         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/ClassificatoreService?wsdl" />
+         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+@@ -477,7 +475,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.core}/ClassificatoreService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
+-        <!--qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" /-->
++        <qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" />
+     </bean>
+ 
+     <bean id="operazioneAsincronaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">

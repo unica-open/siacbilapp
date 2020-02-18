@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="capEntrataGestione" extends="capitoloDefault" namespace="/">
+    
+        <!-- Azioni riferite al CDU GESC025 Inserisce Capitolo Entrata Gestione -->
+            <!-- Ingresso nella GUI -->
+        <action name="inserisciCapEntrataGestione" class="inserisciCapitoloEntrataGestioneAction">
+            <result name="success">/jsp/capEntrataGestione/inserisciCapEntGest.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+            <!-- Inserimento -->
+        <action name="inserimentoCapEntrataGestione" class="inserisciCapitoloEntrataGestioneAction" method="inserisceCDU">
+            <result name="success">/jsp/capEntrataGestione/inserisciCapEntGestDISABLED.jsp</result>
+            <result name="success_aggiornamento_variazione" type="redirectAction">
+                 <param name="actionName">aggiornamentoVariazioneImporti</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="success_aggiornamentoConUEB_variazione" type="redirectAction">
+                 <param name="actionName">aggiornamentoVariazioneImportiUEB</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="success_inserimentoConUEB_variazione" type="redirectAction">
+                 <param name="actionName">enterStep3InserimentoVariazioniImportiConUEB</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="success_inserimentoSenzaUEB_variazione" type="redirectAction">
+                 <param name="actionName">enterStep3InserimentoVariazioniImportiSenzaUEB</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/capEntrataGestione/inserisciCapEntGest.jsp</result>
+        </action>
+            <!-- Visualizza totali di Gestione -->
+        <action name="visualizzaTotaliGestioneCapEntrataGestione" class="inserisciCapitoloEntrataGestioneAction"
+                method="visualizza">
+            <result name="success">/jsp/capEntrataGestione/visualizzaTotaliGestioneCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/inserisciCapEntGest.jsp</result>
+        </action>
+            <!-- Cerca -->
+        <action name="cercaCapEntrataGestione" class="inserisciCapitoloEntrataGestioneAction" method="cerca">
+            <result name="success">/jsp/capEntrataGestione/inserisciCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/inserisciCapEntGest.jsp</result>
+        </action>
+            <!-- Copia -->
+        <action name="copiaCapEntrataGestione" class="inserisciCapitoloEntrataGestioneAction" method="copia">
+            <result name="success">/jsp/capEntrataGestione/inserisciCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/inserisciCapEntGest.jsp</result>
+        </action>
+            <!-- Annulla -->
+        <action name="annullaInserisciCapEntrataGestione" class="inserisciCapitoloEntrataGestioneAction" method="annulla">
+            <result name="success" type="redirectAction">inserisciCapEntrataGestione</result>
+            <result name="input" type="redirectAction">inserisciCapEntrataGestione</result>
+        </action>
+            <!-- Redirezione verso la GUI di aggiornamento -->
+        <action name="redirezioneAggiornamentoCapEntrataGestione" class="inserisciCapitoloEntrataGestioneAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC034 Aggiorna Capitolo Entrata Gestione -->
+            <!-- Ingresso nella GUI -->
+        <action name="aggiornaCapEntrataGestione" class="aggiornaCapitoloEntrataGestioneAction">
+            <result name="success">/jsp/capEntrataGestione/aggiornaCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/inserisciCapEntGestDISABLED.jsp</result>
+        </action>
+            <!-- Aggiornamento -->
+        <action name="aggiornamentoCapEntrataGestione" class="aggiornaCapitoloEntrataGestioneAction" method="aggiornaCDU">
+            <result name="success">/jsp/capEntrataGestione/inserisciCapEntGestDISABLED.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/aggiornaCapEntGest.jsp</result>
+        </action>
+            <!-- Visualizza totali di Gestione --> <!-- DA METTERE A POSTO -->
+        <action name="visualizzaTotaliGestioneAggiornaCapEntrataGestione" class="aggiornaCapitoloEntrataGestioneAction" 
+                method="visualizza">
+            <result name="success">/jsp/capEntrataGestione/visualizzaTotaliGestioneCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/aggiornaCapEntGest.jsp</result>
+        </action>
+        
+        
+        <!-- Azioni riferite al CDU GESC038 Annulla Capitolo Entrata Gestione -->
+        <action name="annullaCapEntrataGestione" class="annullaCapitoloEntrataGestioneAction">
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaCapEntGestione</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/capEntrataGestione/risultatiRicercaCapEntGest.jsp</result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC011 Consulta Capitolo Entrata Gestione -->
+        <action name="consultaCapEntrataGestione" class="consultaCapitoloEntrataGestioneAction">
+            <result name="success">/jsp/capEntrataGestione/consultaCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/risultatiRicercaCapEntGest.jsp</result>
+        </action>
+        <action name="ricercaMovimentiCapitoloAjax_ottieniVincoliCapitoloEntrataGestione" class="ricercaMovimentiCapitoloAjaxAction" method="ottieniVincoliCapitoloEntrataGestione">
+            <result name="input" type="customMessagesJSON" />
+            <result name="success">/jsp/cap/include/consulta_vincoli.jsp</result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC005 Ricerca Capitolo Entrata Gestione --> <!-- INCOMPLETO -->
+            <!-- Ingresso nella GUI di ricerca con operazioni -->
+        <action name="ricercaConOperazioniCapEntrataGestione" class="ricercaCapitoloEntrataGestioneAction">
+            <result name="success">/jsp/capEntrataGestione/ricercaCapEntGest.jsp</result>
+        </action>
+        
+        <!-- Ricerca con operazioni -->
+        <action name="effettuaRicercaConOperazioniCapEntrataGestione" class="ricercaCapitoloEntrataGestioneAction" 
+                method="ricercaConOperazioniCDU">
+            <!-- result name="success" type="redirectAction">risultatiRicercaCapEntrataGestione</result -->
+            <result name="success" type="redirectAction">
+                 <param name="actionName">risultatiRicercaCapEntrataGestione</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/capEntrataGestione/ricercaCapEntGest.jsp</result>
+        </action>
+        
+            <!-- Ricerca come dato aggiuntivo -->
+        <action name="effettuaRicercaComeDatoAggiuntivoCapEntrataGestione" class="ricercaCapitoloEntrataGestioneAction"
+                method="ricercaComeDatoAggiuntivo">
+            <result name="success" type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    listaCapitoli.*
+                </param>
+            </result>
+        </action>
+
+        <!-- Risultati Ricerca con operazioni -->
+        <action name="risultatiRicercaCapEntrataGestione" class="risultatiRicercaCapitoloEntrataGestioneAction" >
+            <result name="success">/jsp/capEntrataGestione/risultatiRicercaCapEntGest.jsp</result>
+        </action>
+            <!-- AGGIORNA -->
+        <action name="risultatiRicercaCapEntrataGestioneAggiorna" class="risultatiRicercaCapitoloEntrataGestioneAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+                <param name="daAggiornamento">true</param>
+            </result>
+        </action>
+            <!-- ANNULLA -->
+        <action name="risultatiRicercaCapEntrataGestioneAnnulla" class="risultatiRicercaCapitoloEntrataGestioneAction" method="annulla">
+            <result name="success">/jsp/capEntrataGestione/risultatiRicercaCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/risultatiRicercaCapEntGest.jsp</result>
+        </action>
+            <!-- CONSULTA -->
+        <action name="risultatiRicercaCapEntrataGestioneConsulta" class="risultatiRicercaCapitoloEntrataGestioneAction" method="consulta">
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="uidDaConsultare">${uidDaConsultare}</param>
+            </result>
+        </action>
+            <!-- ELIMINA -->
+        <action name="risultatiRicercaCapEntrataGestioneElimina" class="risultatiRicercaCapitoloEntrataGestioneAction" method="elimina">
+            <result name="success">/jsp/capEntrataGestione/risultatiRicercaCapEntGest.jsp</result>
+            <result name="input">/jsp/capEntrataGestione/risultatiRicercaCapEntGest.jsp</result>
+        </action>
+        
+        
+        <!-- Action AJAX per i risultati di ricerca sintetica capitolo entrata Gestione -->
+        <action name="risultatiRicercaCapEntrataGestioneAjax" class="risultatiRicercaCapitoloEntrataGestioneAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        
+        <!-- **** Chiamate AJAX per annullamento ed eliminazione **** -->
+        <action name="annullaCapEntrataGestioneAjax" class="annullaCapitoloEntrataGestioneAction" method="execute">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*
+                </param>
+            </result>
+        </action>
+        <action name="eliminaCapEntrataGestioneAjax" class="eliminaCapitoloEntrataGestioneAction" method="execute">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*
+                </param>
+            </result>
+        </action>
+        
+        
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- **********                                                             ********** -->
+        <!-- **********                         MASSIVI                             ********** -->
+        <!-- **********                                                             ********** -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        
+        <!-- Azioni riferite al CDU GESC073 Ricerca Capitolo Entrata Gestione (Massiva) -->
+            <!-- Ingresso nella GUI di ricerca con operazioni -->
+        <action name="ricercaMassivaConOperazioniCapEntrataGestione" class="ricercaMassivaCapitoloEntrataGestioneAction">
+            <result name="success">/jsp/capEntrataGestione/ricercaCapEntGestMassivo.jsp</result>
+        </action>
+            <!-- Ricerca con operazioni -->
+        <action name="effettuaRicercaMassivaConOperazioniCapEntrataGestione" class="ricercaMassivaCapitoloEntrataGestioneAction" 
+                method="ricercaConOperazioniCDU">
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaMassivaCapEntrataGestione</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/capEntrataGestione/ricercaCapEntGestMassivo.jsp</result>
+        </action>
+        
+        	<!-- Ricerca per variazioni -->
+        <action name="ricercaMassivaVariazioneCodificheCapEntrataGestione" class="ricercaMassivaCapitoloEntrataGestioneAction" method="ricercaVariazioneCodifiche">
+            <result name="success" type="customJSON">
+            	<param name="includeProperties">errori.*, messaggi.*, informazioni.*, elementoCapitoloCodifiche.*</param>
+            </result>
+        </action>
+        
+        <!-- Risultati Ricerca con operazioni -->
+        <action name="risultatiRicercaMassivaCapEntrataGestione" class="risultatiRicercaMassivaCapitoloEntrataGestioneAction" >
+            <result name="success">/jsp/capEntrataGestione/risultatiRicercaCapEntGestMassivo.jsp</result>
+        </action>
+            <!-- AGGIORNA -->
+        <action name="risultatiRicercaMassivaCapEntrataGestioneAggiorna" class="risultatiRicercaMassivaCapitoloEntrataGestioneAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaMassivaCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="annoCapitoloDaAggiornare">${annoCapitoloDaAggiornare}</param>
+                <param name="numeroCapitoloDaAggiornare">${numeroCapitoloDaAggiornare}</param>
+                <param name="numeroArticoloDaAggiornare">${numeroArticoloDaAggiornare}</param>
+            </result>
+        </action>
+            <!-- CONSULTA -->
+        <action name="risultatiRicercaMassivaCapEntrataGestioneConsulta" class="risultatiRicercaMassivaCapitoloEntrataGestioneAction" method="consulta">
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaMassivaCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="annoCapitoloDaConsultare">${annoCapitoloDaConsultare}</param>
+                <param name="numeroCapitoloDaConsultare">${numeroCapitoloDaConsultare}</param>
+                <param name="numeroArticoloDaConsultare">${numeroArticoloDaConsultare}</param>
+            </result>
+        </action>
+        
+        <!-- Action AJAX per i risultati di ricerca sintetica massiva capitolo Entrata Gestione -->
+        <action name="risultatiRicercaMassivaCapEntrataGestioneAjax" class="risultatiRicercaCapitoloEntrataGestioneMassivoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC074 Consulta Capitolo Entrata  Gestione (Massivo) -->
+        <action name="consultaMassivaCapEntrataGestione" class="consultaMassivaCapitoloEntrataGestioneAction">
+            <result name="input">/jsp/capEntrataGestione/risultatiRicercaCapEntGestMassivo.jsp</result>
+            <result name="success">/jsp/capEntrataGestione/consultaCapEntGestMassivo.jsp</result>
+        </action>
+            <!-- Risultati ricerca AJAX -->
+        <action name="risultatiRicercaConsultazioneMassivaCapitoloEntrataGestione" class="risultatiRicercaConsultazioneMassivaCapitoloEntrataGestioneAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        <!-- Aggiorna Capitolo Entrata  Gestione (Massivo) -->
+        <action name="aggiornaMassivaCapEntrataGestione" class="aggiornaMassivaCapitoloEntrataGestioneAction">
+            <result name="input">/jsp/capEntrataGestione/aggiornaCapEntGestMassivoDISABLED.jsp</result>
+            <result name="success">/jsp/capEntrataGestione/aggiornaCapEntGestMassivo.jsp</result>
+        </action>
+        <action name="aggiornamentoMassivoCapEntrataGestione" class="aggiornaMassivaCapitoloEntrataGestioneAction" method="aggiornaCDU">
+            <result name="input">/jsp/capEntrataGestione/aggiornaCapEntGestMassivo.jsp</result>
+            <result name="success">/jsp/capEntrataGestione/aggiornaCapEntGestMassivoDISABLED.jsp</result>
+        </action>
+        
+        <action name="effettuaRicercaDettaglioMassivaCapEntrataGestione" class="ricercaMassivaCapitoloEntrataGestioneAction" method="ricercaDettaglio">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    maxUEB,
+                    listaCapitoloVariazione.*,
+                    capitoloMassivo\.annoCapitolo,
+                    capitoloMassivo\.numeroCapitolo,
+                    capitoloMassivo\.numeroArticolo,
+                    capitoloMassivo\.categoriaCapitolo.*,
+                    capitoloMassivo\.descrizione,
+                    capitoloMassivo\.categoriaCapitolo,
+                    capitoloMassivo\.listaImportiCapitoloEG\[\d+\]\.annoCompetenza,
+                    capitoloMassivo\.listaImportiCapitoloEG\[\d+\]\.stanziamento,
+                    capitoloMassivo\.listaImportiCapitoloEG\[\d+\]\.stanziamentoResiduo,
+                    capitoloMassivo\.listaImportiCapitoloEG\[\d+\]\.stanziamentoCassa,
+                    capitoloMassivo\.listaImportiCapitoloEG\[\d+\]\.fondoPluriennaleVinc
+                </param>
+            </result>
+        </action>
+        
+        <action name="effettuaRicercaDettaglioCapEntrataGestione" class="ricercaCapitoloEntrataGestioneAction" method="ricercaDettaglio">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    capitoloEntrataGestione.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="effettuaRicercaDettaglioCapDaVariazioneEntrataGestione" class="ricercaCapitoloEntrataGestioneAction" method="ricercaDettaglioDaVariazione">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    capitoloEntrataGestione.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="caricaListaClassificatoriGenericiCapitoloEntrataGestione" class="ricercaCapitoloEntrataGestioneAction" method="caricaListaClassificatoriGenerici">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaClassificatoreGenerico.*,
+                    labelClassificatoreGenerico.*,
+                    listaTipoFinanziamento.*,
+		      		listaTipoFondo.*,
+					listaRicorrenteEntrata.*,
+					listaPerimetroSanitarioEntrata.*,
+					listaTransazioneUnioneEuropeaEntrata.*,
+                </param>
+            </result>
+        </action>
+        
+        <action name="caricaListaClassificatoriGerarchiciCapitoloEntrataGestione" class="ricercaCapitoloEntrataGestioneAction" method="caricaListaClassificatoriGerarchici">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaTitoloEntrata.*,
+                </param>
+            </result>
+        </action>
+        <!-- Ajax capitolo -->
+        <action name="risultatiRicercaCapitoloEntrataGestioneModaleAjax" class="risultatiRicercaCapitoloEntrataGestioneModaleAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					sEcho,
+					iTotalRecords,
+					iTotalDisplayRecords,
+					iDisplayStart,
+					iDisplayLength,
+					aaData.*
+				</param>
+			</result>
+		</action>
+        
+    </package>
+</struts>

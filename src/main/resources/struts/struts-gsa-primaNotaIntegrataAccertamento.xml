@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gsaPrimaNotaIntegrataAccertamento" extends="gengsaCommon" namespace="/">
+		<!-- Accertamento -->
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA" class="completaValidaAccertamentoInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaValidaAccertamentoInsPrimaNotaIntegrataGSA_landOnPage</result>
+			<result name="input" type="redirectAction">risultatiRicercaRegistrazioneMovFinGSA</result>
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_landOnPage" class="completaValidaAccertamentoInsPrimaNotaIntegrataGSAAction" method="landOnPage">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_completeSalva" class="completaValidaAccertamentoInsPrimaNotaIntegrataGSAAction" method="completeSalva">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataGSA_postInserimento</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
+			</result>
+		</action> 
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_inserisciConto" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_aggiornaConto" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_eliminaConto" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazione" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazione">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<!-- COMPLETA -->
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA" class="completaAccertamentoInsPrimaNotaIntegrataGSAAction">
+			<result name="success" type="redirectAction">completaAccertamentoInsPrimaNotaIntegrataGSA_landOnPage</result>
+			<result name="input" type="redirectAction">risultatiRicercaRegistrazioneMovFinGSA</result>
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_landOnPage" class="completaAccertamentoInsPrimaNotaIntegrataGSAAction" method="landOnPage">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_completeSalva" class="completaAccertamentoInsPrimaNotaIntegrataGSAAction"  method="completeSalva">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataGSA_postInserimento</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
+			</result>
+		</action> 
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_inserisciConto" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_aggiornaConto" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_eliminaConto" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazione" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazione">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+	</package>
+</struts>

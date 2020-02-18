@@ -1,0 +1,38 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(revision 11575)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(working copy)
+@@ -1743,6 +1743,10 @@
+ 			dettaglio.setCausale770(getCausale770());
+ 		}
+ 		
++		if(getTipoSommaNonSoggetta() != null && getTipoSommaNonSoggetta().getUid() != 0){
++			dettaglio.setCodiceSommaNonSoggetta(getTipoSommaNonSoggetta());
++		}
++		
+ 		DocumentoSpesa documentoSpesa = new DocumentoSpesa();
+ 		documentoSpesa.setUid(documento.getUid());
+ 		dettaglio.setDocumentoSpesa(documentoSpesa);
+@@ -1765,7 +1769,8 @@
+ 		if(getCausale770() != null && getCausale770().getUid() != 0) {
+ 			dettaglio.setCausale770(getCausale770());
+ 		}
+-		if(getTipoSommaNonSoggetta() != null){
++		
++		if(getTipoSommaNonSoggetta() != null && getTipoSommaNonSoggetta().getUid() != 0){
+ 			dettaglio.setCodiceSommaNonSoggetta(getTipoSommaNonSoggetta());
+ 		}
+ 		
+Index: src/main/webapp/jsp/documento/aggiornamento/ritenuteDocumentoSpesa.jsp
+===================================================================
+--- src/main/webapp/jsp/documento/aggiornamento/ritenuteDocumentoSpesa.jsp	(revision 11575)
++++ src/main/webapp/jsp/documento/aggiornamento/ritenuteDocumentoSpesa.jsp	(working copy)
+@@ -206,7 +206,7 @@
+ 					<div class="control-group" data-hidden-natura="<s:property value="codiceEsenzione"/> <s:property value="codiceSplitReverse"/>">
+ 						<label for="tipoSommaNonSoggetta" class="control-label">Codice somma non soggetta</label>
+ 						<div class="controls">
+-							<select id="tipoSommaNonSoggetta" name="dettaglioOnere.codiceSommaNonSoggetta.uid" class="span9" disabled="disabled"></select>
++							<select id="tipoSommaNonSoggetta" name="tipoSommaNonSoggetta.uid" class="span9" disabled="disabled"></select>
+ 						</div>
+ 					</div>
+ 					<div class="control-group">

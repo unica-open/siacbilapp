@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="causaleEPGSA" extends="capitoloDefault" namespace="/">
+			<!-- Inserimento -->
+		<action name="inserisciCausaleEPGSA" class="inserisciCausaleEPGSAAction">
+			<result name="success" type="redirectAction">inserisciCausaleEPGSA_step1</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_step1" class="inserisciCausaleEPGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_annullaStep1" class="inserisciCausaleEPGSAAction" method="annullaStep1">
+			<result name="success" type="redirectAction">inserisciCausaleEPGSA_step1</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_completeStep1" class="inserisciCausaleEPGSAAction" method="completeStep1">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">inserisciCausaleEPGSA_step2</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_backToStep1" class="inserisciCausaleEPGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">inserisciCausaleEPGSA_step1</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_step2" class="inserisciCausaleEPGSAAction" method="step2">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_annullaStep2" class="inserisciCausaleEPGSAAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciCausaleEPGSA_step2</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_completeStep2" class="inserisciCausaleEPGSAAction" method="completeStep2">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">inserisciCausaleEPGSA_step3</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_step3" class="inserisciCausaleEPGSAAction" method="step3">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		
+		<action name="inserisciCausaleEPGSA_ottieniListaTipoEventoFiltrata" class="inserisciCausaleEPGSAAction" method="ottieniListaTipoEventoFiltrata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEventoFiltrata.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciCausaleEPGSA_ottieniListaConti" class="inserisciCausaleEPContoOperazioneGSAAction" method="ottieniListaConti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+		</action>
+		<action name="inserisciCausaleEPGSA_inserisciConto" class="inserisciCausaleEPContoOperazioneGSAAction" method="inserisciConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciCausaleEPGSA_aggiornaConto" class="inserisciCausaleEPContoOperazioneGSAAction" method="aggiornaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciCausaleEPGSA_eliminaConto" class="inserisciCausaleEPContoOperazioneGSAAction" method="eliminaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+			<!-- Ricerca -->
+		<action name="ricercaCausaleEPGSA" class="ricercaCausaleEPGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/ricerca.jsp</result>
+		</action>
+		<action name="effettuaRicercaCausaleEPGSA" class="ricercaCausaleEPGSAAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPGSA" class="risultatiRicercaCausaleEPGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPGSA_aggiorna" class="risultatiRicercaCausaleEPGSAAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaCausaleEPGSA</param>
+				<param name="causaleEP.uid">${causaleEP.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPGSA_valida" class="risultatiRicercaCausaleEPGSAAction" method="valida">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPGSA_consulta" class="risultatiRicercaCausaleEPGSAAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaCausaleEPGSA</param>
+				<param name="causaleEP.uid">${causaleEP.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPGSA_annulla" class="risultatiRicercaCausaleEPGSAAction" method="annulla">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPGSA_elimina" class="risultatiRicercaCausaleEPGSAAction" method="elimina">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPGSAAjax" class="risultatiRicercaCausaleEPGSAAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+			<!-- Consultazione -->
+		<action name="consultaCausaleEPGSA" class="consultaCausaleEPGSAAction">
+			<result name="input" type="redirectAction">risultatiRicercaCausaleEPGSA</result>
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/consulta.jsp</result>
+		</action>
+		
+			<!-- Aggiornamento -->
+		<action name="aggiornaCausaleEPGSA" class="aggiornaCausaleEPGSAAction">
+			<result name="input" type="redirectAction">risultatiRicercaCausaleEPGSA</result>
+			<result name="success" type="redirectAction">aggiornaCausaleEPGSA_step1</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_step1" class="aggiornaCausaleEPGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_annullaStep1" class="aggiornaCausaleEPGSAAction" method="annullaStep1">
+			<result name="success" type="redirectAction">aggiornaCausaleEPGSA_step1</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_completeStep1" class="aggiornaCausaleEPGSAAction" method="completeStep1">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">aggiornaCausaleEPGSA_step2</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_backToStep1" class="aggiornaCausaleEPGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">aggiornaCausaleEPGSA_step1</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_step2" class="aggiornaCausaleEPGSAAction" method="step2">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_annullaStep2" class="aggiornaCausaleEPGSAAction" method="annullaStep2">
+			<result name="success" type="redirectAction">aggiornaCausaleEPGSA_step2</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_completeStep2" class="aggiornaCausaleEPGSAAction" method="completeStep2">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">aggiornaCausaleEPGSA_step3</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_step3" class="aggiornaCausaleEPGSAAction" method="step3">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/causali/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		
+		<action name="aggiornaCausaleEPGSA_ottieniListaTipoEventoFiltrata" class="aggiornaCausaleEPGSAAction" method="ottieniListaTipoEventoFiltrata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEventoFiltrata.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="aggiornaCausaleEPGSA_ottieniListaConti" class="aggiornaCausaleEPContoOperazioneGSAAction" method="ottieniListaConti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+		</action>
+		<action name="aggiornaCausaleEPGSA_inserisciConto" class="aggiornaCausaleEPContoOperazioneGSAAction" method="inserisciConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaCausaleEPGSA_aggiornaConto" class="aggiornaCausaleEPContoOperazioneGSAAction" method="aggiornaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="aggiornaCausaleEPGSA_eliminaConto" class="aggiornaCausaleEPContoOperazioneGSAAction" method="eliminaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*, classeDiConciliazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!--    *********************************************************AGGIUNTI IL 13/01/2015 CR-2865 BEGIN ************************************  -->
+		<action name="ricercaCausaleEPGSA_caricaListaClassi" class="ricercaCausaleEPGSAAction" method="caricaListaClassi">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClassi.*</param>
+			</result>
+		</action>
+		<action name="ricercaCausaleEPGSA_caricaListaTitoli" class="ricercaCausaleEPGSAAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaCausaleEPGSA_caricaListaClasseSoggetto" class="ricercaCausaleEPGSAAction" method="caricaListaClasseSoggetto">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClasseSoggetto.* </param>
+			</result>
+		</action>
+		<action name="ricercaCausaleEPGSA_caricaListaTipoEvento" class="ricercaCausaleEPGSAAction" method="caricaListaTipoEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEvento.*</param>
+			</result>
+		</action>
+<!--    *********************************************************AGGIUNTI IL 13/01/2015 CR-2865 FINE ************************************  -->
+			
+		
+	</package>
+</struts>

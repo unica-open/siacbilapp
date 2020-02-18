@@ -1,0 +1,28 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(revision 12865)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(working copy)
+@@ -897,7 +897,11 @@
+ 			elementoCapitoloVariazioneDaAnnullare.setDatiAccessorii("DA ANNULLARE");
+ 			elementoCapitoloVariazioneDaAnnullare.setDaAnnullare(Boolean.TRUE);
+ 		}
++		if(hasErrori()){
++			return SUCCESS;
++		}
+ 		
++		
+ 		log.debug(methodName, "Prendo il capitolo da annullare");
+ 		InserisciDettaglioVariazioneImportoCapitolo request = model.creaRequestInserisciDettaglioVariazioneImportoAnnullaCapitolo();
+ 		
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(revision 12865)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(working copy)
+@@ -567,6 +567,7 @@
+ 			addErrore(ErroreCore.ERRORE_DI_SISTEMA.getErrore("Invocazione non possibile per il capitolo"
+ 					+ elementoCapitoloVariazioneDaAnnullare.getAnnoCapitolo() + " / " + elementoCapitoloVariazioneDaAnnullare.getNumeroCapitolo() + "/"
+ 					+ elementoCapitoloVariazioneDaAnnullare.getNumeroArticolo()));
++			return SUCCESS;
+ 		} else if (Boolean.FALSE.equals(ReflectionUtil.getBooleanField(responseAnnullabilita, "annullabilitaCapitolo"))) {
+ 			addErrori(responseAnnullabilita);
+ 			return SUCCESS;

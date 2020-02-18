@@ -1,0 +1,340 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/attivitaiva/stampa/StampaRegistroIvaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/attivitaiva/stampa/StampaRegistroIvaAction.java	(revision 12296)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/attivitaiva/stampa/StampaRegistroIvaAction.java	(working copy)
+@@ -9,6 +9,7 @@
+ import org.springframework.web.context.WebApplicationContext;
+ 
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
+ import it.csi.siac.siacfin2app.frontend.ui.model.attivitaiva.stampa.StampaRegistroIvaModel;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaRegistroIva;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaRegistroIvaResponse;
+@@ -112,6 +113,8 @@
+ 	 * Validazione per il metodo {@link #effettuaStampaMultipla()}.
+ 	 */
+ 	public void validateEffettuaStampaMultipla() {
++		// SIAC-4108
++		checkCondition(false, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("stampa multipla registri iva"), true);
+ 		
+ 		if (model.isFlagNoCheckRegistroIva()) {
+ 			return;
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/GenericStampaIvaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/GenericStampaIvaModel.java	(revision 12295)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/GenericStampaIvaModel.java	(working copy)
+@@ -1,5 +1,9 @@
+ package it.csi.siac.siacfin2app.frontend.ui.model.attivitaiva.stampa;
+ 
++import java.math.BigDecimal;
++import java.util.ArrayList;
++import java.util.List;
++
+ import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaGruppoAttivitaIva;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaRegistroIva;
+@@ -10,10 +14,6 @@
+ import it.csi.siac.siacfin2ser.model.TipoRegistroIva;
+ import it.csi.siac.siacfin2ser.model.TipoStampa;
+ 
+-import java.math.BigDecimal;
+-import java.util.ArrayList;
+-import java.util.List;
+-
+ /**
+  * Classe di model generica per le stampa dell'iva.
+  * 
+@@ -21,7 +21,7 @@
+  * @version 1.0.0 - 16/07/2014
+  *
+  */
+-public class GenericStampaIvaModel extends GenericBilancioModel {
++public abstract class GenericStampaIvaModel extends GenericBilancioModel {
+ 	
+ 	/** Per la serializzazione */
+ 	private static final long serialVersionUID = -2913331277748746802L;
+@@ -188,6 +188,11 @@
+ 		return getGruppoAttivitaIva() != null && getGruppoAttivitaIva().getUid() != 0;
+ 	}
+ 	
++	/**
++	 * @return the azioneIndietro
++	 */
++	public abstract String getAzioneIndietro();
++	
+ 	/* **** Requests **** */
+ 	
+ 	/**
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/RicercaStampaIvaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/RicercaStampaIvaModel.java	(revision 12295)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/RicercaStampaIvaModel.java	(working copy)
+@@ -187,7 +187,12 @@
+ 	
+ 	@Override
+ 	public Boolean getPeriodoAbilitato() {
+-		return getTipoChiusura() != null;
++		return Boolean.valueOf(getTipoChiusura() != null);
++	}
++	
++	@Override
++	public String getAzioneIndietro() {
++		return "";
+ 	}
+ 	
+ 	/* **** Requests **** */
+@@ -204,7 +209,7 @@
+ 		request.setParametriPaginazione(creaParametriPaginazione());
+ 		
+ 		// Popolamento della stampa
+-		getStampaIva().setFlagPagati(getFlagDocumentiIncassatiNotNull() || getFlagDocumentiPagatiNotNull());
++		getStampaIva().setFlagPagati(Boolean.TRUE.equals(getFlagDocumentiIncassatiNotNull()) || Boolean.TRUE.equals(getFlagDocumentiPagatiNotNull()));
+ 		getStampaIva().getListaRegistroIva().add(getRegistroIva());
+ 		request.setStampaIva(getStampaIva());
+ 		
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaLiquidazioneIvaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaLiquidazioneIvaModel.java	(revision 12295)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaLiquidazioneIvaModel.java	(working copy)
+@@ -1,12 +1,12 @@
+ package it.csi.siac.siacfin2app.frontend.ui.model.attivitaiva.stampa;
+ 
++import java.util.ArrayList;
++import java.util.List;
++
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.StampaLiquidazioneIva;
+ import it.csi.siac.siacfin2ser.model.ProRataEChiusuraGruppoIva;
+ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+ 
+-import java.util.ArrayList;
+-import java.util.List;
+-
+ /**
+  * Classe di model per la stampa della liquidazione iva.
+  * 
+@@ -25,6 +25,11 @@
+ 		setTitolo("Stampa liquidazione iva");
+ 		setTemplateConferma(ErroreFin.CONFERMA_STAMPA_LIQUIDAZIONE_IVA.getErrore("___").getTesto());
+ 	}
++	
++	@Override
++	public String getAzioneIndietro() {
++		return "stampaLiquidazioneIva";
++	}
+ 
+ 	/* **** Requests **** */
+ 	
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaRegistroIvaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaRegistroIvaModel.java	(revision 12296)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaRegistroIvaModel.java	(working copy)
+@@ -155,21 +155,26 @@
+ 	 * @return the documentiPagatiVisibile
+ 	 */
+ 	public Boolean getDocumentiPagatiVisibile() {
+-		return TipoRegistroIva.ACQUISTI_IVA_DIFFERITA.equals(getTipoRegistroIva());
++		return Boolean.valueOf(TipoRegistroIva.ACQUISTI_IVA_DIFFERITA.equals(getTipoRegistroIva()));
+ 	}
+ 	
+ 	/**
+ 	 * @return the documentiIncassatiVisibile
+ 	 */
+ 	public Boolean getDocumentiIncassatiVisibile() {
+-		return TipoRegistroIva.VENDITE_IVA_DIFFERITA.equals(getTipoRegistroIva());
++		return Boolean.valueOf(TipoRegistroIva.VENDITE_IVA_DIFFERITA.equals(getTipoRegistroIva()));
+ 	}
+ 	
+ 	/**
+ 	 * @return the registoIvaAbilitato
+ 	 */
+ 	public Boolean getRegistroIvaAbilitato() {
+-		return getGruppoAttivitaIva() != null && getGruppoAttivitaIva().getUid() != 0 && getTipoRegistroIva() != null;
++		return Boolean.valueOf(getGruppoAttivitaIva() != null && getGruppoAttivitaIva().getUid() != 0 && getTipoRegistroIva() != null);
++	}
++	
++	@Override
++	public String getAzioneIndietro() {
++		return "stampaRegistroIva";
+ 	}
+ 
+ 	/* **** Requests **** */
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaRiepilogoAnnualeIvaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaRiepilogoAnnualeIvaModel.java	(revision 12295)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/attivitaiva/stampa/StampaRiepilogoAnnualeIvaModel.java	(working copy)
+@@ -22,6 +22,11 @@
+ 		setTitolo("Stampa riepilogo annuale iva");
+ 		setTemplateConferma(ErroreFin.CONFERMA_STAMPA_RIEPILOGO_ANNUALE_IVA.getErrore("___").getTesto());
+ 	}
++	
++	@Override
++	public String getAzioneIndietro() {
++		return "stampaRiepilogoAnnualeIva";
++	}
+ 
+ 	/* **** Requests **** */
+ 	
+Index: src/main/webapp/js/local/attivitaIva/stampe/stampaRegistroIva.js
+===================================================================
+--- src/main/webapp/js/local/attivitaIva/stampe/stampaRegistroIva.js	(revision 12373)
++++ src/main/webapp/js/local/attivitaIva/stampe/stampaRegistroIva.js	(working copy)
+@@ -20,71 +20,68 @@
+         });
+ 
+         $("#pulsanteStampa").substituteHandler("click", function() {
+-            st.aperturaModaleConfermaStampa($("#registroIva"), "Registro Iva", true);
++            st.aperturaModaleConfermaStampa($("#registroIva"), "Registro Iva", false);
++            // SIAC-4108
++            //st.aperturaModaleConfermaStampa($("#registroIva"), "Registro Iva", true);
+         });
+         
+-        $("#pulsanteConfermaStampaIva").substituteHandler("click", function() {
+-            var selectedOption = $("#registroIva").find("option:selected");
+-            var url = "stampaRegistroIva_effettuaStampaMultipla.do";
+-            var obj;
+-            
+-            if (selectedOption.val() === '') {
+-            	$("#modaleConfermaStampaIva").modal("hide");
+-            	 
+-            	obj = $("form").serializeObject();
+-            	
+-            	$.postJSON(url, obj)
+-            	.then(function (data) {
+-            		if (impostaDatiNegliAlert(data.errori, alertErrori)) {
+-            			return;
+-            		}
+-            		
+-            		if (data.messaggi && data.messaggi.length) {
+-            			handleRetry(data.messaggi, url, obj, $.noop, mostraPaginaSuccesso);
+-            			return;
+-            		}
+-            		
+-            		mostraPaginaSuccesso();
+-            	});
+-            	
+-            	return false;
+-            }
+-            else {
+-            	return true;
+-            }
+-        });
++//        $("#pulsanteConfermaStampaIva").substituteHandler("click", function() {
++//            var selectedOption = $("#registroIva").find("option:selected");
++//            var url = "stampaRegistroIva_effettuaStampaMultipla.do";
++//            var obj;
++//            
++//            if (selectedOption.val() === '') {
++//                $("#modaleConfermaStampaIva").modal("hide");
++//                obj = $("form").serializeObject();
++//                $.postJSON(url, obj)
++//                .then(function (data) {
++//                    if (impostaDatiNegliAlert(data.errori, alertErrori)) {
++//                        return;
++//                    }
++//                    if (data.messaggi && data.messaggi.length) {
++//                        handleRetry(data.messaggi, url, obj, $.noop, mostraPaginaSuccesso);
++//                        return;
++//                    }
++//                    mostraPaginaSuccesso();
++//                });
++//                return false;
++//            }
++//            else {
++//            	return true;
++//            }
++//        });
+     });
+-    
+-    
+-    function handleRetry(array, url, data, failCallback, endCallback) {
+-    	var str = '';
+-        var btnNo = {label: 'No, indietro', 'class': 'btn', callback: failCallback};
+-        var btnOk = {label: 'Si, prosegui', 'class': 'btn', callback: function() {
+-            var div = $('.bootbox');
+-            var btns = div.find('a[data-handler]').overlay('show');
+-            data.flagNoCheckRegistroIva = true;
+-            $.postJSON(url, data)
+-            .then(endCallback)
+-            .always(function() {
+-                btns.overlay('hide');
+-                div.modal('hide');
+-            });
+-            return false;
+-        }};
+-        if(array) {
+-            str = array.reduce(function(acc, el) {
+-                if(el.testo) {
+-                    return acc + '<li>' + el.testo + '</li>';
+-                }
+-                return acc + '<li>' + el.codice + ' - ' + el.descrizione + '</li>';
+-            }, '<ul>') + '</ul>';
+-        }
+-
+-        bootbox.dialog(str, [btnNo, btnOk], {animate: true, classes: 'dialogWarn', header: 'Attenzione', backdrop: 'static'});
+-    }
+-
+-    
+-    function mostraPaginaSuccesso() {
+-    	$("form").attr("action", "stampaRegistroIva_mostraPaginaSuccesso.do").submit();
+-    }
++//    
++//    
++//    function handleRetry(array, url, data, failCallback, endCallback) {
++//    	var str = '';
++//        var btnNo = {label: 'No, indietro', 'class': 'btn', callback: failCallback};
++//        var btnOk = {label: 'Si, prosegui', 'class': 'btn', callback: function() {
++//            var div = $('.bootbox');
++//            var btns = div.find('a[data-handler]').overlay('show');
++//            data.flagNoCheckRegistroIva = true;
++//            $.postJSON(url, data)
++//            .then(endCallback)
++//            .always(function() {
++//                btns.overlay('hide');
++//                div.modal('hide');
++//            });
++//            return false;
++//        }};
++//        if(array) {
++//            str = array.reduce(function(acc, el) {
++//                if(el.testo) {
++//                    return acc + '<li>' + el.testo + '</li>';
++//                }
++//                return acc + '<li>' + el.codice + ' - ' + el.descrizione + '</li>';
++//            }, '<ul>') + '</ul>';
++//        }
++//
++//        bootbox.dialog(str, [btnNo, btnOk], {animate: true, classes: 'dialogWarn', header: 'Attenzione', backdrop: 'static'});
++//    }
++//
++//    
++//    function mostraPaginaSuccesso() {
++//    	$("form").attr("action", "stampaRegistroIva_mostraPaginaSuccesso.do").submit();
++//    }
+ }(jQuery, this));
+\ No newline at end of file
+Index: src/main/webapp/jsp/attivitaIva/stampe/stampaRegistroIva.jsp
+===================================================================
+--- src/main/webapp/jsp/attivitaIva/stampe/stampaRegistroIva.jsp	(revision 12295)
++++ src/main/webapp/jsp/attivitaIva/stampe/stampaRegistroIva.jsp	(working copy)
+@@ -73,7 +73,7 @@
+ 									</div>
+ 								</div>
+ 								<div class="control-group">
+-									<label for="registroIva" class="control-label">Registro iva</label>
++									<label for="registroIva" class="control-label">Registro iva *</label>
+ 									<div class="controls">
+ 										<s:select list="listaRegistroIva" id="registroIva" name="registroIva.uid" required="true" disabled="!registroIvaAbilitato"
+ 											cssClass="span6" headerKey="" headerValue="" listKey="uid" listValue="%{codice + ' - ' + descrizione}" data-overlay="" />
+Index: src/main/webapp/jsp/attivitaIva/stampe/successoStampa.jsp
+===================================================================
+--- src/main/webapp/jsp/attivitaIva/stampe/successoStampa.jsp	(revision 12295)
++++ src/main/webapp/jsp/attivitaIva/stampe/successoStampa.jsp	(working copy)
+@@ -14,7 +14,7 @@
+ 			<div class="span12 contentPage">
+ 				<s:include value="/jsp/include/messaggi.jsp" />
+ 				<p class="margin-medium">
+-					<s:url action="redirectToCruscotto" var="indietroURL" />
++					<s:url action="%{azioneIndietro}" var="indietroURL" />
+ 					<s:a cssClass="btn" href="%{indietroURL}">Indietro</s:a>
+ 				</p>
+ 			</div>

@@ -1,0 +1,29 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/GenericDocumentoModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/GenericDocumentoModel.java	(revision 12395)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/GenericDocumentoModel.java	(working copy)
+@@ -724,6 +724,11 @@
+ 			if(StringUtils.isNotBlank(oggetto)) {
+ 				utility.setOggetto(oggetto);
+ 			}
++			
++			// Injetto lo stato operativo se e solo se è stato inizializzato
++			if(attoAmministrativo.getStatoOperativo() != null && !attoAmministrativo.getStatoOperativo().isEmpty()) {
++				utility.setStatoOperativo(attoAmministrativo.getStatoOperativo());
++			}
+ 		}
+ 		
+ 		
+@@ -737,11 +742,8 @@
+ 			utility.setStrutturaAmministrativoContabile(strutturaAmministrativoContabile);
+ 		}
+ 		
+-		// Injetto lo stato operativo se e solo se è stato inizializzato
+-		if(attoAmministrativo.getStatoOperativo() != null && !attoAmministrativo.getStatoOperativo().isEmpty()) {
+-			utility.setStatoOperativo(attoAmministrativo.getStatoOperativo());
+-		}
+ 		
++		
+ 		return utility;
+ 	}
+ 	

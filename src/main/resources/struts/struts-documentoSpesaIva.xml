@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="documentoSpesaIva" extends="capitoloDefault" namespace="/">
+    	
+    	<!-- INSERIMENTO -->
+    	<action name="inserisciDocumentoIvaSpesa" class="inserisciDocumentoIvaSpesaAction">
+    		<result name="success">/jsp/documentoIva/inserisciDocumentoIva.jsp</result>
+    		<result name="input" type="redirectAction">
+    			<param name="actionName">aggiornaDocumentoSpesa</param>
+    			<param name="namespace">/</param>
+    			<param name="uidDocumentoDaAggiornare">${uidDocumentoCollegato}</param>
+    		</result>
+    	</action>
+    	
+    	<action name="inserimentoDocumentoIvaSpesa" class="inserisciDocumentoIvaSpesaAction" method="inserisciDocumentoIva">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">aggiornaDocumentoIvaSpesa</param>
+    			<param name="namespace">/</param>
+    			<param name="uidSubdocumentoIva">${uidSubdocumentoIva}</param>
+    		</result>
+    		<result name="input">/jsp/documentoIva/inserisciDocumentoIva.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciDocumentoIvaSpesa_caricaMovimentiIva" class="inserisciDocumentoIvaSpesaAction" method="caricaMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="inserisciDocumentoIvaSpesa_apriCollapseMovimentiIva" class="inserisciDocumentoIvaSpesaAction" method="apriCollapseMovimentiIva">
+    		<result name="success">/jsp/documentoIva/collapseMovimentiIva.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciDocumentoIvaSpesa_inserisciMovimentiIva" class="inserisciDocumentoIvaSpesaAction" method="inserisciMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="inserisciDocumentoIvaSpesa_apriModaleMovimentiIva" class="inserisciDocumentoIvaSpesaAction" method="apriModaleMovimentiIva">
+    		<result name="success">/jsp/documentoIva/modaleMovimentiIva.jsp</result>
+    	</action>
+    	
+    	<action name="inserisciDocumentoIvaSpesa_aggiornaMovimentiIva" class="inserisciDocumentoIvaSpesaAction" method="aggiornaMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="inserisciDocumentoIvaSpesa_eliminaMovimentiIva" class="inserisciDocumentoIvaSpesaAction" method="eliminaMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<!-- RICERCA -->
+    	<action name="ricercaDocumentoIvaSpesa" class="ricercaDocumentoIvaSpesaAction">
+    		<result name="success">/jsp/documentoIva/ricercaDocumentoIva.jsp</result>
+    		<result name="input">/jsp/documentoIva/ricercaDocumentoIva.jsp</result>
+    	</action>
+    	
+    	<action name="effettuaRicercaDocumentoIvaSpesa" class="ricercaDocumentoIvaSpesaAction" method="ricerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaDocumentoIvaSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/documentoIva/ricercaDocumentoIva.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaDocumentoIvaSpesa" class="risultatiRicercaDocumentoIvaSpesaAction">
+			<result name="success">/jsp/documentoIva/risultatiRicercaDocumentoIva.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		
+		
+		<action name="risultatiRicercaDocumentoIvaSpesaAjax" class="risultatiRicercaDocumentoIvaSpesaAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					sEcho,
+					iTotalRecords,
+					iTotalDisplayRecords,
+					iDisplayStart,
+					iDisplayLength,
+					aaData.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaDocumentoIvaSpesaConsulta" class="risultatiRicercaDocumentoIvaSpesaAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaDocumentoIvaSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoIvaDaConsultare">${uidDaConsultare}</param>
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaDocumentoIvaSpesaAggiorna" class="risultatiRicercaDocumentoIvaSpesaAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoIvaSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidSubdocumentoIva">${uidDaAggiornare}</param>
+			</result>
+		</action>
+		
+		<!-- CONSULTAZIONE -->
+		
+		<action name="consultaDocumentoIvaSpesa" class="consultaDocumentoIvaSpesaAction">
+			<result name="success">/jsp/documentoIva/consultaDocumentoIva.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		
+		<action name="consultaDocumentoIvaSpesa_ottieniDettaglioQuotaIvDifferita" class="consultaDocumentoIvaSpesaAction" method="ottieniDettaglioQuotaIvDifferita">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					quotaIvaDifferita.*
+				</param>
+			</result>
+		</action>
+		
+		<!-- AGGIORNAMENTO -->
+		<action name="aggiornaDocumentoIvaSpesa" class="aggiornaDocumentoIvaSpesaAction">
+			<result name="success">/jsp/documentoIva/aggiornaDocumentoIva.jsp</result>
+			<result name="input">/jsp/documentoIva/aggiornaDocumentoIvaDisabled.jsp</result>
+		</action>
+    	
+    	<action name="aggiornamentoDocumentoIvaSpesa" class="aggiornaDocumentoIvaSpesaAction" method="aggiornaDocumentoIva">
+    		<result name="success">/jsp/documentoIva/aggiornaDocumentoIva.jsp</result>
+    		<result name="input">/jsp/documentoIva/aggiornaDocumentoIva.jsp</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_caricaMovimentiIva" class="aggiornaDocumentoIvaSpesaAction" method="caricaMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_apriCollapseMovimentiIva" class="aggiornaDocumentoIvaSpesaAction" method="apriCollapseMovimentiIva">
+    		<result name="success">/jsp/documentoIva/collapseMovimentiIva.jsp</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_inserisciMovimentiIva" class="aggiornaDocumentoIvaSpesaAction" method="inserisciMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_apriModaleMovimentiIva" class="aggiornaDocumentoIvaSpesaAction" method="apriModaleMovimentiIva">
+    		<result name="success">/jsp/documentoIva/modaleMovimentiIva.jsp</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_aggiornaMovimentiIva" class="aggiornaDocumentoIvaSpesaAction" method="aggiornaMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_eliminaMovimentiIva" class="aggiornaDocumentoIvaSpesaAction" method="eliminaMovimentiIva">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIva.*,
+    				totaleImponibileMovimentiIva,
+    				totaleImpostaMovimentiIva,
+    				totaleTotaleMovimentiIva
+    			</param>
+    		</result>
+    	</action>
+    	<!-- NOTA CREDITO -->
+    	<action name="aggiornaDocumentoIvaSpesa_inserisciNotaCredito" class="aggiornaDocumentoIvaSpesaAction" method="inserisciNotaCredito">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">aggiornaDocumentoIvaSpesa</param>
+    			<param name="namespace">/</param>
+    			<param name="uidSubdocumentoIva">${uidSubdocumentoIva}</param>
+    			<param name="aperturaTabNotaCredito">true</param>
+    		</result>
+    		<result name="input">/jsp/documentoIva/aggiornaDocumentoIva.jsp</result>
+    	</action>
+    	<action name="aggiornaDocumentoIvaSpesa_aggiornaNotaCredito" class="aggiornaDocumentoIvaSpesaAction" method="aggiornaNotaCredito">
+    		<result name="success" type="redirectAction">
+    			<param name="actionName">aggiornaDocumentoIvaSpesa</param>
+    			<param name="namespace">/</param>
+    			<param name="uidSubdocumentoIva">${uidSubdocumentoIva}</param>
+    			<param name="aperturaTabNotaCredito">true</param>
+    		</result>
+    		<result name="input">/jsp/documentoIva/aggiornaDocumentoIva.jsp</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_caricaMovimentiIvaNota" class="aggiornaDocumentoIvaSpesaAction" method="caricaMovimentiIvaNota">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				listaAliquotaSubdocumentoIvaNota.*,
+    				totaleImponibileMovimentiIvaNota,
+    				totaleImpostaMovimentiIvaNota,
+    				totaleTotaleMovimentiIvaNota
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_apriCollapseMovimentiIvaNota" class="aggiornaDocumentoIvaSpesaAction" method="apriCollapseMovimentiIvaNota">
+    		<result name="success">/jsp/documentoIva/collapseMovimentiIvaNota.jsp</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_inserisciMovimentiIvaNota" class="aggiornaDocumentoIvaSpesaAction" method="inserisciMovimentiIvaNota">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIvaNota.*,
+    				totaleImponibileMovimentiIvaNota,
+    				totaleImpostaMovimentiIvaNota,
+    				totaleTotaleMovimentiIvaNota
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_apriModaleMovimentiIvaNota" class="aggiornaDocumentoIvaSpesaAction" method="apriModaleMovimentiIvaNota">
+    		<result name="success">/jsp/documentoIva/modaleMovimentiIvaNota.jsp</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_aggiornaMovimentiIvaNota" class="aggiornaDocumentoIvaSpesaAction" method="aggiornaMovimentiIvaNota">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIvaNota.*,
+    				totaleImponibileMovimentiIvaNota,
+    				totaleImpostaMovimentiIvaNota,
+    				totaleTotaleMovimentiIvaNota
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="aggiornaDocumentoIvaSpesa_eliminaMovimentiIvaNota" class="aggiornaDocumentoIvaSpesaAction" method="eliminaMovimentiIvaNota">
+    		<result name="success" type="json">
+    			<param name="ignoreHierarchy">false</param>
+    			<param name="enumAsBean">true</param>
+    			<param name="includeProperties">
+    				errori.*,
+    				messaggi.*,
+    				informazioni.*,
+    				listaAliquotaSubdocumentoIvaNota.*,
+    				totaleImponibileMovimentiIvaNota,
+    				totaleImpostaMovimentiIvaNota,
+    				totaleTotaleMovimentiIvaNota
+    			</param>
+    		</result>
+    	</action>
+    	
+    </package>
+</struts>

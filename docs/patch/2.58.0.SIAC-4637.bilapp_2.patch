@@ -1,0 +1,57 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capentgest/InserisciCapitoloEntrataGestioneAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capentgest/InserisciCapitoloEntrataGestioneAction.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capentgest/InserisciCapitoloEntrataGestioneAction.java	(working copy)
+@@ -380,13 +380,17 @@
+ 		
+ 		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
+ 		boolean faseDiBilancioCompatibile = 
+-				FaseBilancio.GESTIONE.equals(faseBilancio) ||
+-				FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) ||
+-				FaseBilancio.ASSESTAMENTO.equals(faseBilancio);
+-		
+-		if(!faseDiBilancioCompatibile) {
+-			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
+-		}
++				FaseBilancio.GESTIONE.equals(faseBilancio) ||
++				FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) ||
++				FaseBilancio.ASSESTAMENTO.equals(faseBilancio);
++		// SIAC-4637
++		if(Boolean.TRUE.equals(model.getDaVariazione())) {
++			faseDiBilancioCompatibile = faseDiBilancioCompatibile
++					|| FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio);
++		}
++		if(!faseDiBilancioCompatibile) {
++			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
++		}
+ 	}
+ 	
+ 	/**
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capuscgest/InserisciCapitoloUscitaGestioneAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capuscgest/InserisciCapitoloUscitaGestioneAction.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capuscgest/InserisciCapitoloUscitaGestioneAction.java	(working copy)
+@@ -379,12 +379,17 @@
+ 		
+ 		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
+ 		boolean faseDiBilancioCompatibile = 
+-				FaseBilancio.GESTIONE.equals(faseBilancio) ||
+-				FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) ||
+-				FaseBilancio.ASSESTAMENTO.equals(faseBilancio);
+-		
+-		if(!faseDiBilancioCompatibile) {
+-			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
++				FaseBilancio.GESTIONE.equals(faseBilancio) ||
++				FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) ||
++				FaseBilancio.ASSESTAMENTO.equals(faseBilancio);
++		// SIAC-4637
++		if(Boolean.TRUE.equals(model.getDaVariazione())) {
++			faseDiBilancioCompatibile = faseDiBilancioCompatibile
++					|| FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO.equals(faseBilancio);
++		}
++		
++		if(!faseDiBilancioCompatibile) {
++			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
+ 		}
+ 	}
+ 	

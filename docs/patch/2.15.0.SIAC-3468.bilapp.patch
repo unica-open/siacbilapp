@@ -1,0 +1,138 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/AggiornaTestataDocumentoEntrataAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/AggiornaTestataDocumentoEntrataAction.java	(revision 9963)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/AggiornaTestataDocumentoEntrataAction.java	(working copy)
+@@ -146,8 +146,8 @@
+ 		}
+ 		
+ 		// Validazione degli importi
+-		validazioneImporti(documento, BigDecimal.ZERO);
+-		// Se la data di scadenza Ã¨ presente, deve essere maggiore o uguale la data del documento
++		validazioneImportiTestata(documento, BigDecimal.ZERO);
++		// Se la data di scadenza è presente, deve essere maggiore o uguale la data del documento
+ 		checkCondition(documento.getDataEmissione() == null || documento.getDataScadenza() == null ||
+ 			documento.getDataScadenza().compareTo(documento.getDataEmissione()) >= 0,
+ 			ErroreFin.DATA_SCADENZA_ANTECEDENTE_ALLA_DATA_DEL_DOCUMENTO.getErrore());
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/AggiornaTestataDocumentoSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/AggiornaTestataDocumentoSpesaAction.java	(revision 9963)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/AggiornaTestataDocumentoSpesaAction.java	(working copy)
+@@ -147,8 +147,8 @@
+ 		}
+ 		
+ 		// Validazione degli importi
+-		validazioneImporti(documento, BigDecimal.ZERO);
+-		// Se la data di scadenza Ã¨ presente, deve essere maggiore o uguale la data del documento
++		validazioneImportiTestata(documento, BigDecimal.ZERO);
++		// Se la data di scadenza è presente, deve essere maggiore o uguale la data del documento
+ 		checkCondition(documento.getDataEmissione() == null || documento.getDataScadenza() == null ||
+ 				documento.getDataScadenza().compareTo(documento.getDataEmissione()) >= 0,
+ 				ErroreFin.DATA_SCADENZA_ANTECEDENTE_ALLA_DATA_DEL_DOCUMENTO.getErrore());
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/GenericAggiornaDocumentoAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/GenericAggiornaDocumentoAction.java	(revision 9963)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/GenericAggiornaDocumentoAction.java	(working copy)
+@@ -209,14 +209,56 @@
+ 			log.debug(methodName, "netto: " + model.getNetto());
+ 			log.debug(methodName, "totale da pagare quote: " + model.getTotaleDaPagareQuote());
+ 			
++//			// L'arrotondamento deve essere non-positivo NON PIU', CR 2889
++//			checkCondition(documento.getArrotondamento().signum() <= 0,
++//					ErroreCore.FORMATO_NON_VALIDO.getErrore("Arrotondamento", ": deve essere minore o uguale a zero"), true);
++			// Importo + arrotondamento > 0
+ 			// L'importo deve essere non negativo
+-			checkCondition(documento.getImporto().signum() > 0,
+-					ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", ": deve essere maggiore di zero"), true);
++			checkCondition(documento.getImporto().signum() >= 0, ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", ": deve essere maggiore o uguale a zero"), true);
++			checkCondition(documento.getImporto().add(documento.getArrotondamento()).signum() >= 0,
++					ErroreCore.FORMATO_NON_VALIDO.getErrore("Arrotondamento", ": importo sommato ad arrotondamento deve essere maggiore o uguale a zero"), true);
++			checkCondition(documento.getImporto().add(documento.getArrotondamento()).add(totaleImponibileOneriRC).subtract(model.getTotaleQuote()).signum() >= 0,
++//					ErroreCore.FORMATO_NON_VALIDO.getErrore("importo o arrotondamento",
++//							": importo sommato ad arrotondamento deve essere maggiore o uguale al totale delle quote")
++					ErroreFin.TOTALE_QUOTE_E_IMPORTI_DOCUMENTO_NON_COERENTI.getErrore("controllare gli importi del documento e gli importi delle quote.")
++							);
++			BigDecimal nuovoNetto = documento.getImporto().add(documento.getArrotondamento()).add(totaleImponibileOneriRC).subtract(model.getTotaleImportoDaDedurreSuFattura());
++			checkCondition(nuovoNetto.signum() > 0,
++					ErroreCore.FORMATO_NON_VALIDO.getErrore("netto",
++							": l'importo netto deve essere maggiore di zero"));
++		} catch(ParamValidationException e) {
++			log.debug("validazioneImporti", "Arrotondamento errato: " + e.getMessage() + " - Impostazione vecchio netto");
++			documento.setArrotondamento(model.getOldArrotondamento());
++			model.impostaNettoFromOld();
++		} finally{
++			// Ricalcolo gli importi
++			model.calcoloImporti();
++		}
++	}
++	
++	/**
++	 * Valida gli importi.
++	 * <br>
++	 * Nel caso in cui la validazione non vada a buon fine, ripristina come valore di netto ed arrotondamento i vecchi valori
++	 * 
++	 * @param documento il documento da cui ottenere i dati
++	 * @param totaleImponibileOneriRC il totale imponibile, oneri e reverse/change
++	 */
++	protected <D extends Documento<?, ?>> void validazioneImportiTestata(D documento, BigDecimal totaleImponibileOneriRC) {
++		try {
++			final String methodName = "validazioneImporti";
++			log.debug(methodName, "importo: " + documento.getImporto());
++			log.debug(methodName, "arrotondamento: " + documento.getArrotondamento());
++			log.debug(methodName, "netto: " + model.getNetto());
++			log.debug(methodName, "totale da pagare quote: " + model.getTotaleDaPagareQuote());
++			
+ //			// L'arrotondamento deve essere non-positivo NON PIU', CR 2889
+ //			checkCondition(documento.getArrotondamento().signum() <= 0,
+ //					ErroreCore.FORMATO_NON_VALIDO.getErrore("Arrotondamento", ": deve essere minore o uguale a zero"), true);
+ 			// Importo + arrotondamento > 0
+-			checkCondition(documento.getImporto().signum() <= 0 || documento.getImporto().add(documento.getArrotondamento()).signum() > 0,
++			// L'importo deve essere non negativo
++			checkCondition(documento.getImporto().signum() > 0, ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", ": deve essere maggiore di zero"), true);
++			checkCondition(documento.getImporto().add(documento.getArrotondamento()).signum() > 0,
+ 					ErroreCore.FORMATO_NON_VALIDO.getErrore("Arrotondamento", ": importo sommato ad arrotondamento deve essere maggiore di zero"), true);
+ 			checkCondition(documento.getImporto().add(documento.getArrotondamento()).add(totaleImponibileOneriRC).subtract(model.getTotaleQuote()).signum() >= 0,
+ //					ErroreCore.FORMATO_NON_VALIDO.getErrore("importo o arrotondamento",
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/entrata/AggiornaDocumentoEntrataQuotaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/entrata/AggiornaDocumentoEntrataQuotaAction.java	(revision 9963)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/entrata/AggiornaDocumentoEntrataQuotaAction.java	(working copy)
+@@ -455,7 +455,7 @@
+ 		BigDecimal totalePerCoerenza =nuovoTotaleQuote.subtract(model.getDocumento().getImporto().add(model.getDocumento().getArrotondamento()));
+ 		checkCondition(totalePerCoerenza.signum() <= 0, ErroreFin.IMPORTO_QUOTE_E_IMPORTO_DOCUMENTO_INCONGRUENTI.getErrore());
+ 		//TOTALE QUOTE >= TOTALE NOTE
+-		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleNoteCredito()).signum()>= 0, 
++		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleImportoDaDedurreSuFattura()).signum()>= 0, 
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("importo quota", ": il totale delle quote deve essere maggiore o uguale al totale delle note credito"));
+ 	}
+ 
+@@ -481,7 +481,7 @@
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("importo quota", ": l'importo della quota deve essere maggiore dell'importo da dedurre"));
+ 		
+ 		//TOTALE QUOTE >= TOTALE NOTE
+-		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleNoteCredito()).signum()>= 0, 
++		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleImportoDaDedurreSuFattura()).signum()>= 0, 
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("importo quota", ": il totale delle quote deve essere maggiore o uguale al totale delle note credito"));
+ 		
+ 	}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/spesa/AggiornaDocumentoSpesaQuotaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/spesa/AggiornaDocumentoSpesaQuotaAction.java	(revision 9963)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/aggiornamento/spesa/AggiornaDocumentoSpesaQuotaAction.java	(working copy)
+@@ -632,7 +632,7 @@
+ 		checkCondition(totalePerCoerenza.signum() <= 0, ErroreFin.IMPORTO_QUOTE_E_IMPORTO_DOCUMENTO_INCONGRUENTI.getErrore());
+ 		
+ 		// TOTALE QUOTE >= TOTALE NOTE
+-		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleNoteCredito()).signum()>= 0, 
++		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleImportoDaDedurreSuFattura()).signum()>= 0, 
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("importo quota", ": il totale delle quote deve essere maggiore o uguale al totale delle note credito"));
+ 	}
+ 	
+@@ -667,7 +667,7 @@
+ 		checkCondition(totalePerCoerenzaNotaCredito.signum()<= 0, ErroreFin.IMPORTO_QUOTE_E_IMPORTO_DOCUMENTO_INCONGRUENTI.getErrore());
+ 		
+ 		//TOTALE QUOTE >= TOTALE NOTE
+-		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleNoteCredito()).signum()>= 0, 
++		checkCondition(nuovoTotaleQuote.subtract(model.getTotaleImportoDaDedurreSuFattura()).signum()>= 0, 
+ 					ErroreCore.FORMATO_NON_VALIDO.getErrore("importo quota", ": il totale delle quote deve essere maggiore o uguale al totale delle note credito"));
+ 		
+ 		//TOTALE QUOTE <= importo Documento  + arrotondamento + totale importo degli oneri con TipoIvaSplitReverse=RC se presenti.

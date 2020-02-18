@@ -1,0 +1,77 @@
+Index: src/main/webapp/js/local/allegatoAtto/convalidaElenco_dettaglio.js
+===================================================================
+--- src/main/webapp/js/local/allegatoAtto/convalidaElenco_dettaglio.js	(revision 11873)
++++ src/main/webapp/js/local/allegatoAtto/convalidaElenco_dettaglio.js	(working copy)
+@@ -111,14 +111,17 @@
+ 
+     function submitForm() {
+         var formToSubmit = $('#formConvalidaAllegatoAttoStep2');
+-        writeSelectedToForm(formToSubmit);
++        var isConvalidaManuale = $('#convalidaManuale_modal').prop('checked');
++        var html = '<input type="hidden" name="convalidaManuale" value="' + isConvalidaManuale + '"/>';
++        $('#formConvalidaAllegatoAttoStep2_unused').addClass('form-submitted');
++        writeSelectedToForm(formToSubmit, html);
+         
+         // Invio il form
+         formToSubmit.submit();
+     }
+     
+-    function writeSelectedToForm($form) {
+-        var html = '';
++    function writeSelectedToForm($form, initialHtmlValue) {
++        var html = initialHtmlValue || '';
+         var i;
+         for(i in selectedDatas) {
+             if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
+Index: src/main/webapp/js/local/allegatoAtto/convalidaElenco_step2.js
+===================================================================
+--- src/main/webapp/js/local/allegatoAtto/convalidaElenco_step2.js	(revision 11873)
++++ src/main/webapp/js/local/allegatoAtto/convalidaElenco_step2.js	(working copy)
+@@ -222,8 +222,11 @@
+      */
+     function convalidaElenco(e) {
+         var formToSubmit = $('#formConvalidaAllegatoAttoStep2');
+-        writeSelectedToForm(formToSubmit);
+-        
++        var isConvalidaManuale = $('#convalidaManuale_modal').prop('checked');
++        var html = '<input type="hidden" name="convalidaManuale" value="' + isConvalidaManuale + '"/>';
++        $('#formConvalidaAllegatoAttoStep2_unused').addClass('form-submitted');
++        writeSelectedToForm(formToSubmit, html);
++       
+         // Blocco l'evento
+         e.preventDefault();
+         
+@@ -232,8 +235,8 @@
+             .submit();
+     }
+     
+-    function writeSelectedToForm($form) {
+-        var html = '';
++    function writeSelectedToForm($form, htmlDiPartenza) {
++        var html = htmlDiPartenza || '';
+         var i;
+         for(i in selectedDatas) {
+             if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
+@@ -248,7 +251,8 @@
+      */
+     function rifiutaElenco() {
+         var formToSubmit = $('#formConvalidaAllegatoAttoStep2');
+-        writeSelectedToForm(formToSubmit);
++        $('#formConvalidaAllegatoAttoStep2_unused').addClass('form-submitted');
++        writeSelectedToForm(formToSubmit, '');
+         // Invio il form
+         formToSubmit.attr("action", "convalidaAllegatoAtto_rifiutaElenco.do")
+             .submit();
+Index: src/main/webapp/jsp/allegatoAtto/convalida/modaleTipoConvalida.jsp
+===================================================================
+--- src/main/webapp/jsp/allegatoAtto/convalida/modaleTipoConvalida.jsp	(revision 11873)
++++ src/main/webapp/jsp/allegatoAtto/convalida/modaleTipoConvalida.jsp	(working copy)
+@@ -14,7 +14,7 @@
+ 						<input type="radio" value="false" name="convalidaManuale" <s:if test="!convalidaManuale">checked</s:if>>Automatica
+ 					</label>
+ 					<label class="radio inline">
+-						<input type="radio" value="true" name="convalidaManuale" <s:if test="convalidaManuale">checked</s:if>>Manuale
++						<input type="radio" id="convalidaManuale_modal" value="true" name="convalidaManuale" <s:if test="convalidaManuale">checked</s:if>>Manuale
+ 					</label>
+ 				</div>
+ 			</div>

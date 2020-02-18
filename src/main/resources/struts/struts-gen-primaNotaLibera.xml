@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="genPrimaNotaLibera" extends="gengsaCommon" namespace="/">
+		<result-types>
+			<result-type name="contoPrimaNotaLibera"
+				class="it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.BaseInserisciAggiornaContoPrimaNotaLiberaBaseAction$ContoPrimaNotaLiberaResult" />
+		</result-types>
+	
+	
+			<!-- Inserimento -->
+		<action name="inserisciPrimaNotaLiberaFIN" class="inserisciPrimaNotaLiberaFINAction">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaFIN_step1</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_step1" class="inserisciPrimaNotaLiberaFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+	 	<action name="inserisciPrimaNotaLiberaFIN_annullaStep1" class="inserisciPrimaNotaLiberaFINAction" method="annullaStep1">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaFIN_step1</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_completeStep1" class="inserisciPrimaNotaLiberaFINAction" method="completeStep1">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaFIN_step2</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_backToStep1" class="inserisciPrimaNotaLiberaFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaFIN_step1</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_step2" class="inserisciPrimaNotaLiberaFINAction" method="step2">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_annullaStep2" class="inserisciPrimaNotaLiberaFINAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaFIN_step2</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_completeStep2" class="inserisciPrimaNotaLiberaFINAction" method="completeStep2">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaFIN_step3</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_step3" class="inserisciPrimaNotaLiberaFINAction" method="step3">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_completeStep3" class="inserisciPrimaNotaLiberaFINAction" method="completeStep3">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaFIN_step3</result>
+		</action>
+		
+		<action name="inserisciPrimaNotaLiberaFIN_ottieniListaPrimeNoteCollegate" class="inserisciPrimaNotaLiberaFINAction" method="ottieniListaPrimeNoteCollegate">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				 	errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_collegaPrimaNota" class="inserisciPrimaNotaLiberaFINAction" method="collegaPrimaNota">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_eliminaCollegamento" class="inserisciPrimaNotaLiberaFINAction" method="eliminaCollegamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciPrimaNotaLiberaFIN_ottieniListaConti" class="inserisciContoPrimaNotaLiberaFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaLibera" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_impostaImportoDaRegistrare" class="inserisciContoPrimaNotaLiberaFINAction" method="impostaImportoDaRegistrare">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		 <!--  Gestione Conto in lista movimento dettaglio-->
+		<action name="inserisciPrimaNotaLiberaFIN_inserisciConto" class="inserisciContoPrimaNotaLiberaFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_aggiornaConto" class="inserisciContoPrimaNotaLiberaFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaFIN_eliminaConto" class="inserisciContoPrimaNotaLiberaFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!-- ricerca -->
+		<action name="ricercaPrimaNotaLiberaFIN" class="ricercaPrimaNotaLiberaFINAction">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/ricerca.jsp</result>
+		</action>
+		<action name="ricercaPrimaNotaLiberaFIN_effettuaRicerca" class="ricercaPrimaNotaLiberaFINAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaFIN" class="risultatiRicercaPrimaNotaLiberaFINAction">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaFINAjax" class="risultatiRicercaPrimaNotaLiberaFINAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaFIN_aggiorna" class="risultatiRicercaPrimaNotaLiberaFINAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPrimaNotaLiberaFIN</param>
+				<param name="primaNotaLibera.uid">${primaNotaLibera.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaFIN_valida" class="risultatiRicercaPrimaNotaLiberaFINAction" method="valida">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaFIN_consulta" class="risultatiRicercaPrimaNotaLiberaFINAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaLiberaFIN</param>
+				<param name="primaNotaLibera.uid">${primaNotaLibera.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaFIN_annulla" class="risultatiRicercaPrimaNotaLiberaFINAction" method="annulla">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		<action name="dettaglioMovimentiPrimaNotaLiberaFINAction_caricaMovimenti" class="dettaglioMovimentiPrimaNotaLiberaFINAction" method="caricaMovimenti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaMovimentoDettaglio.*, totaleDare, totaleAvere</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		
+		<!-- Consultazione -->
+		<action name="consultaPrimaNotaLiberaFIN" class="consultaPrimaNotaLiberaFINAction">
+			<result name="input" type="redirectAction">risultatiRicercaPrimaNotaLiberaFIN</result>
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/consulta.jsp</result>
+		</action>
+		
+		<!-- Aggiornamento -->
+		<action name="aggiornaPrimaNotaLiberaFIN" class="aggiornaPrimaNotaLiberaFINAction">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaFIN_step1</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_step1" class="aggiornaPrimaNotaLiberaFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+	 	<action name="aggiornaPrimaNotaLiberaFIN_annullaStep1" class="aggiornaPrimaNotaLiberaFINAction" method="annullaStep1">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaFIN_step1</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_completeStep1" class="aggiornaPrimaNotaLiberaFINAction" method="completeStep1">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaFIN_step2</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_backToStep1" class="aggiornaPrimaNotaLiberaFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaFIN_step1</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_step2" class="aggiornaPrimaNotaLiberaFINAction" method="step2">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_annullaStep2" class="aggiornaPrimaNotaLiberaFINAction" method="annullaStep2">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaFIN_step2</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_completeStep2" class="aggiornaPrimaNotaLiberaFINAction" method="completeStep2">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaFIN_step3</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_step3" class="aggiornaPrimaNotaLiberaFINAction" method="step3">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_completeStep3" class="aggiornaPrimaNotaLiberaFINAction" method="completeStep3">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaFIN_step3</result>
+		</action>
+		
+		<action name="aggiornaPrimaNotaLiberaFIN_ottieniListaPrimeNoteCollegate" class="aggiornaPrimaNotaLiberaFINAction" method="ottieniListaPrimeNoteCollegate">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				    errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_collegaPrimaNota" class="aggiornaPrimaNotaLiberaFINAction" method="collegaPrimaNota">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_eliminaCollegamento" class="aggiornaPrimaNotaLiberaFINAction" method="eliminaCollegamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!-- Gestione Conto in lista movimento dettaglio in aggiornamento-->
+		<action name="aggiornaPrimaNotaLiberaFIN_ottieniListaConti" class="aggiornaContoPrimaNotaLiberaFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaLibera" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_impostaImportoDaRegistrare" class="aggiornaContoPrimaNotaLiberaAction" method="impostaImportoDaRegistrare">
+			<result name="success" type="contoPrimaNotaLibera" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_inserisciConto" class="aggiornaContoPrimaNotaLiberaFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_aggiornaConto" class="aggiornaContoPrimaNotaLiberaFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaFIN_eliminaConto" class="aggiornaContoPrimaNotaLiberaFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+	</package>
+</struts>

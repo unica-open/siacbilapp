@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:property-placeholder location="classpath:spring/*.properties" />
+
+    <!-- Impostazione dei timeout a 2 minuti -->
+    <util:map id="jaxwsCustomProperties">
+        <!-- Sets timeout until a connection is established -->
+        <entry key="javax.xml.ws.client.connectionTimeout">
+            <value type="java.lang.Integer">${javax.xml.ws.client.connectionTimeout}</value>
+        </entry>
+        <!-- Sets timeout until a response is received -->
+        <entry key="javax.xml.ws.client.receiveTimeout">
+            <value type="java.lang.Integer">${javax.xml.ws.client.receiveTimeout}</value>
+        </entry>
+    </util:map>
+
+    <!--
+        Per utilizzare il servizio all'interno della propria Action o componente di Spring basta dichiarare un field a livello di classe in questo modo:
+
+        @Autowired
+        private CapitoloUscitaPrevisioneService capitoloUscitaPrevisioneService;
+     -->
+
+    <!-- ################ Servizi di Bilancio ################# -->
+
+    <!-- Per il fake sarà:
+    <bean id="capitoloUscitaPrevisioneService" class="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneFakeService" primary="true">
+    </bean>
+    -->
+
+    <!-- @@@@@@ Capitolo @@@@@@ -->
+    <bean id="capitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="CapitoloService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="capitoloUscitaPrevisioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloUscitaPrevisioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="CapitoloUscitaPrevisioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloUscitaPrevisioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="capitoloUscitaGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloUscitaGestioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="CapitoloUscitaGestioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloUscitaGestioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="capitoloEntrataPrevisioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataPrevisioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloEntrataPrevisioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="CapitoloEntrataPrevisioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloEntrataPrevisioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="capitoloEntrataGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloEntrataGestioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="CapitoloEntrataGestioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloEntrataGestioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+
+    <!-- @@@@@@ Classificatori @@@@@@ -->
+    <bean id="classificatoreBilService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ClassificatoreBilService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="ClassificatoreBilService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/ClassificatoreBilService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+        <qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" />
+    </bean>
+
+    <!-- @@@@@@ Atti @@@@@@ -->
+    <bean id="attoDiLeggeService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacattser.frontend.webservice.AttoDiLeggeService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/AttoDiLeggeService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/att/svc/1.0" />
+        <property name="serviceName" value="AttoDiLeggeService" />
+        <property name="endpointAddress" value="${endpoint.url.service.att}/AttoDiLeggeService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Variazione di bilancio @@@@@@ -->
+    <bean id="variazioneDiBilancioService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.VariazioneDiBilancioService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/VariazioneDiBilancioService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="VariazioneDiBilancioService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/VariazioneDiBilancioService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Provvedimento @@@@@@ -->
+    <bean id="provvedimentoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.att}/ProvvedimentoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/att/svc/1.0" />
+        <property name="serviceName" value="ProvvedimentoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.att}/ProvvedimentoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Vincolo @@@@@@ -->
+    <bean id="vincoloCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.VincoloCapitoloService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/VincoloCapitoloService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="VincoloCapitoloService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/VincoloCapitoloService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Progetto @@@@@@ -->
+    <bean id="progettoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ProgettoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ProgettoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="ProgettoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/ProgettoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Bilancio @@@@@@ -->
+    <bean id="bilancioService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.BilancioService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/BilancioService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="BilancioService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/BilancioService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Codifiche @@@@@@ -->
+    <bean id="codificheService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CodificheService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CodificheService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="CodificheService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/CodificheService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Fondi dubbia esigibilita' @@@@@@ -->
+    <bean id="fondiDubbiaEsigibilitaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.FondiDubbiaEsigibilitaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/FondiDubbiaEsigibilitaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="FondiDubbiaEsigibilitaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/FondiDubbiaEsigibilitaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="azioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.AzioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/AzioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="AzioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/AzioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- ################ Servizi di FIN2 ################# -->
+
+	<!-- @@@@@@ Documento @@@@@@ -->
+    <bean id="documentoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="DocumentoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Documento Spesa @@@@@@ -->
+    <bean id="documentoSpesaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoSpesaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="DocumentoSpesaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoSpesaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Documento Entrata @@@@@@ -->
+    <bean id="documentoEntrataService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoEntrataService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoEntrataService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="DocumentoEntrataService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoEntrataService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <!-- @@@@@@ Elenco documenti allegato @@@@@@ -->
+    <bean id="elencoDocumentiAllegatoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.ElencoDocumentiAllegatoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/ElencoDocumentiAllegatoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="ElencoDocumentiAllegatoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/ElencoDocumentiAllegatoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ PreDocumento Spesa @@@@@@ -->
+    <bean id="preDocumentoSpesaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/PreDocumentoSpesaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="PreDocumentoSpesaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/PreDocumentoSpesaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ PreDocumento Entrata @@@@@@ -->
+    <bean id="preDocumentoEntrataService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoEntrataService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/PreDocumentoEntrataService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="PreDocumentoEntrataService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/PreDocumentoEntrataService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Documento IVA @@@@@@ -->
+    <bean id="documentoIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoIvaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="DocumentoIvaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoIvaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Documento IVA Spesa @@@@@@ -->
+    <bean id="documentoIvaSpesaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaSpesaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoIvaSpesaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="DocumentoIvaSpesaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoIvaSpesaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Documento IVA Entrata @@@@@@ -->
+    <bean id="documentoIvaEntrataService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaEntrataService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoIvaEntrataService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="DocumentoIvaEntrataService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoIvaEntrataService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Attivita IVA Capitolo @@@@@@ -->
+    <bean id="attivitaIvaCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.AttivitaIvaCapitoloService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/AttivitaIvaCapitoloService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="AttivitaIvaCapitoloService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/AttivitaIvaCapitoloService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Gruppo Attivita IVA @@@@@@ -->
+    <bean id="gruppoAttivitaIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.GruppoAttivitaIvaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/GruppoAttivitaIvaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="GruppoAttivitaIvaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/GruppoAttivitaIvaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Registro IVA @@@@@@ -->
+    <bean id="registroIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.RegistroIvaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/RegistroIvaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="RegistroIvaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/RegistroIvaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Stampa IVA @@@@@@ -->
+    <bean id="stampaIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.StampaIvaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/StampaIvaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="StampaIvaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.integ}/StampaIvaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Allegato Atto @@@@@@ -->
+    <bean id="allegatoAttoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.AllegatoAttoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/AllegatoAttoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="AllegatoAttoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.integ}/AllegatoAttoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Tipo Onere @@@@@@ -->
+    <bean id="tipoOnereService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.TipoOnereService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/TipoOnereService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="TipoOnereService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/TipoOnereService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Emissione Ordinativo @@@@@@ -->
+    <bean id="emissioneOrdinativiService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.EmissioneOrdinativiService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/EmissioneOrdinativiService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="EmissioneOrdinativiService" />
+        <property name="endpointAddress" value="${endpoint.url.service.integ}/EmissioneOrdinativiService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ PCC @@@@@@ -->
+    <bean id="registroComunicazioniPCCService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.RegistroComunicazioniPCCService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/RegistroComunicazioniPCCService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="RegistroComunicazioniPCCService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/RegistroComunicazioniPCCService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- @@@@@@ Ordine @@@@@@ -->
+    <bean id="ordineService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.OrdineService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/OrdineService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="OrdineService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/OrdineService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <!-- ################ Servizi di CEC ################# -->
+
+    <!-- @@@@@@ Cassa Economale @@@@@@ -->
+    <bean id="cassaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.CassaEconomaleService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.cec}/CassaEconomaleService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cec/svc/1.0" />
+        <property name="serviceName" value="CassaEconomaleService" />
+        <property name="endpointAddress" value="${endpoint.url.service.cec}/CassaEconomaleService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="richiestaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.RichiestaEconomaleService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.cec}/RichiestaEconomaleService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cec/svc/1.0" />
+        <property name="serviceName" value="RichiestaEconomaleService" />
+        <property name="endpointAddress" value="${endpoint.url.service.cec}/RichiestaEconomaleService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="stampaCassaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.StampaCassaEconomaleService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/StampaCassaEconomaleService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cec/svc/1.0" />
+        <property name="serviceName" value="StampaCassaEconomaleService" />
+        <property name="endpointAddress" value="${endpoint.url.service.integ}/StampaCassaEconomaleService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <!-- ################ Servizi di GEN ################# -->
+    <bean id="contoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.ContoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/ContoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
+        <property name="serviceName" value="ContoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.gen}/ContoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="causaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.CausaleService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/CausaleService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
+        <property name="serviceName" value="CausaleService" />
+        <property name="endpointAddress" value="${endpoint.url.service.gen}/CausaleService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+     <bean id="primaNotaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.PrimaNotaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/PrimaNotaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
+        <property name="serviceName" value="PrimaNotaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.integ}/PrimaNotaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="registrazioneMovFinService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.RegistrazioneMovFinService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/RegistrazioneMovFinService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
+        <property name="serviceName" value="RegistrazioneMovFinService" />
+        <property name="endpointAddress" value="${endpoint.url.service.gen}/RegistrazioneMovFinService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="conciliazioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.ConciliazioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/ConciliazioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
+        <property name="serviceName" value="ConciliazioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.gen}/ConciliazioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <bean id="classificatoreGSAService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.ClassificatoreGSAService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/ClassificatoreGSAService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
+        <property name="serviceName" value="ClassificatoreGSAService" />
+        <property name="endpointAddress" value="${endpoint.url.service.gen}/ClassificatoreGSAService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+
+
+    <!-- ################ Servizi di FEL ################# -->
+    <bean id="fatturaElettronicaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.sirfelser.frontend.webservice.FatturaElettronicaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fel}/FatturaElettronicaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fel/svc/1.0" />
+        <property name="serviceName" value="FatturaElettronicaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fel}/FatturaElettronicaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+     <!-- ################ Servizi di consultazione entita collegate ################# -->
+    <bean id="consultazioneEntitaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacconsultazioneentitaser.frontend.webservice.ConsultazioneEntitaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ConsultazioneEntitaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="ConsultazioneEntitaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/ConsultazioneEntitaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="false" />
+    </bean>
+    
+    <!-- Cespiti -->
+    <bean id="classificazioneCespiteService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccespser.frontend.webservice.ClassificazioneCespiteService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ClassificazioneCespiteService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cesp/svc/1.0" />
+        <property name="serviceName" value="ClassificazioneCespiteService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/ClassificazioneCespiteService?wsdl" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+     <bean id="cespiteService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccespser.frontend.webservice.CespiteService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CespiteService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cesp/svc/1.0" />
+        <property name="serviceName" value="CespiteService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/CespiteService?wsdl" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <bean id="primaNotaCespiteService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccespser.frontend.webservice.PrimaNotaCespiteService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/PrimaNotaCespiteService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cesp/svc/1.0" />
+        <property name="serviceName" value="PrimaNotaCespiteService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/PrimaNotaCespiteService?wsdl" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <!-- ################ Servizi di Core ################# -->
+
+    <bean id="coreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.CoreService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/CoreService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+        <property name="serviceName" value="CoreService" />
+        <property name="endpointAddress" value="${endpoint.url.service.core}/CoreService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="false" />
+    </bean>
+
+    <bean id="classificatoreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+        <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/ClassificatoreService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+        <property name="serviceName" value="ClassificatoreService" />
+        <property name="endpointAddress" value="${endpoint.url.service.core}/ClassificatoreService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" />
+        <property name="logSOAPMessages" value="false" />
+    </bean>
+
+    <bean id="operazioneAsincronaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/OperazioneAsincronaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+        <property name="serviceName" value="OperazioneAsincronaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.core}/OperazioneAsincronaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="fileService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.FileService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/FileService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+        <property name="serviceName" value="FileService" />
+        <property name="endpointAddress" value="${endpoint.url.service.core}/FileService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="false" />
+    </bean>
+    
+    <!-- ################ Servizi di FIN ################# -->
+    <bean id="classificatoreFinService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.ClassificatoreFinService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/ClassificatoreFinService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="ClassificatoreFinService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/ClassificatoreFinService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="genericService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.GenericService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/GenericService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="GenericService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/GenericService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="movimentoGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/MovimentoGestioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="MovimentoGestioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/MovimentoGestioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="soggettoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.SoggettoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/SoggettoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="SoggettoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/SoggettoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="liquidazioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/LiquidazioneService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="LiquidazioneService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/LiquidazioneService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="provvisorioService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/ProvvisorioService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="ProvvisorioService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/ProvvisorioService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    <bean id="ordinativoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.OrdinativoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/OrdinativoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="OrdinativoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/OrdinativoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="elaborazioniService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ElaborazioniService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ElaborazioniService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="ElaborazioniService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/ElaborazioniService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <bean id="quadroEconomicoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.QuadroEconomicoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/QuadroEconomicoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="QuadroEconomicoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/QuadroEconomicoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+	<bean id="backofficeModificaCigService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.BackofficeModificaCigService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/BackofficeModificaCigService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="BackofficeModificaCigService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/BackofficeModificaCigService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <bean id="tipoComponenteImportiCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.TipoComponenteImportiCapitoloService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/TipoComponenteImportiCapitoloService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="TipoComponenteImportiCapitoloService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/TipoComponenteImportiCapitoloService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    <bean id="componenteImportiCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ComponenteImportiCapitoloService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="ComponenteImportiCapitoloService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/ComponenteImportiCapitoloService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+      
+</beans>

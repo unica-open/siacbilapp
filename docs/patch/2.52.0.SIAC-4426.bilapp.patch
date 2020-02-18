@@ -1,0 +1,50 @@
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoAction.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoAction.java
+index b1c5035af..cb6b2ead6 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoAction.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoAction.java
+@@ -541,30 +541,5 @@ public class GenericPreDocumentoAction<M extends GenericPreDocumentoModel> exten
+ 		return defaultingList(listaFiltrata);
+ 		
+ 	}
+-	
+-	/**
+-	 * Devono essere visualizzate solo modalit&agrave; di pagamento relative ai TipoAccredito = <code>CB</code> e <code>CCP</code>
+-	 * in stato <code>VALIDO</code> e con data scadenza delle modalit&agrave; di pagamento &ge; alla data corrente
+-	 * 
+-	 * @param listaModalitaPagamentoContoCorrente la lista delle modalita da filtrare
+-	 * @return la lista filtrata
+-	 */
+-	protected List<ContoCorrente> filtraListaModalitaPagamentoContoCorrente(List<ContoCorrente> listaModalitaPagamentoContoCorrente){
+-		List<ContoCorrente> listaFiltrata =new ArrayList<ContoCorrente>();
+-		//TODO aggiungere il filtro sulla data di scadenza
+-		for(ContoCorrente cc : listaModalitaPagamentoContoCorrente){
+-			ModalitaAccreditoSoggetto mas = cc.getModalitaAccreditoSoggetto();
+-			boolean isModalitaPagamentoContoCorrente = mas != null &&
+-					(BilConstants.CODICE_MODALITA_PAGAMENTO_DIPENDENTE_CONTO_CORRENTE_BANCARIO_CB.getConstant().equals(mas.getCodice()) /*CCB*/
+-							|| BilConstants.CODICE_MODALITA_PAGAMENTO_DIPENDENTE_CONTO_CORRENTE_POSTALE.getConstant().equals(mas.getCodice()))/*CCP*/;
+-			
+-			if(isModalitaPagamentoContoCorrente && StatoOperativoModalitaPagamentoSoggetto.VALIDO.getCodice().equals(cc.getCodiceStatoModalitaPagamento())){	
+-				listaFiltrata.add(cc);
+-			}
+-		}
+-		
+-		return defaultingList(listaFiltrata);
+-		
+-	}
+ 
+ }
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoEntrataAction.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoEntrataAction.java
+index 10ce1dc73..0abdd51ac 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoEntrataAction.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/GenericPreDocumentoEntrataAction.java
+@@ -271,9 +271,7 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
+ 				throw new WebServiceInvocationFailureException("caricaListaContoCorrente");
+ 			}
+ 			
+-			listaInSessione = response.getContiCorrenti();
+-
+-			listaInSessione =filtraListaModalitaPagamentoContoCorrente(listaInSessione);
++			listaInSessione = defaultingList(response.getContiCorrenti());
+ 			sessionHandler.setParametro(BilSessionParameter.LISTA_CONTO_CORRENTE, listaInSessione);
+ 		}
+ 		

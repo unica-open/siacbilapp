@@ -1,0 +1,229 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capuscgest/ConsultaCapitoloUscitaGestioneAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capuscgest/ConsultaCapitoloUscitaGestioneAction.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/capuscgest/ConsultaCapitoloUscitaGestioneAction.java	(working copy)
+@@ -12,12 +12,13 @@
+ import it.csi.siac.siacbilapp.frontend.ui.model.capuscgest.ConsultaCapitoloUscitaGestioneModel;
+ import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestioneResponse;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestione;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestioneResponse;
+-
+-/**
+- * Classe di Action per la gestione della consultazione del Capitolo di Uscita Gestione.
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestioneResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestione;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestioneResponse;
++import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
++
++/**
++ * Classe di Action per la gestione della consultazione del Capitolo di Uscita Gestione.
+  * 
+  * @author Alessandro Marchino
+  * @version 1.0.0 30/07/2013
+@@ -41,12 +42,14 @@
+ 		try {
+ 			// Effettuo la ricerca di dettaglio del Capitolo
+ 			ricercaDettaglioCapitolo();
+-			// CR-4324
+-			// TODO: valutare se caricarla via AJAX
+-			ricercaDisponibilitaCapitolo();
+-		} catch(WebServiceInvocationFailureException wsife) {
+-			log.debug(methodName, wsife.getMessage());
+-			return INPUT;
++			// CR-4324
++			// TODO: valutare se caricarla via AJAX
++			ricercaDisponibilitaCapitolo();
++			// SIAC-4585
++			gestisciMassimoImpegnabile();
++		} catch(WebServiceInvocationFailureException wsife) {
++			log.debug(methodName, wsife.getMessage());
++			return INPUT;
+ 		}
+ 		
+ 		
+@@ -95,7 +98,28 @@
+ 		log.debug(methodName, "Impostazione delle disponibilita");
+ 		model.setDisponibilitaCapitoloUscitaGestioneAnno0(res.getDisponibilitaCapitoloUscitaGestioneAnno0());
+ 		model.setDisponibilitaCapitoloUscitaGestioneAnno1(res.getDisponibilitaCapitoloUscitaGestioneAnno1());
+-		model.setDisponibilitaCapitoloUscitaGestioneAnno2(res.getDisponibilitaCapitoloUscitaGestioneAnno2());
+-		model.setDisponibilitaCapitoloUscitaGestioneResiduo(res.getDisponibilitaCapitoloUscitaGestioneResiduo());
+-	}
+-}
++		model.setDisponibilitaCapitoloUscitaGestioneAnno2(res.getDisponibilitaCapitoloUscitaGestioneAnno2());
++		model.setDisponibilitaCapitoloUscitaGestioneResiduo(res.getDisponibilitaCapitoloUscitaGestioneResiduo());
++	}
++	
++	/**
++	 * Gestione del massimo impegnabile
++	 */
++	private void gestisciMassimoImpegnabile() {
++		ImportiCapitoloUG icug0 = model.getImportiCapitoloUscitaGestione0();
++		ImportiCapitoloUG icug1 = model.getImportiCapitoloUscitaGestione1();
++		ImportiCapitoloUG icug2 = model.getImportiCapitoloUscitaGestione2();
++		
++		boolean hasMassimoImpegnabile = hasMassimoImpegnabile(icug0) || hasMassimoImpegnabile(icug1) || hasMassimoImpegnabile(icug2);
++		model.setHasMassimoImpegnabile(hasMassimoImpegnabile);
++	}
++	
++	/**
++	 * Controlla se gli importi hanno il massimo impegnabile
++	 * @param icug l'importo da controllare
++	 * @return true se l'importo ha il massimo impegnabile
++	 */
++	private boolean hasMassimoImpegnabile(ImportiCapitoloUG icug) {
++		return icug != null && icug.getMassimoImpegnabile() != null;
++	}
++}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/capuscgest/ConsultaCapitoloUscitaGestioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/capuscgest/ConsultaCapitoloUscitaGestioneModel.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/capuscgest/ConsultaCapitoloUscitaGestioneModel.java	(working copy)
+@@ -3,12 +3,13 @@
+ import java.util.Date;
+ import java.util.EnumSet;
+ import java.util.List;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloUscitaModel;
+-import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestioneResponse;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestione;
++
++import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloUscitaModel;
++import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
++import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestioneResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestione;
+ import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
+ import it.csi.siac.siacbilser.model.DisponibilitaCapitoloUscitaGestione;
+ import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
+@@ -42,12 +43,15 @@
+ 	
+ 	// CR-4324
+ 	private DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneAnno0;
+-	private DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneAnno1;
+-	private DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneAnno2;
+-	private DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneResiduo;
+-
+-	/** Costruttore vuoto di default */
+-	public ConsultaCapitoloUscitaGestioneModel() {
++	private DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneAnno1;
++	private DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneAnno2;
++	private DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneResiduo;
++	
++	// SIAC-4585
++	private boolean hasMassimoImpegnabile;
++
++	/** Costruttore vuoto di default */
++	public ConsultaCapitoloUscitaGestioneModel() {
+ 		super();
+ 		setTitolo("Consultazione Capitolo Spesa Gestione");
+ 	}
+@@ -218,15 +222,56 @@
+ 	 * @param disponibilitaCapitoloUscitaGestioneResiduo the disponibilitaCapitoloUscitaGestioneResiduo to set
+ 	 */
+ 	public void setDisponibilitaCapitoloUscitaGestioneResiduo(DisponibilitaCapitoloUscitaGestione disponibilitaCapitoloUscitaGestioneResiduo) {
+-		this.disponibilitaCapitoloUscitaGestioneResiduo = disponibilitaCapitoloUscitaGestioneResiduo;
+-	}
+-
+-	/* ==== Request ==== */
+-
+-	/**
+-	 * Crea una Request per il servizio di {@link RicercaDettaglioCapitoloUscitaGestione}.
+-	 *
+-	 * @return la Request creata
++		this.disponibilitaCapitoloUscitaGestioneResiduo = disponibilitaCapitoloUscitaGestioneResiduo;
++	}
++
++	/**
++	 * @return the hasMassimoImpegnabile
++	 */
++	public boolean isHasMassimoImpegnabile() {
++		return hasMassimoImpegnabile;
++	}
++
++	/**
++	 * @param hasMassimoImpegnabile the hasMassimoImpegnabile to set
++	 */
++	public void setHasMassimoImpegnabile(boolean hasMassimoImpegnabile) {
++		this.hasMassimoImpegnabile = hasMassimoImpegnabile;
++	}
++	// SIAC-4585
++	/**
++	 * @return the massimoImpegnabile0
++	 */
++	public String getMassimoImpegnabile0() {
++		return hasMassimoImpegnabile && getImportiCapitoloUscitaGestione0() != null && getImportiCapitoloUscitaGestione0().getMassimoImpegnabile() != null
++				? FormatUtils.formatCurrency(getImportiCapitoloUscitaGestione0().getMassimoImpegnabile())
++				: "-";
++	}
++
++	/**
++	 * @return the massimoImpegnabile1
++	 */
++	public String getMassimoImpegnabile1() {
++		return hasMassimoImpegnabile && getImportiCapitoloUscitaGestione1() != null && getImportiCapitoloUscitaGestione1().getMassimoImpegnabile() != null
++				? FormatUtils.formatCurrency(getImportiCapitoloUscitaGestione1().getMassimoImpegnabile())
++				: "-";
++	}
++
++	/**
++	 * @return the massimoImpegnabile2
++	 */
++	public String getMassimoImpegnabile2() {
++		return hasMassimoImpegnabile && getImportiCapitoloUscitaGestione2() != null && getImportiCapitoloUscitaGestione2().getMassimoImpegnabile() != null
++				? FormatUtils.formatCurrency(getImportiCapitoloUscitaGestione2().getMassimoImpegnabile())
++				: "-";
++	}
++
++	/* ==== Request ==== */
++	
++	/**
++	 * Crea una Request per il servizio di {@link RicercaDettaglioCapitoloUscitaGestione}.
++	 *
++	 * @return la Request creata
+ 	 */
+ 	public RicercaDettaglioCapitoloUscitaGestione creaRequestRicercaDettaglioCapitoloUscitaGestione() {
+ 		RicercaDettaglioCapitoloUscitaGestione request = new RicercaDettaglioCapitoloUscitaGestione();
+Index: src/main/webapp/jsp/capUscitaGestione/include/tabellaDisponibilitaCapUscGest.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/include/tabellaDisponibilitaCapUscGest.jsp	(revision 14051)
++++ src/main/webapp/jsp/capUscitaGestione/include/tabellaDisponibilitaCapUscGest.jsp	(working copy)
+@@ -50,19 +50,21 @@
+ 			<td><strong>Disponibilit&agrave; ad impegnare</strong></td>
+ 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno0.disponibilitaImpegnare"/></td>
+ 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno1.disponibilitaImpegnare"/></td>
+-			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno2.disponibilitaImpegnare"/></td>
+-			<td></td>
+-		</tr>
+-		<tr>
+-			<td><strong>Massimo impegnabile</strong>
+-			<td class="text-right"><s:property value="importiCapitoloUscitaGestione0.massimoImpegnabile"/></td>
+-			<td class="text-right"><s:property value="importiCapitoloUscitaGestione1.massimoImpegnabile"/></td>
+-			<td class="text-right"><s:property value="importiCapitoloUscitaGestione2.massimoImpegnabile"/></td>
+-			<td></td>
+-		</tr>
+-		<tr>
+-			<td colspan="5" class="row-small"></td>
+-		</tr>
++			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno2.disponibilitaImpegnare"/></td>
++			<td></td>
++		</tr>
++		<s:if test="hasMassimoImpegnabile">
++			<tr>
++				<td><strong>Massimo impegnabile</strong>
++				<td class="text-right"><s:property value="massimoImpegnabile0"/></td>
++				<td class="text-right"><s:property value="massimoImpegnabile1"/></td>
++				<td class="text-right"><s:property value="massimoImpegnabile2"/></td>
++				<td></td>
++			</tr>
++		</s:if>
++		<tr>
++			<td colspan="5" class="row-small"></td>
++		</tr>
+ 
+ 		<tr>
+ 			<th colspan="5">Liquidazioni</th>

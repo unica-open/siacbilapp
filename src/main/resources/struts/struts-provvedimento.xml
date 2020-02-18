@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="provvedimento" extends="capitoloDefault" namespace="/">
+        <action name="inserisciProvvedimento" class="inserisciProvvedimentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/provvedimento/inserisciProvvedimento.jsp</result>
+        </action>
+        <action name="salvaInserisciProvvedimento" class="inserisciProvvedimentoAction" method="inserimentoCDU">
+            <result name="success">/jsp/provvedimento/inserisciProvvedimentoDISABLED.jsp</result>
+            <result name="input">/jsp/provvedimento/inserisciProvvedimento.jsp</result>
+        </action>
+        <action name="inserisciProvvedimento_inserimento" class="inserisciProvvedimentoAction" method="inserimento">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">informazioni.*, attoAmministrativo.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON"/>
+        </action>
+        
+        <action name="aggiornaProvvedimento" class="aggiornaProvvedimentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/provvedimento/aggiornaProvvedimento.jsp</result>
+        </action>
+        <action name="salvaAggiornaProvvedimento" class="aggiornaProvvedimentoAction" method="aggiornamentoCDU">
+            <result name="success">/jsp/provvedimento/aggiornaProvvedimentoDISABLED.jsp</result>
+            <result name="input">/jsp/provvedimento/aggiornaProvvedimento.jsp</result>
+        </action>
+        
+        <action name="ricercaProvvedimento" class="ricercaProvvedimentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/provvedimento/ricercaProvvedimento.jsp</result>
+        </action>
+        
+        <action name="ricercaProvvedimentoDA" class="ricercaProvvedimentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/provvedimento/editProvvedimento.jsp</result>
+        </action>
+        
+        <action name="ricercaProvvedimentoEst" class="ricercaProvvedimentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/provvedimento/cercaProvvedimento.jsp</result>
+        </action>
+        
+        <!-- Consultazione -->
+        <action name="consultaProvvedimento" class="consultaProvvedimentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/provvedimento/consultaProvvedimento.jsp</result>
+        </action>
+        
+        
+        
+        <!-- Azioni della ricerca -->
+            <!-- Ricerca con operazioni -->
+        <action name="effettuaRicercaConOperazioniProvvedimento" class="ricercaProvvedimentoAction" method="ricercaConOperazioniCDU">
+            <result name="input">/jsp/provvedimento/ricercaProvvedimento.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaProvvedimento</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+            <!-- Ricerca senza operazioni -->
+        <action name="effettuaRicercaSenzaOperazioniProvvedimento" class="ricercaProvvedimentoAction" method="ricercaSenzaOperazioniCDU">
+			<result name="input" type="customMessagesJSON" />
+            <result name="success" type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">listaElementoProvvedimento.*</param>
+            </result>
+        </action>
+        
+        <!-- Risultati di ricerca -->
+        <action name="risultatiRicercaProvvedimento" class="risultatiRicercaProvvedimentoAction" method="execute">
+            <result name="input">/jsp/provvedimento/ricercaProvvedimento.jsp</result>
+            <result name="success">/jsp/provvedimento/risultatiRicercaProvvedimento.jsp</result>
+        </action>
+            <!-- Redirezione verso aggiornamento -->
+        <action name="risultatiRicercaProvvedimentoAggiorna" class="risultatiRicercaProvvedimentoAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaProvvedimento</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+            <!-- Redirezione verso consultazione -->
+        <action name="risultatiRicercaProvvedimentoConsulta" class="risultatiRicercaProvvedimentoAction" method="consulta">
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaProvvedimento</param>
+                <param name="namespace">/</param>
+                <param name="uidDaConsultare">${uidDaConsultare}</param>
+            </result>
+        </action>
+        
+    </package>
+</struts>

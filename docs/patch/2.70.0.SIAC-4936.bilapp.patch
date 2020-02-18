@@ -1,0 +1,46 @@
+Index: src/main/webapp/js/local/attoDiLegge/attoDiLegge.js
+===================================================================
+--- src/main/webapp/js/local/attoDiLegge/attoDiLegge.js	(revision 15260)
++++ src/main/webapp/js/local/attoDiLegge/attoDiLegge.js	(working copy)
+@@ -240,13 +240,13 @@
+                     return source.dataFineFinanziamento;
+                 }},
+                 {"aTargets" : [10], "mData" : function(source) {
+-                    return source.azioni || "";
+-                }, "fnCreatedCell" : function (nTd, sData, oData) {
+-                    // Importante : attivare il popover sull'elemento anchor
+-                    $("a[href='#divAnnullaRelazione']", nTd).on("click", function(event) {
+-                        event.preventDefault();
+-                        clickOnAnnullaRelazione(oData.uid);
+-                    });
++                    return source.azioni || "";
++                }, "fnCreatedCell" : function (nTd, sData, oData) {
++                    // Importante : attivare il popover sull'elemento anchor
++                    $("a[data-target='#divAnnullaRelazione']", nTd).on("click", function(event) {
++                        event.preventDefault();
++                        clickOnAnnullaRelazione(oData.uid);
++                    });
+                     $("a[data-target='#divAggiornaRelazioneAttoDiLeggeCapitolo']", nTd).on("click", function(event) {
+                         event.preventDefault();
+                         clickOnAggiornaRelazione(oData.uid, oData.uidAttoDiLegge);
+@@ -1003,12 +1003,12 @@
+         $("#btnCercaAtto").on("click", AttoDiLegge.cercaAttoDiLegge);
+ 
+         $("#pulsantePreparaInserimentoRelazione").on("click", AttoDiLegge.preparaInserimentoRelazione);
+-        $("#pulsantePreparaAssociaRelazione").on("click", AttoDiLegge.preparaAssociaRelazione);
+-        $("#btnModalInsRelazioneSalva").on("click", AttoDiLegge.salvaRelazioneAttoDiLeggeCapitolo);
+-        $("#btnAnnullaRelProcedi").on("click", AttoDiLegge.annullaRelazioneAttoDiLegge);
+-        $("btnAggiornaRelAnnulla").on("click", AttoDiLegge.clickOnAnnullaAggiornaRelazione);
+-        $("#btnAggiornaRelSalva").on("click", AttoDiLegge.aggiornaRelazioneAttoDiLegge);
+-        $("#btnAggiornaAttoLegge").on("click", AttoDiLegge.preparaAggiornaAttoDiLegge);
+-        $("#btnModalAggAttoSalva").on("click", AttoDiLegge.aggiornaAttoDiLegge);
++        $("#pulsantePreparaAssociaRelazione").on("click", AttoDiLegge.preparaAssociaRelazione);
++        $("#btnModalInsRelazioneSalva").on("click", AttoDiLegge.salvaRelazioneAttoDiLeggeCapitolo);
++        $("#btnAnnullaRelProcedi").on("click", AttoDiLegge.annullaRelazioneAttoDiLegge);
++        $("#btnAggiornaRelAnnulla").on("click", AttoDiLegge.clickOnAnnullaAggiornaRelazione);
++        $("#btnAggiornaRelSalva").on("click", AttoDiLegge.aggiornaRelazioneAttoDiLegge);
++        $("#btnAggiornaAttoLegge").on("click", AttoDiLegge.preparaAggiornaAttoDiLegge);
++        $("#btnModalAggAttoSalva").on("click", AttoDiLegge.aggiornaAttoDiLegge);
+     }
+ );
+\ No newline at end of file

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<!-- Costante di definizione del massimo numero di breadcrumbs visualizzabili -->
+	<constant name="arianna:maxCrumbs" value="6" />
+
+	<include file="struts-global.xml" />
+	<include file="struts-capitolo.xml" />
+
+	<include file="struts/struts-admin.xml" />
+
+	<include file="struts/struts-capitolo-common.xml" />
+	<include file="struts/struts-capEntrataGestione.xml" />
+	<include file="struts/struts-capEntrataPrevisione.xml" />
+	<include file="struts/struts-capUscitaGestione.xml" />
+	<include file="struts/struts-capUscitaPrevisione.xml" />
+	<include file="struts/struts-selezionaCapitolo.xml" />
+
+	<include file="struts/struts-classificatori-ajax.xml" />
+	<include file="struts/struts-classificatori-ricercaSintetica.xml" />
+
+	<include file="struts/struts-attoDiLegge.xml" />
+	<include file="struts/struts-provvedimento.xml" />
+	<include file="struts/struts-storno.xml" />
+
+	<include file="struts/struts-variazioniImporti.xml" />
+	<include file="struts/struts-variazioniImportiUEB.xml" />
+	<include file="struts/struts-variazioniCodifiche.xml" />
+
+	<include file="struts/struts-vincoli.xml" />
+
+	<include file="struts/struts-dubbiaEsigibilita.xml" />
+	<include file="struts/struts-dubbiaEsigibilitaRendiconto.xml" />
+
+	<include file="struts/struts-progetto.xml" />
+	<include file="struts/struts-cronoprogramma.xml" />
+
+	<include file="struts/struts-documentoEntrata.xml" />
+	<include file="struts/struts-documentoSpesa.xml" />
+	<include file="struts/struts-soggetto.xml" />
+	<include file="struts/struts-movimentoGestione.xml" />
+
+	<include file="struts/struts-preDocumentoSpesa.xml" />
+	<include file="struts/struts-preDocumentoEntrata.xml" />
+	<include file="struts/struts-causaleSpesa.xml" />
+	<include file="struts/struts-causaleEntrata.xml" />
+
+	<include file="struts/struts-comune.xml" />
+
+	<include file="struts/struts-attivitaIvaCapitolo.xml" />
+	<include file="struts/struts-gruppoAttivitaIva.xml" />
+	<include file="struts/struts-registroIva.xml" />
+
+	<include file="struts/struts-documentoEntrataIva.xml" />
+	<include file="struts/struts-documentoSpesaIva.xml" />
+
+	<include file="struts/struts-documentoEntrataTestata.xml" />
+	<include file="struts/struts-documentoSpesaTestata.xml" />
+
+	<include file="struts/struts-stampaRegistroIva.xml" />
+
+	<include file="struts/struts-allegatoAtto.xml" />
+	<include file="struts/struts-provvisorioCassa.xml" />
+
+	<include file="struts/struts-tipoOnere.xml" />
+	<include file="struts/struts-emissioneOrdinativi.xml" />
+
+	<include file="struts/struts-cassaEconomale.xml" />
+	<include file="struts/struts-cassaEconomaleRichiesteAnticipoPerTrasfertaDipendenti.xml" />
+	<include file="struts/struts-cassaEconomaleRichiesteAnticipoSpese.xml" />
+	<include file="struts/struts-cassaEconomaleRichiesteAnticipoSpeseRendiconto.xml" />
+	<include file="struts/struts-cassaEconomaleRichiesteAnticipoSpesePerMissione.xml" />
+	<include file="struts/struts-cassaEconomaleRichiesteAnticipoSpesePerMissioneRendiconto.xml" />
+	<include file="struts/struts-cassaEconomaleRichiestePagamentoFatture.xml" />
+	<include file="struts/struts-cassaEconomaleRichiesteRimborsoSpese.xml" />
+	<include file="struts/struts-cassaEconomaleRichiestePagamento.xml" />
+	<include file="struts/struts-cassaEconomale-stampe.xml" />
+
+	<include file="struts/struts-gen-gsa-common.xml" />
+
+	<include file="struts/struts-gen-pianoDeiConti.xml" />
+	<include file="struts/struts-gen-causaleEP.xml" />
+	<include file="struts/struts-gen-primaNotaLibera.xml" />
+	<include file="struts/struts-gen-registrazioneMovFin.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrata.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataAccertamento.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataDocumento.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataImpegno.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataLiquidazione.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataModificaMovimentoGestioneEntrata.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataModificaMovimentoGestioneSpesa.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataOrdinativo.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataRendicontoRichiesta.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataRichiestaEconomale.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataSubAccertamento.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataSubImpegno.xml" />
+	<include file="struts/struts-gen-primaNotaIntegrataNotaCredito.xml" />
+
+	<include file="struts/struts-fatturaElettronica.xml" />
+	<include file="struts/struts-registroComunicazioniPCC.xml" />
+
+	<include file="struts/struts-gsa-pianoDeiConti.xml" />
+	<include file="struts/struts-gsa-causaleEP.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrata.xml" />
+	<!-- SIAC-5334 -->
+	<include file="struts/struts-gsa-primaNotaIntegrataManuale.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataAccertamento.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataDocumento.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataImpegno.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataLiquidazione.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneEntrata.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneSpesa.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataOrdinativo.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataRendicontoRichiesta.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataRichiestaEconomale.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataSubAccertamento.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataSubImpegno.xml" />
+	<include file="struts/struts-gsa-primaNotaLibera.xml" />
+	<include file="struts/struts-gsa-registrazioneMovFin.xml" />
+	<include file="struts/struts-gsa-primaNotaIntegrataNotaCredito.xml" />
+	<include file="struts/struts-gsa-conciliazione.xml" />
+	<!-- cespiti -->
+	<include file="struts/struts-inv-primaNotaLibera.xml" />
+	
+	<!-- SIAC-5336 -->
+	<include file="struts/struts-gsa-classificatoreGSA.xml" />
+	<!-- SIAC-5255 -->
+	<include file="struts/struts-quadroEconomico.xml" />
+	<!-- CESPITI -->
+	<include file="struts/struts-categoriacespiti.xml" />
+	<include file="struts/struts-tipoBeneCespiti.xml" />
+	<include file="struts/struts-cespite.xml" />
+	<include file="struts/struts-dismissioneCespite.xml" />
+	<include file="struts/struts-variazioneCespite.xml" />
+	<include file="struts/struts-ammortamentoAnnuoCespite.xml" />
+	<include file="struts/struts-registroACespite.xml" />
+	<include file="struts/struts-registrob.xml" />
+	
+	<!-- backoffice -->
+	<include file="struts/struts-backoffice-movimentoGestione.xml" />
+	
+	<include file="struts/struts-consultazioneEntita.xml" />
+	<include file="struts/struts-async.xml" />
+	<!-- SIAC-6881 -->
+	<include file="struts/struts-tipoComponenteImportiCapitolo.xml"/>	
+	<include file="struts/struts-componenteImportiCapitolo.xml" />
+</struts>

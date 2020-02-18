@@ -1,0 +1,79 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(revision 14963)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(working copy)
+@@ -331,6 +331,9 @@
+ 		log.debug(methodName, "Il servizio asincrono ha ancora risposto.");
+ 		model.setIsAsyncResponsePresent(Boolean.TRUE);
+ 		
++		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo(), "provvedimento variazione di PEG");
++		model.popolaStringaProvvedimentoAggiuntivo(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio());
++		
+ 		//Il servizio asincrono ha dato risposta.
+ 		if (res.hasErrori()) {
+ 			log.debug(methodName, "Invocazione terminata con fallimento");
+@@ -430,6 +433,8 @@
+ 		
+ 		log.debug(methodName, "Il servizio asincrono ha risposto.");
+ 		model.setIsAsyncResponsePresent(Boolean.TRUE);
++		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo(), "provvedimento variazione di PEG");
++		model.popolaStringaProvvedimentoAggiuntivo(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio());
+ 		
+ 		//Il servizio asincrono ha dato risposta.
+ 		// Ottengo l'id dell'attività
+@@ -472,8 +477,8 @@
+ 			setErroriInSessionePerActionSuccessiva();			
+ 		}
+ 		
+-		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo(), "provvedimento variazione di PEG");
+-		model.popolaStringaProvvedimentoAggiuntivo(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio());
++//		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo(), "provvedimento variazione di PEG");
++//		model.popolaStringaProvvedimentoAggiuntivo(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio());
+ 		log.logXmlTypeObject(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio().getTipoAtto(), "VARIAZIONE IMPORTO CAPITOLO");
+ 		model.setStatoOperativoVariazioneDiBilancio(res.getVariazioneImportoCapitolo().getStatoOperativoVariazioneDiBilancio());
+ 				
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(revision 14963)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(working copy)
+@@ -1213,14 +1213,6 @@
+ 	 * @param descrizioneAtto la descrizione da pre-pendere alla stringa
+ 	 */
+ 	public void popolaStringaProvvedimento(AttoAmministrativo attoAmministrativo, String descrizioneAtto) {
+-		if(this.tipoAtto != null && attoAmministrativo != null){
+-			TipoAtto temp = new TipoAtto();
+-			
+-			temp.setCodice(this.tipoAtto.getCodice());
+-			temp.setDescrizione(this.tipoAtto.getDescrizione());
+-			attoAmministrativo.setTipoAtto(temp);
+-		}
+-		
+ 		setStringaProvvedimento(getStringDescrizioneAtto(attoAmministrativo, descrizioneAtto));
+ 	}
+ 	
+@@ -1230,13 +1222,7 @@
+ 	 * @param attoAmministrativo l'atto amministrativo da cui creare la stringa
+ 	 */
+ 	public void popolaStringaProvvedimentoAggiuntivo(AttoAmministrativo attoAmministrativo) {
+-		if(this.tipoAttoAggiuntivo != null && attoAmministrativo != null ){
+-			TipoAtto temp = new TipoAtto();
+-			
+-			temp.setCodice(this.tipoAttoAggiuntivo.getCodice());
+-			temp.setDescrizione(this.tipoAttoAggiuntivo.getDescrizione());
+-			attoAmministrativo.setTipoAtto(temp);
+-		}
++		
+ 		setStringaProvvedimentoAggiuntivo(getStringDescrizioneAtto(attoAmministrativo, "provvedimento variazione di bilancio"));
+ 	}
+ 
+@@ -1256,8 +1242,8 @@
+ 				.append(provvedimento.getAnno())
+ 				.append(provvedimento.getNumero() != 0 ? " / " : "")
+ 				.append(provvedimento.getNumero() != 0 ? provvedimento.getNumero() : "")
+-				.append(provvedimento.getTipoAtto() != null  && provvedimento.getTipoAtto().getDescrizione() != null && !provvedimento.getTipoAtto().getDescrizione().isEmpty()? " / " : "")
+-				.append(provvedimento.getTipoAtto() != null ? (provvedimento.getTipoAtto().getDescrizione()): "");
++				.append(provvedimento.getTipoAtto() != null  && provvedimento.getTipoAtto().getCodice() != null && !provvedimento.getTipoAtto().getCodice().isEmpty()? " / " : "")
++				.append(provvedimento.getTipoAtto() != null ? (provvedimento.getTipoAtto().getCodice() + " - " + provvedimento.getTipoAtto().getDescrizione()): "");
+ 			return sb.toString();
+ 		}
+ 		return sb.append("Nessun " + attoAmmTesto + " selezionato").toString();

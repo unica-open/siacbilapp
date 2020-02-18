@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="classificatoriRicercaSintetica" extends="capitoloDefault" namespace="">
+		<result-types>
+			<result-type name="classificatoreGerarchicoByCodice" class="it.csi.siac.siacbilapp.frontend.ui.action.ajax.classificatori.RicercaClassificatoreGerarchicoByCodiceAction$ResultClassificatoreGerarchicoByCodice" />
+		</result-types>
+
+		<!-- Ricerche puntuali -->
+		<action name="ricercaClassificatoreGerarchicoByCodice_siopeSpesa" class="ricercaClassificatoreGerarchicoByCodiceAction" method="siopeSpesa">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="classificatoreGerarchicoByCodice" />
+		</action>
+		<action name="ricercaClassificatoreGerarchicoByCodice_siopeEntrata" class="ricercaClassificatoreGerarchicoByCodiceAction" method="siopeEntrata">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="classificatoreGerarchicoByCodice" />
+		</action>
+
+		<!-- Ricerche sintetiche -->
+		<action name="ricercaClassificatoreGerarchico_siopeSpesa" class="ricercaClassificatoreGerarchicoAction" method="siopeSpesa">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="ricercaClassificatoreGerarchico_siopeEntrata" class="ricercaClassificatoreGerarchicoAction" method="siopeEntrata">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<!-- Risultati -->
+		<action name="risultatiRicercaSiopeSpesaAjax" class="risultatiRicercaSiopeSpesaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaSiopeEntrataAjax" class="risultatiRicercaSiopeEntrataAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,89 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoEntrataModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoEntrataModel.java	(revision 11299)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoEntrataModel.java	(working copy)
+@@ -653,7 +653,12 @@
+ 		request.setDataOra(new Date());
+ 		request.setRichiedente(getRichiedente());
+ 		request.setDocumentoEntrata(notaCredito);
+-		notaCredito.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++//		notaCredito.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++		for(DocumentoEntrata docPadre : notaCredito.getListaDocumentiEntrataPadre()){
++			if(docPadre.getUid() == documento.getUid()){
++				docPadre.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++			}
++		}
+ 		request.setBilancio(getBilancio());
+ 		
+ 		return request;
+@@ -712,7 +717,12 @@
+ 		request.setDataOra(new Date());
+ 		request.setRichiedente(getRichiedente());
+ 		notaCredito.setEnte(getEnte());
+-		notaCredito.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++//		notaCredito.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++		for(DocumentoEntrata docPadre : notaCredito.getListaDocumentiEntrataPadre()){
++			if(docPadre.getUid() == documento.getUid()){
++				docPadre.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++			}
++		}
+ 		request.setBilancio(getBilancio());
+ 		
+ 		request.setDocumentoEntrata(notaCredito);
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(revision 11299)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(working copy)
+@@ -1197,7 +1197,11 @@
+ 	public InserisceNotaCreditoSpesa creaRequestInserisceNotaCreditoSpesa() {
+ 		InserisceNotaCreditoSpesa request = new InserisceNotaCreditoSpesa();
+ 		
+-		notaCredito.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++		for(DocumentoSpesa docPadre : notaCredito.getListaDocumentiSpesaPadre()){
++			if(docPadre.getUid() == documento.getUid()){
++				docPadre.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++			}
++		}
+ 		request.setDataOra(new Date());
+ 		request.setRichiedente(getRichiedente());
+ 		request.setDocumentoSpesa(notaCredito);
+@@ -1398,7 +1402,12 @@
+ 		request.setRichiedente(getRichiedente());
+ 		notaCredito.setEnte(getEnte());
+ 		notaCredito.getListaSubdocumenti().get(0).setAttoAmministrativo(getAttoAmministrativo());
+-		notaCredito.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++//		notaCredito.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++		for(DocumentoSpesa docPadre : notaCredito.getListaDocumentiSpesaPadre()){
++			if(docPadre.getUid() == documento.getUid()){
++				docPadre.setImportoDaDedurreSuFattura(getImportoDaDedurreSuFattura());
++			}
++		}
+ 		request.setBilancio(getBilancio());
+ 		
+ 		request.setDocumentoSpesa(notaCredito);
+Index: src/main/webapp/js/local/documento/aggiornaEntrataNoteCredito.js
+===================================================================
+--- src/main/webapp/js/local/documento/aggiornaEntrataNoteCredito.js	(revision 11299)
++++ src/main/webapp/js/local/documento/aggiornaEntrataNoteCredito.js	(working copy)
+@@ -443,7 +443,7 @@
+         $("#tabellaNoteCreditoDocumento").dataTable(options);
+         $("#thtotaleNoteCredito").html(totaleNoteCredito.formatMoney());
+         $("#thtotaleDaDedurreSuFattura").html(totaleImportoDaDedurreSuFattura.formatMoney());
+-        $("#noteCreditoDocumento").val(totaleImportoDaDedurreSuFattura.formatMoney());
++        $("#noteCreditoDocumento").val(totaleImportoDaDedurreSuFattura.formatMoney()).keepOriginalValues();
+ 
+     }
+ 
+Index: src/main/webapp/js/local/documento/aggiornaSpesaNoteCredito.js
+===================================================================
+--- src/main/webapp/js/local/documento/aggiornaSpesaNoteCredito.js	(revision 11299)
++++ src/main/webapp/js/local/documento/aggiornaSpesaNoteCredito.js	(working copy)
+@@ -451,7 +451,7 @@
+         $("#tabellaNoteCreditoDocumento").dataTable(options);
+         $("#thtotaleNoteCredito").html(totaleNoteCredito.formatMoney());
+         $("#thtotaleDaDedurreSuFattura").html(totaleImportoDaDedurreSuFattura.formatMoney());
+-        $("#noteCreditoDocumento").val(totaleImportoDaDedurreSuFattura.formatMoney());
++        $("#noteCreditoDocumento").val(totaleImportoDaDedurreSuFattura.formatMoney()).keepOriginalValues();
+ 
+ 
+     }

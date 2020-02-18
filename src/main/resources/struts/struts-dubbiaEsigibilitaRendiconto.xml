@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="dubbiaEsigibilitaRendiconto" extends="capitoloDefault" namespace="/">
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="enterPage">
+			<result name="success">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_salvaAttributiBilancio" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="salvaAttributiBilancio">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_aggiornaAttributiBilancio" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="aggiornaAttributiBilancio">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_confermaCapitoli" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="confermaCapitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaAccantonamentoFondiDubbiaEsigibilitaRendicontoTemp.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_leggiListaTemp" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="leggiListaTemp">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaAccantonamentoFondiDubbiaEsigibilitaRendicontoTemp.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_salvaCapitoli" method="salvaCapitoli"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,informazioni.*,listaAccantonamentoFondiDubbiaEsigibilitaRendiconto.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_eliminaAccantonamento" method="eliminaAccantonamento"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_aggiornaAccantonamento" method="aggiornaAccantonamento"
+			class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="selezionaCapitoliFondiDubbiaEsigibilitaRendiconto" class="selezionaCapitoloAction" method="selezionaCapitoloFondiDubbiaEsigibilitaRendiconto">
+			<result name="input" type="customMessagesJSON"/>
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">errori.*, listaCapitoli.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_caricaListaAccantonamentoFondi" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="caricaListaAccantonamentoFondi">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaRendicontoAjax" class="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaRendicontoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_popolaDaAnnoPrecedente" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="popolaDaAnnoPrecedente">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">idOperazioneAsincrona</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+	</package>
+</struts>

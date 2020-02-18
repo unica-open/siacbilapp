@@ -1,0 +1,63 @@
+Index: src/main/webapp/js/local/documento/consultaSpesa.js
+===================================================================
+--- src/main/webapp/js/local/documento/consultaSpesa.js	(revision 12597)
++++ src/main/webapp/js/local/documento/consultaSpesa.js	(revision 12598)
+@@ -564,11 +564,14 @@
+         $.post('consultaRegistroComunicazioniPCCSubdocumentoSpesaInVisualizzazione.do', {'subdocumentoSpesa.uid': uid})
+         .then(function(data) {
+             $target.html(data);
+-            $target.collapse('show');
+-
+-            RegistroComunicazioniPCC.activateDataTableOnTable($target.find('table[data-table="contabilizzazioni"]'), {oLanguage: {sZeroRecords: 'Non sono presenti contabilizzazioni', oPaginate: {sEmptyTable: 'Nessuna contabilizzazione disponibile'}}});
+-            RegistroComunicazioniPCC.activateDataTableOnTable($target.find('table[data-table="comunicazioniDataScadenza"]'), {oLanguage: {sZeroRecords: 'Non sono presenti comunicazioni per la data di scadenza', oPaginate: {sEmptyTable: 'Nessuna comunicazione per data di scadenza disponibile'}}});
+-            RegistroComunicazioniPCC.activateDataTableOnTable($target.find('table[data-table="comunicazioniPagamento"]'), {oLanguage: {sZeroRecords: 'Non sono presenti comunicazioni per il pagamento', oPaginate: {sEmptyTable: 'Nessuna comunicazione per pagamento disponibile'}}});
++            $target.collapse('show'); 
++            //workaround dovuto al fatto che le tabelle sono all'interno di una tabella per cui vale .table-accordion thead {display: none;}
++            $target.find('thead').each(function(){
++            	$(this).show();
++            });
++            RegistroComunicazioniPCC.activateDataTableOnTable('table[data-table="contabilizzazioni"]', {oLanguage: {sZeroRecords: 'Non sono presenti contabilizzazioni', oPaginate: {sEmptyTable: 'Nessuna contabilizzazione disponibile'}}});
++            RegistroComunicazioniPCC.activateDataTableOnTable('table[data-table="comunicazioniDataScadenza"]', {oLanguage: {sZeroRecords: 'Non sono presenti comunicazioni per la data di scadenza', oPaginate: {sEmptyTable: 'Nessuna comunicazione per data di scadenza disponibile'}}});
++            RegistroComunicazioniPCC.activateDataTableOnTable('table[data-table="comunicazioniPagamento"]', {oLanguage: {sZeroRecords: 'Non sono presenti comunicazioni per il pagamento', oPaginate: {sEmptyTable: 'Nessuna comunicazione per pagamento disponibile'}}});
+         }).always($this.overlay.bind($this, 'hide'));
+     }
+ 
+Index: src/main/webapp/js/local/registroComunicazioniPCC/registroComunicazioniPCCConsultazioneSubdocumentoSpesa.js
+===================================================================
+--- src/main/webapp/js/local/registroComunicazioniPCC/registroComunicazioniPCCConsultazioneSubdocumentoSpesa.js	(revision 12597)
++++ src/main/webapp/js/local/registroComunicazioniPCC/registroComunicazioniPCCConsultazioneSubdocumentoSpesa.js	(revision 12598)
+@@ -30,7 +30,7 @@
+     /**
+      * Attivazione del dataTable sulla tabella.
+      *
+-     * @param tableSelector (String) l'id della tabella
++     * @param tableSelector (String) il selettore css della tabella
+      * @param extraOpts     (Object) le opzioni aggiuntive (opzionale, default = {})
+      */
+     function activateDataTableOnTable(tableSelector, extraOpts) {
+@@ -39,9 +39,9 @@
+                 title: "Descrizione Esito",
+                 trigger: "hover"
+             };
++        $('a[rel="popover"]', 'td ' + tableSelector).eventPreventDefault('click')
++        .popover(popoverOpts);
+         $(tableSelector).dataTable(opts);
+-        $("a", "td").eventPreventDefault("click")
+-            .popover(popoverOpts);
+     }
+ 
+     global.RegistroComunicazioniPCC = exports;
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/ConsultaDocumentoSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/ConsultaDocumentoSpesaAction.java	(revision 12597)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/ConsultaDocumentoSpesaAction.java	(revision 12598)
+@@ -354,7 +354,8 @@
+ 			SubdocumentoSpesa subdocumentoSpesa = ottieniSubdocumentoSpesa();
+ 			ottieniDettaglioMovimentoGestione(subdocumentoSpesa);
+ 			
+-			model.setSubdocumentoSpesa(subdocumentoSpesa);
++			model.setSubdocumentoSpesa(subdocumentoSpesa);			
++			model.setIdWorkaround(Integer.toString(subdocumentoSpesa.getUid()));
+ 		} catch(WebServiceInvocationFailureException wsife) {
+ 			log.info(methodName, wsife.getMessage());
+ 		}

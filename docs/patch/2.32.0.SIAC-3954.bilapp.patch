@@ -1,0 +1,23 @@
+Index: src/main/webapp/js/local/capitolo/dettaglioVariazioni.js
+===================================================================
+--- src/main/webapp/js/local/capitolo/dettaglioVariazioni.js	(revision 12068)
++++ src/main/webapp/js/local/capitolo/dettaglioVariazioni.js	(revision 12098)
+@@ -73,8 +73,7 @@
+             + '<dt>Stato</dt>'
+             + '<dd>' + (source.statoOperativoVariazioneDiBilancio ? source.statoOperativoVariazioneDiBilancio.descrizione : '') + '&nbsp;</dd>'
+             + '<dt>Applicazione</dt>'
+-            // FIXME: mettere quello corretto quando si capira' quale sia
+-            + '<dd>Gestione</dd>'
++            + '<dd>' + (source.applicazioneVariazione ? source.applicazioneVariazione._name : '') + '</dd>'
+             + '<dt>Descrizione</dt>'
+             + '<dd>' + source.descrizione + '&nbsp;</dd>'
+             + '<dt>Note</dt>'
+@@ -90,7 +89,7 @@
+         return '<h5>Provvedimento</h5>'
+         + '<dl class="dl-horizontal">'
+             + '<dt>Tipo</dt>'
+-            + '<dd>' + (attoAmministrativo && attoAmministrativo.tipoAtto ? attoAmministrativo.tipoAtto.codice : '') + '&nbsp;</dd>'
++            + '<dd>' + (attoAmministrativo && attoAmministrativo.tipoAtto ? attoAmministrativo.tipoAtto.codice + ' - ' + attoAmministrativo.tipoAtto.descrizione : '') + '&nbsp;</dd>'
+             + '<dt>Anno</dt>'
+             + '<dd>' + (attoAmministrativo ? attoAmministrativo.anno : '') + '&nbsp;</dd>'
+             + '<dt>Numero</dt>'

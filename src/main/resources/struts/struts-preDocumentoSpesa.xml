@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="preDocumentoSpesa" extends="capitoloDefault" namespace="/">
+		<result-types>
+			<result-type name="invocazioneAsincronaJSON" class="it.csi.siac.siacfin2app.frontend.ui.action.predocumento.RisultatiRicercaPreDocumentoGenericAction$InvocazioneAsincronaJSONResult" />
+		</result-types>
+
+		<action name="inserisciPreDocumentoSpesa" class="inserisciPreDocumentoSpesaAction">
+			<result name="success">/jsp/predocumento/inserisciPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="inserimentoPreDocumentoSpesa" class="inserisciPreDocumentoSpesaAction" method="inserimento">
+			<result name="aggiorna" type="redirectAction">
+				<param name="actionName">aggiornaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaAggiornare">${uidPreDocumento}</param>
+			</result>
+			<result name="ricerca" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/inserisciPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="inserisciPreDocumentoSpesa_ottieniListaSedeSecondariaEModalitaPagamento" class="inserisciPreDocumentoSpesaAction" method="ottieniListaSedeSecondariaEModalitaPagamento">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornaPreDocumentoSpesa" class="aggiornaPreDocumentoSpesaAction">
+			<result name="success">/jsp/predocumento/aggiornaPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="aggiornamentoPreDocumentoSpesa" class="aggiornaPreDocumentoSpesaAction" method="aggiornamento">
+			<result name="aggiorna" type="redirectAction">
+				<param name="actionName">aggiornaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaAggiornare">${uidPreDocumentoDaAggiornare}</param>
+			</result>
+			<result name="ricerca" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/aggiornaPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="aggiornaPreDocumentoSpesa_ottieniListaSedeSecondariaEModalitaPagamento" class="aggiornaPreDocumentoSpesaAction" method="ottieniListaSedeSecondariaEModalitaPagamento">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*
+				</param>
+			</result>
+		</action>
+
+		<action name="consultaPreDocumentoSpesa" class="consultaPreDocumentoSpesaAction">
+			<result name="success">/jsp/predocumento/consultaPreDocumentoSpesa.jsp</result>
+		</action>
+
+		<action name="ricercaPreDocumentoSpesa" class="ricercaPreDocumentoSpesaAction">
+			<result name="success">/jsp/predocumento/ricercaPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="effettuaRicercaPreDocumentoSpesa" class="ricercaPreDocumentoSpesaAction" method="ricerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/ricercaPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="ricercaPreDocumentoSpesa_ottieniListaSedeSecondariaEModalitaPagamento" class="ricercaPreDocumentoSpesaAction" method="ottieniListaSedeSecondariaEModalitaPagamento">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*
+				</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesa" class="risultatiRicercaPreDocumentoSpesaAction">
+			<result name="success">/jsp/predocumento/risultatiRicercaPreDocumentoSpesa.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesaAjax" class="risultatiRicercaPreDocumentoSpesaAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					sEcho,
+					iTotalRecords,
+					iTotalDisplayRecords,
+					iDisplayStart,
+					iDisplayLength,
+					aaData.*
+				</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesaAggiorna" class="risultatiRicercaPreDocumentoSpesaAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaAggiornare">${uidDaAggiornare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesaAnnulla" class="risultatiRicercaPreDocumentoSpesaAction" method="annulla">
+			<result name="success">/jsp/predocumento/risultatiRicercaPreDocumentoSpesa.jsp</result>
+			<result name="input">/jsp/predocumento/risultatiRicercaPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesaConsulta" class="risultatiRicercaPreDocumentoSpesaAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaConsultare">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesaInserisci" class="risultatiRicercaPreDocumentoSpesaAction" method="inserisci">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		<action name="definisciPreDocumentoSpesaPerElenco" class="definisciPreDocumentoSpesaPerElencoAction">
+			<result name="success">/jsp/predocumento/definisciPreDocumentoSpesaPerElenco.jsp</result>
+			<result name="success">/jsp/predocumento/definisciPreDocumentoSpesaPerElenco.jsp</result>
+		</action>
+		<action name="definisciPreDocumentoSpesaPerElenco_cercaElencoTotali" class="definisciPreDocumentoSpesaPerElencoAction" method="cercaElencoTotali">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					numeroPreDocumentiTotale, 
+					numeroPreDocumentiIncompleti, 
+					numeroPreDocumentiDefiniti,					
+					importoPreDocumentiTotale,
+					importoPreDocumentiIncompleti,
+					importoPreDocumentiDefiniti,
+					elencoDocumentiAllegato.*			
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="definisciPreDocumentoSpesaPerElenco" class="definisciPreDocumentoSpesaPerElencoAction">
+			<result name="success">/jsp/predocumento/definisciPreDocumentoSpesaPerElenco.jsp</result>
+			<result name="success">/jsp/predocumento/definisciPreDocumentoSpesaPerElenco.jsp</result>
+		</action>
+		
+		<action name="definisciPreDocumentoSpesaPerElenco_completaDefinisci" class="definisciPreDocumentoSpesaPerElencoAction" method="completaDefinisci">
+			<result name="success">/jsp/predocumento/definisciPreDocumentoSpesaPerElenco.jsp</result>
+			<result name="input">/jsp/predocumento/definisciPreDocumentoSpesaPerElenco.jsp</result>
+		</action>
+		
+		<!-- Async -->
+		<action name="risultatiRicercaPreDocumentoSpesaAssocia" class="risultatiRicercaPreDocumentoSpesaAction" method="associa">
+			<result name="success" type="invocazioneAsincronaJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesaDefinisci" class="risultatiRicercaPreDocumentoSpesaAction" method="definisci">
+			<result name="success" type="invocazioneAsincronaJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesa_apriAssociaConModifiche" class="risultatiRicercaPreDocumentoSpesaAction" method="apriAssociaConModifiche">
+			<result name="success">/jsp/predocumento/imputazioniContabiliPreDocumentoSpesa.jsp</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoSpesa_associaConModifiche" class="risultatiRicercaPreDocumentoSpesaAction" method="associaConModifiche">
+			<result name="success" type="invocazioneAsincronaJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+	</package>
+</struts>

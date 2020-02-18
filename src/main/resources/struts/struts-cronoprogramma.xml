@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="cronoprogramma" extends="capitoloDefault" namespace="/">
+    
+        <result-types>
+            <result-type name="dettagliCronoprogrammaJSON" class="it.csi.siac.siacbilapp.frontend.ui.action.progetto.GenericCronoprogrammaAction$DettagliCronoprogrammaJSONResult" />
+            <result-type name="campiCronoprogrammaDaCopiareJSON" class="it.csi.siac.siacbilapp.frontend.ui.action.progetto.BaseInserisciCronoprogrammaAction$CronoprogrammaDaCopiareJSONResult" />
+        </result-types>
+        
+         <!-- Inserimento cronoprogramma da inserimento progetto -->
+        <action name="inserisciCronoprogramma" class="inserisciCronoprogrammaAction">
+            <result name="success" type="redirectAction">inserisciCronoprogramma_enter</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="inserisciCronoprogramma_enter" class="inserisciCronoprogrammaAction" method="enter">
+            <result name="success">/jsp/cronoprogramma/inserisciCronoprogramma.jsp</result>
+        </action>
+        <action name="inserimentoCronoprogramma" class="inserisciCronoprogrammaAction" method="inserisciCDU">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaProgetto</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidProgetto}</param>
+            </result>
+            <result name="input">/jsp/cronoprogramma/inserisciCronoprogramma.jsp</result>
+        </action>
+        <action name="inserimentoCronoprogramma_backToProgetto" class="inserisciCronoprogrammaAction" method="backToProgetto">
+            <result name="success" type="redirectAction">
+                <param name="actionName">inserimentoProgetto</param>
+                <param name="namespace">/</param>
+                <param name="fromCronoprogramma">true</param>
+            </result>
+        </action>
+        <action name="inserimentoCronoprogrammaOttieniListeDettaglio" class="inserisciCronoprogrammaAction" method="ottieniListeDettaglio">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        <action name="inserimentoCronoprogrammaInserisciDettaglioCronoprogrammaEntrata" class="inserisciCronoprogrammaAction" method="inserisciDettaglioCronoprogrammaEntrata">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON"/>
+        </action>
+        <action name="inserimentoCronoprogrammaInserisciDettaglioCronoprogrammaUscita" class="inserisciCronoprogrammaAction" method="inserisciDettaglioCronoprogrammaUscita">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON"/>
+        </action>
+        <action name="inserimentoCronoprogrammaCancellaDettaglioCronoprogrammaEntrata" class="inserisciCronoprogrammaAction" method="cancellaDettaglioCronoprogrammaEntrata">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        <action name="inserimentoCronoprogrammaCancellaDettaglioCronoprogrammaUscita" class="inserisciCronoprogrammaAction" method="cancellaDettaglioCronoprogrammaUscita">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        <action name="inserimentoCronoprogrammaConsultaTotaliEntrata" class="inserisciCronoprogrammaAction" method="consultaTotaliEntrata">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">mappaTotali.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoCronoprogrammaConsultaTotaliUscita" class="inserisciCronoprogrammaAction" method="consultaTotaliUscita">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">mappaTotali.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoCronoprogrammaPopolaAggiornamentoDettaglioCronoprogrammaUscita" class="inserisciCronoprogrammaAction" method="popolaAggiornamentoDettaglioCronoprogrammaUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_modale_aggiornamento_uscita.jsp</result>
+        </action>
+        <action name="inserimentoCronoprogrammaPopolaAggiornamentoDettaglioCronoprogrammaEntrata" class="inserisciCronoprogrammaAction" method="popolaAggiornamentoDettaglioCronoprogrammaEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_modale_aggiornamento_entrata.jsp</result>
+        </action>
+        <action name="inserimentoCronoprogrammaAggiornaDettaglioCronoprogrammaUscita" class="inserisciCronoprogrammaAction" method="aggiornaDettaglioCronoprogrammaUscita">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoCronoprogrammaAggiornaDettaglioCronoprogrammaEntrata" class="inserisciCronoprogrammaAction" method="aggiornaDettaglioCronoprogrammaEntrata">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoCronoprogrammaAnnullaAggiornamentoDettaglioCronoprogrammaUscita" class="inserisciCronoprogrammaAction" method="annullaAggiornamentoDettaglioCronoprogrammaUscita">
+            <result name="success" type="json">
+                <param name="excludeProperties">*</param>
+            </result>
+        </action>
+        <action name="inserimentoCronoprogrammaAnnullaAggiornamentoDettaglioCronoprogrammaEntrata" class="inserisciCronoprogrammaAction" method="annullaAggiornamentoDettaglioCronoprogrammaEntrata">
+            <result name="success" type="json">
+                <param name="excludeProperties">*</param>
+            </result>
+        </action>
+        <action name="inserimentoCronoprogrammaCopiaDaCronoprogramma" class="inserisciCronoprogrammaAction" method="copiaDaCronoprogramma">
+            <result name="success" type="campiCronoprogrammaDaCopiareJSON" />
+        </action>
+        
+        <action name="inserimentoCronoprogrammaVerificaQuadratura" class="inserisciCronoprogrammaAction" method="verificaQuadratura">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">errori.*, quadratura.*</param>
+            </result>
+        </action>
+        
+        <action name="inserimentoCronoprogrammaClean" class="inserisciCronoprogrammaAction" method="clean">
+            <result name="success" type="redirectAction">inserisciCronoprogramma_enter</result>
+        </action>
+
+        <!-- CR-2450 -->
+        <action name="inserimentoCronoprogramma_apriInserisciDettaglioEntrata" class="inserisciCronoprogrammaAction" method="apriInserisciDettaglioEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_inserimento_entrata.jsp</result>
+        </action>
+        <action name="inserimentoCronoprogramma_apriInserisciDettaglioUscita" class="inserisciCronoprogrammaAction" method="apriInserisciDettaglioUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_inserimento_uscita.jsp</result>
+        </action>
+        <action name="inserimentoCronoprogramma_apriAggiornaDettaglioEntrata" class="inserisciCronoprogrammaAction" method="apriAggiornaDettaglioEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_aggiornamento_entrata.jsp</result>
+        </action>
+        <action name="inserimentoCronoprogramma_apriAggiornaDettaglioUscita" class="inserisciCronoprogrammaAction" method="apriAggiornaDettaglioUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_aggiornamento_uscita.jsp</result>
+        </action>
+        
+         <!-- SIAC-6255 -->
+        <action name="inserimentoCronoprogramma_calcolaDataFineLavori" class="inserisciCronoprogrammaAction" method="calcolaDataFineLavori">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">dataFineLavoriString</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+         <action name="inserimentoCronoprogrammaCaricaCronoprogrammiDaCopiare" class="inserisciCronoprogrammaAction" method="caricaCronoprogrammiDaCopiare">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">listaCronoprogrammiDaCopiare.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoCronoprogramma_caricaListaQuadroEconomico" class="inserisciCronoprogrammaAction" method="caricaListaQuadroEconomico">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">listaQuadroEconomico.*</param>
+            </result>
+        </action>
+
+            <!-- Inserimento cronoprogramma da aggiornamento progetto -->
+        <action name="inserisciNuovoCronoprogramma" class="inserisciNuovoCronoprogrammaAction">
+            <result name="success" type="redirectAction">inserisciNuovoCronoprogramma_enter</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="inserisciNuovoCronoprogramma_enter" class="inserisciNuovoCronoprogrammaAction" method="enter">
+            <result name="success">/jsp/cronoprogramma/inserisciCronoprogramma_nuovo.jsp</result>
+        </action>
+        <action name="inserimentoNuovoCronoprogramma" class="inserisciNuovoCronoprogrammaAction" method="inserisciCDU">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaProgetto</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidProgetto}</param>
+            </result>
+            <result name="input">/jsp/cronoprogramma/inserisciCronoprogramma_nuovo.jsp</result>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaOttieniListeDettaglio" class="inserisciNuovoCronoprogrammaAction" method="ottieniListeDettaglio">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaInserisciDettaglioCronoprogrammaEntrata" class="inserisciNuovoCronoprogrammaAction" method="inserisciDettaglioCronoprogrammaEntrata">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON"/>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaInserisciDettaglioCronoprogrammaUscita" class="inserisciNuovoCronoprogrammaAction" method="inserisciDettaglioCronoprogrammaUscita">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON"/>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaCancellaDettaglioCronoprogrammaEntrata" class="inserisciNuovoCronoprogrammaAction" method="cancellaDettaglioCronoprogrammaEntrata">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaCancellaDettaglioCronoprogrammaUscita" class="inserisciNuovoCronoprogrammaAction" method="cancellaDettaglioCronoprogrammaUscita">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaConsultaTotaliEntrata" class="inserisciNuovoCronoprogrammaAction" method="consultaTotaliEntrata">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">mappaTotali.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaConsultaTotaliUscita" class="inserisciNuovoCronoprogrammaAction" method="consultaTotaliUscita">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">mappaTotali.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaPopolaAggiornamentoDettaglioCronoprogrammaUscita" class="inserisciNuovoCronoprogrammaAction" method="popolaAggiornamentoDettaglioCronoprogrammaUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_modale_aggiornamento_uscita.jsp</result>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaPopolaAggiornamentoDettaglioCronoprogrammaEntrata" class="inserisciNuovoCronoprogrammaAction" method="popolaAggiornamentoDettaglioCronoprogrammaEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_modale_aggiornamento_entrata.jsp</result>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaAggiornaDettaglioCronoprogrammaUscita" class="inserisciNuovoCronoprogrammaAction" method="aggiornaDettaglioCronoprogrammaUscita">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaAggiornaDettaglioCronoprogrammaEntrata" class="inserisciNuovoCronoprogrammaAction" method="aggiornaDettaglioCronoprogrammaEntrata">
+            <result name="success" type="dettagliCronoprogrammaJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaAnnullaAggiornamentoDettaglioCronoprogrammaUscita" class="inserisciNuovoCronoprogrammaAction" method="annullaAggiornamentoDettaglioCronoprogrammaUscita">
+            <result name="success" type="json">
+                <param name="excludeProperties">*</param>
+            </result>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaAnnullaAggiornamentoDettaglioCronoprogrammaEntrata" class="inserisciNuovoCronoprogrammaAction" method="annullaAggiornamentoDettaglioCronoprogrammaEntrata">
+            <result name="success" type="json">
+                <param name="excludeProperties">*</param>
+            </result>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaCopiaDaCronoprogramma" class="inserisciNuovoCronoprogrammaAction" method="copiaDaCronoprogramma">
+            <result name="success" type="campiCronoprogrammaDaCopiareJSON" />
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaVerificaQuadratura" class="inserisciNuovoCronoprogrammaAction" method="verificaQuadratura">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">errori.*, quadratura.*</param>
+            </result>
+        </action>
+        <action name="inserimentoNuovoCronoprogrammaClean" class="inserisciNuovoCronoprogrammaAction" method="clean">
+            <result name="success" type="redirectAction">inserisciCronoprogramma_enter</result>
+        </action>
+
+
+        <!-- CR-2450 -->
+        <action name="inserimentoNuovoCronoprogramma_apriInserisciDettaglioEntrata" class="inserisciNuovoCronoprogrammaAction" method="apriInserisciDettaglioEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_inserimento_entrata.jsp</result>
+        </action>
+        <action name="inserimentoNuovoCronoprogramma_apriInserisciDettaglioUscita" class="inserisciNuovoCronoprogrammaAction" method="apriInserisciDettaglioUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_inserimento_uscita.jsp</result>
+        </action>
+        <action name="inserimentoNuovoCronoprogramma_apriAggiornaDettaglioEntrata" class="inserisciNuovoCronoprogrammaAction" method="apriAggiornaDettaglioEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_aggiornamento_entrata.jsp</result>
+        </action>
+        <action name="inserimentoNuovoCronoprogramma_apriAggiornaDettaglioUscita" class="inserisciNuovoCronoprogrammaAction" method="apriAggiornaDettaglioUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_aggiornamento_uscita.jsp</result>
+        </action>
+       <!-- SIAC-6255 -->
+       <action name="inserimentoNuovoCronoprogramma_calcolaDataFineLavori" class="inserisciNuovoCronoprogrammaAction" method="calcolaDataFineLavori">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">dataFineLavoriString</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="inserimentoNuovoCronoprogrammaCaricaCronoprogrammiDaCopiare" class="inserisciNuovoCronoprogrammaAction" method="caricaCronoprogrammiDaCopiare">
+             <result name="success" type="customJSON">
+                <param name="includeProperties">listaCronoprogrammiDaCopiare.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="inserimentoNuovoCronoprogramma_caricaListaQuadroEconomico" class="inserisciNuovoCronoprogrammaAction" method="caricaListaQuadroEconomico">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">listaQuadroEconomico.*</param>
+            </result>
+        </action>
+
+
+
+
+            <!-- Aggiornamento -->
+        <action name="aggiornaCronoprogramma" class="aggiornaCronoprogrammaAction">
+        	<result name="success" type="redirectAction">aggiornaCronoprogramma_enter</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="aggiornaCronoprogramma_enter" class="aggiornaCronoprogrammaAction" method="enter">
+            <result name="success">/jsp/cronoprogramma/aggiornaCronoprogramma.jsp</result>
+        </action>
+        <action name="aggiornamentoCronoprogramma" class="aggiornaCronoprogrammaAction" method="aggiornaCDU">
+        	<result name="success" type="redirectAction">
+        		<param name="actionName">aggiornaProgetto</param>
+            	<param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidProgetto}</param>
+        	</result>
+            <result name="input">/jsp/cronoprogramma/aggiornaCronoprogramma.jsp</result>
+        </action>
+        
+        <action name="aggiornamentoNuovoCronoprogramma" class="aggiornaCronoprogrammaAction" method="inserisciCDU">
+        	<result name="success" type="redirectAction">
+        		<param name="actionName">aggiornaProgetto</param>
+            	<param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidProgetto}</param>
+        	</result>
+            <result name="input">/jsp/cronoprogramma/inserisciCronoprogramma_nuovo.jsp</result>
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaOttieniListeDettaglio" class="aggiornaCronoprogrammaAction" method="ottieniListeDettaglio">
+        	<result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaInserisciDettaglioCronoprogrammaEntrata" class="aggiornaCronoprogrammaAction" method="inserisciDettaglioCronoprogrammaEntrata">
+        	<result name="success" type="dettagliCronoprogrammaJSON" />
+        	<result name="input" type="customMessagesJSON"/>
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaInserisciDettaglioCronoprogrammaUscita" class="aggiornaCronoprogrammaAction" method="inserisciDettaglioCronoprogrammaUscita">
+        	<result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaCancellaDettaglioCronoprogrammaEntrata" class="aggiornaCronoprogrammaAction" method="cancellaDettaglioCronoprogrammaEntrata">
+        	<result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaCancellaDettaglioCronoprogrammaUscita" class="aggiornaCronoprogrammaAction" method="cancellaDettaglioCronoprogrammaUscita">
+        	<result name="success" type="dettagliCronoprogrammaJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaConsultaTotaliEntrata" class="aggiornaCronoprogrammaAction" method="consultaTotaliEntrata">
+        	<result name="success" type="customJSON">
+        		<param name="includeProperties">mappaTotali.*</param>
+        	</result>
+        	<result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaConsultaTotaliUscita" class="aggiornaCronoprogrammaAction" method="consultaTotaliUscita">
+        	<result name="success" type="customJSON">
+        		<param name="includeProperties">mappaTotali.*</param>
+        	</result>
+        	<result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaPopolaAggiornamentoDettaglioCronoprogrammaUscita" class="aggiornaCronoprogrammaAction" method="popolaAggiornamentoDettaglioCronoprogrammaUscita">
+        	<result name="success">/jsp/cronoprogramma/cronoprogramma_modale_aggiornamento_uscita.jsp</result>
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaPopolaAggiornamentoDettaglioCronoprogrammaEntrata" class="aggiornaCronoprogrammaAction" method="popolaAggiornamentoDettaglioCronoprogrammaEntrata">
+        	<result name="success">/jsp/cronoprogramma/cronoprogramma_modale_aggiornamento_entrata.jsp</result>
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaAggiornaDettaglioCronoprogrammaUscita" class="aggiornaCronoprogrammaAction" method="aggiornaDettaglioCronoprogrammaUscita">
+        	<result name="success" type="dettagliCronoprogrammaJSON" />
+        	<result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaAggiornaDettaglioCronoprogrammaEntrata" class="aggiornaCronoprogrammaAction" method="aggiornaDettaglioCronoprogrammaEntrata">
+        	<result name="success" type="dettagliCronoprogrammaJSON" />
+        	<result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaAnnullaAggiornamentoDettaglioCronoprogrammaUscita" class="aggiornaCronoprogrammaAction" method="annullaAggiornamentoDettaglioCronoprogrammaUscita">
+        	<result name="success" type="json">
+        		<param name="excludeProperties">*</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaAnnullaAggiornamentoDettaglioCronoprogrammaEntrata" class="aggiornaCronoprogrammaAction" method="annullaAggiornamentoDettaglioCronoprogrammaEntrata">
+        	<result name="success" type="json">
+        		<param name="excludeProperties">*</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaCopiaDaCronoprogramma" class="aggiornaCronoprogrammaAction" method="copiaDaCronoprogramma">
+        	<result name="success" type="campiCronoprogrammaDaCopiareJSON" />
+        </action>
+        
+        <action name="aggiornamentoCronoprogrammaVerificaQuadratura" class="aggiornaCronoprogrammaAction" method="verificaQuadratura">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			errori.*,
+        			quadratura.*
+        		</param>
+        	</result>
+        </action>
+        <action name="aggiornamentoCronoprogrammaClean" class="aggiornaCronoprogrammaAction" method="clean">
+            <result name="success" type="redirectAction">aggiornaCronoprogramma_enter</result>
+        </action>
+
+       <!-- CR-2450 -->
+        <action name="aggiornamentoCronoprogramma_apriInserisciDettaglioEntrata" class="aggiornaCronoprogrammaAction" method="apriInserisciDettaglioEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_inserimento_entrata.jsp</result>
+        </action>
+        <action name="aggiornamentoCronoprogramma_apriInserisciDettaglioUscita" class="aggiornaCronoprogrammaAction" method="apriInserisciDettaglioUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_inserimento_uscita.jsp</result>
+        </action>
+        <action name="aggiornamentoCronoprogramma_apriAggiornaDettaglioEntrata" class="aggiornaCronoprogrammaAction" method="apriAggiornaDettaglioEntrata">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_aggiornamento_entrata.jsp</result>
+        </action>
+        <action name="aggiornamentoCronoprogramma_apriAggiornaDettaglioUscita" class="aggiornaCronoprogrammaAction" method="apriAggiornaDettaglioUscita">
+            <result name="success">/jsp/cronoprogramma/cronoprogramma_collapse_aggiornamento_uscita.jsp</result>
+        </action>
+        
+        <!-- SIAC-6255 -->
+       <action name="aggiornamentoCronoprogramma_calcolaDataFineLavori" class="aggiornaCronoprogrammaAction" method="calcolaDataFineLavori">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">dataFineLavoriString</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+         <action name="aggiornamentoCronoprogramma_caricaListaQuadroEconomico" class="aggiornaCronoprogrammaAction" method="caricaListaQuadroEconomico">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">listaQuadroEconomico.*</param>
+            </result>
+        </action>
+    </package>
+</struts>

@@ -1,0 +1,89 @@
+diff --git src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js
+index 3bc5fb8..1783337 100644
+--- src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js
++++ src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js
+@@ -265,25 +265,6 @@
+     }
+     
+     /**
+-     * Gestione del reset del form
+-     * @param e (Event) l'evento di reset
+-     */
+-    function handleFormReset(e) {
+-        var $this = jQuery(this);
+-        // Cancello tutti i dati con il reset. Non ripristino i campi iniziali
+-        e.preventDefault();
+-        // Pericoloso?
+-        $this.find(':input')
+-            .filter('input[type="checkbox"], input[type="radio"]')
+-                .removeAttr('checked')
+-                .removeProp('checked')
+-                .end()
+-            .not('*[data-maintain], input[type="hidden"], input[type="button"], input[type="submit"], input[type="reset"], input[type="radio"], button')
+-                .val('');
+-        $this.find('input[name="tipoElenco"]:first').change();
+-    }
+-
+-    /**
+      * Gestione del change del tipo evento
+      */
+     function changeTipoEvento() {
+@@ -315,6 +296,17 @@
+         return Soggetto.caricaDettaglioSoggetto(campoCodiceSoggetto, accordionSedeSecondaria, accordionModalitaPagamento, spanDescrizione,undefined,undefined, undefined,true);
+     }
+ 
++    /**
++     * Gestione del reset del form
++     */
++    function handleReset() {
++        var $form = $('form');
++        $form.substituteHandler('reset', function() {
++            $form.overlay('show');
++            document.location = './ricercaPrimaNotaIntegrataFIN.do';
++        });
++    }
++
+     $(function () {
+         var radioTipoElenco = $("input[type='radio'][name='tipoElenco']");
+         var checkedRadioTipoElenco = radioTipoElenco.filter(":checked");
+@@ -342,7 +334,7 @@
+             caricaCausaleEP(true);
+         });
+         
+-        $('form').substituteHandler('reset', handleFormReset);
++        handleReset();
+     });
+ 
+ }(jQuery, this);
+\ No newline at end of file
+diff --git src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.js src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.js
+index ef814d6..790de45 100644
+--- src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.js
++++ src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.js
+@@ -256,6 +256,17 @@
+         return Soggetto.caricaDettaglioSoggetto(campoCodiceSoggetto, accordionSedeSecondaria, accordionModalitaPagamento, spanDescrizione,undefined,undefined, undefined,true);
+     }
+ 
++    /**
++     * Gestione del reset del form
++     */
++    function handleReset() {
++        var $form = $('form');
++        $form.substituteHandler('reset', function() {
++            $form.overlay('show');
++            document.location = './ricercaPrimaNotaIntegrataFIN.do';
++        });
++    }
++
+     $(function () {
+         var radioTipoElenco = $("input[type='radio'][name='tipoElenco']");
+         var checkedRadioTipoElenco = radioTipoElenco.filter(":checked");
+@@ -280,6 +291,7 @@
+                 selectTipoEvento.change();
+             }
+         });
++        handleReset();
+     });
+ 
+ }(jQuery, this);
+\ No newline at end of file

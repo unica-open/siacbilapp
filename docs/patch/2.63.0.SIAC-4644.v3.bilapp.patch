@@ -1,0 +1,82 @@
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RicercaPrimaNotaIntegrataBaseAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RicercaPrimaNotaIntegrataBaseAction.java
+index 36698fe43..e400acffd 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RicercaPrimaNotaIntegrataBaseAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RicercaPrimaNotaIntegrataBaseAction.java
+@@ -363,6 +363,10 @@ public abstract class RicercaPrimaNotaIntegrataBaseAction<M extends RicercaPrima
+ 			log.info(methodName, createErrorInServiceInvocationString(req, res));
+ 			return;
+ 		}
++		if(res.getSoggetto() == null) {
++			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Soggetto", model.getSoggetto().getCodiceSoggetto()));
++			return;
++		}
+ 		model.setSoggetto(res.getSoggetto());
+ 	}
+ 
+diff --git src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java
+index 793031952..bb87ff3dd 100644
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java
+@@ -502,7 +502,7 @@ public class RicercaValidazionePrimaNotaIntegrataFINAction extends GenericBilanc
+ 		Soggetto soggetto = response.getSoggetto();
+ 		if(soggetto == null) {
+ 			log.info(methodName, "Soggetto == null");
+-			addErrore(ErroreCore.ERRORE_DI_SISTEMA.getErrore("Il soggetto non e' presente"));
++			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Soggetto", model.getSoggetto().getCodiceSoggetto()));
+ 			return;
+ 		}
+ 		
+diff --git src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp
+index efffff1ea..2cc32b9bd 100644
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp
+@@ -195,11 +195,11 @@
+ 								<div class="control-group">
+ 									<label class="control-label" for="annoProvvedimento">Anno</label>
+ 									<div class="controls">
+-										<s:textfield id="annoProvvedimento" cssClass="lbTextSmall span1 soloNumeri" name="attoAmministrativo.anno" disabled="true" />
++										<s:textfield id="annoProvvedimento" cssClass="lbTextSmall span1 soloNumeri" name="attoAmministrativo.anno" disabled="true" maxlength="4" />
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroProvvedimento">Numero</label>
+ 										</span>
+-										<s:textfield id="numeroProvvedimento" cssClass="lbTextSmall span2 soloNumeri" name="attoAmministrativo.numero" disabled="true" />
++										<s:textfield id="numeroProvvedimento" cssClass="lbTextSmall span2 soloNumeri" name="attoAmministrativo.numero" disabled="true" maxlength="10" />
+ 										<span class="al">
+ 											<label class="radio inline" for="tipoAttoProvvedimento">Tipo</label>
+ 										</span>
+diff --git src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp
+index d80dbd781..0e2b3a96b 100644
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp
+@@ -145,11 +145,11 @@
+ 								<div class="control-group">
+ 									<label class="control-label" for="annoProvvedimento">Anno</label>
+ 									<div class="controls">
+-										<s:textfield id="annoProvvedimento" cssClass="lbTextSmall span1 soloNumeri" name="attoAmministrativo.anno" disabled="true" />
++										<s:textfield id="annoProvvedimento" cssClass="lbTextSmall span1 soloNumeri" name="attoAmministrativo.anno" disabled="true" maxlength="4" />
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroProvvedimento">Numero</label>
+ 										</span>
+-										<s:textfield id="numeroProvvedimento" cssClass="lbTextSmall span2 soloNumeri" name="attoAmministrativo.numero" disabled="true" />
++										<s:textfield id="numeroProvvedimento" cssClass="lbTextSmall span2 soloNumeri" name="attoAmministrativo.numero" disabled="true" maxlength="10" />
+ 										<span class="al">
+ 											<label class="radio inline" for="tipoAttoProvvedimento">Tipo</label>
+ 										</span>
+diff --git src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp
+index 733799882..28f056242 100644
+--- src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp
++++ src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/ricerca.jsp
+@@ -181,11 +181,11 @@
+ 								<div class="control-group">
+ 									<label class="control-label" for="annoProvvedimento">Anno</label>
+ 									<div class="controls">
+-										<s:textfield id="annoProvvedimento" cssClass="lbTextSmall span1 soloNumeri" name="attoAmministrativo.anno" />
++										<s:textfield id="annoProvvedimento" cssClass="lbTextSmall span1 soloNumeri" name="attoAmministrativo.anno" maxlength="4" />
+ 										<span class="al">
+ 											<label class="radio inline" for="numeroProvvedimento">Numero</label>
+ 										</span>
+-										<s:textfield id="numeroProvvedimento" cssClass="lbTextSmall span2 soloNumeri" name="attoAmministrativo.numero" />
++										<s:textfield id="numeroProvvedimento" cssClass="lbTextSmall span2 soloNumeri" name="attoAmministrativo.numero" maxlength="10" />
+ 										<span class="al">
+ 											<label class="radio inline" for="tipoAttoProvvedimento">Tipo</label>
+ 										</span>

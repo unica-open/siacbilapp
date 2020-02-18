@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gsaPrimaNotaLibera" extends="gengsaCommon" namespace="/">
+		<result-types>
+			<result-type name="contoPrimaNotaLibera"
+				class="it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.BaseInserisciAggiornaContoPrimaNotaLiberaBaseAction$ContoPrimaNotaLiberaResult" />
+		</result-types>
+	
+	
+			<!-- Inserimento -->
+		<action name="inserisciPrimaNotaLiberaGSA" class="inserisciPrimaNotaLiberaGSAAction">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaGSA_step1</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_step1" class="inserisciPrimaNotaLiberaGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+	 	<action name="inserisciPrimaNotaLiberaGSA_annullaStep1" class="inserisciPrimaNotaLiberaGSAAction" method="annullaStep1">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaGSA_step1</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_completeStep1" class="inserisciPrimaNotaLiberaGSAAction" method="completeStep1">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaGSA_step2</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_backToStep1" class="inserisciPrimaNotaLiberaGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaGSA_step1</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_step2" class="inserisciPrimaNotaLiberaGSAAction" method="step2">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_annullaStep2" class="inserisciPrimaNotaLiberaGSAAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaGSA_step2</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_completeStep2" class="inserisciPrimaNotaLiberaGSAAction" method="completeStep2">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaGSA_step3</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_step3" class="inserisciPrimaNotaLiberaGSAAction" method="step3">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_completeStep3" class="inserisciPrimaNotaLiberaGSAAction" method="completeStep3">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+			<result name="success" type="redirectAction">inserisciPrimaNotaLiberaGSA_step3</result>
+		</action>
+		
+		<action name="inserisciPrimaNotaLiberaGSA_ottieniListaPrimeNoteCollegate" class="inserisciPrimaNotaLiberaGSAAction" method="ottieniListaPrimeNoteCollegate">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				 	errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_collegaPrimaNota" class="inserisciPrimaNotaLiberaGSAAction" method="collegaPrimaNota">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_eliminaCollegamento" class="inserisciPrimaNotaLiberaGSAAction" method="eliminaCollegamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciPrimaNotaLiberaGSA_ottieniListaConti" class="inserisciContoPrimaNotaLiberaGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaLibera" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_impostaImportoDaRegistrare" class="inserisciContoPrimaNotaLiberaGSAAction" method="impostaImportoDaRegistrare">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!--   Gestione Conto in lista movimento dettaglio -->
+		<action name="inserisciPrimaNotaLiberaGSA_inserisciConto" class="inserisciContoPrimaNotaLiberaGSAAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_aggiornaConto" class="inserisciContoPrimaNotaLiberaGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciPrimaNotaLiberaGSA_eliminaConto" class="inserisciContoPrimaNotaLiberaGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!-- ricerca -->
+
+		<action name="ricercaPrimaNotaLiberaGSA" class="ricercaPrimaNotaLiberaGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/ricerca.jsp</result>
+		</action>
+		
+		<action name="ricercaPrimaNotaLiberaGSA_effettuaRicerca" class="ricercaPrimaNotaLiberaGSAAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaGSA" class="risultatiRicercaPrimaNotaLiberaGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaGSAAjax" class="risultatiRicercaPrimaNotaLiberaGSAAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaGSA_aggiorna" class="risultatiRicercaPrimaNotaLiberaGSAAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPrimaNotaLiberaGSA</param>
+				<param name="primaNotaLibera.uid">${primaNotaLibera.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaGSA_valida" class="risultatiRicercaPrimaNotaLiberaGSAAction" method="valida">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaGSA_consulta" class="risultatiRicercaPrimaNotaLiberaGSAAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaLiberaGSA</param>
+				<param name="primaNotaLibera.uid">${primaNotaLibera.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaLiberaGSA_annulla" class="risultatiRicercaPrimaNotaLiberaGSAAction" method="annulla">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaGSA</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		<action name="dettaglioMovimentiPrimaNotaLiberaGSAAction_caricaMovimenti" class="dettaglioMovimentiPrimaNotaLiberaGSAAction" method="caricaMovimenti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaMovimentoDettaglio.*, totaleDare, totaleAvere</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		
+<!-- 		Consultazione -->
+		<action name="consultaPrimaNotaLiberaGSA" class="consultaPrimaNotaLiberaGSAAction">
+			<result name="input" type="redirectAction">risultatiRicercaPrimaNotaLiberaGSA</result>
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/consulta.jsp</result>
+		</action>
+		
+<!-- 		Aggiornamento -->
+		<action name="aggiornaPrimaNotaLiberaGSA" class="aggiornaPrimaNotaLiberaGSAAction">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaGSA_step1</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_step1" class="aggiornaPrimaNotaLiberaGSAAction" method="step1">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+	 	<action name="aggiornaPrimaNotaLiberaGSA_annullaStep1" class="aggiornaPrimaNotaLiberaGSAAction" method="annullaStep1">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaGSA_step1</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_completeStep1" class="aggiornaPrimaNotaLiberaGSAAction" method="completeStep1">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaGSA_step2</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_backToStep1" class="aggiornaPrimaNotaLiberaGSAAction" method="backToStep1">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaGSA_step1</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_step2" class="aggiornaPrimaNotaLiberaGSAAction" method="step2">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_annullaStep2" class="aggiornaPrimaNotaLiberaGSAAction" method="annullaStep2">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaGSA_step2</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_completeStep2" class="aggiornaPrimaNotaLiberaGSAAction" method="completeStep2">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaGSA_step3</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_step3" class="aggiornaPrimaNotaLiberaGSAAction" method="step3">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_completeStep3" class="aggiornaPrimaNotaLiberaGSAAction" method="completeStep3">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step3.jsp</result>
+			<result name="success" type="redirectAction">aggiornaPrimaNotaLiberaGSA_step3</result>
+		</action>
+		
+		<action name="aggiornaPrimaNotaLiberaGSA_ottieniListaPrimeNoteCollegate" class="aggiornaPrimaNotaLiberaGSAAction" method="ottieniListaPrimeNoteCollegate">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+				    errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_collegaPrimaNota" class="aggiornaPrimaNotaLiberaGSAAction" method="collegaPrimaNota">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_eliminaCollegamento" class="aggiornaPrimaNotaLiberaGSAAction" method="eliminaCollegamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteDaCollegare.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+<!-- 		Gestione Conto in lista movimento dettaglio in aggiornamento -->
+		<action name="aggiornaPrimaNotaLiberaGSA_ottieniListaConti" class="aggiornaContoPrimaNotaLiberaGSAAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaLibera" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_impostaImportoDaRegistrare" class="aggiornaContoPrimaNotaLiberaAction" method="impostaImportoDaRegistrare">
+			<result name="success" type="contoPrimaNotaLibera" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_inserisciConto" class="aggiornaContoPrimaNotaLiberaGSAAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_aggiornaConto" class="aggiornaContoPrimaNotaLiberaGSAAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaLiberaGSA_eliminaConto" class="aggiornaContoPrimaNotaLiberaGSAAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaLibera" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+
+		
+		
+		
+	</package>
+</struts>

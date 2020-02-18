@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="selezionaCapitolo" extends="capitoloDefault" namespace="/">
+		<result-types>
+			<result-type name="selezionaCapitoloCustomJSON" class="it.csi.siac.siacbilapp.frontend.ui.action.commons.SelezionaCapitoloAction$SelezionaCapitoloCustomJSONResult" />
+			<result-type name="selezionaCapitoloJSON" class="it.csi.siac.siacbilapp.frontend.ui.action.commons.SelezionaCapitoloAction$SelezionaCapitoloJSONResult" />
+		</result-types>
+	
+
+		<action name="selezionaCapitoloEntrataGestione" class="selezionaCapitoloAction" method="entrataGestione">
+			<result name="success" type="selezionaCapitoloJSON" />
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="selezionaCapitoloEntrataPrevisione" class="selezionaCapitoloAction" method="entrataPrevisione">
+			<result name="success" type="selezionaCapitoloJSON" />
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="selezionaCapitoloUscitaGestione" class="selezionaCapitoloAction" method="uscitaGestione">
+			<result name="success" type="selezionaCapitoloJSON" />
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="selezionaCapitoloUscitaPrevisione" class="selezionaCapitoloAction" method="uscitaPrevisione">
+			<result name="success" type="selezionaCapitoloJSON" />
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="selezionaCapitolo_capitoloEntrataPrevisioneFondiDubbiaEsigibilita" class="selezionaCapitoloAction" method="capitoloEntrataPrevisioneFondiDubbiaEsigibilita">
+			<result name="input" type="customMessagesJSON"/>
+			<result name="success" type="selezionaCapitoloCustomJSON" />
+		</action>
+		<action name="selezionaCapitolo_capitoloEntrataGestioneFondiDubbiaEsigibilita" class="selezionaCapitoloAction" method="capitoloEntrataGestioneFondiDubbiaEsigibilita">
+			<result name="input" type="customMessagesJSON"/>
+			<result name="success" type="selezionaCapitoloCustomJSON" />
+		</action>
+
+	</package>
+</struts>

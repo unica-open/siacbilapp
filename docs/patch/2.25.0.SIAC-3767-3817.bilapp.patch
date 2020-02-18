@@ -1,0 +1,467 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/CapitoloUscitaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/CapitoloUscitaAction.java	(revision 11076)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/CapitoloUscitaAction.java	(working copy)
+@@ -74,7 +74,7 @@
+ 		LeggiClassificatoriByTipoElementoBilResponse response = ottieniResponseLeggiClassificatoriByTipoElementoBil(codiceTipoElementoBilancio.getConstant());
+ 		/* Imposto le liste nel model */
+ 		model.setListaMissione(response.getClassificatoriMissione());
+-		
++		sessionHandler.setParametro(BilSessionParameter.LISTA_MISSIONE, response.getClassificatoriMissione());
+ 		/* Liste derivate */
+ 		/* Programma */
+ 		List<Programma> listaProgramma = sessionHandler.getParametro(BilSessionParameter.LISTA_PROGRAMMA);
+Index: src/main/webapp/js/local/capitolo/capitolo.js
+===================================================================
+--- src/main/webapp/js/local/capitolo/capitolo.js	(revision 11076)
++++ src/main/webapp/js/local/capitolo/capitolo.js	(working copy)
+@@ -296,7 +296,7 @@
+ 
+                 impostaZTree("treePDC", zTreeSettings, listaElementoPianoDeiConti);
+                 // Se il bottone è disabilitato, lo si riabiliti
+-                if (options.attr("disabled") === "disabled") {
++                if (options.attr("disabled") === "disabled" && isListaElementoPianoDeiContiNonVuota) {
+                     options.removeAttr("disabled");
+                 }
+ 
+Index: src/main/webapp/js/local/capitolo/capitoloUscita.js
+===================================================================
+--- src/main/webapp/js/local/capitolo/capitoloUscita.js	(revision 11076)
++++ src/main/webapp/js/local/capitolo/capitoloUscita.js	(working copy)
+@@ -49,7 +49,7 @@
+      * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+      */
+     exports.caricaListaClassificatoriGerarchici = function (gestionePrevisione) {
+-        var selects = $("#missione,#titoloSpesa").overlay("show");
++        var selects = $("#missione").overlay("show");
+         return $.postJSON("capUscita" + gestionePrevisione + "/caricaListaClassificatoriGerarchiciCapitoloUscita" + gestionePrevisione + ".do")
+         .then(function (data) {
+             var errori = data.errori;
+@@ -59,7 +59,6 @@
+             }
+ 
+             caricaSelectCodifiche($("#missione"), data.listaMissione).change();
+-            caricaSelectCodifiche($("#titoloSpesa"), data.listaTitoloSpesa).change();
+         }).always(selects.overlay.bind(selects, "hide"));
+     };
+     
+@@ -140,7 +139,7 @@
+         $("#classificazioneCofog").val("").attr("disabled", "disabled");
+         $("#titoloSpesa").val("").attr("disabled", "disabled");
+         $("#macroaggregato").val("").attr("disabled", "disabled");
+-                
++        $("#bottonePdC").attr("disabled", "disabled");
+     }
+     /**
+      * Carica i dati nella select del Programma da chiamata AJAX.
+@@ -148,71 +147,68 @@
+      * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+      */
+     exports.caricaProgramma = function () {
+-        /* Ottiene l'UID dalla select */
+-        var idMissione = $("#missione").val();
+-        // Pulisco i campi
+-        pulisciDisabilitaCampi();
++		/* Ottiene l'UID dalla select */
++		var idMissione = $("#missione").val();
++		// Pulisco i campi
++		pulisciDisabilitaCampi();
++		var selectProgramma = $("#programma").overlay("show");
++		return $.postJSON("ajax/programmaAjax.do", {
++			"id" : idMissione
++		}).then(function(data) {
++			/* La lista dei programmi ottenuta dalla chiamata */
++			var listaProgramma = (data.listaProgramma);
++			/* La lista degli errori */
++			var errori = (data.errori);
++			/* La select in cui dovranno essere posti i dati */
++			var selectProgramma = $("#programma");
++			var titoloSpesa = $("#titoloSpesa");
++			var macroaggregato = $("#macroaggregato");
++			/*
++			 * La select per il classificatore Cofog. Serve per un controllo
++			 * sulla disabilitazione
++			 */
++			var cofog = $("#classificazioneCofog");
+ 
+-        return $.postJSON(
+-            "ajax/programmaAjax.do",
+-            {"id" : idMissione},
+-            function (data) {
+-                /* La lista dei programmi ottenuta dalla chiamata */
+-                var listaProgramma = (data.listaProgramma);
+-                /* La lista degli errori */
+-                var errori = (data.errori);
+-                /* La select in cui dovranno essere posti i dati */
+-                var selectProgramma = $("#programma");
+-                var titoloSpesa = $("#titoloSpesa");
+-                var macroaggregato=$("#macroaggregato");
+-                /*
+-                 * La select per il classificatore Cofog. Serve per un controllo
+-                 * sulla disabilitazione
+-                 */
+-                var cofog = $("#classificazioneCofog");
++			/* Pulisci l'eventuale lista presente */
++			selectProgramma.find('option').remove().end();
+ 
+-                /* Pulisci l'eventuale lista presente */
+-                selectProgramma.find('option').remove().end();
++			// Se vi sono degli errori, esco subito
++			if (errori.length > 0) {
++				selectProgramma.attr("disabled", "disabled");
++				return;
++			}
++			/*
++			 * Controlla che i select Cofog,titolo.macroaggregato sia
++			 * disabilitato. In caso contrario, li disabilito
++			 */
++			if (cofog.attr("disabled") !== "disabled") {
++				cofog.attr("disabled", "disabled");
++			}
+ 
+-                // Se vi sono degli errori, esco subito
+-                if(errori.length > 0) {
+-                    selectProgramma.attr("disabled", "disabled");
+-                    return;
+-                }
+-                /*
+-                 * Controlla che i select Cofog,titolo.macroaggregato sia disabilitato. In caso
+-                 * contrario, li disabilito
+-                 */
+-                if (cofog.attr("disabled") !== "disabled") {
+-                    cofog.attr("disabled", "disabled");
+-                }
+-                
+-                if (titoloSpesa.attr("disabled") !== "disabled") {
+-                	titoloSpesa.attr("disabled", "disabled");
+-                }  
+-                
+-                if (macroaggregato.attr("disabled") !== "disabled") {
+-                	macroaggregato.attr("disabled", "disabled").off("click");
+-                }  
+-                
+-                
+-                caricaSelectCodifiche(selectProgramma, listaProgramma).change();
+-            }
+-        );
+-    };
++			if (titoloSpesa.attr("disabled") !== "disabled") {
++				titoloSpesa.attr("disabled", "disabled");
++			}
++
++			if (macroaggregato.attr("disabled") !== "disabled") {
++				macroaggregato.attr("disabled", "disabled").off("click");
++			}
++
++			caricaSelectCodifiche(selectProgramma, listaProgramma).change();
++		}).always(selectProgramma.overlay.bind(selectProgramma, "hide"));
++	};
+ 
+     /**
+-     * Carica i dati nella select del Cofog da chiamata AJAX.
+-     * 
+-     * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+-     */
++	 * Carica i dati nella select del Cofog da chiamata AJAX.
++	 * 
++	 * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
++	 */
+     exports.caricaCofogTitolo = function () {
+         exports.caricaTitoloCofog();
+     };
+ 
+     /**
+-     * Carica il codice del tipo di Cofog nel campo hidden corrispondente
+-     */
++	 * Carica il codice del tipo di Cofog nel campo hidden corrispondente
++	 */
+     exports.caricaCodiceCofog = function() {
+         var codice = $(this).find("option:selected")
+                 .data("codiceTipo");
+@@ -229,55 +225,69 @@
+      * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+      */
+     exports.caricaTitoloCofog = function () {
+-        var idProgramma = $("#programma").val();
+-        $("#macroaggregato").val("").attr("disabled","disabled");
+-        return $.postJSON(
+-            "ajax/titoloSpesaCofogByProgrammaAjax.do",
+-            {"id" : idProgramma},
+-            function (data) {
+-            	//TITOLO SPESA
+-                var listaTitoloSpesa = data.listaTitoloSpesa;
+-                var errori = data.errori;
+-                var selectTitolo = $("#titoloSpesa");
+-                
+-                //COFOG
+-                var listaClassificazioneCofog = data.listaClassificazioneCofog;
+-                var selectCofog = $("#classificazioneCofog");
++		        var idProgramma = $("#programma").val();
++		$("#macroaggregato").val("").attr("disabled", "disabled");
++		$("#bottonePdC").attr("disabled", "disabled");
++		// non funge l'overlay se inserisco piu di una select ...
++		var selectTitolo = $('#titoloSpesa').overlay("show");
++		var selectCofog = $('#classificazioneCofog').overlay("show");
+ 
+-                var macroaggregato=$("#macroaggregato");
+-                selectCofog.find('option').remove().end();
+-                selectTitolo.find('option').remove().end();
++		return $
++				.postJSON("ajax/titoloSpesaCofogByProgrammaAjax.do", {
++					"id" : idProgramma
++				})
++				.then(
++						function(data) {
++							// TITOLO SPESA
++							var listaTitoloSpesa = data.listaTitoloSpesa;
++							var errori = data.errori;
++							var selectTitolo = $("#titoloSpesa");
+ 
+-                if(errori.length > 0) {
+-                    selectCofog.attr("disabled", "disabled");
+-                	selectTitolo.attr("disabled", "disabled");
+-                    return;
+-                }
+-                
+-                if (selectTitolo.attr("disabled") !== "disabled") {
+-                	selectTitolo.attr("disabled", "disabled");
+-                }  
+-                
+-                if (selectCofog.attr("disabled") !== "disabled") {
+-                	selectCofog.attr("disabled", "disabled");
+-                }  
+-                //carica la select dei cofog
+-                caricaSelectCodifiche(selectCofog, listaClassificazioneCofog,  function (val) {
+-                    return ' data-codice-tipo="' + val.tipoClassificatore.codice + '"';
+-                }).change();
+-                
+-                //carica la select dei titoli
+-                caricaSelectCodifiche(selectTitolo, listaTitoloSpesa).change();
++							// COFOG
++							var listaClassificazioneCofog = data.listaClassificazioneCofog;
++							var selectCofog = $("#classificazioneCofog");
+ 
+-            }
+-        );
++							var macroaggregato = $("#macroaggregato");
++							selectCofog.find('option').remove().end();
++							selectTitolo.find('option').remove().end();
++
++							if (errori.length > 0) {
++								selectCofog.attr("disabled", "disabled");
++								selectTitolo.attr("disabled", "disabled");
++								return;
++							}
++
++							if (selectTitolo.attr("disabled") !== "disabled") {
++								selectTitolo.attr("disabled", "disabled");
++							}
++
++							if (selectCofog.attr("disabled") !== "disabled") {
++								selectCofog.attr("disabled", "disabled");
++							}
++							// carica la select dei cofog
++							caricaSelectCodifiche(
++									selectCofog,
++									listaClassificazioneCofog,
++									function(val) {
++										return ' data-codice-tipo="'
++												+ val.tipoClassificatore.codice
++												+ '"';
++									}).change();
++
++							// carica la select dei titoli
++							caricaSelectCodifiche(selectTitolo,
++									listaTitoloSpesa).change();
++
++						}).always(
++						selectTitolo.overlay.bind(selectTitolo, "hide"),
++						selectCofog.overlay.bind(selectCofog, "hide"));
+     };
+ 
+     /**
+-     * Carica i dati nella select del Cofog da chiamata AJAX.
+-     * 
+-     * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
+-     */
++	 * Carica i dati nella select del Cofog da chiamata AJAX.
++	 * 
++	 * @returns (jQuery.Deferred) l'oggetto Deferred relativo all'invocazione
++	 */
+     exports.caricaCofog = function () {
+         var idProgramma = $("#programma").val();
+         return $.postJSON(
+@@ -310,35 +320,37 @@
+     exports.caricaMacroaggregato = function () {
+         var idTitoloSpesa = $("#titoloSpesa").val();
+ 
+-        // Pulisco il valore dei campi riferentesi all'elemento del piano dei
+-        // conti
+-        $("#HIDDEN_ElementoPianoDeiContiUid").val("");
+-        $("#HIDDEN_ElementoPianoDeiContiStringa").val("");
+-        $("#SPAN_ElementoPianoDeiConti").html("Nessun P.d.C. finanziario selezionato");
++		        // Pulisco il valore dei campi riferentesi all'elemento del piano dei
++		// conti
++		$("#HIDDEN_ElementoPianoDeiContiUid").val("");
++		$("#HIDDEN_ElementoPianoDeiContiStringa").val("");
++		$("#SPAN_ElementoPianoDeiConti").html(
++				"Nessun P.d.C. finanziario selezionato");
++		$("#bottonePdC").attr("disabled", "disabled");
++		var select = $("#macroaggregato").overlay("show");
++		// Effettuo la chiamata JSON
++		return $.postJSON("ajax/macroaggregatoAjax.do", {
++			"id" : idTitoloSpesa
++		}).then(
++				function(data) {
++					var listaMacroaggregato = (data.listaMacroaggregato);
++					var errori = data.errori;
++					var selectMacroaggregato = $("#macroaggregato");
++					var bottonePdC = $("#bottonePdC");
+ 
+-        // Effettuo la chiamata JSON
+-        return $.postJSON(
+-            "ajax/macroaggregatoAjax.do",
+-            {"id" : idTitoloSpesa},
+-            function (data) {
+-                var listaMacroaggregato = (data.listaMacroaggregato);
+-                var errori = data.errori;
+-                var selectMacroaggregato = $("#macroaggregato");
+-                var bottonePdC = $("#bottonePdC");
++					selectMacroaggregato.find('option').remove().end();
++					if (errori.length > 0) {
++						selectMacroaggregato.attr("disabled", "disabled");
++						return;
++					}
++					if (bottonePdC.attr("disabled") !== "disabled") {
++						bottonePdC.attr("disabled", "disabled");
++					}
+ 
+-                selectMacroaggregato.find('option').remove().end();
+-                if(errori.length > 0) {
+-                    selectMacroaggregato.attr("disabled", "disabled");
+-                    return;
+-                }
+-                if (bottonePdC.attr("disabled") !== "disabled") {
+-                    bottonePdC.attr("disabled", "disabled");
+-                }
+-                
+-                caricaSelectCodifiche(selectMacroaggregato, listaMacroaggregato).change();
+-            }
+-        );
+-    };
++					caricaSelectCodifiche(selectMacroaggregato,
++							listaMacroaggregato).change();
++				}).always(select.overlay.bind(select, "hide"));
++	};
+ 
+     return exports;
+ }());
+\ No newline at end of file
+Index: src/main/webapp/js/local/capitoloUscitaGestione/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaGestione/ricerca.js	(revision 11076)
++++ src/main/webapp/js/local/capitoloUscitaGestione/ricerca.js	(working copy)
+@@ -17,7 +17,7 @@
+         
+         // Lego le azioni
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofog);
++        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
+         $("#classificazioneCofog").on("change", CapitoloUscita.caricaCodiceCofog);
+ 
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+Index: src/main/webapp/js/local/capitoloUscitaPrevisione/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaPrevisione/ricerca.js	(revision 11076)
++++ src/main/webapp/js/local/capitoloUscitaPrevisione/ricerca.js	(working copy)
+@@ -17,7 +17,7 @@
+         
+         // Lego le azioni
+         $("#missione").on("change", CapitoloUscita.caricaProgramma);
+-        $("#programma").on("change", CapitoloUscita.caricaCofog);
++        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo);
+         $("#classificazioneCofog").on("change", CapitoloUscita.caricaCodiceCofog);
+         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+         $("#macroaggregato").on("change", function() {
+Index: src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGest.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGest.jsp	(revision 11076)
++++ src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGest.jsp	(working copy)
+@@ -106,8 +106,14 @@
+ 											</div>
+ 										</div>
+ 										<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo</label>
+-											<div class="controls">
++										<label for="titoloSpesa" class="control-label">Titolo *
++											<a class="tooltip-test" title="selezionare prima il Programma" href="#">
++												<i class="icon-info-sign">&nbsp;
++													<span class="nascosto">selezionare prima il Programma</span>
++												</i>
++											</a>
++										</label>	
++										<div class="controls">
+ 												<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 													headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+ 											</div>
+Index: src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGestMassivo.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGestMassivo.jsp	(revision 11076)
++++ src/main/webapp/jsp/capUscitaGestione/ricercaCapUscGestMassivo.jsp	(working copy)
+@@ -98,7 +98,13 @@
+ 										</s:if>
+ 										<s:if test="titoloSpesaEditabile">
+ 											<div class="control-group">
+-												<label for="titoloSpesa" class="control-label">Titolo</label>
++											<label for="titoloSpesa" class="control-label">Titolo *
++												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
++													<i class="icon-info-sign">&nbsp;
++														<span class="nascosto">selezionare prima il Programma</span>
++													</i>
++												</a>
++											</label>
+ 												<div class="controls">
+ 													<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 														headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+Index: src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp	(revision 11076)
++++ src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp	(working copy)
+@@ -104,8 +104,14 @@
+ 											</div>
+ 										</div>
+ 										<div class="control-group">
+-											<label for="titoloSpesa" class="control-label">Titolo</label>
+-											<div class="controls">
++										<label for="titoloSpesa" class="control-label">Titolo *
++											<a class="tooltip-test" title="selezionare prima il Programma" href="#">
++												<i class="icon-info-sign">&nbsp;
++													<span class="nascosto">selezionare prima il Programma</span>
++												</i>
++											</a>
++										</label>				
++										<div class="controls">
+ 												<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 													headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+ 											</div>
+Index: src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp	(revision 11076)
++++ src/main/webapp/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp	(working copy)
+@@ -98,8 +98,14 @@
+ 										</s:if>
+ 										<s:if test="titoloSpesaEditabile">
+ 											<div class="control-group">
+-												<label for="titoloSpesa" class="control-label">Titolo</label>
+-												<div class="controls">
++											<label for="titoloSpesa" class="control-label">Titolo *
++												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
++													<i class="icon-info-sign">&nbsp;
++														<span class="nascosto">selezionare prima il Programma</span>
++													</i>
++												</a>
++											</label>									
++											<div class="controls">
+ 													<s:select id="titoloSpesa" list="listaTitoloSpesa" name="titoloSpesa.uid" cssClass="span10"
+ 														headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+ 												</div>

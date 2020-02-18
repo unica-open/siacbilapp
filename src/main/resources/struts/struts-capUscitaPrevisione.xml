@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <package name="capUscitaPrevisione" extends="capitoloDefault" namespace="/">
+    
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- **********                                                             ********** -->
+        <!-- **********                         PUNTUALI                            ********** -->
+        <!-- **********                                                             ********** -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+    
+    	
+    
+        <!-- Azioni riferite al CDU GESC022 Inserisce Capitolo Uscita Previsione -->
+            <!-- Ingresso nella GUI -->
+        <action name="inserisciCapUscitaPrevisione" class="inserisciCapitoloUscitaPrevisioneAction">
+            <result name="success">/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+            <!-- Inserimento -->
+        <action name="inserimentoCapUscitaPrevisione" class="inserisciCapitoloUscitaPrevisioneAction" method="inserisceCDU">
+            <result name="success">/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp</result>
+            <result name="success_aggiornamento_variazione" type="redirectAction">
+                 <param name="actionName">aggiornamentoVariazioneImporti</param>
+                 <param name="namespace">/</param>
+                 <param name="uidVariazione">${uidVariazioneCapitolo}</param>
+            </result>
+            <result name="success_aggiornamentoConUEB_variazione" type="redirectAction">
+                 <param name="actionName">aggiornamentoVariazioneImportiUEB</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="success_inserimentoConUEB_variazione" type="redirectAction">
+                 <param name="actionName">enterStep3InserimentoVariazioniImportiConUEB</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="success_inserimentoSenzaUEB_variazione" type="redirectAction">
+                 <param name="actionName">enterStep3InserimentoVariazioniImportiSenzaUEB</param>
+                 <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp</result>
+        </action>
+            <!-- Visualizza totali di previsione -->
+        <action name="visualizzaTotaliPrevisioneCapUscitaPrevisione" class="inserisciCapitoloUscitaPrevisioneAction"
+                method="visualizza">
+            <result name="success">/jsp/capUscitaPrevisione/visualizzaTotaliPrevisioneCapUscPrev.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp</result>
+        </action>
+            <!-- Cerca -->
+        <action name="cercaCapUscitaPrevisione" class="inserisciCapitoloUscitaPrevisioneAction" method="cerca">
+            <result name="success">/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp</result>
+        </action>
+            <!-- Copia -->
+        <action name="copiaCapUscitaPrevisione" class="inserisciCapitoloUscitaPrevisioneAction" method="copia">
+            <result name="success">/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/inserisciCapUscPrev.jsp</result>
+        </action>
+            <!-- Annulla -->
+        <action name="annullaInserisciCapUscitaPrevisione" class="inserisciCapitoloUscitaPrevisioneAction" method="annulla">
+            <result name="success" type="redirectAction">inserisciCapUscitaPrevisione</result>
+            <result name="input" type="redirectAction">inserisciCapUscitaPrevisione</result>
+        </action>
+            <!-- Redirezione verso la GUI di aggiornamento -->
+        <action name="redirezioneAggiornamentoCapUscitaPrevisione" class="inserisciCapitoloUscitaPrevisioneAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+                <param name="capitoloFondino">${capitoloFondino}</param>
+            </result>
+        </action>
+        <!-- SIAC-6881 -->
+       <action name="risultatiRicercaAllegatoAtto_controlloImportiImpegniVincolati" class="risultatiRicercaAllegatoAttoAction" method="controlloImportiImpegniVincolati">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+        
+        <!-- Azioni riferite al CDU GESC028 Aggiorna Capitolo Uscita Previsione -->
+            <!-- Ingresso nella GUI -->
+        <action name="aggiornaCapUscitaPrevisione" class="aggiornaCapitoloUscitaPrevisioneAction">
+            <result name="success">/jsp/capUscitaPrevisione/aggiornaCapUscPrev.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp</result>
+        </action>
+            <!-- Aggiornamento -->
+        <action name="aggiornamentoCapUscitaPrevisione" class="aggiornaCapitoloUscitaPrevisioneAction" method="aggiornaCDU">
+<!--             <result name="success">/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp</result> -->
+            <result name="success">/jsp/capUscitaPrevisione/aggiornamentoCapUscPrevDISABLED.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/aggiornaCapUscPrev.jsp</result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC014 Consulta Capitolo Uscita Previsione -->
+        <action name="consultaCapUscitaPrevisione" class="consultaCapitoloUscitaPrevisioneAction">
+            <result name="success">/jsp/capUscitaPrevisione/consultaCapUscPrev.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrev.jsp</result>
+        </action>
+        <action name="ricercaMovimentiCapitoloAjax_ottieniVincoliCapitoloUscitaPrevisione" class="ricercaMovimentiCapitoloAjaxAction" method="ottieniVincoliCapitoloUscitaPrevisione">
+            <result name="input" type="customMessagesJSON" />
+            <result name="success">/jsp/cap/include/consulta_vincoli.jsp</result>
+        </action>
+        
+        
+        <!-- Azioni riferite al CDU GESC010 Ricerca Capitolo Uscita Previsione -->
+            <!-- Ingresso nella GUI di ricerca con operazioni -->
+        <action name="ricercaConOperazioniCapUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction">
+            <result name="success">/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp</result>
+        </action>
+            <!-- Ricerca con operazioni -->
+        <action name="effettuaRicercaConOperazioniCapUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction" 
+                method="ricercaConOperazioniCDU">
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/capUscitaPrevisione/ricercaCapUscPrev.jsp</result>
+        </action>
+            <!-- Ricerca come dato aggiuntivo -->
+        <action name="effettuaRicercaComeDatoAggiuntivoCapUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction"
+                method="ricercaComeDatoAggiuntivo">
+            <result name="success" type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    listaCapitoli.*
+                </param>
+            </result>
+        </action>
+
+
+        <!-- Risultati Ricerca con operazioni -->
+        <action name="risultatiRicercaCapUscitaPrevisione" class="risultatiRicercaCapitoloUscitaPrevisioneAction" >
+            <result name="success">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrev.jsp</result>
+        </action>
+            <!-- AGGIORNA -->
+        <action name="risultatiRicercaCapUscitaPrevisioneAggiorna" class="risultatiRicercaCapitoloUscitaPrevisioneAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+                <param name="daAggiornamento">true</param>
+            </result>
+        </action>
+            <!-- ANNULLA -->
+        <action name="risultatiRicercaCapUscitaPrevisioneAnnulla" class="risultatiRicercaCapitoloUscitaPrevisioneAction" method="annulla">
+            <result name="success">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrev.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrev.jsp</result>
+        </action>
+            <!-- CONSULTA -->
+        <action name="risultatiRicercaCapUscitaPrevisioneConsulta" class="risultatiRicercaCapitoloUscitaPrevisioneAction" method="consulta">
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="uidDaConsultare">${uidDaConsultare}</param>
+            </result>
+        </action>
+            <!-- ELIMINA -->
+        <action name="risultatiRicercaCapUscitaPrevisioneElimina" class="risultatiRicercaCapitoloUscitaPrevisioneAction" method="elimina">
+            <result name="success">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrev.jsp</result>
+            <result name="input">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrev.jsp</result>
+        </action>
+        
+        
+        <!-- Action AJAX per i risultati di ricerca sintetica capitolo uscita previsione -->
+        <action name="risultatiRicercaCapUscitaPrevisioneAjax" class="risultatiRicercaCapitoloUscitaPrevisioneAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        
+        <!-- **** Chiamate AJAX per annullamento ed eliminazione **** -->
+        <action name="annullaCapUscitaPrevisioneAjax" class="annullaCapitoloUscitaPrevisioneAction" method="execute">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*
+                </param>
+            </result>
+        </action>
+        <action name="eliminaCapUscitaPrevisioneAjax" class="eliminaCapitoloUscitaPrevisioneAction" method="execute">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*
+                </param>
+            </result>
+        </action>
+        
+        
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- **********                                                             ********** -->
+        <!-- **********                         MASSIVI                             ********** -->
+        <!-- **********                                                             ********** -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        <!-- ********************************************************************************* -->
+        
+        <!-- Azioni riferite al CDU GESC073 Ricerca Capitolo Uscita Previsione (Massiva) -->
+            <!-- Ingresso nella GUI di ricerca con operazioni -->
+        <action name="ricercaMassivaConOperazioniCapUscitaPrevisione" class="ricercaMassivaCapitoloUscitaPrevisioneAction">
+            <result name="success">/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp</result>
+        </action>
+            <!-- Ricerca con operazioni -->
+        <action name="effettuaRicercaMassivaConOperazioniCapUscitaPrevisione" class="ricercaMassivaCapitoloUscitaPrevisioneAction" 
+                method="ricercaConOperazioniCDU">
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaMassivaCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/capUscitaPrevisione/ricercaCapUscPrevMassivo.jsp</result>
+        </action>
+        
+        	<!-- Ricerca per variazioni -->
+        <action name="ricercaMassivaVariazioneCodificheCapUscitaPrevisione" class="ricercaMassivaCapitoloUscitaPrevisioneAction" method="ricercaVariazioneCodifiche">
+            <result name="success" type="customJSON">
+            	<param name="includeProperties">errori.*, messaggi.*, informazioni.*, elementoCapitoloCodifiche.*</param>
+            </result>
+        </action>
+        
+        <!-- Risultati Ricerca con operazioni -->
+        <action name="risultatiRicercaMassivaCapUscitaPrevisione" class="risultatiRicercaMassivaCapitoloUscitaPrevisioneAction" >
+            <result name="success">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrevMassivo.jsp</result>
+        </action>
+            <!-- AGGIORNA -->
+        <action name="risultatiRicercaMassivaCapUscitaPrevisioneAggiorna" class="risultatiRicercaMassivaCapitoloUscitaPrevisioneAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaMassivaCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="annoCapitoloDaAggiornare">${annoCapitoloDaAggiornare}</param>
+                <param name="numeroCapitoloDaAggiornare">${numeroCapitoloDaAggiornare}</param>
+                <param name="numeroArticoloDaAggiornare">${numeroArticoloDaAggiornare}</param>
+            </result>
+        </action>
+            <!-- CONSULTA -->
+        <action name="risultatiRicercaMassivaCapUscitaPrevisioneConsulta" class="risultatiRicercaMassivaCapitoloUscitaPrevisioneAction" method="consulta">
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaMassivaCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="annoCapitoloDaConsultare">${annoCapitoloDaConsultare}</param>
+                <param name="numeroCapitoloDaConsultare">${numeroCapitoloDaConsultare}</param>
+                <param name="numeroArticoloDaConsultare">${numeroArticoloDaConsultare}</param>
+            </result>
+        </action>
+        
+        <!-- Action AJAX per i risultati di ricerca sintetica massiva capitolo uscita previsione -->
+        <action name="risultatiRicercaMassivaCapUscitaPrevisioneAjax" class="risultatiRicercaCapitoloUscitaPrevisioneMassivoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        <!-- Azioni riferite al CDU GESC074 Consulta Capitolo Uscita  Previsione (Massivo) -->
+        <action name="consultaMassivaCapUscitaPrevisione" class="consultaMassivaCapitoloUscitaPrevisioneAction">
+            <result name="input">/jsp/capUscitaPrevisione/risultatiRicercaCapUscPrevMassivo.jsp</result>
+            <result name="success">/jsp/capUscitaPrevisione/consultaCapUscPrevMassivo.jsp</result>
+        </action>
+            <!-- Risultati ricerca AJAX -->
+        <action name="risultatiRicercaConsultazioneMassivaCapitoloUscitaPrevisione" class="risultatiRicercaConsultazioneMassivaCapitoloUscitaPrevisioneAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        <!-- Aggiorna Capitolo Uscita  Previsione (Massivo) -->
+        <action name="aggiornaMassivaCapUscitaPrevisione" class="aggiornaMassivaCapitoloUscitaPrevisioneAction">
+            <result name="input">/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivoDISABLED.jsp</result>
+            <result name="success">/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivo.jsp</result>
+        </action>
+        <action name="aggiornamentoMassivoCapUscitaPrevisione" class="aggiornaMassivaCapitoloUscitaPrevisioneAction" method="aggiornaCDU">
+            <result name="input">/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivo.jsp</result>
+            <result name="success">/jsp/capUscitaPrevisione/aggiornaCapUscPrevMassivoDISABLED.jsp</result>
+        </action>
+        
+        <action name="effettuaRicercaDettaglioMassivaCapUscitaPrevisione" class="ricercaMassivaCapitoloUscitaPrevisioneAction" method="ricercaDettaglio">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    maxUEB,
+                    listaCapitoloVariazione.*,
+                    capitoloMassivo\.annoCapitolo,
+                    capitoloMassivo\.numeroCapitolo,
+                    capitoloMassivo\.numeroArticolo,
+                    capitoloMassivo\.categoriaCapitolo.*,
+                    capitoloMassivo\.descrizione,
+                    capitoloMassivo\.listaImportiCapitoloUP\[\d+\]\.annoCompetenza,
+                    capitoloMassivo\.listaImportiCapitoloUP\[\d+\]\.stanziamento,
+                    capitoloMassivo\.listaImportiCapitoloUP\[\d+\]\.stanziamentoResiduo,
+                    capitoloMassivo\.listaImportiCapitoloUP\[\d+\]\.stanziamentoCassa,
+                    capitoloMassivo\.listaImportiCapitoloUP\[\d+\]\.fondoPluriennaleVinc
+                </param>
+            </result>
+        </action>
+        
+        <action name="effettuaRicercaDettaglioCapUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction" method="ricercaDettaglio">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    capitoloUscitaPrevisione.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- SIAC-6884 FIltro capitoli uscita previsione -->
+        <!-- SIAC-6884 Filtro capitoli -->
+        <action name="effettuaRicercaDettaglioCapDaVariazioneUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction" method="ricercaDettaglioPerVariazione">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    capitoloUscitaPrevisione.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="ricercaComponentiCapUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction" method="ricercaComponenteImportiCapitolo">
+            <result name="success">/jsp/cap/include/stanziamento_per_componenti.jsp</result>
+            <result name="input" type="customMessagesJSON"/>
+        </action>
+        
+        <action name="caricaListaClassificatoriGenericiCapitoloUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction" method="caricaListaClassificatoriGenerici">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaClassificatoreGenerico.*,
+                    labelClassificatoreGenerico.*,
+                    listaPoliticheRegionaliUnitarie.*,
+                    listaTipoFinanziamento.*,
+		      		listaTipoFondo.*,
+					listaRicorrenteSpesa.*,
+					ricorrenteSpesa.*,
+					listaPerimetroSanitarioSpesa.*,
+					listaTransazioneUnioneEuropeaSpesa.*,
+					listaPoliticheRegionaliUnitarie.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="caricaListaClassificatoriGerarchiciCapitoloUscitaPrevisione" class="ricercaCapitoloUscitaPrevisioneAction" method="caricaListaClassificatoriGerarchici">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaMissione.*,
+					listaTitoloSpesa.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Ajax capitolo -->
+		<action name="risultatiRicercaCapitoloUscitaPrevisioneModaleAjax" class="risultatiRicercaCapitoloUscitaPrevisioneModaleAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					sEcho,
+					iTotalRecords,
+					iTotalDisplayRecords,
+					iDisplayStart,
+					iDisplayLength,
+					aaData.*
+				</param>
+			</result>
+		</action>
+    </package>
+</struts>

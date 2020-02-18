@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="finRegistrazioneMovFin" extends="capitoloDefault" namespace="/">
+
+		<!-- ****************************************************************************************************** -->
+		<!-- ******************************************** Ricerca ************************************************* -->
+		<!-- ****************************************************************************************************** -->
+
+		<action name="ricercaRegistrazioneMovFinFIN" class="ricercaRegistrazioneMovFinFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/ricercaRegistrazione.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinFIN_caricaTipiEvento" class="ricercaRegistrazioneMovFinFINAction" method="caricaTipiEvento">
+			<result type="customJSON">
+				<param name="includeProperties">listaTipiEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinFIN_caricaEventi" class="ricercaRegistrazioneMovFinFINAction" method="ricercaEventi">
+			<result type="customJSON">
+				<param name="includeProperties">errori.*, listaEventi.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinFIN_caricaTipiEvento" class="ricercaRegistrazioneMovFinFINAction" method="caricaTipiEvento">
+			<result type="customJSON">
+				<param name="includeProperties">listaTipiEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinFIN_caricaListaTitoli" class="ricercaRegistrazioneMovFinFINAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinFIN_caricaListaTipiEvento" class="ricercaRegistrazioneMovFinFINAction" method="caricaListaTipiEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="ricercaRegistrazioneMovFinFIN_effettuaRicercaRegistrazioneMovFin" class="ricercaRegistrazioneMovFinFINAction" method="ricercaRegistrazioneMovFin">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/ricercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN" class="risultatiRicercaRegistrazioneMovFinFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFINAjax" class="risultatiRicercaRegistrazioneMovFinFINAjaxAction">
+			<result type="dataTable" />
+		</action>
+		
+		<action name="risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriSpesaByContoFin" class="risultatiRicercaRegistrazioneMovFinFINAction" method = "leggiClassificatoriSpesaByContoFin">
+			<result name="success" type="json">
+				<param name="enumAsBean">true</param>
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.* 
+					,listaTitoloSpesa.*
+					,listaMacroaggregato.*
+					,uidTitoloSpesaConto.*
+					,uidMacroaggregatoConto.*
+				</param> 
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriEntrataByContoFin" class="risultatiRicercaRegistrazioneMovFinFINAction" method = "leggiClassificatoriEntrataByContoFin">
+			<result type="customJSON">
+				<param name="includeProperties">uidMacroaggregatoConto.*</param>
+				<param name="includeProperties">
+					errori.* 
+					,uidCategoriaConto.*
+					,listaMacroaggregato.*
+					,uidTipologiaTitoloConto.*
+					,uidTitoloEntrataConto.*
+					,listaTitoloEntrata.*
+					,listaTitoloTipologia.*
+					,listaTipologiaCategoria.*
+				</param> 
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaRegistrazioneMovFinFINAction_aggiornaPianoDeiContiRegistrazione" class="risultatiRicercaRegistrazioneMovFinFINAction" method = "aggiornaPianoDeiContiRegistrazione">
+			<result type="customJSON">
+				<param name="enumAsBean">true</param>
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">errori.*, registrazioneAggiornata.*</param>				
+			</result>
+		</action>
+		
+		<action name="leggiPianoDeiContiSpesa" class="risultatiRicercaRegistrazioneMovFinFINAction" method = "leggiPianoDeiContiSpesa">
+			<result type="customJSON">
+				<param name="enumAsBean">true</param>
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">errori.*, registrazioneAggiornata.*</param>				
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_annulla" class="risultatiRicercaRegistrazioneMovFinFINAction" method="annulla">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaDS" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinDocumentoSpesaFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaDE" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinDocumentoEntrataFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaI" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinImpegnoFIN</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaA" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinAccertamentoFIN</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaL" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinLiquidazioneFIN</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaOI" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinOrdinativoIncassoFIN</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaOP" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinOrdinativoPagamentoFIN</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaRE" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRichiestaEconomaleFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidRichiestaEconomale">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaRR" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRendicontoRichiestaFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidRendicontoRichiestaEconomale">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaSI" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinSubImpegnoFIN</param>
+				<param name="namespace">/</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaSA" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinSubAccertamentoFIN</param>
+				<param name="namespace">/</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaMMGS" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinModificaMovimentoGestioneSpesaFIN</param>
+				<param name="namespace">/</param>
+				<param name="uid">${uidDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaMMGE" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinModificaMovimentoGestioneEntrataFIN</param>
+				<param name="namespace">/</param>
+				<param name="uid">${uidDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaNCD" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinNotaCreditoSpesaFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaNCV" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinNotaCreditoEntrataFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaRT" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRateoFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidPrimaNota">${uidPrimaNotaRegistrazioneDaConsultare}</param>
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_consultaRS" class="risultatiRicercaRegistrazioneMovFinFINAction" method="consulta">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRiscontoFIN</param>
+				<param name="namespace">/</param>
+				<param name="uidPrimaNota">${uidPrimaNotaRegistrazioneDaConsultare}</param>
+				<param name="uidRisconto">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_completa" class="risultatiRicercaRegistrazioneMovFinFINAction" method="completa">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">${nomeAzione}</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistrazione">${uidDaCompletare}</param>
+				<param name="validazione">${validazione}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_completaEValida" class="risultatiRicercaRegistrazioneMovFinFINAction" method="completaEValida">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">${nomeAzione}</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistrazione">${uidDaCompletare}</param>
+				<param name="validazione">${validazione}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinFIN_valida" class="risultatiRicercaRegistrazioneMovFinFINAction" method="valida">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- ****************************************************************************************************** -->
+		<!-- ******************************************** Consultazione ******************************************* -->
+		<!-- ****************************************************************************************************** -->
+
+
+		<!-- DOCUMENTO SPESA -->
+		<action name="consultaRegistrazioneMovFinDocumentoSpesaFIN" class="consultaRegistrazioneMovFinDocumentoSpesaFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- DOCUMENTO ENTRATA -->
+		<action name="consultaRegistrazioneMovFinDocumentoEntrataFIN" class="consultaRegistrazioneMovFinDocumentoEntrataFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- IMPEGNO -->
+		<action name="consultaRegistrazioneMovFinImpegnoFIN" class="consultaRegistrazioneMovFinImpegnoFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- ACCERTAMENTO -->
+		<action name="consultaRegistrazioneMovFinAccertamentoFIN" class="consultaRegistrazioneMovFinAccertamentoFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- LIQUIDAZIONE -->
+		<action name="consultaRegistrazioneMovFinLiquidazioneFIN" class="consultaRegistrazioneMovFinLiquidazioneFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- ORDINATIVO INCASSO -->
+		<action name="consultaRegistrazioneMovFinOrdinativoIncassoFIN" class="consultaRegistrazioneMovFinOrdinativoIncassoFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- ORDINATIVO PAGAMENTO -->
+		<action name="consultaRegistrazioneMovFinOrdinativoPagamentoFIN" class="consultaRegistrazioneMovFinOrdinativoPagamentoFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- RICHIESTA ECONOMALE -->
+		<action name="consultaRegistrazioneMovFinRichiestaEconomaleFIN" class="consultaRegistrazioneMovFinRichiestaEconomaleFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- RENDICONTO RICHIESTA ECONOMALE -->
+		<action name="consultaRegistrazioneMovFinRendicontoRichiestaFIN" class="consultaRegistrazioneMovFinRendicontoRichiestaEconomaleFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- SUBIMPEGNO -->
+		<action name="consultaRegistrazioneMovFinSubImpegnoFIN" class="consultaRegistrazioneMovFinSubImpegnoFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<!-- SUBACCERTAMENTO -->
+		<action name="consultaRegistrazioneMovFinSubAccertamentoFIN" class="consultaRegistrazioneMovFinSubAccertamentoFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<action name="consultaRegistrazioneMovFinModificaMovimentoGestioneSpesaFIN" class="consultaRegistrazioneMovFinModificaMovimentoGestioneSpesaFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+
+		<action name="consultaRegistrazioneMovFinModificaMovimentoGestioneEntrataFIN" class="consultaRegistrazioneMovFinModificaMovimentoGestioneEntrataFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<action name="consultaRegistrazioneMovFinNotaCreditoSpesaFIN" class="consultaRegistrazioneMovFinNotaCreditoSpesaFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<action name="consultaRegistrazioneMovFinNotaCreditoEntrataFIN" class="consultaRegistrazioneMovFinNotaCreditoEntrataFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<action name="consultaRegistrazioneMovFinRateoFIN" class="consultaRegistrazioneMovFinRateoFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<action name="consultaRegistrazioneMovFinRiscontoFIN" class="consultaRegistrazioneMovFinRiscontoFINAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!--  PRIMA NOTA INTEGRATA  -->
+		<action name="completaRegistrazioneMovFin" class="inserisciPrimaNotaIntegrataAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/completaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/completaRegistrazioneMovFin.jsp</result>
+		</action>
+
+		<action name="completaRegistrazioneMovFinDocumento" class="completaRegistrazioneMovFinDocumentoAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/completaRegistrazioneMovFinDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/completaRegistrazioneMovFinDocumento.jsp</result>
+		</action>
+
+		<action name="completaEValidaRegistrazioneMovFin" class="completaEValidaRegistrazioneMovFinAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/completaEValidaRegistrazione.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/completaEValidaRegistrazione.jsp</result>
+		</action>
+
+		<action name="completaEValidaRegistrazioneMovFinDocumento" class="completaEValidaRegistrazioneMovFinDocumentoAction" >
+			<result name="success">/jsp/contabilitaGenerale/registrazione/completaEValidaRegistrazioneDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/completaEValidaRegistrazioneDocumento.jsp</result>
+		</action>
+		
+		<!-- CR-4222 -->
+		<action name="ricercaRegistrazioneMassivaMovFinFIN" class="ricercaRegistrazioneMassivaMovFinFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/ricercaRegistrazioneMassiva.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinFIN_caricaTipiEvento" class="ricercaRegistrazioneMassivaMovFinFINAction" method="caricaTipiEvento">
+			<result type="customJSON">
+				<param name="includeProperties">listaTipiEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinFIN_caricaEventi" class="ricercaRegistrazioneMassivaMovFinFINAction" method="ricercaEventi">
+			<result type="customJSON">
+				<param name="includeProperties">errori.*, listaEventi.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinFIN_caricaTipiEvento" class="ricercaRegistrazioneMassivaMovFinFINAction" method="caricaTipiEvento">
+			<result type="customJSON">
+				<param name="includeProperties">listaTipiEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinFIN_caricaListaTitoli" class="ricercaRegistrazioneMassivaMovFinFINAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinFIN_caricaListaTipiEvento" class="ricercaRegistrazioneMassivaMovFinFINAction" method="caricaListaTipiEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="ricercaRegistrazioneMassivaMovFinFIN_effettuaRicercaRegistrazioneMovFin" class="ricercaRegistrazioneMassivaMovFinFINAction" method="ricercaRegistrazioneMovFin">
+			<result name="input">/jsp/contabilitaGenerale/registrazione/ricercaRegistrazioneMassiva.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMassivaMovFinFIN</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMassivaMovFinFIN" class="risultatiRicercaRegistrazioneMassivaMovFinFINAction">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMassiva.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMassivaMovFinFIN_registraTutto" class="risultatiRicercaRegistrazioneMassivaMovFinFINAction" method="registraTutto">
+			<result name="success">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMassivaDisabled.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMassiva.jsp</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMassivaMovFinFINAjax" class="risultatiRicercaRegistrazioneMassivaMovFinFINAjaxAction">
+			<result type="dataTable" />
+		</action>
+	</package>
+</struts>

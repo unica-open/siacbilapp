@@ -1,0 +1,61 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/progetto/GenericCronoprogrammaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/progetto/GenericCronoprogrammaAction.java	(revision 12499)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/progetto/GenericCronoprogrammaAction.java	(working copy)
+@@ -496,8 +496,8 @@
+ 		ValidationUtil.checkNotNullNorEmpty(listaErrori, dec.getDescrizioneCapitolo(), "Descrizione Entrata");
+ 		ValidationUtil.checkNotNull(listaErrori, dec.getAnnoCompetenza(), "Anno");
+ 		ValidationUtil.checkNotNull(listaErrori, dec.getStanziamento(), "Valore previsto");
+-		ValidationUtil.checkNotNullNorInvalidUid(listaErrori, dec.getTitoloEntrata(), "Titolo");
+-		ValidationUtil.checkNotNullNorInvalidUid(listaErrori, dec.getTipologiaTitolo(), "Tipologia");
++//		ValidationUtil.checkNotNullNorInvalidUid(listaErrori, dec.getTitoloEntrata(), "Titolo");
++//		ValidationUtil.checkNotNullNorInvalidUid(listaErrori, dec.getTipologiaTitolo(), "Tipologia");
+ 		
+ 		terminaValidazione(listaErrori);
+ 		return listaErrori;
+Index: src/main/webapp/js/local/cronoprogramma/cronoprogramma.js
+===================================================================
+--- src/main/webapp/js/local/cronoprogramma/cronoprogramma.js	(revision 12499)
++++ src/main/webapp/js/local/cronoprogramma/cronoprogramma.js	(working copy)
+@@ -12,9 +12,9 @@
+         "Entrata": {
+             descrizioneEntrata: "Descrizione Entrata",
+             annoEntrata: "Anno",
+-            valorePrevistoEntrata: "Valore previsto",
+-            titoloEntrataEntrata: "Titolo",
+-            tipologiaTitoloEntrata: "Tipologia"
++            valorePrevistoEntrata: "Valore previsto"
++//            titoloEntrataEntrata: "Titolo",
++//            tipologiaTitoloEntrata: "Tipologia"
+         }, "Uscita": {
+             descrizioneUscita: "Descrizione Spesa",
+             annoUscita: "Anno spesa",
+@@ -60,7 +60,7 @@
+             {aTargets: [0], mData: "descrizioneCapitolo"},
+             {aTargets: [1], mData: "annoCompetenza"},
+             {aTargets: [2], mData: function(source) {
+-                return source.titoloEntrata.codice + " - " + source.tipologiaTitolo.codice;
++                return source && source.titoloEntrata && source.tipologiaTitolo && source.titoloEntrata.codice + " - " + source.tipologiaTitolo.codice || "";
+             }},
+             {aTargets: [3], mData : function(source) {
+                 return generaStringaCapitoloArticoloUEB(source, exports.gestioneUEB);
+@@ -101,7 +101,7 @@
+             {aTargets: [1], mData: "annoCompetenza"},
+             {aTargets: [2], mData: "annoEntrata"},
+             {aTargets: [3], mData: function(source) {
+-                return source.missione.codice + " - " + source.programma.codice + " - " + source.titoloSpesa.codice;
++                return source && source.missione && source.programma && source.titoloSpesa && source.missione.codice + " - " + source.programma.codice + " - " + source.titoloSpesa.codice || "";
+             }},
+             {aTargets: [4], mData: function(source) {
+                 return generaStringaCapitoloArticoloUEB(source, exports.gestioneUEB);
+@@ -507,8 +507,8 @@
+      * @param capitolo (Object) il capitolo da cui ottenere i classificatori
+      */
+     function caricaClassificatoriEntrata (capitolo) {
+-        var uidTitoloEntrata = capitolo.titoloEntrata.uid;
+-        var uidTipologiaTitolo = capitolo.tipologiaTitolo.uid;
++        var uidTitoloEntrata = capitolo && capitolo.titoloEntrata && capitolo.titoloEntrata.uid || 0;
++        var uidTipologiaTitolo = capitolo && capitolo.tipologiaTitolo && capitolo.tipologiaTitolo.uid || 0;
+ 
+         $("#titoloEntrataEntrata").val(uidTitoloEntrata).trigger("change", uidTipologiaTitolo);
+     };

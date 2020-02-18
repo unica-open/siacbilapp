@@ -1,0 +1,16 @@
+/*
+*SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+*SPDX-License-Identifier: EUPL-1.2
+*/
+!function($) {
+    'use strict';
+    
+    $(init);
+    
+    /**
+     * Initialization
+     */
+    function init() {
+    	var obj = ContoBase.inizializza('', '', '#codiceContoPatrimoniale', '#descrizioneContoPatrimoniale', '#pulsanteCompilazioneGuidataContoPatrimoniale');
+    }
+}(jQuery);

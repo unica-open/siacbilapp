@@ -1,0 +1,30 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(revision 10797)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(working copy)
+@@ -789,7 +789,9 @@
+ 		@SuppressWarnings("unchecked")
+ 		List<ElementoCapitoloVariazione> elementiNellaVariazione = (List<ElementoCapitoloVariazione>) ReflectionUtil.getField(specifica, campoElementiNellaVariazione);
+ 		for(ElementoCapitoloVariazione elementoNellaVariazione : elementiNellaVariazione) {
+-			listaDettaglioVariazioneImporto.add(ElementoCapitoloVariazioneFactory.transform(elementoNellaVariazione));
++			DettaglioVariazioneImportoCapitolo transformed = ElementoCapitoloVariazioneFactory.transform(elementoNellaVariazione);
++			transformed.setAnnoCompetenza(getAnnoCompetenza());
++			listaDettaglioVariazioneImporto.add(transformed);
+ 		}
+ 		
+ 		utility.setListaDettaglioVariazioneImporto(listaDettaglioVariazioneImporto);
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java	(revision 10797)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java	(working copy)
+@@ -291,7 +291,9 @@
+ 		@SuppressWarnings("unchecked")
+ 		List<ElementoCapitoloVariazione> elementiNellaVariazione = (List<ElementoCapitoloVariazione>) ReflectionUtil.getField(specifica, campoElementiNellaVariazione);
+ 		for(ElementoCapitoloVariazione elementoNellaVariazione : elementiNellaVariazione) {
+-			listaDettaglioVariazioneImporto.add(ElementoCapitoloVariazioneFactory.transform(elementoNellaVariazione));
++			DettaglioVariazioneImportoCapitolo transformed = ElementoCapitoloVariazioneFactory.transform(elementoNellaVariazione);
++			transformed.setAnnoCompetenza(getDefinisci().getAnnoVariazione());
++			listaDettaglioVariazioneImporto.add(transformed);
+ 		}
+ 		
+ 		utility.setListaDettaglioVariazioneImporto(listaDettaglioVariazioneImporto);

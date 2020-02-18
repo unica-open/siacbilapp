@@ -1,0 +1,139 @@
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/CapitoloEntrataDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/CapitoloEntrataDataAdapter.java	(revision 14750)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/CapitoloEntrataDataAdapter.java	(working copy)
+@@ -1,12 +1,15 @@
+-package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.dataadapter;
+-
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BaseDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.ClassificazioneCapitoloEntrataDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DenominazioneCapitoloDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.SimpleDataInfo;
+-
+-/**
+- * Column Adapter per il Capitolo di Entrata
++package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.dataadapter;
++
++import java.math.BigDecimal;
++
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BaseDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.ClassificazioneCapitoloEntrataDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DenominazioneCapitoloDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.SimpleDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.TypedDataInfo;
++
++/**
++ * Column Adapter per il Capitolo di Entrata
+  * 
+  *
+  */
+@@ -43,13 +46,20 @@
+ 					new SimpleDataInfo("Descrizione Capitolo", "capitolo_desc"),
+ 					new SimpleDataInfo("Descrizione Articolo", "articolo_desc"),
+ 					new BaseDataInfo("Categoria", "{0} - {1}", "classif_categoria_code", "classif_categoria_desc"),
+-					new BaseDataInfo("Tipologia", "{0} - {1}", "classif_tipologia_code", "classif_tipologia_desc"),
+-					new BaseDataInfo("Titolo", "{0} - {1}", "classif_titolo_code", "classif_titolo_desc"),
+-					new BaseDataInfo("Strutt. Amm. Resp.","{0} - {1}", "classif_sac_code", "classif_sac_desc"),
+-					new SimpleDataInfo("P.d.c. finanziario", "classif_pdc_code")
+-					),
+-				asList(
+-					new BaseDataInfo("testo", "Capitolo Entrata {0}/{1}/{2}", "capitolo_anno", "capitolo_numero", "capitolo_articolo")
++					new BaseDataInfo("Tipologia", "{0} - {1}", "classif_tipologia_code", "classif_tipologia_desc"),
++					new BaseDataInfo("Titolo", "{0} - {1}", "classif_titolo_code", "classif_titolo_desc"),
++					new BaseDataInfo("Strutt. Amm. Resp.","{0} - {1}", "classif_sac_code", "classif_sac_desc"),
++					new SimpleDataInfo("P.d.c. finanziario", "classif_pdc_code"),
++					// SIAC-4669
++					new TypedDataInfo<BigDecimal>("Stanziamento", "stanziamento"),
++					new TypedDataInfo<BigDecimal>("Residuo", "stanziamento_residuo"),
++					new TypedDataInfo<BigDecimal>("Cassa", "stanziamento_cassa"),
++					new TypedDataInfo<BigDecimal>("Variazione stanziamento", "stanziamento_var"),
++					new TypedDataInfo<BigDecimal>("Variazione residuo", "stanziamento_res_var"),
++					new TypedDataInfo<BigDecimal>("Variazione cassa", "stanziamento_cassa_var")
++					),
++				asList(
++					new BaseDataInfo("testo", "Capitolo Entrata {0}/{1}/{2}", "capitolo_anno", "capitolo_numero", "capitolo_articolo")
+ 					)
+ 			);
+ 	}
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/CapitoloSpesaDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/CapitoloSpesaDataAdapter.java	(revision 14750)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/CapitoloSpesaDataAdapter.java	(working copy)
+@@ -1,12 +1,15 @@
+-package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.dataadapter;
+-
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BaseDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.ClassificazioneCapitoloSpesaDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DenominazioneCapitoloDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.SimpleDataInfo;
+-
+-/**
+- * Column Adapter per il Capitolo di Spesa
++package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.dataadapter;
++
++import java.math.BigDecimal;
++
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BaseDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.ClassificazioneCapitoloSpesaDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DenominazioneCapitoloDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.SimpleDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.TypedDataInfo;
++
++/**
++ * Column Adapter per il Capitolo di Spesa
+  * 
+  *
+  */
+@@ -45,13 +48,20 @@
+ 						new SimpleDataInfo("Descrizione Articolo", "articolo_desc"),
+ 						new BaseDataInfo("Missione", "{0} - {1}", "classif_missione_code", "classif_missione_desc"),
+ 						new BaseDataInfo("Programma", "{0} - {1}", "classif_programma_code", "classif_programma_desc"),
+-						new BaseDataInfo("Titolo", "{0} - {1}", "classif_titolo_code", "classif_titolo_desc"),
+-						new BaseDataInfo("Macroaggregato", "{0} - {1}", "classif_macr_code", "classif_macr_desc"),
+-						new BaseDataInfo("Strutt. Amm. Resp.","{0} - {1}", "classif_sac_code", "classif_sac_desc"),
+-						new SimpleDataInfo("P.d.c. finanziario", "classif_pdc_code")
+-						),
+-				asList(
+-						new BaseDataInfo("testo", "Capitolo Spesa {0}/{1}/{2}", 
++						new BaseDataInfo("Titolo", "{0} - {1}", "classif_titolo_code", "classif_titolo_desc"),
++						new BaseDataInfo("Macroaggregato", "{0} - {1}", "classif_macr_code", "classif_macr_desc"),
++						new BaseDataInfo("Strutt. Amm. Resp.","{0} - {1}", "classif_sac_code", "classif_sac_desc"),
++						new SimpleDataInfo("P.d.c. finanziario", "classif_pdc_code"),
++						// SIAC-4669
++						new TypedDataInfo<BigDecimal>("Stanziamento", "stanziamento"),
++						new TypedDataInfo<BigDecimal>("Residuo", "stanziamento_residuo"),
++						new TypedDataInfo<BigDecimal>("Cassa", "stanziamento_cassa"),
++						new TypedDataInfo<BigDecimal>("Variazione stanziamento", "stanziamento_var"),
++						new TypedDataInfo<BigDecimal>("Variazione residuo", "stanziamento_res_var"),
++						new TypedDataInfo<BigDecimal>("Variazione cassa", "stanziamento_cassa_var")
++						),
++				asList(
++						new BaseDataInfo("testo", "Capitolo Spesa {0}/{1}/{2}", 
+ 								"capitolo_anno",
+ 								"capitolo_numero", 
+ 								"capitolo_articolo")
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/stampa/StampaEntitaConsultabili.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/stampa/StampaEntitaConsultabili.java	(revision 14750)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/stampa/StampaEntitaConsultabili.java	(working copy)
+@@ -268,13 +268,13 @@
+ 		style.setWrapText(true);
+ 		styles.put("cell_normal", style);
+ 		
+-		style = createBorderedStyle();
+-		style.setAlignment(CellStyle.ALIGN_RIGHT);
+-		style.setWrapText(true);
+-		style.setDataFormat(df.getFormat("###,###.00"));
+-		styles.put("cell_decimal", style);
+-
+-		style = createBorderedStyle();
++		style = createBorderedStyle();
++		style.setAlignment(CellStyle.ALIGN_RIGHT);
++		style.setWrapText(true);
++		style.setDataFormat(df.getFormat("###,##0.00"));
++		styles.put("cell_decimal", style);
++
++		style = createBorderedStyle();
+ 		style.setAlignment(CellStyle.ALIGN_CENTER);
+ 		style.setWrapText(true);
+ 		styles.put("cell_normal_centered", style);

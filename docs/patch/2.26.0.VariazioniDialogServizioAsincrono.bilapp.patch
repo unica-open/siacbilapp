@@ -1,0 +1,233 @@
+Index: src/main/webapp/js/local/variazioni/aggiorna.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/aggiorna.importi.js	(revision 11839)
++++ src/main/webapp/js/local/variazioni/aggiorna.importi.js	(working copy)
+@@ -244,7 +244,7 @@
+      * Se il servizio viene implementato in modo asincrono permette all'utente di scegliere se rimanere
+      * sulla pagina oppure tornare alla home
+      */
+-    function showDialogAbbandonoPaginaSuServizioAsincrono(url) {
++    function showDialogAbbandonoPaginaSuServizioAsincrono(operazione) {
+         bootboxAlert('L\'elaborazione non &egrave ancora terminata. &Egrave possibile rimanere sulla pagina oppure tornare alla home.', 'Attenzione', 'dialogWarn', [
+             {
+                 "label" : "Torna alla home"
+@@ -257,7 +257,7 @@
+                 "label" : "Rimani sulla pagina"
+                 , "class" : "btn"
+                 , "callback" : function() {
+-                    setTimeout(ottieniResponse, url, 30000, 50);
++                    setTimeout(ottieniResponse,30000,operazione, 50, 30000);
+                 }
+             }]);
+     }
+@@ -963,7 +963,7 @@
+                 if(tentativiRimanenti<=0){
+                     //se i tentativi rimanenti sono azzerati chiedo se vuoi continuare ricorsione se sì continuo, altrimenti return.
+                 	$('#collapseVariazioni').overlay('hide');
+-                	showDialogAbbandonoPaginaSuServizioAsincrono(url);
++                	showDialogAbbandonoPaginaSuServizioAsincrono(operazione);
+                     return;
+                 }
+ 
+Index: src/main/webapp/js/local/variazioni/aggiorna.importi.ueb.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/aggiorna.importi.ueb.js	(revision 11839)
++++ src/main/webapp/js/local/variazioni/aggiorna.importi.ueb.js	(working copy)
+@@ -395,6 +395,28 @@
+                 }
+             }]);
+     }
++    
++    /**
++     * Se il servizio viene implementato in modo asincrono permette all'utente di scegliere se rimanere
++     * sulla pagina oppure tornare alla home
++     */
++    function showDialogAbbandonoPaginaSuServizioAsincrono(operazione) {
++        bootboxAlert('L\'elaborazione non &egrave ancora terminata. &Egrave possibile rimanere sulla pagina oppure tornare alla home.', 'Attenzione', 'dialogWarn', [
++            {
++                "label" : "Torna alla home"
++                , "class" : "btn"
++                , "callback": function(){
++                    document.location="/siacbilapp/redirectToCruscotto.do";
++                }
++            }
++            , {
++                "label" : "Rimani sulla pagina"
++                , "class" : "btn"
++                , "callback" : function() {
++                    setTimeout(ottieniResponse,30000,operazione, 50, 30000);
++                }
++            }]);
++    }
+ 
+ 
+ 	/**
+@@ -1529,7 +1551,7 @@
+ 	            if(tentativiRimanenti<=0){
+ 	                //se i tentativi rimanenti sono azzerati chiedo se vuoi continuare ricorsione se sì continuo, altrimenti return.
+ 	            	$('#collapseVariazioni').overlay('hide');
+-	            	showDialogAbbandonoPaginaSuServizioAsincrono(url);
++	            	showDialogAbbandonoPaginaSuServizioAsincrono(operazione);
+ 	                return;
+ 	            }
+ 
+@@ -1640,9 +1662,7 @@
+             }
+         );
+ 
+-
+-
+-
++       
+ 
+         $("form").on("reset", function() {
+         	document.location = 'aggiornaVariazioneImportiUEB.do';
+Index: src/main/webapp/js/local/variazioni/definisci.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/definisci.importi.js	(revision 11839)
++++ src/main/webapp/js/local/variazioni/definisci.importi.js	(working copy)
+@@ -225,7 +225,7 @@
+      * Se il servizio viene implementato in modo asincrono permette all'utente di scegliere se rimanere
+      * sulla pagina oppure tornare alla home
+      * */
+-      function showDialogAbbandonoPaginaSuServizioAsincrono(url) {
++      function showDialogAbbandonoPaginaSuServizioAsincrono(operazione) {
+           bootboxAlert('L\'elaborazione non &egrave ancora terminata. &Egrave possibile rimanere sulla pagina oppure tornare alla home.', 'Attenzione', 'dialogWarn', [
+                {
+                    "label" : "Torna alla home"
+@@ -238,7 +238,7 @@
+                    "label" : "Rimani sulla pagina"
+                    , "class" : "btn"
+                    , "callback" : function() {
+-                       setTimeout(ottieniResponse, url, 30000, 50);
++                	   setTimeout(ottieniResponse,30000,operazione, 50, 30000);
+                    }
+                }]);
+     }
+@@ -248,13 +248,14 @@
+         return $.postJSON(url)
+         .then(function(data) {
+             var alertErrori = $('#ERRORI');
++            var alertMessaggi = $('#MESSAGGI');
+             var alertInformazioni = $('#INFORMAZIONI');
+             var form = $('#aggiornaVariazioneImporti');
+ 
+             alertErrori.slideUp();
+             if (impostaDatiNegliAlert(data.errori,alertErrori)) {
+-            	alertInformazioni.slideUp();
+-            	alertInformazioni.find("ul").find("li").remove();
++            	//alertInformazioni.slideUp();
++            	//alertInformazioni.find("ul").find("li").remove();
+                 form.removeClass('form-submitted');
+                 $('#bottoni').find('button').removeAttr('disabled');
+                 $("#spanPulsanteDefinisciVariazione").removeClass("hide");
+@@ -262,8 +263,8 @@
+             }
+ 
+             if(data.isAsyncResponsePresent === undefined){
+-            	 alertInformazioni.slideUp();
+-            	 alertInformazioni.find("ul").find("li").remove();
++            	//alertInformazioni.slideUp();
++            	//alertInformazioni.find("ul").find("li").remove();
+                 impostaDatiNegliAlert(['COR_ERR_0001 - Errore di sistema: impossibile ottenere la risposta asincrona.'], alertErrori);
+                 $("#spanPulsanteDefinisciVariazione").removeClass("hide");
+                 return;
+@@ -272,7 +273,7 @@
+             if(!data.isAsyncResponsePresent){
+                 if(tentativiRimanenti<=0){
+                     //se i tentativi rimanenti sono azzerati chiedo se vuoi continuare ricorsione se sì continuo, altrimenti return.
+-                    showDialogAbbandonoPaginaSuServizioAsincrono(url);
++                    showDialogAbbandonoPaginaSuServizioAsincrono(operazione);
+                     return;
+                 }
+ 
+@@ -280,12 +281,11 @@
+                 return;
+             }
+            
+-            alertInformazioni.slideUp();
+-            alertInformazioni.find("ul").find("li").remove();
++           // alertInformazioni.slideUp();
++            //alertInformazioni.find("ul").find("li").remove();
+             form.removeClass('form-submitted');
+             $('#bottoni').find('button').removeAttr('disabled');
+ 
+-            var alertMessaggi = $('#MESSAGGI');
+             impostaDatiNegliAlert(data.messaggi, alertMessaggi);
+             impostaDatiNegliAlert(data.informazioni, alertInformazioni,undefined, false);
+ //            $('#buttonDefinisciVariazione').hide();
+@@ -320,5 +320,5 @@
+ 
+     DefinisciVariazioni.leggiCapitoliNellaVariazione();
+     $('#buttonDefinisciVariazione').on("click",DefinisciVariazioni.definisciVariazione);
+-
++    
+ });
+\ No newline at end of file
+Index: src/main/webapp/js/local/variazioni/definisci.importi.ueb.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/definisci.importi.ueb.js	(revision 11839)
++++ src/main/webapp/js/local/variazioni/definisci.importi.ueb.js	(working copy)
+@@ -224,23 +224,23 @@
+     /**
+      * Se il servizio viene implementato in modo asincrono permette all'utente di scegliere se rimanere
+      * sulla pagina oppure tornare alla home
+-     * */
+-      function showDialogAbbandonoPaginaSuServizioAsincrono(url) {
+-          bootboxAlert('L\'elaborazione non &egrave ancora terminata. &Egrave possibile rimanere sulla pagina oppure tornare alla home.', 'Attenzione', 'dialogWarn', [
+-               {
+-                   "label" : "Torna alla home"
+-                   , "class" : "btn"
+-                   , "callback": function(){
+-                       document.location="/siacbilapp/redirectToCruscotto.do";
+-                   }
+-               }
+-               , {
+-                   "label" : "Rimani sulla pagina"
+-                   , "class" : "btn"
+-                   , "callback" : function() {
+-                       setTimeout(ottieniResponse, url, 30000, 50);
+-                   }
+-               }]);
++     */
++    function showDialogAbbandonoPaginaSuServizioAsincrono(operazione) {
++        bootboxAlert('L\'elaborazione non &egrave ancora terminata. &Egrave possibile rimanere sulla pagina oppure tornare alla home.', 'Attenzione', 'dialogWarn', [
++            {
++                "label" : "Torna alla home"
++                , "class" : "btn"
++                , "callback": function(){
++                    document.location="/siacbilapp/redirectToCruscotto.do";
++                }
++            }
++            , {
++                "label" : "Rimani sulla pagina"
++                , "class" : "btn"
++                , "callback" : function() {
++                    setTimeout(ottieniResponse,30000,operazione, 50, 30000);
++                }
++            }]);
+     }
+ 
+     function ottieniResponse(operazione, tentativiRimanenti, timeout){
+@@ -272,7 +272,7 @@
+             if(!data.isAsyncResponsePresent){
+                 if(tentativiRimanenti<=0){
+                     //se i tentativi rimanenti sono azzerati chiedo se vuoi continuare ricorsione se sì continuo, altrimenti return.
+-                    showDialogAbbandonoPaginaSuServizioAsincrono(url);
++                    showDialogAbbandonoPaginaSuServizioAsincrono(operazione);
+                     return;
+                 }
+ 
+Index: src/main/webapp/jsp/variazione/aggiornaVariazioneImportiUEBDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/aggiornaVariazioneImportiUEBDISABLED.jsp	(revision 11839)
++++ src/main/webapp/jsp/variazione/aggiornaVariazioneImportiUEBDISABLED.jsp	(working copy)
+@@ -33,7 +33,7 @@
+ 									<dt>Tipo Variazione</dt>
+ 									<dd>&nbsp;<s:property value="tipoVariazione.codice" />&nbsp;-&nbsp;<s:property value="tipoVariazione.descrizione" /></dd>
+ 									<dt>Anno di competenza</dt>
+-									<dd>&nbsp;<s:property value="annoVariazione" /></dd>
++									<dd>&nbsp;<s:property value="annoCompetenza" /></dd>
+ 								</dl>
+ 								<h5>Elenco modifiche in variazione</h5>    
+ 								<table class="table table-condensed table-hover table-bordered" id="tabellaGestioneVariazioni" summary="....">

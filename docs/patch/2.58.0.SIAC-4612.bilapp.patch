@@ -1,0 +1,58 @@
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java	(working copy)
+@@ -746,7 +746,7 @@
+ 		request.setTipoEvento(getTipoEvento());
+ 		request.setParametriPaginazione(creaParametriPaginazione(100));
+ 		// TODO: quali usare?
+-		request.setCausaleEPModelDetails(CausaleEPModelDetail.Classif, CausaleEPModelDetail.Conto, CausaleEPModelDetail.Soggetto);
++		request.setCausaleEPModelDetails(CausaleEPModelDetail.Classif, CausaleEPModelDetail.Conto, CausaleEPModelDetail.Soggetto, CausaleEPModelDetail.ClasseConciliazione);
+ 		
+ 		return request;
+ 	}
+@@ -812,7 +812,7 @@
+ 		RegistraPrimaNotaIntegrata request = creaRequest(RegistraPrimaNotaIntegrata.class);
+ 		
+ 		getPrimaNota().setBilancio(getBilancio());
+-		getPrimaNota().setTipoCausale(getCausaleEP().getTipoCausale());
++		getPrimaNota().setTipoCausale(TipoCausale.Integrata);
+ 		/* imposto la lista dei movimenti*/
+ 		getPrimaNota().setListaMovimentiEP(ottieniListaMovimentiEPConAmbito());
+ 		getPrimaNota().setAmbito(getAmbito());
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/BaseInserisciAggiornaPrimaNotaLiberaBaseModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/BaseInserisciAggiornaPrimaNotaLiberaBaseModel.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/BaseInserisciAggiornaPrimaNotaLiberaBaseModel.java	(working copy)
+@@ -945,7 +945,7 @@
+ 		req.setBilancio(getBilancio());
+ 		req.setCausaleEP(getCausaleEP());
+ 		// Valutare se servono altri
+-		req.setCausaleEPModelDetails(CausaleEPModelDetail.Conto);
++		req.setCausaleEPModelDetails(CausaleEPModelDetail.Conto,CausaleEPModelDetail.Tipo);
+ 		
+ 		return req;
+ 	}
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrataFactory.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrataFactory.java	(revision 14051)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrataFactory.java	(working copy)
+@@ -65,8 +65,8 @@
+ 		List<ElementoScritturaPrimaNotaIntegrata> listaScritture = new ArrayList<ElementoScritturaPrimaNotaIntegrata>();
+ 		List<ContoTipoOperazione> listaCTOp = causaleEP.getContiTipoOperazione();
+ 		int numeroRiga = 0;
+-		Boolean daClasseConciliazione = null;
+ 		for (ContoTipoOperazione cTOp : listaCTOp) {
++			Boolean daClasseConciliazione = null;
+ 			if(cTOp.getConto() == null || cTOp.getConto().getUid() == 0){
+ 				daClasseConciliazione = Boolean.TRUE;
+ 			}
+@@ -80,7 +80,7 @@
+ 				movDettaglio.setSegno(cTOp.getOperazioneSegnoConto());
+ 				movDettaglio.setImporto(importo);
+ 			}
+-			// nella modalita aggiornamento metto false eprchè al momento il valore è preso da causale e non dal campo di comodo
++			// nella modalita aggiornamento metto false perche' al momento il valore e' preso da causale e non dal campo di comodo
+ 			ElementoScritturaPrimaNotaIntegrata nuovoElemento = new ElementoScritturaPrimaNotaIntegrata(movDettaglio, cTOp, false, causaleEP.getClasseDiConciliazione());
+ 			nuovoElemento.setDaClasseConciliazione(daClasseConciliazione);
+ 			listaScritture.add(nuovoElemento);

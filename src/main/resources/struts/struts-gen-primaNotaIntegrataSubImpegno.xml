@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="genPrimaNotaIntegrataSubImpegno" extends="gengsaCommon" namespace="/">
+		<!-- SubImpegno -->
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN" class="completaValidaSubImpegnoInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_landOnPage</result>
+			<result name="input" type="redirectAction">risultatiRicercaRegistrazioneMovFinFIN</result>
+		</action>
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_landOnPage" class="completaValidaSubImpegnoInsPrimaNotaIntegrataFINAction" method="landOnPage">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+		</action>
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_completeSalva" class="completaValidaSubImpegnoInsPrimaNotaIntegrataFINAction" method="completeSalva">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataFIN_postInserimento</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_ottieniListaContiIniziale" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="ottieniListaContiIniziale">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_inserisciConto" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataFIN_eliminaConto" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<!-- COMPLETA -->
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN" class="completaSubImpegnoInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaSubImpegnoInsPrimaNotaIntegrataFIN_landOnPage</result>
+			<result name="input" type="redirectAction">risultatiRicercaRegistrazioneMovFinFIN</result>
+		</action>
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN_landOnPage" class="completaSubImpegnoInsPrimaNotaIntegrataFINAction" method="landOnPage">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+		</action>
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN_completeSalva" class="completaSubImpegnoInsPrimaNotaIntegrataFINAction"  method="completeSalva">
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciMovimentoReg.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataFIN_postInserimento</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN_ottieniListaContiIniziale" class="completaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="ottieniListaContiIniziale">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN_inserisciConto" class="completaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubImpegnoInsPrimaNotaIntegrataFIN_eliminaConto" class="completaSubImpegnoInsContoPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+	</package>
+</struts>

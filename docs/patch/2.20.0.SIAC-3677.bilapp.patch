@@ -1,0 +1,20 @@
+Index: src/main/webapp/jsp/documento/aggiornamento/ritenuteDocumentoSpesa.jsp
+===================================================================
+--- src/main/webapp/jsp/documento/aggiornamento/ritenuteDocumentoSpesa.jsp	(revision 11504)
++++ src/main/webapp/jsp/documento/aggiornamento/ritenuteDocumentoSpesa.jsp	(working copy)
+@@ -197,13 +197,13 @@
+ 							<select id="causale770DettaglioOnere" name="causale770.uid" class="span5" disabled="disabled"></select>
+ 						</div>
+ 					</div>
+-					<div class="control-group">
++					<div class="control-group" data-hidden-natura="<s:property value="codiceEsenzione"/> <s:property value="codiceSplitReverse"/>">
+ 					<label for="importoSommaNonSoggetta" class="control-label">Somma non soggetta</label>
+ 					<div class="controls">
+ 						<s:textfield id="importoSommaNonSoggetta" name="dettaglioOnere.sommaNonSoggetta" cssClass="lbTextSmall span2 soloNumeri decimale" placeholder="somma non soggetta"/>
+ 					</div>
+ 					</div>
+-					<div class="control-group">
++					<div class="control-group" data-hidden-natura="<s:property value="codiceEsenzione"/> <s:property value="codiceSplitReverse"/>">
+ 						<label for="tipoSommaNonSoggetta" class="control-label">Codice somma non soggetta</label>
+ 						<div class="controls">
+ 							<select id="tipoSommaNonSoggetta" name="dettaglioOnere.tipoSommaNonSoggetta" class="span9" disabled="disabled"></select>

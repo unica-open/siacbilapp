@@ -1,0 +1,752 @@
+Index: src/main/webapp/js/local/ordinativo/emissionePagamentoStep2Quota.js
+===================================================================
+--- src/main/webapp/js/local/ordinativo/emissionePagamentoStep2Quota.js	(revision 12039)
++++ src/main/webapp/js/local/ordinativo/emissionePagamentoStep2Quota.js	(revision 12056)
+@@ -1,8 +1,10 @@
+ !function($) {
+     "use strict";
+-    var tableId = "#tabellaQuote";
+-    var tbody = $("tbody", tableId);
++    var $table = $("#tabellaQuote").overlay({rebind: true, loader: true});
++    var tbody = $table.find("tbody");
+     var disabled = !!$("#DISABLED").length;
++    var selectedDatas = {};
++    var isOverlayIn = false;
+ 
+     /**
+      * Caricamento dei dati nella tabella.
+@@ -14,14 +16,12 @@
+             sServerMethod: "POST",
+             bPaginate: true,
+             bLengthChange: false,
+-            iDisplayLength: 50,
++            iDisplayLength: 10,
+             bSort: false,
+             bInfo: true,
+             bAutoWidth: true,
+             bFilter: false,
+             bProcessing: true,
+-            sScrollY: "300px",
+-            bScrollCollapse: true,
+             oLanguage: {
+                 sInfo: "_START_ - _END_ di _MAX_ risultati",
+                 sInfoEmpty: "0 risultati",
+@@ -35,28 +35,32 @@
+                     sEmptyTable: "Nessun elenco disponibile"
+                 }
+             },
+-            fnPreDrawCallback: function () {
+-                // Mostro il div del processing
+-                $(tableId + "_processing").parent("div")
+-                    .show();
++            fnPreDrawCallback: function(opts) {
++                defaultPreDraw(opts);
++                if(!isOverlayIn){
++                    $table.overlay('show');
++                    isOverlayIn = true;
++                }
+             },
+             // Chiamata al termine della creazione della tabella
+-            fnDrawCallback: function () {
++            fnDrawCallback: function (opts) {
+                 // Nascondo il div del processing
+-                $(tableId + "_processing").parent("div")
+-                    .hide();
++                defaultDrawCallback(opts);
+                 // Attivo i popover
+-                $(tableId).find("a[rel='popover']")
+-                    .popover();
+-                // Calcolo subito i totali
+-                $("#selezionaTuttiQuote").change();
++                $table.find("a[rel='popover']").popover();
++                $table.overlay('hide');
++                isOverlayIn = false;
++                ricalcolaTotali();
+             },
+             aoColumnDefs: [
+                 {aTargets: [0], mData: function(source) {
+                     var res = "<input type='checkbox' name='uidQuota' value='" + source.uid + "'";
+                     if(disabled) {
+-                        res += "disabled";
++                        res += " disabled";
+                     }
++                    if(selectedDatas[+source.uid] && selectedDatas[+source.uid].isSelected) {
++                        res += ' checked';
++                    }
+                     res += "/>";
+                     return res;
+                 }, fnCreatedCell: function(nTd, sData, oData) {
+@@ -100,41 +104,58 @@
+                 }}
+             ]
+         };
+-        $(tableId).dataTable(opts);
++        $table.dataTable(opts);
+     }
+ 
+     /**
+      * Selezione di tutti i checkbox
+      */
+     function selectAll() {
+-        var checked = $(this).prop("checked");
+-        tbody.find("input[name='uidQuota'][type='checkbox']")
+-            .not("[disabled]")
+-                .prop("checked", checked)
+-                .first()
+-                    .change();
++        var $this = $(this);
++        var table = $this.closest("table");
++        var checkboxes = table.find("tbody").find("input[type='checkbox']");
++        var toCheck = $this.prop("checked");
++
++        checkboxes.prop("checked", toCheck).each(function(idx, el) {
++            selectedDatas[+el.value] = {isSelected: toCheck, data: $(el).data('originalQuota')};
++        });
++        ricalcolaTotali();
+     }
+ 
+     /**
++     * Salvataggio della singola riga nell'elenco dei selezionati
++     */
++    function saveRiga() {
++        var $this = $(this);
++        var isChecked;
++        if($this.attr('id') === 'selezionaTuttiQuote') {
++            return;
++        }
++        isChecked = $this.prop('checked');
++        selectedDatas[+$this.val()] = {isSelected: isChecked, data: $this.data('originalQuota')};
++        ricalcolaTotali();
++    }
++
++    /**
+      * Ricalcolo dei totali.
+      */
+     function ricalcolaTotali() {
+         var totale = 0;
+-        var chks = tbody.find("input[name='uidQuota'][type='checkbox']").filter(":checked");
+-        chks.each(function() {
+-            var self = $(this);
+-            var quota = self.data("originalQuota");
+-            if(!quota) {
+-                // Non ho i data. Errore?
+-                return;
++        var checkedNum = 0;
++        var i;
++        var data;
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                checkedNum++;
++                data = selectedDatas[i].data;
++                if(data) {
++                    totale += data.domStringImporto;
++                }
+             }
+-            totale += quota.domStringImporto;
+-        });
++        }
+         $("#totaleQuoteSelezionate").html(totale.formatMoney());
+-
+-        // Mostro o nascondo il pulsante di emissione
+-        $("#pulsanteEmissione")[chks.length ? "show" : "hide"]();
+-        $("#confermaEmissioneNumeroSpan").html(chks.length + (chks.length === 1 ? " ordinativo" : " ordinativi"));
++        $("#pulsanteEmissione")[checkedNum ? "show" : "hide"]();
++        $("#confermaEmissioneNumeroSpan").html(checkedNum + (checkedNum === 1 ? " ordinativo" : " ordinativi"));
+     }
+ 
+     /**
+@@ -142,30 +163,31 @@
+      */
+     function confermaEmissione() {
+         var $form = $("form");
+-        var str = "";
+-        tbody.find("input[name='uidQuota'][type='checkbox']").filter(":checked").each(function(idx) {
+-            var quota = $(this).data("originalQuota");
+-            if(!quota) {
+-                // Non ho i data. Errore?
+-                return;
++        var str = '';
++        var idx = 0;
++        var i;
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                str += '<input type="hidden" name="listSubdocumenti[' + idx + '].uid" value="' + i + '" />';
++                idx++;
+             }
+-            str += "<input type='hidden' name='listSubdocumenti[" + idx + "].uid' value='" + quota.uid + "'/>";
+-        });
++        }
+         $form.append(str);
+         $form.submit();
+     }
+ 
+     $(function() {
++        var annoDatepicker = parseInt($("#HIDDEN_anno_datepicker").val(), 10);
++        var now = new Date();
+         // Selezione di tutti gli elenchi
+         $("#selezionaTuttiQuote").substituteHandler("change", selectAll);
+-        $(document).on("change", tableId + " input[name='uidQuota'][type='checkbox']", ricalcolaTotali);
++        $table.on("change", "input[name='uidQuota'][type='checkbox']", saveRiga);
+         $("#confermaEmissioneModalConferma").substituteHandler("click", confermaEmissione);
+ 
+         // Caricamento dei dati
+         loadDataIntoTable();
+         
+-        var annoDatepicker = parseInt($("#HIDDEN_anno_datepicker").val(), 10);
+-        $('#dataScadenza').datepicker('setStartDate',new Date());
++        $('#dataScadenza').datepicker('setStartDate',new Date(annoDatepicker, now.getMonth(), now.getDate()));
+         $('#dataScadenza').datepicker('setEndDate',new Date(annoDatepicker, 11, 31));
+     });
+ }(jQuery);
+\ No newline at end of file
+Index: src/main/webapp/js/local/ordinativo/emissioneIncassoStep2Quota.js
+===================================================================
+--- src/main/webapp/js/local/ordinativo/emissioneIncassoStep2Quota.js	(revision 12039)
++++ src/main/webapp/js/local/ordinativo/emissioneIncassoStep2Quota.js	(revision 12056)
+@@ -1,8 +1,10 @@
+ !function($) {
+     "use strict";
+-    var tableId = "#tabellaQuote";
+-    var tbody = $("tbody", tableId);
++    var $table = $("#tabellaQuote").overlay({rebind: true, loader: true});
++    var tbody = $table.find("tbody");
+     var disabled = !!$("#DISABLED").length;
++    var selectedDatas = {};
++    var isOverlayIn = false;
+ 
+     /**
+      * Caricamento dei dati nella tabella.
+@@ -14,14 +16,12 @@
+             sServerMethod: "POST",
+             bPaginate: true,
+             bLengthChange: false,
+-            iDisplayLength: 50,
++            iDisplayLength: 10,
+             bSort: false,
+             bInfo: true,
+             bAutoWidth: true,
+             bFilter: false,
+             bProcessing: true,
+-            sScrollY: "300px",
+-            bScrollCollapse: true,
+             oLanguage: {
+                 sInfo: "_START_ - _END_ di _MAX_ risultati",
+                 sInfoEmpty: "0 risultati",
+@@ -35,28 +35,32 @@
+                     sEmptyTable: "Nessun elenco disponibile"
+                 }
+             },
+-            fnPreDrawCallback: function () {
+-                // Mostro il div del processing
+-                $(tableId + "_processing").parent("div")
+-                    .show();
++            fnPreDrawCallback: function(opts) {
++                defaultPreDraw(opts);
++                if(!isOverlayIn){
++                    $table.overlay('show');
++                    isOverlayIn = true;
++                }
+             },
+             // Chiamata al termine della creazione della tabella
+-            fnDrawCallback: function () {
++            fnDrawCallback: function (opts) {
+                 // Nascondo il div del processing
+-                $(tableId + "_processing").parent("div")
+-                    .hide();
++                defaultDrawCallback(opts);
+                 // Attivo i popover
+-                $(tableId).find("a[rel='popover']")
+-                    .popover();
+-                // Calcolo subito i totali
+-                $("#selezionaTuttiQuote").change();
++                $table.find("a[rel='popover']").popover();
++                $table.overlay('hide');
++                isOverlayIn = false;
++                ricalcolaTotali();
+             },
+             aoColumnDefs: [
+                 {aTargets: [0], mData: function(source) {
+                     var res = "<input type='checkbox' name='uidQuota' value='" + source.uid + "'";
+                     if(disabled) {
+-                        res += "disabled";
++                        res += " disabled";
+                     }
++                    if(selectedDatas[+source.uid] && selectedDatas[+source.uid].isSelected) {
++                        res += ' checked';
++                    }
+                     res += "/>";
+                     return res;
+                 }, fnCreatedCell: function(nTd, sData, oData) {
+@@ -88,41 +92,58 @@
+                 }}
+             ]
+         };
+-        $(tableId).dataTable(opts);
++        $table.dataTable(opts);
+     }
+ 
+     /**
+      * Selezione di tutti i checkbox
+      */
+     function selectAll() {
+-        var checked = $(this).prop("checked");
+-        tbody.find("input[name='uidQuota'][type='checkbox']")
+-            .not("[disabled]")
+-                .prop("checked", checked)
+-                .first()
+-                    .change();
++        var $this = $(this);
++        var table = $this.closest("table");
++        var checkboxes = table.find("tbody").find("input[type='checkbox']");
++        var toCheck = $this.prop("checked");
++
++        checkboxes.prop("checked", toCheck).each(function(idx, el) {
++            selectedDatas[+el.value] = {isSelected: toCheck, data: $(el).data('originalQuota')};
++        });
++        ricalcolaTotali();
+     }
+ 
+     /**
++     * Salvataggio della singola riga nell'elenco dei selezionati
++     */
++    function saveRiga() {
++        var $this = $(this);
++        var isChecked;
++        if($this.attr('id') === 'selezionaTuttiQuote') {
++            return;
++        }
++        isChecked = $this.prop('checked');
++        selectedDatas[+$this.val()] = {isSelected: isChecked, data: $this.data('originalQuota')};
++        ricalcolaTotali();
++    }
++
++    /**
+      * Ricalcolo dei totali.
+      */
+     function ricalcolaTotali() {
+         var totale = 0;
+-        var chks = tbody.find("input[name='uidQuota'][type='checkbox']").filter(":checked");
+-        chks.each(function() {
+-            var self = $(this);
+-            var quota = self.data("originalQuota");
+-            if(!quota) {
+-                // Non ho i data. Errore?
+-                return;
++        var checkedNum = 0;
++        var i;
++        var data;
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                checkedNum++;
++                data = selectedDatas[i].data;
++                if(data) {
++                    totale += data.domStringImporto;
++                }
+             }
+-            totale += quota.domStringImporto;
+-        });
++        }
+         $("#totaleQuoteSelezionate").html(totale.formatMoney());
+-
+-        // Mostro o nascondo il pulsante di emissione
+-        $("#pulsanteEmissione")[chks.length ? "show" : "hide"]();
+-        $("#confermaEmissioneNumeroSpan").html(chks.length + (chks.length === 1 ? " ordinativo" : " ordinativi"));
++        $("#pulsanteEmissione")[checkedNum ? "show" : "hide"]();
++        $("#confermaEmissioneNumeroSpan").html(checkedNum + (checkedNum === 1 ? " ordinativo" : " ordinativi"));
+     }
+ 
+     /**
+@@ -130,30 +151,31 @@
+      */
+     function confermaEmissione() {
+         var $form = $("form");
+-        var str = "";
+-        tbody.find("input[name='uidQuota'][type='checkbox']").filter(":checked").each(function(idx) {
+-            var quota = $(this).data("originalQuota");
+-            if(!quota) {
+-                // Non ho i data. Errore?
+-                return;
++        var str = '';
++        var idx = 0;
++        var i;
++        for(i in selectedDatas) {
++            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
++                str += '<input type="hidden" name="listSubdocumenti[' + idx + '].uid" value="' + i + '" />';
++                idx++;
+             }
+-            str += "<input type='hidden' name='listSubdocumenti[" + idx + "].uid' value='" + quota.uid + "'/>";
+-        });
++        }
+         $form.append(str);
+         $form.submit();
+     }
+ 
+     $(function() {
++        var annoDatepicker = parseInt($("#HIDDEN_anno_datepicker").val(), 10);
++        var now = new Date();
+         // Selezione di tutti gli elenchi
+         $("#selezionaTuttiQuote").substituteHandler("change", selectAll);
+-        $(document).on("change", tableId + " input[name='uidQuota'][type='checkbox']", ricalcolaTotali);
++        $table.on("change", "input[name='uidQuota'][type='checkbox']", saveRiga);
+         $("#confermaEmissioneModalConferma").substituteHandler("click", confermaEmissione);
+ 
+         // Caricamento dei dati
+         loadDataIntoTable();
+-        
+-        var annoDatepicker = parseInt($("#HIDDEN_anno_datepicker").val(), 10);
+-        $('#dataScadenza').datepicker('setStartDate',new Date());
++
++        $('#dataScadenza').datepicker('setStartDate',new Date(annoDatepicker, now.getMonth(), now.getDate()));
+         $('#dataScadenza').datepicker('setEndDate',new Date(annoDatepicker, 11, 31));
+     });
+ }(jQuery);
+\ No newline at end of file
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/ordinativo/EmissioneOrdinativiPagamentoModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/ordinativo/EmissioneOrdinativiPagamentoModel.java	(revision 12039)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/ordinativo/EmissioneOrdinativiPagamentoModel.java	(revision 12056)
+@@ -1,15 +1,15 @@
+ package it.csi.siac.siacfin2app.frontend.ui.model.ordinativo;
+ 
++import java.math.BigDecimal;
++import java.util.ArrayList;
++import java.util.List;
++
+ import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiPagamentoDaElenco;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereSpesa;
+ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
+ import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
+ 
+-import java.math.BigDecimal;
+-import java.util.ArrayList;
+-import java.util.List;
+-
+ /**
+  * Classe di model per l'emissione degli ordinativi di pagamento.
+  * 
+@@ -152,7 +152,7 @@
+ 		
+ 		request.setFlagConvalidaManuale(Boolean.TRUE);
+ 		request.setDistinta(impostaEntitaFacoltativa(getDistinta()));
+-		request.setParametriPaginazione(creaParametriPaginazione(50));
++		request.setParametriPaginazione(creaParametriPaginazione());
+ 		
+ 		return request;
+ 	}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/ordinativo/EmissioneOrdinativiIncassoModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/ordinativo/EmissioneOrdinativiIncassoModel.java	(revision 12039)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/ordinativo/EmissioneOrdinativiIncassoModel.java	(revision 12056)
+@@ -152,7 +152,7 @@
+ 		
+ 		request.setFlagConvalidaManuale(Boolean.TRUE);
+ 		request.setDistinta(impostaEntitaFacoltativa(getDistinta()));
+-		request.setParametriPaginazione(creaParametriPaginazione(50));
++		request.setParametriPaginazione(creaParametriPaginazione());
+ 		
+ 		return request;
+ 	}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettere.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettere.java	(revision 12039)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettere.java	(revision 12056)
+@@ -27,47 +27,39 @@
+ 	
+ 	/** Per la serializzazione */
+ 	private static final long serialVersionUID = -6081852567432530746L;
+-	private S subdocumento;
+-	private final boolean gestioneUEB;
+-	
+-	// Wrappers
++	protected final boolean gestioneUEB;
++	/** Subdocumento wrappato */
++	protected final S subdocumento;
+ 	/** Capitolo wrappato */
+-	protected C capitolo;
++	protected final C capitolo;
+ 	/** Movimento di gestione wrappato */
+-	protected M movimento;
++	protected final M movimento;
+ 	/** Submovimento di gestione wrappato */
+-	protected SM submovimento;
++	protected final SM submovimento;
+ 	
++	// Wrappers
++	
+ 	/**
+ 	 * Costruttore a partire dal subdocumento wrappato e dall'eventuale gestione della UEB.
+ 	 * 
+ 	 * @param subdocumento il subdocumento da wrappare
+ 	 * @param gestioneUEB  la gestione dell'UEB dell'ente
++	 * @param capitolo il capitolo da wrappare
++	 * @param movimento il movimento da wrappare
++	 * @param submovimento il submovimento da wrappare
+ 	 */
+-	public ElementoSubdocumentoDaEmettere(S subdocumento, boolean gestioneUEB) {
++	public ElementoSubdocumentoDaEmettere(S subdocumento, boolean gestioneUEB, C capitolo, M movimento, SM submovimento) {
+ 		super();
+ 		this.subdocumento = subdocumento;
+ 		this.gestioneUEB = gestioneUEB;
++		this.capitolo = capitolo;
++		this.movimento = movimento;
++		this.submovimento = submovimento;
+ 	}
+ 
+-	/**
+-	 * @return the subdocumento
+-	 */
+-	public S getSubdocumento() {
+-		return subdocumento;
+-	}
+-
+-	/**
+-	 * @param subdocumento the subdocumento to set
+-	 */
+-	public void setSubdocumento(S subdocumento) {
+-		// TODO: utilizzato?
+-		this.subdocumento = subdocumento;
+-	}
+-
+ 	@Override
+ 	public int getUid() {
+-		return getSubdocumento() == null ? 0 : getSubdocumento().getUid();
++		return subdocumento == null ? 0 : subdocumento.getUid();
+ 	}
+ 	
+ 	/**
+@@ -76,23 +68,23 @@
+ 	public String getDomStringAttoAmministrativo() {
+ 		StringBuilder sb = new StringBuilder();
+ 		
+-		if(getSubdocumento() != null && getSubdocumento().getAttoAmministrativo() != null) {
++		if(subdocumento != null && subdocumento.getAttoAmministrativo() != null) {
+ 			// Esporre Anno/Numero/codice Tipo/codice Struttura
+ 			// TooltipText: Oggetto
+ 			
+ 			sb.append("<a data-original-title='Oggetto' data-trigger='hover' rel='popover' data-content='")
+-				.append(getSubdocumento().getAttoAmministrativo().getOggetto())
++				.append(subdocumento.getAttoAmministrativo().getOggetto())
+ 				.append("'>")
+-				.append(getSubdocumento().getAttoAmministrativo().getAnno())
++				.append(subdocumento.getAttoAmministrativo().getAnno())
+ 				.append("/")
+-				.append(getSubdocumento().getAttoAmministrativo().getNumero());
+-			if(getSubdocumento().getAttoAmministrativo().getTipoAtto() != null) {
++				.append(subdocumento.getAttoAmministrativo().getNumero());
++			if(subdocumento.getAttoAmministrativo().getTipoAtto() != null) {
+ 				sb.append("/")
+-					.append(getSubdocumento().getAttoAmministrativo().getTipoAtto().getCodice());
++					.append(subdocumento.getAttoAmministrativo().getTipoAtto().getCodice());
+ 			}
+-			if(getSubdocumento().getAttoAmministrativo().getStrutturaAmmContabile() != null) {
++			if(subdocumento.getAttoAmministrativo().getStrutturaAmmContabile() != null) {
+ 				sb.append("/")
+-					.append(getSubdocumento().getAttoAmministrativo().getStrutturaAmmContabile().getCodice());
++					.append(subdocumento.getAttoAmministrativo().getStrutturaAmmContabile().getCodice());
+ 			}
+ 			sb.append("</a>");
+ 		}
+@@ -105,11 +97,11 @@
+ 	public String getDomStringElenco() {
+ 		StringBuilder sb = new StringBuilder();
+ 		
+-		if(getSubdocumento() != null && getSubdocumento().getElencoDocumenti() != null) {
++		if(subdocumento != null && subdocumento.getElencoDocumenti() != null) {
+ 			// Anno/numero elenco
+-			sb.append(getSubdocumento().getElencoDocumenti().getAnno())
++			sb.append(subdocumento.getElencoDocumenti().getAnno())
+ 				.append("/")
+-				.append(getSubdocumento().getElencoDocumenti().getNumero());
++				.append(subdocumento.getElencoDocumenti().getNumero());
+ 		}
+ 		return sb.toString();
+ 	}
+@@ -120,13 +112,13 @@
+ 	public String getDomStringSoggetto() {
+ 		StringBuilder sb = new StringBuilder();
+ 		
+-		if(getSubdocumento() != null && getSubdocumento().getDocumento() != null && getSubdocumento().getDocumento().getSoggetto() != null) {
++		if(subdocumento != null && subdocumento.getDocumento() != null && subdocumento.getDocumento().getSoggetto() != null) {
+ 			// Codice, nel tooltip esporre la Denominazione
+ 			
+ 			sb.append("<a data-original-title='Denominazione' data-trigger='hover' rel='popover' data-content='")
+-				.append(getSubdocumento().getDocumento().getSoggetto().getDenominazione())
++				.append(subdocumento.getDocumento().getSoggetto().getDenominazione())
+ 				.append("'>")
+-				.append(getSubdocumento().getDocumento().getSoggetto().getCodiceSoggetto())
++				.append(subdocumento.getDocumento().getSoggetto().getCodiceSoggetto())
+ 				.append("</a>");
+ 		}
+ 		return sb.toString();
+@@ -145,22 +137,22 @@
+ 	public String getDomStringDocumento() {
+ 		StringBuilder sb = new StringBuilder();
+ 		
+-		if(getSubdocumento() != null && getSubdocumento().getDocumento() != null) {
++		if(subdocumento != null && subdocumento.getDocumento() != null) {
+ 			// Anno/tipo/numero
+ 			// Descrizione della quota documento
+ 			
+ 			sb.append("<a data-original-title='Descrizione' data-trigger='hover' rel='popover' data-content='")
+-				.append(getSubdocumento().getDescrizione())
++				.append(subdocumento.getDescrizione())
+ 				.append("'>")
+-				.append(getSubdocumento().getDocumento().getAnno());
+-			if(getSubdocumento().getDocumento().getTipoDocumento() != null) {
++				.append(subdocumento.getDocumento().getAnno());
++			if(subdocumento.getDocumento().getTipoDocumento() != null) {
+ 				sb.append("/")
+-					.append(getSubdocumento().getDocumento().getTipoDocumento().getCodice());
++					.append(subdocumento.getDocumento().getTipoDocumento().getCodice());
+ 			}
+ 			sb.append("/")
+-				.append(getSubdocumento().getDocumento().getNumero())
++				.append(subdocumento.getDocumento().getNumero())
+ 				.append("-")
+-				.append(getSubdocumento().getNumero())
++				.append(subdocumento.getNumero())
+ 				.append("</a>");
+ 		}
+ 		return sb.toString();
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettereEntrata.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettereEntrata.java	(revision 12039)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettereEntrata.java	(revision 12056)
+@@ -26,10 +26,11 @@
+ 	 * @param gestioneUEB  la gestione dell'UEB dell'ente
+ 	 */
+ 	public ElementoSubdocumentoDaEmettereEntrata(SubdocumentoEntrata subdocumento, boolean gestioneUEB) {
+-		super(subdocumento, gestioneUEB);
+-		this.capitolo = subdocumento != null && subdocumento.getAccertamento() != null ? subdocumento.getAccertamento().getCapitoloEntrataGestione() : null;
+-		this.movimento = subdocumento != null ? subdocumento.getAccertamento() : null;
+-		this.submovimento = subdocumento != null ? subdocumento.getSubAccertamento() : null;
++		super(subdocumento,
++			gestioneUEB,
++			subdocumento != null && subdocumento.getAccertamento() != null ? subdocumento.getAccertamento().getCapitoloEntrataGestione() : null,
++			subdocumento != null ? subdocumento.getAccertamento() : null,
++			subdocumento != null ? subdocumento.getSubAccertamento() : null);
+ 	}
+ 	
+ }
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettereSpesa.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettereSpesa.java	(revision 12039)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaEmettereSpesa.java	(revision 12056)
+@@ -1,5 +1,10 @@
+ package it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento;
+ 
++import java.util.ArrayList;
++import java.util.List;
++
++import org.apache.commons.lang3.StringUtils;
++
+ import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+ import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
+ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
+@@ -8,11 +13,6 @@
+ import it.csi.siac.siacfinser.model.SubImpegno;
+ import it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto;
+ 
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-import org.apache.commons.lang3.StringUtils;
+-
+ /**
+  * Classe di wrap per il Subdocumento da emettere di spesa.
+  * 
+@@ -20,8 +20,7 @@
+  * @version 1.0.0 - 20/11/2014
+  *
+  */
+-public class ElementoSubdocumentoDaEmettereSpesa
+-	extends ElementoSubdocumentoDaEmettere<SubdocumentoSpesa, DocumentoSpesa, CapitoloUscitaGestione, Impegno, SubImpegno> {
++public class ElementoSubdocumentoDaEmettereSpesa extends ElementoSubdocumentoDaEmettere<SubdocumentoSpesa, DocumentoSpesa, CapitoloUscitaGestione, Impegno, SubImpegno> {
+ 	
+ 	/** Per la serializzazione */
+ 	private static final long serialVersionUID = 7715350360717454929L;
+@@ -33,34 +32,35 @@
+ 	 * @param gestioneUEB  la gestione dell'UEB dell'ente
+ 	 */
+ 	public ElementoSubdocumentoDaEmettereSpesa(SubdocumentoSpesa subdocumento, boolean gestioneUEB) {
+-		super(subdocumento, gestioneUEB);
+-		this.capitolo = subdocumento != null && subdocumento.getImpegno() != null ? subdocumento.getImpegno().getCapitoloUscitaGestione() : null;
+-		this.movimento = subdocumento != null ? subdocumento.getImpegno() : null;
+-		this.submovimento = subdocumento != null ? subdocumento.getSubImpegno() : null;
++		super(subdocumento,
++			gestioneUEB,
++			subdocumento != null && subdocumento.getImpegno() != null ? subdocumento.getImpegno().getCapitoloUscitaGestione() : null,
++			subdocumento != null ? subdocumento.getImpegno() : null,
++			subdocumento != null ? subdocumento.getSubImpegno() : null);
+ 	}
+ 	
+ 	@Override
+ 	public String getDomStringModalitaPagamentoSoggetto() {
+ 		StringBuilder sb = new StringBuilder();
+-		if(getSubdocumento() != null && getSubdocumento().getLiquidazione() != null
+-				&& getSubdocumento().getLiquidazione().getModalitaPagamentoSoggetto() != null
+-				&& getSubdocumento().getLiquidazione().getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto() != null) {
++		if(subdocumento != null && subdocumento.getLiquidazione() != null
++				&& subdocumento.getLiquidazione().getModalitaPagamentoSoggetto() != null
++				&& subdocumento.getLiquidazione().getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto() != null) {
+ 			// Si riferisce alla ModalitaPagamentoSoggetto collegata alla liquidazione
+ 			// Codice della ModalitaAccredito, nel tooltip esporre la  Denominazione
+ 			// Nel tooltip concatenare anche la denomianzione della SedeSecondariaSoggetto nel caso si presente
+ 			
+ 			sb.append("<a data-original-title='Denominazione' data-trigger='hover' rel='popover' data-content='");
+-			String denominazioneModalitaPagamentoSoggetto = calcolaDenominazione(getSubdocumento().getLiquidazione().getModalitaPagamentoSoggetto());
++			String denominazioneModalitaPagamentoSoggetto = calcolaDenominazione(subdocumento.getLiquidazione().getModalitaPagamentoSoggetto());
+ 			sb.append(denominazioneModalitaPagamentoSoggetto);
+-			if(StringUtils.isNotBlank(getSubdocumento().getLiquidazione().getModalitaPagamentoSoggetto().getAssociatoA()) &&
+-				!BilConstants.ASSOCIATO_A_SOGGETTO.getConstant().equalsIgnoreCase(getSubdocumento().getLiquidazione().getModalitaPagamentoSoggetto().getAssociatoA())) {
++			if(StringUtils.isNotBlank(subdocumento.getLiquidazione().getModalitaPagamentoSoggetto().getAssociatoA()) &&
++				!BilConstants.ASSOCIATO_A_SOGGETTO.getConstant().equalsIgnoreCase(subdocumento.getLiquidazione().getModalitaPagamentoSoggetto().getAssociatoA())) {
+ 				
+ 				sb.append(" (Sede: ")
+-					.append(getSubdocumento().getLiquidazione().getModalitaPagamentoSoggetto().getAssociatoA())
++					.append(subdocumento.getLiquidazione().getModalitaPagamentoSoggetto().getAssociatoA())
+ 					.append(")");
+ 			}
+ 			sb.append("'>")
+-				.append(getSubdocumento().getLiquidazione().getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto().getCodice());
++				.append(subdocumento.getLiquidazione().getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto().getCodice());
+ 			sb.append("</a>");
+ 		}
+ 		return sb.toString();
+@@ -134,10 +134,10 @@
+ 	@Override
+ 	public String getDomStringLiquidazione() {
+ 		StringBuilder sb = new StringBuilder();
+-		if(getSubdocumento() != null && getSubdocumento().getLiquidazione() != null) {
+-			sb.append(getSubdocumento().getLiquidazione().getAnnoLiquidazione())
++		if(subdocumento != null && subdocumento.getLiquidazione() != null) {
++			sb.append(subdocumento.getLiquidazione().getAnnoLiquidazione())
+ 				.append("/")
+-				.append(getSubdocumento().getLiquidazione().getNumeroLiquidazione().toPlainString());
++				.append(subdocumento.getLiquidazione().getNumeroLiquidazione().toPlainString());
+ 		}
+ 		return sb.toString();
+ 	}
+@@ -145,8 +145,8 @@
+ 	@Override
+ 	public String getDomStringDistinta() {
+ 		StringBuilder sb = new StringBuilder();
+-		if(getSubdocumento() != null && getSubdocumento().getLiquidazione() != null && getSubdocumento().getLiquidazione().getDistinta() != null) {
+-			sb.append(getSubdocumento().getLiquidazione().getDistinta().getCodice());
++		if(subdocumento != null && subdocumento.getLiquidazione() != null && subdocumento.getLiquidazione().getDistinta() != null) {
++			sb.append(subdocumento.getLiquidazione().getDistinta().getCodice());
+ 		}
+ 		return sb.toString();
+ 	}
+@@ -154,8 +154,8 @@
+ 	@Override
+ 	public String getDomStringContoTesoreria() {
+ 		StringBuilder sb = new StringBuilder();
+-		if(getSubdocumento() != null && getSubdocumento().getLiquidazione() != null && getSubdocumento().getLiquidazione().getContoTesoreria() != null) {
+-			sb.append(getSubdocumento().getLiquidazione().getContoTesoreria().getCodice());
++		if(subdocumento != null && subdocumento.getLiquidazione() != null && subdocumento.getLiquidazione().getContoTesoreria() != null) {
++			sb.append(subdocumento.getLiquidazione().getContoTesoreria().getCodice());
+ 		}
+ 		return sb.toString();
+ 	}

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="consultazioneEntita" extends="capitoloDefault" namespace="/">
+	
+		<result-types>
+			<result-type name="entitaConsultabileStream" class="it.csi.siac.siacconsultazioneentitaapp.frontend.ui.action.ajax.RicercaEntitaConsultabileBaseAjaxAction$EntitaConsultabileStreamResult" />
+			<result-type name="entitaConsultabileDataTablesResult" class="it.csi.siac.siacconsultazioneentitaapp.frontend.ui.action.ajax.RicercaEntitaConsultabileAjaxAction$EntitaConsultabileDataTablesResult"></result-type>
+		</result-types>
+		
+		<!-- ingresso pagina ricerca -->
+		<action name="consultaEntitaCollegate" class="consultaEntitaCollegateAction">
+			<result name="success">/jsp/consultazioneEntita/consultaEntitaCollegateHome.jsp</result>
+		</action>
+	<!-- #########################################################################
+						 SELEZIONE ENTITA DI PARTENZA 
+		########################################################################## -->
+		
+		<!-- Caricamento AJAX della lista del titolo Entrata -->
+		<action name="titoloEntrataAjax" class="titoloEntrataAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					listaTitoloEntrata.*
+				</param>
+			</result>
+		</action>
+		
+		<!-- Caricamento AJAX della lista del titolo Uscita -->
+		<action name="titoloSpesaAjax" class="titoloSpesaAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					listaTitoloSpesa.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="tipoAttoAjax" class="tipoAttoAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					listaTipoAtto.*
+				</param>
+			</result>
+		</action>
+		
+		<!-- Caricamento AJAX delle entita selezionabili a partire da una entita -->
+		<action name="ottieniFigliEntitaConsultabileAjax" class="ottieniFigliEntitaConsultabileAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					listaFigliEntitaConsultabile.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="ricercaIntestazioniCampiTabellaEntitaConsultabileAjax" class="ricercaIntestazioniCampiTabellaEntitaConsultabileAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					listaIntestazioniCampiTabella.*
+				</param>
+			</result>
+		</action>
+
+		<action name="ricercaCapitoloEntrataConsultabileAjax" class="ricercaCapitoloEntrataConsultabileAjaxAction">
+			<result name ="success" type="dataTable" />
+		</action>
+		
+		<action name="ricercaCapitoloSpesaConsultabileAjax" class="ricercaCapitoloSpesaConsultabileAjaxAction">
+			<result name ="success" type="dataTable" />
+		</action>
+		
+		<action name="ricercaCapitoloSpesaConsultabileAjax_download" class="ricercaCapitoloSpesaConsultabileAjaxAction" method="download">
+			<result name="success" type="entitaConsultabileStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="ricercaCapitoloEntrataConsultabileAjax_download" class="ricercaCapitoloEntrataConsultabileAjaxAction" method="download">
+			<result name="success" type="entitaConsultabileStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="ricercaProvvedimentoConsultabileAjax_download" class="ricercaProvvedimentoConsultabileAjaxAction" method="download">
+			<result name="success" type="entitaConsultabileStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="ricercaSoggettoConsultabileAjax_download" class="ricercaSoggettoConsultabileAjaxAction" method="download">
+			<result name="success" type="entitaConsultabileStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="ricercaEntitaConsultabileAjax_download" class="ricercaEntitaConsultabileAjaxAction" method="download">
+			<result name="success" type="entitaConsultabileStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="ricercaProvvedimentoConsultabileAjax" class="ricercaProvvedimentoConsultabileAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="ricercaSoggettoConsultabileAjax" class="ricercaSoggettoConsultabileAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="ricercaEntitaConsultabileAjax" class="ricercaEntitaConsultabileAjaxAction">
+			<result name="success" type="entitaConsultabileDataTablesResult" />
+		</action>
+		
+	</package>
+</struts>
+
+

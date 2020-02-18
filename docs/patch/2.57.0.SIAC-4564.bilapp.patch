@@ -1,0 +1,25 @@
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/documento/InserisciPrimaNotaIntegrataSubdocumentoBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/documento/InserisciPrimaNotaIntegrataSubdocumentoBaseAction.java	(revision 13946)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/documento/InserisciPrimaNotaIntegrataSubdocumentoBaseAction.java	(working copy)
+@@ -90,13 +90,13 @@
+ 	}
+ 	
+ 	/**
+-	 * Preparazione per il metodo {@link #enterDettaglio()}.
+-	 */
+-	public void prepareEnterDettaglio() {
+-		model.setPrimaNota(null);
+-		model.setSubdocumento(null);
+-		model.setMovimentoEP(null);
+-		
++	 * Preparazione per il metodo {@link #enterDettaglio()}.
++	 */
++	public void prepareEnterDettaglio() {
++		//model.setPrimaNota(null);
++		model.setSubdocumento(null);
++		model.setMovimentoEP(null);
++		
+ 		model.setCausaleEP(null);
+ 		model.setListaConto(null);
+ 		model.setTotaleDare(BigDecimal.ZERO);

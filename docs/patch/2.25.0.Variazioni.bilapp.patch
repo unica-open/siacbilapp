@@ -1,0 +1,81 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(revision 11776)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(working copy)
+@@ -830,6 +830,7 @@
+ 		model.getSpecificaUEB().setListaUEBNellaVariazioneCollassate(new ArrayList<ElementoCapitoloVariazione>());
+ 		// Comunico all'inserimento l'arrivo dall'aggiornamento
+ 		sessionHandler.setParametro(BilSessionParameter.INSERISCI_NUOVO_DA_AGGIORNAMENTO, Boolean.TRUE);
++		sessionHandler.setParametro(BilSessionParameter.INSERIMENTO_DA_VARIAZIONE, Boolean.TRUE);
+ 
+ 		String tipoCapitolo = model.getSpecificaImporti().getTipoCapitolo().toLowerCase(getLocale());
+ 		String tipoApplicazione = model.getApplicazione().getDescrizione().toLowerCase(getLocale());
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/LeggiCapitoliNellaVariazioneImportiAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/LeggiCapitoliNellaVariazioneImportiAjaxAction.java	(revision 11776)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/LeggiCapitoliNellaVariazioneImportiAjaxAction.java	(working copy)
+@@ -54,7 +54,8 @@
+ 
+ 	@Override
+ 	protected ElementoCapitoloVariazione ottieniIstanza(DettaglioVariazioneImportoCapitolo e) throws FrontEndBusinessException {
+-		return ElementoCapitoloVariazioneFactory.getInstanceFromSingoloDettaglio(e, Boolean.FALSE);
++		Boolean gestioneUEB = Boolean.valueOf(model.isGestioneUEB());
++		return ElementoCapitoloVariazioneFactory.getInstanceFromSingoloDettaglio(e, gestioneUEB);
+ 	}
+ 
+ 	@Override
+Index: src/main/resources/struts/struts-variazioniImporti.xml
+===================================================================
+--- src/main/resources/struts/struts-variazioniImporti.xml	(revision 11776)
++++ src/main/resources/struts/struts-variazioniImporti.xml	(working copy)
+@@ -165,11 +165,11 @@
+ 
+ 		<action name="esecuzioneStep2InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="executeStep2">
+ 			<result name="input">/jsp/variazione/step2/variazioneStep2.jsp</result>
+-			<result name="success" type="redirectAction">enterStep3InserimentoVariazioniImporti</result>
++			<result name="success" type="redirectAction">enterStep3InserimentoVariazioniImportiSenzaUEB</result>
+ 		</action>
+ 
+ 		<!-- STEP 3 -->
+-		<action name="enterStep3InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="enterStep3">
++		<action name="enterStep3InserimentoVariazioniImportiSenzaUEB" class="inserisciVariazioneImportiAction" method="enterStep3">
+ 			<result name="success">/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp</result>
+ 			<result name="input">/jsp/failure.jsp</result>
+ 		</action>
+Index: src/main/webapp/js/local/variazioni/aggiorna.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/aggiorna.importi.js	(revision 11776)
++++ src/main/webapp/js/local/variazioni/aggiorna.importi.js	(working copy)
+@@ -897,12 +897,12 @@
+                 return;
+             }
+             ottieniResponse(operazione, 10, 10000);
+-        }).always(form.removeClass.bind(form, 'form-submitted'));
++        });
+     }
+ 
+ 
+     function ottieniResponse(operazione, tentativiRimanenti, timeout){
+-
++    	var form = $('form');
+         var url = operazione + 'AggiornamentoVariazioneImportiAsyncResponse.do';
+         return $.postJSON(url)
+         .then(function(data) {
+@@ -911,7 +911,8 @@
+ 
+             alertErrori.slideUp();
+             if (impostaDatiNegliAlert(data.errori,alertErrori)) {
+-           	redirezioneAPaginaDisabilitata();
++            	form.removeClass('form-submitted');
++            	redirezioneAPaginaDisabilitata();
+                 return;
+             }
+ 
+@@ -940,6 +941,7 @@
+             }
+ 
+             redirezioneAPaginaDisabilitata();
++            form.removeClass('form-submitted');
+         });
+ 
+     }

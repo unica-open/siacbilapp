@@ -1,0 +1,406 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/attodilegge/AssociaAttoDiLeggeAlCapitoloAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/attodilegge/AssociaAttoDiLeggeAlCapitoloAction.java	(revision 15401)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/attodilegge/AssociaAttoDiLeggeAlCapitoloAction.java	(working copy)
+@@ -50,11 +50,11 @@
+ 	@Autowired private transient CapitoloService capitoloService;
+ 
+ 	/** Stringhe HTML per azioni consentite */
+-	private static final String AZIONI_CONSENTITE_BEGIN = "<div class='btn-group'> "+
+-			"<button type='button' class='btn dropdown-toggle' data-placement='left' data-toggle='dropdown'>Azioni <span class='caret'></span></button>" +
+-			"<ul class='dropdown-menu pull-right' >";
+-	private static final String AZIONI_CONSENTITE_AGGIORNA = "<li><a data-toggle='collapse' data-target='#divAggiornaRelazioneAttoDiLeggeCapitolo'>aggiorna</a></li>";
+-	private static final String AZIONI_CONSENTITE_ANNULLA = "<li><a data-target='#divAnnullaRelazione' data-toggle='modal'>annulla</a></li>";
++	private static final String AZIONI_CONSENTITE_BEGIN = "<div class=\"btn-group\"> "+
++			"<button type=\"button\" class=\"btn dropdown-toggle\" data-placement=\"left\" data-toggle=\"dropdown\">Azioni <span class=\"caret\"></span></button>" +
++			"<ul class=\"dropdown-menu pull-right\">";
++	private static final String AZIONI_CONSENTITE_AGGIORNA = "<li><a href=\"#\" data-aggiorna>aggiorna</a></li>";
++	private static final String AZIONI_CONSENTITE_ANNULLA = "<li><a href=\"#\" data-annulla data-target=\"#divAnnullaRelazione\" data-toggle=\"modal\">annulla</a></li>";
+ 	private static final String AZIONI_CONSENTITE_END = "</ul></div>";
+ 	
+ 	/**
+Index: src/main/webapp/js/local/attoDiLegge/attoDiLegge.js
+===================================================================
+--- src/main/webapp/js/local/attoDiLegge/attoDiLegge.js	(revision 15401)
++++ src/main/webapp/js/local/attoDiLegge/attoDiLegge.js	(working copy)
+@@ -8,49 +8,49 @@
+ 
+     // Opzioni DataTables per le ricerche del Atto di Legge
+     var dataTableAttoDiLeggeOptions = {
+-        "bPaginate" : true,
+-        "bLengthChange" : false,
+-        "iDisplayLength" : 5,
+-        "bSort" : false,
+-        "bInfo" : true,
+-        "bAutoWidth" : true,
+-        "bFilter" : false,
+-        "bProcessing" : true,
+-        "oLanguage" : {
+-            "sInfo" : "_START_ - _END_ di _MAX_ risultati",
+-            "sInfoEmpty" : "0 risultati",
+-            "sProcessing" : "Attendere prego...",
+-            "sZeroRecords" : "Nessun Atto di Legge trovato con in criteri di ricerca indicati.",
+-            "oPaginate" : {
+-                "sFirst" : "inizio",
+-                "sLast" : "fine",
+-                "sNext" : "succ.",
+-                "sPrevious" : "prec.",
+-                "sEmptyTable" : "Nessun dato disponibile"
++        bPaginate: true,
++        bLengthChange: false,
++        iDisplayLength: 5,
++        bSort: false,
++        bInfo: true,
++        bAutoWidth: true,
++        bFilter: false,
++        bProcessing: true,
++        oLanguage: {
++            sInfo: "_START_ - _END_ di _MAX_ risultati",
++            sInfoEmpty: "0 risultati",
++            sProcessing: "Attendere prego...",
++            sZeroRecords: "Nessun Atto di Legge trovato con in criteri di ricerca indicati.",
++            oPaginate: {
++                sFirst: "inizio",
++                sLast: "fine",
++                sNext: "succ.",
++                sPrevious: "prec.",
++                sEmptyTable: "Nessun dato disponibile"
+             }
+         }
+     };
+     // Opzioni DataTables per le ricerche del Atto di Legge */
+     var dataTableRelazioniOptions = {
+-        "bPaginate" : false,
+-        "bLengthChange" : false,
+-        "iDisplayLength" : 99,
+-        "bSort" : false,
+-        "bInfo" : false,
+-        "bAutoWidth" : false,
+-        "bFilter" : false,
+-        "bProcessing" : true,
+-        "oLanguage" : {
+-            "sInfo" : "_START_ - _END_ di _MAX_ risultati",
+-            "sInfoEmpty" : "0 risultati",
+-            "sProcessing" : "Attendere prego...",
+-            "sZeroRecords" : "Nessuna relazione con atti di legge valida per questo capitolo.",
+-            "oPaginate" : {
+-                "sFirst" : "inizio",
+-                "sLast" : "fine",
+-                "sNext" : "succ.",
+-                "sPrevious" : "prec.",
+-                "sEmptyTable" : "Nessun dato disponibile"
++        bPaginate: false,
++        bLengthChange: false,
++        iDisplayLength: 99,
++        bSort: false,
++        bInfo: false,
++        bAutoWidth: false,
++        bFilter: false,
++        bProcessing: true,
++        oLanguage: {
++            sInfo: "_START_ - _END_ di _MAX_ risultati",
++            sInfoEmpty: "0 risultati",
++            sProcessing: "Attendere prego...",
++            sZeroRecords: "Nessuna relazione con atti di legge valida per questo capitolo.",
++            oPaginate: {
++                sFirst: "inizio",
++                sLast: "fine",
++                sNext: "succ.",
++                sPrevious: "prec.",
++                sEmptyTable: "Nessun dato disponibile"
+             }
+         }
+     };
+@@ -92,9 +92,10 @@
+         var btnSalva = $("#btnAggiornaRelSalva");
+         var btnAggiornaAtto = $("btnAggiornaAttoLegge");
+         var objectDaInviare = {
+-            "uidAttoDiLeggeCapitolo" : uidRelazione
++            uidAttoDiLeggeCapitolo: uidRelazione
+         };
+ 
++        $("#divAggiornaRelazioneAttoDiLeggeCapitolo").slideUp();
+         alertErrori.slideUp();
+         alertInformazioni.slideUp();
+ 
+@@ -143,7 +144,7 @@
+                 $("input[name='relazioneAttoDiLeggeCapitolo.uidAttoDiLegge']").val(listaRisultati[0].uidAttoDiLegge);
+                 $("input[name='aggAttoDiLegge.uid']").val(listaRisultati[0].uidAttoDiLegge);
+                 $("input[name='relazioneAttoDiLeggeCapitolo.gerarchia']").val(listaRisultati[0].gerarchia);
+-                $("input[name='relazioneAttoDiLeggeCapitolo.descrizione']").val(listaRisultati[0].descrizione);
++                $("textarea[name='relazioneAttoDiLeggeCapitolo.descrizione']").val(listaRisultati[0].descrizione);
+                 $("input[name='relazioneAttoDiLeggeCapitolo.dataInizioFinanziamento']").val(listaRisultati[0].dataInizioFinanziamento);
+                 $("input[name='relazioneAttoDiLeggeCapitolo.dataFineFinanziamento']").val(listaRisultati[0].dataFineFinanziamento);
+             }
+@@ -164,30 +165,20 @@
+         var tabella = $("#risultatiRicercaAttoDiLeggeSenzaOperazioni");
+ 
+         var nuoveOptions = {
+-            "aaData" : aaData,
++            aaData: aaData,
+             // Definizione delle colonne
+-            "aoColumnDefs" : [
+-                {"aTargets": [0], "mData": function(source) {
++            aoColumnDefs: [
++                {aTargets: [0], mData: function(source) {
+                     return "<input type='radio' name='" + campo + "Radio' value='" + source.uid + "'/>";
+                 }},
+-                {"aTargets": [1], "mData": function (source) {
++                {aTargets: [1], mData: function (source) {
+                     return source.tipoAtto && (source.tipoAtto.codice + "-" + source.tipoAtto.descrizione) || "";
+                 }},
+-                {"aTargets": [2], "mData": function(source) {
+-                    return source.anno || "";
+-                }},
+-                {"aTargets": [3], "mData": function(source) {
+-                    return source.numero || "";
+-                }},
+-                {"aTargets": [4], "mData": function(source) {
+-                    return source.articolo || "";
+-                }},
+-                {"aTargets": [5], "mData": function(source) {
+-                    return source.comma || "";
+-                }},
+-                {"aTargets": [6], "mData": function(source) {
+-                    return source.punto || "";
+-                }}
++                {aTargets: [2], mData: defaultPerDataTable('anno')},
++                {aTargets: [3], mData: defaultPerDataTable('numero')},
++                {aTargets: [4], mData: defaultPerDataTable('articolo')},
++                {aTargets: [5], mData: defaultPerDataTable('comma')},
++                {aTargets: [6], mData: defaultPerDataTable('punto')}
+             ]
+         };
+ 
+@@ -206,48 +197,26 @@
+         // Le opzioni nuove del dataTable
+         var tabella = $("#relazioniAttoDiLeggeCapitoloConOperazioni");
+         var nuoveOptions = {
+-            "aaData" : aaData,
++            aaData: aaData,
+             // Definizione delle colonne
+-            "aoColumnDefs" : [
+-                {"aTargets" : [0], "mData" : function(source) {
+-                    return source.tipoAtto || "";
+-                }},
+-                {"aTargets" : [1], "mData" : function(source) {
+-                    return source.anno || "";
+-                }},
+-                {"aTargets" : [2], "mData" : function(source) {
+-                    return source.numero || "";
+-                }},
+-                {"aTargets" : [3], "mData" : function(source) {
+-                    return source.articolo || "";
+-                }},
+-                {"aTargets" : [4], "mData" : function(source) {
+-                    return source.comma || "";
+-                }},
+-                {"aTargets" : [5], "mData" : function(source) {
+-                    return source.punto || "";
+-                }},
+-                {"aTargets" : [6], "mData" : function(source) {
+-                    return source.gerarchia || "";
+-                }},
+-                {"aTargets" : [7], "mData" : function(source) {
+-                    return source.descrizione || "";
+-                }},
+-                {"aTargets" : [8], "mData" : function(source) {
+-                    return source.dataInizioFinanziamento;
+-                }},
+-                {"aTargets" : [9], "mData" : function(source) {
+-                    return source.dataFineFinanziamento;
+-                }},
+-                {"aTargets" : [10], "mData" : function(source) {
+-                    return source.azioni || "";
+-                }, "fnCreatedCell" : function (nTd, sData, oData) {
++            aoColumnDefs: [
++                {aTargets: [0], mData: defaultPerDataTable('tipoAtto')},
++                {aTargets: [1], mData: defaultPerDataTable('anno')},
++                {aTargets: [2], mData: defaultPerDataTable('numero')},
++                {aTargets: [3], mData: defaultPerDataTable('articolo')},
++                {aTargets: [4], mData: defaultPerDataTable('comma')},
++                {aTargets: [5], mData: defaultPerDataTable('punto')},
++                {aTargets: [6], mData: defaultPerDataTable('gerarchia')},
++                {aTargets: [7], mData: defaultPerDataTable('descrizione')},
++                {aTargets: [8], mData: defaultPerDataTable('dataInizioFinanziamento')},
++                {aTargets: [9], mData: defaultPerDataTable('dataFineFinanziamento')},
++                {aTargets: [10], mData: defaultPerDataTable('azioni'), fnCreatedCell: function (nTd, sData, oData) {
+                     // Importante : attivare il popover sull'elemento anchor
+-                    $("a[data-target='#divAnnullaRelazione']", nTd).on("click", function(event) {
++                    $("a[data-annulla]", nTd).substituteHandler("click", function(event) {
+                         event.preventDefault();
+                         clickOnAnnullaRelazione(oData.uid);
+                     });
+-                    $("a[data-target='#divAggiornaRelazioneAttoDiLeggeCapitolo']", nTd).on("click", function(event) {
++                    $("a[data-aggiorna]", nTd).substituteHandler("click", function(event) {
+                         event.preventDefault();
+                         clickOnAggiornaRelazione(oData.uid, oData.uidAttoDiLegge);
+                     });
+@@ -270,8 +239,8 @@
+         var uidCapitoloAggiornare = $("#uidCapitoloDaAggiornare").val();
+         var uidBilancio = $("input[name='bilancio.uid']").val();
+         var objectDaInviare = {
+-             "uidCapitolo" : uidCapitoloAggiornare,
+-             "uidBilancio" : uidBilancio
++             uidCapitolo: uidCapitoloAggiornare,
++             uidBilancio: uidBilancio
+         };
+         // nasconde alert errori e messaggi
+         alertErrori.slideUp();
+@@ -699,7 +668,7 @@
+         var btnProcedi = $("#btnAnnullaRelProcedi");
+         var uidRelazioneSelezionata = $("input[name='relazioneAttoDiLeggeCapitolo.uid']").val();
+         var objectDaInviare = {
+-            "uidAttoDiLeggeCapitolo" : uidRelazioneSelezionata
++            uidAttoDiLeggeCapitolo: uidRelazioneSelezionata
+         };
+ 
+         alertAvviso.slideUp();
+@@ -760,7 +729,7 @@
+         $("input[name='relazioneAttoDiLeggeCapitolo.uid']").val('');
+         $("input[name='relazioneAttoDiLeggeCapitolo.uidAttoDiLegge']").val('');
+         $("input[name='relazioneAttoDiLeggeCapitolo.gerarchia']").val('');
+-        $("input[name='relazioneAttoDiLeggeCapitolo.descrizione']").val('');
++        $("textarea[name='relazioneAttoDiLeggeCapitolo.descrizione']").val('');
+         $("input[name='relazioneAttoDiLeggeCapitolo.dataInizioFinanziamento']").val('');
+         $("input[name='relazioneAttoDiLeggeCapitolo.dataFineFinanziamento']").val('');
+     };
+@@ -785,7 +754,7 @@
+         var uidRelazioneSelezionata = $("input[name='relazioneAttoDiLeggeCapitolo.uid']").val();
+         var uidAttoDiLegge = $("input[name='relazioneAttoDiLeggeCapitolo.uidAttoDiLegge']").val();
+         var gerarchia = $("input[name='relazioneAttoDiLeggeCapitolo.gerarchia']").val();
+-        var descrizione = $("input[name='relazioneAttoDiLeggeCapitolo.descrizione']").val();
++        var descrizione = $("textarea[name='relazioneAttoDiLeggeCapitolo.descrizione']").val();
+         var dataInizioFinanziamento = $("input[name='relazioneAttoDiLeggeCapitolo.dataInizioFinanziamento']").val();
+         var dataFineFinanziamento = $("input[name='relazioneAttoDiLeggeCapitolo.dataFineFinanziamento']").val();
+         var uidCapitolo = $("#uidCapitoloDaAggiornare").val();
+@@ -792,14 +761,14 @@
+         var uidBilancio = $("input[name='bilancio.uid']").val();
+ 
+         var objectDaInviare = {
+-                "uidAttoDiLeggeCapitolo" : uidRelazioneSelezionata,
+-                "uidAttoDiLegge" : uidAttoDiLegge,
+-                "uidCapitolo" : uidCapitolo,
+-                "uidBilancio" : uidBilancio,
+-                "gerarchia" : gerarchia,
+-                "descrizione" : descrizione,
+-                "dataInizioFinanziamento" : dataInizioFinanziamento,
+-                "dataFineFinanziamento" : dataFineFinanziamento
++                uidAttoDiLeggeCapitolo: uidRelazioneSelezionata,
++                uidAttoDiLegge: uidAttoDiLegge,
++                uidCapitolo: uidCapitolo,
++                uidBilancio: uidBilancio,
++                gerarchia: gerarchia,
++                descrizione: descrizione,
++                dataInizioFinanziamento: dataInizioFinanziamento,
++                dataFineFinanziamento: dataFineFinanziamento
+             };
+ 
+         alertErrori.slideUp();
+@@ -847,7 +816,7 @@
+                 // Aggiorna il datatable
+                 cercaRelazioniAttoDiLegge();
+                 // Collasso il div
+-                $("#divAggiornaRelazioneAttoDiLeggeCapitolo").collapse("hide");
++                $("#divAggiornaRelazioneAttoDiLeggeCapitolo").slideUp();
+                 // Mostro l'alert di successo
+                 alertInformazioni.slideDown();
+                 return;
+@@ -866,7 +835,7 @@
+         var btnAnnulla = $("#btnModalAggAttoAnnulla");
+         var btnSalva = $("#btnModalAggAttoSalva");
+         var uidAttoDiLegge = $("input[name='relazioneAttoDiLeggeCapitolo.uidAttoDiLegge']").val();
+-        var objectDaInviare = {"uidAttoDiLegge" : uidAttoDiLegge};
++        var objectDaInviare = {uidAttoDiLegge: uidAttoDiLegge};
+ 
+         alertErrori.slideUp();
+ 
+@@ -933,13 +902,13 @@
+         var btnSalva = $("#btnModalAggAttoSalva");
+ 
+         var objectDaInviare = {
+-            "attoDiLegge.uid" : $("input[name='aggAttoDiLegge.uid']").val(),
+-            "attoDiLegge.anno" : $("input[name='aggAttoDiLegge.anno']").val(),
+-            "attoDiLegge.numero" : $("input[name='aggAttoDiLegge.numero']").val(),
+-            "attoDiLegge.articolo" : $("input[name='aggAttoDiLegge.articolo']").val(),
+-            "attoDiLegge.comma" : $("input[name='aggAttoDiLegge.comma']").val(),
+-            "attoDiLegge.punto" : $("input[name='aggAttoDiLegge.punto']").val(),
+-            "attoDiLegge.tipoAtto.uid" : $("select[name='aggAttoDiLegge.tipoAtto.uid']").val()
++            "attoDiLegge.uid": $("input[name='aggAttoDiLegge.uid']").val(),
++            "attoDiLegge.anno": $("input[name='aggAttoDiLegge.anno']").val(),
++            "attoDiLegge.numero": $("input[name='aggAttoDiLegge.numero']").val(),
++            "attoDiLegge.articolo": $("input[name='aggAttoDiLegge.articolo']").val(),
++            "attoDiLegge.comma": $("input[name='aggAttoDiLegge.comma']").val(),
++            "attoDiLegge.punto": $("input[name='aggAttoDiLegge.punto']").val(),
++            "attoDiLegge.tipoAtto.uid": $("select[name='aggAttoDiLegge.tipoAtto.uid']").val()
+         };
+ 
+         alertErrori.slideUp();
+@@ -992,23 +961,21 @@
+     return exports;
+ }());
+ 
+-$(
+-    function() {
++$(function() {
+ 
+-        // Gestione delle azioni
+-        $("#btnModalInsAttoSalva").on("click", AttoDiLegge.salvaNuovoAttoDiLegge);
+-        $("#pulsantePreparaInserisciNuovoAttoDiLegge").on("click", AttoDiLegge.preparaInserimentoAttoDiLegge);
+-        $("#pulsantePreparaAnnullaAttoDiLegge").on("click", AttoDiLegge.preparaAnnullaAttoDiLegge);
+-        $("#btnAnnullaAttoProcedi").on("click", AttoDiLegge.annullaAttoDiLegge);
+-        $("#btnCercaAtto").on("click", AttoDiLegge.cercaAttoDiLegge);
++    // Gestione delle azioni
++    $("#btnModalInsAttoSalva").on("click", AttoDiLegge.salvaNuovoAttoDiLegge);
++    $("#pulsantePreparaInserisciNuovoAttoDiLegge").on("click", AttoDiLegge.preparaInserimentoAttoDiLegge);
++    $("#pulsantePreparaAnnullaAttoDiLegge").on("click", AttoDiLegge.preparaAnnullaAttoDiLegge);
++    $("#btnAnnullaAttoProcedi").on("click", AttoDiLegge.annullaAttoDiLegge);
++    $("#btnCercaAtto").on("click", AttoDiLegge.cercaAttoDiLegge);
+ 
+-        $("#pulsantePreparaInserimentoRelazione").on("click", AttoDiLegge.preparaInserimentoRelazione);
+-        $("#pulsantePreparaAssociaRelazione").on("click", AttoDiLegge.preparaAssociaRelazione);
+-        $("#btnModalInsRelazioneSalva").on("click", AttoDiLegge.salvaRelazioneAttoDiLeggeCapitolo);
+-        $("#btnAnnullaRelProcedi").on("click", AttoDiLegge.annullaRelazioneAttoDiLegge);
+-        $("#btnAggiornaRelAnnulla").on("click", AttoDiLegge.clickOnAnnullaAggiornaRelazione);
+-        $("#btnAggiornaRelSalva").on("click", AttoDiLegge.aggiornaRelazioneAttoDiLegge);
+-        $("#btnAggiornaAttoLegge").on("click", AttoDiLegge.preparaAggiornaAttoDiLegge);
+-        $("#btnModalAggAttoSalva").on("click", AttoDiLegge.aggiornaAttoDiLegge);
+-    }
+-);
+\ No newline at end of file
++    $("#pulsantePreparaInserimentoRelazione").on("click", AttoDiLegge.preparaInserimentoRelazione);
++    $("#pulsantePreparaAssociaRelazione").on("click", AttoDiLegge.preparaAssociaRelazione);
++    $("#btnModalInsRelazioneSalva").on("click", AttoDiLegge.salvaRelazioneAttoDiLeggeCapitolo);
++    $("#btnAnnullaRelProcedi").on("click", AttoDiLegge.annullaRelazioneAttoDiLegge);
++    $("#btnAggiornaRelAnnulla").on("click", AttoDiLegge.clickOnAnnullaAggiornaRelazione);
++    $("#btnAggiornaRelSalva").on("click", AttoDiLegge.aggiornaRelazioneAttoDiLegge);
++    $("#btnAggiornaAttoLegge").on("click", AttoDiLegge.preparaAggiornaAttoDiLegge);
++    $("#btnModalAggAttoSalva").on("click", AttoDiLegge.aggiornaAttoDiLegge);
++});
+\ No newline at end of file
+Index: src/main/webapp/jsp/attoDiLegge/aggiornaRelazioneAttoDiLeggeCapitolo.jsp
+===================================================================
+--- src/main/webapp/jsp/attoDiLegge/aggiornaRelazioneAttoDiLeggeCapitolo.jsp	(revision 15401)
++++ src/main/webapp/jsp/attoDiLegge/aggiornaRelazioneAttoDiLeggeCapitolo.jsp	(working copy)
+@@ -37,7 +37,7 @@
+ <!--/ Modale Annulla -->
+ 
+ 
+-<div class="accordion-body collapse" id="divAggiornaRelazioneAttoDiLeggeCapitolo">
++<div class="hide" id="divAggiornaRelazioneAttoDiLeggeCapitolo">
+ 	<h4>Aggiorna relazione</h4>
+ 	<s:form action="aggiornaRelazioneAttoDiLeggeCapitolo" method="post" id="aggiornaRelazioneAttoDiLeggeCapitolo">
+ 		<%-- Messaggio di ERRORI --%>
+Index: src/main/webapp/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp
+===================================================================
+--- src/main/webapp/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp	(revision 15401)
++++ src/main/webapp/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp	(working copy)
+@@ -142,7 +142,7 @@
+ 					<div class="control-group">
+ 						<label class="control-label" for="file_11">Descrizione</label>
+ 						<div class="controls">
+-							<s:textfield id="relDescrizione" name="descrizione" id="file_11" cssClass="span4" maxlength="500" /> <%-- Gestione della lunghezza del campo --%>
++							<s:textarea name="descrizione" id="file_111" cssClass="span4" maxlength="500" />
+ 						</div>
+ 					</div>
+ 					<div class="control-group">

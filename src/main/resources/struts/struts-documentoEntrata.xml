@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="documentoEntrata" extends="capitoloDefault" namespace="/">
+
+		<!-- ****************************************************************************************************** -->
+		<!-- ************************************** Inserimento *************************************************** -->
+		<!-- ****************************************************************************************************** -->
+
+		<action name="inserisciDocumentoEntrata" class="inserisciDocumentoEntrataAction">
+			<result name="success">/jsp/documento/inserisciDocumentoEntrata.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrataEnterStep2" class="inserisciDocumentoEntrataAction" method="enterStep2">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoEntrataStep2</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/documento/inserisciDocumentoEntrata.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrataStep2" class="inserisciDocumentoEntrataAction" method="step2">
+			<result name="success">/jsp/documento/inserisciDocumentoEntrata_step2.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrataReturnToStep1" class="inserisciDocumentoEntrataAction" method="back">
+			<result name="success">/jsp/documento/inserisciDocumentoEntrata.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrataEnterStep3" class="inserisciDocumentoEntrataAction" method="enterStep3">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoEntrataStep3</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/documento/inserisciDocumentoEntrata_step2.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrataStep3" class="inserisciDocumentoEntrataAction" method="step3">
+			<result name="success">/jsp/documento/inserisciDocumentoEntrata_step3.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrata_aggiorna" class="inserisciDocumentoEntrataAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoDaAggiornare">${uidDocumento}</param>
+			</result>
+			<result name="input">/jsp/documento/inserisciDocumentoEntrata_step3.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrata_ripeti" class="inserisciDocumentoEntrataAction" method="ripeti">
+			<result name="success">/jsp/documento/inserisciDocumentoEntrata_ripeti.jsp</result>
+			<result name="input">/jsp/documento/inserisciDocumentoEntrata_step3.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrata_quote" class="inserisciDocumentoEntrataAction" method="quote">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoDaAggiornare">${uidDocumento}</param>
+				<param name="ingressoTabQuote">true</param>
+			</result>
+			<result name="input">/jsp/documento/inserisciDocumentoEntrata_step3.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrata_ripetiSalva" class="inserisciDocumentoEntrataAction" method="ripetiSalva">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoEntrata_ripetiStep3</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/documento/inserisciDocumentoEntrata_ripeti.jsp</result>
+		</action>
+
+		<action name="inserisciDocumentoEntrata_ripetiStep3" class="inserisciDocumentoEntrataAction" method="ripetiStep3">
+			<result name="success">/jsp/documento/inserisciDocumentoEntrata_step3.jsp</result>
+		</action>
+
+		<!-- ****************************************************************************************************** -->
+		<!-- ************************************** Aggiornamento ************************************************* -->
+		<!-- ****************************************************************************************************** -->
+
+		<action name="aggiornaDocumentoEntrata" class="aggiornaDocumentoEntrataAnagraficaAction">
+			<result name="success">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_aggiornamentoAnagrafica" class="aggiornaDocumentoEntrataAnagraficaAction" method="aggiornamentoAnagrafica">
+			<result name="success">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_inizioInserimentoNuovaQuota" class="aggiornaDocumentoEntrataQuotaAction" method="inizioInserimentoNuovaQuota">
+			<result name="success">/jsp/documento/aggiornamento/quoteDocumentoEntrata_collapse.jsp</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_inserimentoNuovaQuota" class="aggiornaDocumentoEntrataQuotaAction" method="inserimentoNuovaQuota">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					messaggioConfermaSfondamentoAccertamento,
+					listaSubdocumentoEntrata.*,
+					totaleQuote,
+					importoDaAttribuire,
+					totaleDaPagareQuote,
+					flagDatiIvaAccessibile,
+					documentoIncompleto,
+					stato,
+					netto,
+					statoOperativoDocumentoCompleto,
+					attivaRegistrazioniContabiliVisible
+				</param>
+			</result>
+			<result name="ask" type="customMessagesJSON" />
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_inizioAggiornamentoNuovaQuota" class="aggiornaDocumentoEntrataQuotaAction" method="inizioAggiornamentoNuovaQuota">
+			<result name="success">/jsp/documento/aggiornamento/quoteDocumentoEntrata_collapse.jsp</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_inizioRipetiNuovaQuota" class="aggiornaDocumentoEntrataQuotaAction" method="inizioRipetiNuovaQuota">
+			<result name="success">/jsp/documento/aggiornamento/quoteDocumentoEntrata_collapse.jsp</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_eliminaQuota" class="aggiornaDocumentoEntrataQuotaAction" method="eliminaQuota">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					listaSubdocumentoEntrata.*,
+					totaleQuote,
+					importoDaAttribuire,
+					totaleDaPagareQuote,
+					flagDatiIvaAccessibile,
+					documentoIncompleto,
+					stato,
+					netto,
+					statoOperativoDocumentoCompleto,
+					attivaRegistrazioniContabiliVisible
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_aggiornamentoQuota" class="aggiornaDocumentoEntrataQuotaAction" method="aggiornamentoQuota">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					messaggioConfermaSfondamentoAccertamento,
+					listaSubdocumentoEntrata.*,
+					totaleQuote,
+					importoDaAttribuire,
+					totaleDaPagareQuote,
+					flagDatiIvaAccessibile,
+					documentoIncompleto,
+					stato,
+					netto,
+					statoOperativoDocumentoCompleto,
+					attivaRegistrazioniContabiliVisible
+				</param>
+			</result>
+			<result name="ask" type="customMessagesJSON" />
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_ottieniListaQuote" class="aggiornaDocumentoEntrataQuotaAction" method="ottieniListaQuoteEntrata">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaSubdocumentoEntrata.*,
+					totaleQuote,
+					importoDaAttribuire,
+					totaleDaPagareQuote
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_campiDisabilitati" class="aggiornaDocumentoEntrataQuotaAction" method="campiDisabilitati">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					capitoloQuotaDisabilitato,
+					impegnoQuotaDisabilitato
+				</param>
+			</result>
+		</action>
+
+
+		<action name="aggiornamentoDocumentoEntrata_ottieniListaDocumentiCollegati" class="aggiornaDocumentoEntrataDocumentiCollegatiAction" method="ottieniListaDocumentiCollegati">
+			<result name="success" type="json">
+				<param name="includeProperties">
+					listaDocumentoSpesa.*
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_ottieniListaNoteCredito" class="aggiornaDocumentoEntrataNotaCreditoAction" method="ottieniListaNoteCredito">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaDocumentoEntrata.*,
+					totaleNoteCredito,
+					totaleImportoDaDedurreSuFattura,
+					netto
+				</param>
+			</result>
+		</action>
+		<action name="aggiornamentoDocumentoEntrata_ricercaNotaCreditoEsistente" class="aggiornaDocumentoEntrataNotaCreditoAction" method="ricercaNotaCreditoEsistente">
+			<result name="success">/jsp/documento/aggiornamento/noteCreditoDocumentoEntrata_collapse.jsp</result>
+		</action>
+		<action name="aggiornamentoDocumentoEntrata_collegaNotaCreditoEsistente" class="aggiornaDocumentoEntrataNotaCreditoAction" method="collegaNotaCreditoEsistente">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					listaDocumentoEntrata.*,
+					totaleNoteCredito,
+					totaleImportoDaDedurreSuFattura,
+					netto,
+					importoDaAttribuire,
+					stato,
+					statoOperativoDocumentoCompleto
+				</param>
+			</result>
+		</action>
+		<action name="aggiornamentoDocumentoEntrata_scollegaNotaCreditoEsistente" class="aggiornaDocumentoEntrataNotaCreditoAction" method="scollegaNotaCreditoEsistente">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					totaleDaPagareQuote,
+					listaDocumentoEntrata.*,
+					totaleNoteCredito,
+					totaleImportoDaDedurre,
+					totaleImportoDaDedurreSuFattura,
+					totaleQuoteNotaCredito,
+					netto,
+					importoDaAttribuire,
+					stato,
+					statoOperativoDocumentoCompleto
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_ricalcolaListaDocumentiCollegati" class="aggiornaDocumentoEntrataNotaCreditoAction" method="ricalcolaListaDocumentiCollegati">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					listaDocumentoEntrata.*,
+					totaleNoteCredito,
+					totaleImportoDaDedurreSuFattura,
+					netto,
+					importoDaAttribuire,
+					stato,
+					statoOperativoDocumentoCompleto
+				</param>
+			</result>
+		</action>
+		<action name="aggiornamentoDocumentoEntrata_inizioInserimentoNuovaNotaCredito" class="aggiornaDocumentoEntrataNotaCreditoAction" method="inizioInserimentoNuovaNotaCredito">
+			<result name="success">/jsp/documento/aggiornamento/noteCreditoDocumentoEntrata_collapse.jsp</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_inserimentoNuovaNotaCredito" class="aggiornaDocumentoEntrataNotaCreditoAction" method="inserimentoNuovaNotaCredito">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					listaDocumentoEntrata.*,
+					totaleNoteCredito,
+					totaleImportoDaDedurreSuFattura,
+					netto,
+					importoDaAttribuire,
+					stato,
+					statoOperativoDocumentoCompleto
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_inizioAggiornamentoNuovaNotaCredito" class="aggiornaDocumentoEntrataNotaCreditoAction" method="inizioAggiornamentoNuovaNotaCredito">
+			<result name="success">/jsp/documento/aggiornamento/noteCreditoDocumentoEntrata_collapse.jsp</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_annullaNotaCredito" class="aggiornaDocumentoEntrataNotaCreditoAction" method="annullaNotaCredito">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					listaDocumentoEntrata.*,
+					totaleNoteCredito,
+					totaleImportoDaDedurreSuFattura,
+					netto,
+					importoDaAttribuire,
+					stato,
+					statoOperativoDocumentoCompleto
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_aggiornamentoNotaCredito" class="aggiornaDocumentoEntrataNotaCreditoAction" method="aggiornamentoNotaCredito">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					listaDocumentoEntrata.*,
+					totaleNoteCredito,
+					totaleImportoDaDedurreSuFattura,
+					netto,
+					importoDaAttribuire,
+					stato,
+					statoOperativoDocumentoCompleto
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_ottieniListaQuoteNotaCredito" class="aggiornaDocumentoEntrataNotaCreditoAction" method="ottieniListaQuoteNotaCredito">
+			<result name="success" type="json">
+					<param name="ignoreHierarchy">false</param>
+					<param name="includeProperties">
+						errori.*,
+						listaSubdocumentoEntrata.*,
+						totaleImportoDaDedurreSuFattura,
+						totaleImportoDaDedurre,
+						totaleQuoteNotaCredito,
+						netto
+					</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_applicaImportiDaDedurre" class="aggiornaDocumentoEntrataNotaCreditoAction" method="applicaImportiDaDedurre">
+			<result name="success" type="json">
+					<param name="ignoreHierarchy">false</param>
+					<param name="includeProperties">
+						errori.*,
+						informazioni.*,
+						listaSubdocumentoEntrata.*,
+						totaleImportoDaDedurreSuFattura,
+						totaleImportoDaDedurre,
+						totaleQuoteNotaCredito,
+						netto,
+						totaleDaPagareQuote,
+						importoDaAttribuire
+					</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_redirezioneInserimentoDocumentoSpesa" class="aggiornaDocumentoEntrataDocumentiCollegatiAction" method="redirezioneInserimentoDocumentoSpesa">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoCollegato">${uidDocumentoDaAggiornare}</param>
+				<param name="classeDocumentoCollegato">Entrata</param>
+				<param name="flagSubordinato">true</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_redirezioneInserimentoDocumentoIvaEntrata_documento" class="aggiornaDocumentoEntrataDatiIvaAction" method="redirezioneInserimentoDocumentoIvaEntrata">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoIvaEntrata</param>
+				<param name="uidDocumentoCollegato">${uidDocumentoDaAggiornare}</param>
+				<param name="tipoSubdocumentoIvaQuota">false</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_redirezioneInserimentoDocumentoIvaEntrata_quota" class="aggiornaDocumentoEntrataDatiIvaAction" method="redirezioneInserimentoDocumentoIvaEntrata">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoIvaEntrata</param>
+				<param name="uidDocumentoCollegato">${uidDocumentoDaAggiornare}</param>
+				<param name="uidQuotaDocumentoCollegato">${uidQuota}</param>
+				<param name="tipoSubdocumentoIvaQuota">true</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_redirezioneAggiornamentoDocumentoIvaEntrata_documento" class="aggiornaDocumentoEntrataDatiIvaAction" method="redirezioneAggiornamentoDocumentoIvaEntrata">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoIvaEntrata</param>
+				<param name="uidSubdocumentoIva">${uidSubdocumentoIva}</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_redirezioneAggiornamentoDocumentoIvaEntrata_quota" class="aggiornaDocumentoEntrataDatiIvaAction" method="redirezioneAggiornamentoDocumentoIvaEntrata">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoIvaEntrata</param>
+				<param name="uidSubdocumentoIva">${uidSubdocumentoIva}</param>
+				<param name="tipoSubdocumentoIvaQuota">true</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_ottieniQuoteRilevantiIva" class="aggiornaDocumentoEntrataDatiIvaAction" method="ottieniQuoteRilevantiIva">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					listaQuoteRilevantiIva.*
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiornamentoDocumentoEntrata_attivaRegistrazioniContabili" class="aggiornaDocumentoEntrataAnagraficaAction" method="attivaRegistrazioniContabili">
+			<result name="success">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
+			<result name="proceed" type="redirectAction">
+				<param name="actionName">gestionePrimaNotaIntegrataFIN_impostaGestioneDaCDUDocumento</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistrazione">${uidDaCompletare}</param>
+				<param name="validazione">true</param>
+			</result>
+		</action>
+		<!-- SIAC-5333 -->
+		
+		<action name="aggiornamentoDocumentoEntrata_controllaNecessitaRichiestaUlterioreConferma" class="aggiornaDocumentoEntrataAnagraficaAction" method="controllaNecessitaRichiestaUlterioreConferma">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					abilitatoPrimaNotaDaFinanziaria,
+					esisteUnaRegistrazioneNonAnnullataPerLAccertamentoAssociatoAllaQuota,
+					errori.*
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!-- ****************************************************************************************************** -->
+		<!-- ************************************** Consultazione ************************************************* -->
+		<!-- ****************************************************************************************************** -->
+
+		<action name="consultaDocumentoEntrata" class="consultaDocumentoEntrataAction">
+			<result name="success" type="redirectAction">consultaDocumentoEntrata_loadPage</result>
+			<result name="input">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+		</action>
+		<action name="consultaDocumentoEntrata_loadPage" class="consultaDocumentoEntrataAction" method="loadPage">
+			<result name="success">/jsp/documento/consultaDocumentoEntrata.jsp</result>
+		</action>
+		<action name="consultaDocumentoEntrata_caricamentoQuote" class="consultaDocumentoEntrataAction" method="caricamentoQuote">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">numeroQuote</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="consultaDocumentoEntrata_caricamentoQuoteSpesa" class="consultaDocumentoEntrataAction" method="caricamentoQuoteSpesa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleQuoteSpesa</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<!-- JIRA 5154 -->
+		<action name="consultaDocumentoEntrata_caricamentoQuoteEntrata" class="consultaDocumentoEntrataAction" method="caricamentoQuoteEntrata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleQuote</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="consultaDocumentoEntrata_caricamentoQuoteIva" class="consultaDocumentoEntrataAction" method="caricamentoQuoteIva">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="consultaDocumentoEntrata_caricaNotaCredito" class="consultaDocumentoEntrataAction" method="caricaNotaCredito">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					notaCredito\.totaleImportoDaDedurreQuote,
+					notaCredito\.totaleImportoQuote,
+					notaCredito\.importoTotaleNoteCollegate,
+					notaCredito\.importoTotaleDaDedurreSuFatturaNoteCollegate
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="consultaDocumentoEntrata_caricamentoQuoteNotaCredito" class="consultaDocumentoEntrataAction" method="caricamentoQuoteNotaCredito">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="consultaDocumentoEntrataOttieniListaDocumentiCollegati" class="consultaDocumentoEntrataAction" method="ottieniListaDocumentiCollegati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaDocumentiCollegati.*
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="consultaDocumentoEntrata_caricaDettaglioRegistrazioneIva" class="consultaDocumentoEntrataAction" method="caricaDettaglioRegistrazioneIva">
+			<result name="success" type="customJSON">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					quotaIvaDifferita.*
+				</param>
+			</result>
+		</action>
+
+		<action name="consultaDocumentoEntrata_caricaSubdocumento" class="consultaDocumentoEntrataAction" method="caricaSubdocumento">
+			<result name="success">/jsp/documento/consultazione/consultaDocEntrata_collapseQuota.jsp</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<!-- ****************************************************************************************************** -->
+		<!-- ******************************************** Ricerca ************************************************* -->
+		<!-- ****************************************************************************************************** -->
+
+		<action name="ricercaDocumentoEntrata" class="ricercaDocumentoEntrataAction">
+			<result name="success">/jsp/documento/ricercaDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+
+		<action name="effettuaRicercaDocumentoEntrata" class="ricercaDocumentoEntrataAction" method="ricercaDocumento">
+			<result name="input">/jsp/documento/ricercaDocumentoEntrata.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaDocumentoEntrata" class="risultatiRicercaDocumentoEntrataAction">
+			<result name="success">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+
+		<action name="risultatiRicercaDocumentoEntrataAjax" class="risultatiRicercaDocumentoEntrataAjaxAction">
+			<result type="dataTable" />
+		</action>
+
+		<action name="risultatiRicercaDocumentoEntrataAggiorna" class="risultatiRicercaDocumentoEntrataAction" method="aggiorna">
+			<result name="input">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoDaAggiornare">${uidDaAggiornare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaDocumentoEntrataAnnulla" class="risultatiRicercaDocumentoEntrataAction" method="annulla">
+			<result name="success">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+		</action>
+
+		<action name="risultatiRicercaDocumentoEntrataConsulta" class="risultatiRicercaDocumentoEntrataAction" method="consulta">
+			<result name="input">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaDocumentoEntrataDettaglioQuote" class="risultatiRicercaDocumentoEntrataAction" method="ottieniListaQuoteEntrata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,totaleQuote</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaSinteticaQuoteDocumentoEntrataAjax" class="risultatiRicercaSinteticaQuoteDocumentoEntrataAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+
+		<!-- SIAC-6565 -->		
+		<action name="risultatiRicercaDocumentoEntrataEmettiFatturaFel" class="risultatiRicercaDocumentoEntrataAction" method="emettiFatturaFel">
+			<result name="success">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/documento/risultatiRicercaDocumentoEntrata.jsp</result>
+		</action>
+		
+		<!-- JIRA  5154 -->
+		<action name="risultatiRicercaSinteticaQuoteDocumentoEntrataCollegatoAjax" class="risultatiRicercaSinteticaQuoteDocumentoEntrataCollegatoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaSinteticaQuoteDocumentoEntrataPerIvaAjax" class="risultatiRicercaSinteticaQuoteDocumentoEntrataPerIvaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaSinteticaQuoteDocumentoEntrataPerNotaCreditoAjax" class="risultatiRicercaSinteticaQuoteDocumentoEntrataPerNotaCreditoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="risultatiRicercaDocumentoEntrata_attivaRegistrazioniContabili" class="risultatiRicercaDocumentoEntrataAction" method="attivaRegistrazioniContabili">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="risultatiRicercaQuoteEntrataAjax" class="risultatiRicercaQuoteEntrataAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaQuoteDaEmettereEntrataAjax" class="risultatiRicercaQuoteDaEmettereEntrataAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="ricercaDocumentoEntrataAjax" class="ricercaDocumentoEntrataAjaxAction" method="ricerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, informazioni.*,importoTotale</param>
+			</result>
+		</action>
+		<action name="ricercaDocumentoEntrataAjax_ricercaDocumentoModale" class="ricercaDocumentoEntrataAjaxAction" method="ricercaDocumentoModale">
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		<action name="ricercaDocumentoEntrataAjax_ricercaQuoteDocumentoEntrata" class="ricercaDocumentoEntrataAjaxAction" method="ricercaQuoteDocumentoEntrata">
+			<result name="input" type="customMessagesJSON"/>
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaSubdocumentoEntrata.*</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

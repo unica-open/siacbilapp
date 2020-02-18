@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="categoriacespiti" extends="capitoloDefault" namespace="/">
+		<action name="inserisciCategoriaCespiti" class="inserisciCategoriaCespitiAction">
+			<result name="success">/jsp/cespiti/categoriacespiti/inserisciCategoriaCespiti.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="inserisciCategoriaCespiti_salva" class="inserisciCategoriaCespitiAction" method="salva">
+			<result name="input">/jsp/cespiti/categoriacespiti/inserisciCategoriaCespiti.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaCategoriaCespiti</param>
+                <param name="namespace">/</param>
+                <param name="uidCategoriaCespiti">${uidCategoriaCespitiInserita}</param>
+            </result>
+		</action>
+		<action name="aggiornaCategoriaCespiti" class="aggiornaCategoriaCespitiAction">
+			<result name="input">/jsp/failure.jsp</result>
+			<result name="success">/jsp/cespiti/categoriacespiti/aggiornaCategoriaCespiti.jsp</result>			
+		</action>
+		
+		<action name="aggiornaCategoriaCespiti_salva" class="aggiornaCategoriaCespitiAction" method = "salva">
+			<result name="input">/jsp/cespiti/categoriacespiti/aggiornaCategoriaCespiti.jsp</result>
+			<result name="success">/jsp/cespiti/categoriacespiti/aggiornaCategoriaCespiti.jsp</result>			
+		</action>
+		
+		<action name="aggiornaCategoriaCespiti_ricaricaDaAnnulla" class="aggiornaCategoriaCespitiAction" method = "ricaricaDaAnnulla">
+			<result name="input">/jsp/cespiti/categoriacespiti/aggiornaCategoriaCespiti.jsp</result>
+			<result name="success">/jsp/cespiti/categoriacespiti/aggiornaCategoriaCespiti.jsp</result>			
+		</action>
+		
+		
+		
+		<action name="ricercaCategoriaCespiti" class="ricercaCategoriaCespitiAction">
+			<result name="input">/jsp/cespiti/categoriacespiti/ricercaCategoriaCespiti.jsp</result>
+			<result name="success">/jsp/cespiti/categoriacespiti/ricercaCategoriaCespiti.jsp</result>			
+		</action>
+		<action name="ricercaCategoriaCespiti_effettuaRicerca" class="ricercaCategoriaCespitiAction" method="effettuaRicerca">
+			<result name="input">/jsp/cespiti/categoriacespiti/ricercaCategoriaCespiti.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaCategoriaCespiti</param>
+				<param name="namespace">/</param>
+			</result>		
+		</action>
+		<action name="risultatiRicercaCategoriaCespiti" class="risultatiRicercaCategoriaCespitiAction">
+			<result name="success">/jsp/cespiti/categoriacespiti/risultatiRicercaCategoriaCespiti.jsp</result>
+		</action>		
+		<action name="risultatiRicercaCategoriaCespitiAjax" class="risultatiRicercaCategoriaCespitiAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="risultatiRicercaCategoriaCespiti_aggiorna" class="risultatiRicercaCategoriaCespitiAction" method="aggiorna">
+			<result name="input">/jsp/cespiti/categoriacespiti/ricercaCategoriaCespiti.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaCategoriaCespiti</param>
+                <param name="namespace">/</param>
+                <param name="uidCategoriaCespiti">${uidCategoriaCespiti}</param>
+            </result>
+		</action>
+		
+		<action name="risultatiRicercaCategoriaCespiti_consulta" class="risultatiRicercaCategoriaCespitiAction" method="consulta">
+			<result name="input">/jsp/cespiti/categoriacespiti/ricercaCategoriaCespiti.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">consultaCategoriaCespiti</param>
+                <param name="namespace">/</param>
+                <param name="uidCategoriaCespiti">${uidCategoriaCespiti}</param>
+            </result>
+		</action>
+		<action name="risultatiRicercaCategoriaCespiti_eliminaCategoria" class="risultatiRicercaCategoriaCespitiAction" method="eliminaCategoria">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		
+		<action name="risultatiRicercaCategoriaCespiti_annullaCategoria" class="risultatiRicercaCategoriaCespitiAction" method="annullaCategoria">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		
+		<action name="consultaCategoriaCespiti" class="consultaCategoriaCespitiAction"> 
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaCategoriaCespiti</param>
+			</result>			
+			<result name="success">/jsp/cespiti/categoriacespiti/consultaCategoriaCespiti.jsp</result>			
+		</action>
+		
+	</package>
+</struts>

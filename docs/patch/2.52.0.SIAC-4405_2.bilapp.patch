@@ -1,0 +1,39 @@
+diff --git src/main/webapp/js/local/provvedimento/inserisci_modale.js src/main/webapp/js/local/provvedimento/inserisci_modale.js
+index eb4e9d5..36fcc48 100644
+--- src/main/webapp/js/local/provvedimento/inserisci_modale.js
++++ src/main/webapp/js/local/provvedimento/inserisci_modale.js
+@@ -2,7 +2,6 @@
+     'use strict';
+     var exports = {};
+     var msgImpostatoDalSistema = 'Impostato dal sistema';
+-    var hrefPulsanteSAC = '#modaleInserimentoProvvedimento_struttAmm';
+     var instance;
+ 
+     var ProvvedimentoInserimento = function(prefix, suffix, ztree) {
+@@ -61,7 +60,7 @@
+ 
+     function addField(fieldName, addToFields, upperCase) {
+         var field = $('#' + this.prefix + '_' + (upperCase ? fieldName.toUpperCase() : fieldName));
+-        this[fieldName] = field
++        this[fieldName] = field;
+         if(addToFields) {
+             this.fields.push(field);
+         }
+@@ -134,7 +133,7 @@
+         this.fieldset.overlay('show');
+         $.postJSON('inserisciProvvedimento_inserimento.do', obj)
+         .then(function(data) {
+-            if(impostaDatiNegliAlert(data.errori, this.alertErrori)) {
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+                 return $.Deferred().reject().promise();
+             }
+             return data.attoAmministrativo;
+@@ -148,7 +147,7 @@
+         var descSAC = provvedimento.strutturaAmmContabile && provvedimento.strutturaAmmContabile.codice + '-' + provvedimento.strutturaAmmContabile.descrizione || '';
+         var uidSAC = provvedimento.strutturaAmmContabile && provvedimento.strutturaAmmContabile.uid || '';
+         var hiddenStr = '<input type="hidden" name="' + this.originalFieldTipo.attr('name') + '" value="' + uidTipoAtto + '"/>';
+-        var informazioni = [provvedimento.anno + ' / ' + provvedimento.numero, descTipo, provvedimento.oggetto, descSAC, 'Stato: ' + provvedimento.statoOperativo]
++        var informazioni = [provvedimento.anno + ' / ' + provvedimento.numero, descTipo, provvedimento.oggetto, descSAC, 'Stato: ' + provvedimento.statoOperativo];
+ 
+         $('input[type="hidden"][name="' + this.originalFieldTipo.attr('name') + '"]').remove();
+ 

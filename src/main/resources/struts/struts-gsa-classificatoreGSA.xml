@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gsaclassificatoreGSA" extends="gengsaCommon" namespace="/">
+		
+		<!-- classificatori GSA -->
+		<action name="gestisciClassificatoriGSA" class="gestisciClassificatoreGSAAction" >
+			<result name="success">/jsp/gestioneSanitariaAccentrata/classifgsa/gestisciClassifGSA.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/classifgsa/gestisciClassifGSA.jsp</result>
+		</action>
+		<action name="gestisciClassificatoriGSA_cercaClassificatoreGSA" class="gestisciClassificatoreGSAAction" method="cercaClassificatoreGSA" >
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		<action name="gestisciClassificatoriGSA_aggiornaClassificatoreGSA" class="gestisciClassificatoreGSAAction" method="aggiornaClassificatoreGSA" >
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		<action name="gestisciClassificatoriGSA_inserisciClassificatoreGSAPadre" class="gestisciClassificatoreGSAAction" method="inserisciClassificatoreGSAPadre" >
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		<action name="gestisciClassificatoriGSA_inserisciClassificatoreGSAFiglio" class="gestisciClassificatoreGSAAction" method="inserisciClassificatoreGSAFiglio" >
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		<action name="gestisciClassificatoriGSA_annullaClassificatoreGSA" class="gestisciClassificatoreGSAAction" method="annullaClassificatoreGSA" >
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="elencoClassificatoreGSA" class="elencoClassificatoreGSAAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClassificatoreGSA.*</param>
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaClassificatoreGSAAjax" class="risultatiRicercaClassificatoreGSAAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+	</package>
+</struts>

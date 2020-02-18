@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="vincoli" extends="capitoloDefault" namespace="/">
+        
+        <action name="inserisciVincolo" class="inserisciVincoloAction">
+        	<result name="success">/jsp/vincoli/inserisciVincolo.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="inserimentoVincolo" class="inserisciVincoloAction" method="inserisciCDU">
+            <result name="input">/jsp/vincoli/inserisciVincolo.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaVincolo</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${idVincolo}</param>
+            </result>
+        </action>
+        
+        
+        
+        <action name="consultaVincolo" class="consultaVincoloAction">
+            <result name="success">/jsp/vincoli/consultaVincolo.jsp</result>
+            <result name="input">/jsp/vincoli/risultatiRicercaVincolo.jsp</result>
+        </action>
+        
+        <action name="consultaVincoloPerCapitolo" class="consultaVincoloAction" method="consultaVincoloPerCapitolo">
+            <result name="success">/jsp/vincoli/snipConsultaVincolo.jsp</result>
+        </action>
+        
+        
+        <action name="ricercaVincolo" class="ricercaVincoloAction">
+        	<result name="success">/jsp/vincoli/ricercaVincolo.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="effettuaRicercaVincolo" class="ricercaVincoloAction" method="ricercaCDU">
+            <result name="input">/jsp/vincoli/ricercaVincolo.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">risultatiRicercaVincolo</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+        
+        <action name="effettuaRicercaDettaglioCapitoliLegatiAlVincolo" class="ricercaVincoloAction" method="ricercaDettaglioCapitoli">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaCapitoliEntrata.*,
+            		listaCapitoliUscita.*
+            	</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaVincolo" class="risultatiRicercaVincoloAction">
+            <result name="success">/jsp/vincoli/risultatiRicercaVincolo.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="risultatiRicercaVincoloAjax" class="risultatiRicercaVincoloAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaVincoloAggiorna" class="risultatiRicercaVincoloAction" method="aggiorna">
+            <result name="input">/jsp/vincoli/risultatiRicercaVincolo.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaVincolo</param>
+            	<param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaVincoloAnnulla" class="risultatiRicercaVincoloAction" method="annulla">
+            <result name="success">/jsp/vincoli/risultatiRicercaVincolo.jsp</result>
+            <result name="input">/jsp/vincoli/risultatiRicercaVincolo.jsp</result>
+        </action>
+        
+        <action name="risultatiRicercaVincoloConsulta" class="risultatiRicercaVincoloAction" method="consulta">
+            <result name="input">/jsp/vincoli/risultatiRicercaVincolo.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">consultaVincolo</param>
+            	<param name="namespace">/</param>
+                <param name="uidDaConsultare">${uidDaConsultare}</param>
+            </result>
+        </action>
+        
+        
+        
+        
+        <action name="aggiornaVincolo" class="aggiornaVincoloAction">
+            <result name="success">/jsp/vincoli/aggiornaVincolo.jsp</result>
+            <result name="input">/jsp/vincoli/risultatiRicercaVincolo.jsp</result>
+        </action>
+        
+        <action name="aggiornamentoVincolo" class="aggiornaVincoloAction" method="aggiornaCDU">
+            <result name="success">/jsp/vincoli/aggiornaVincolo.jsp</result>
+            <result name="input">/jsp/vincoli/aggiornaVincolo.jsp</result>
+        </action>
+        
+        <action name="aggiornaVincoloLeggiCapitoliAssociati" class="aggiornaVincoloAction" method="leggiCapitoliAssociati">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		listaCapitoliEntrata.*,
+            		listaCapitoliUscita.*
+            	</param>
+            </result>
+        </action>
+        
+        <action name="aggiornaVincoloAssociaCapitoloEntrata" class="aggiornaVincoloAction" method="associaCapitoloEntrata">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaCapitoliEntrata.*,
+            		totaleStanziamentoEntrata0,
+            		totaleStanziamentoEntrata1,
+            		totaleStanziamentoEntrata2
+            	</param>
+            </result>
+        </action>
+        
+        <action name="aggiornaVincoloAssociaCapitoloUscita" class="aggiornaVincoloAction" method="associaCapitoloUscita">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaCapitoliUscita.*,
+            		totaleStanziamentoUscita0,
+            		totaleStanziamentoUscita1,
+            		totaleStanziamentoUscita2
+            	</param>
+            </result>
+        </action>
+        
+        <action name="aggiornaVincoloScollegaCapitoloEntrata" class="aggiornaVincoloAction" method="scollegaCapitoloEntrata">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaCapitoliEntrata.*,
+            		totaleStanziamentoEntrata0,
+            		totaleStanziamentoEntrata1,
+            		totaleStanziamentoEntrata2
+            	</param>
+            </result>
+        </action>
+        
+        <action name="aggiornaVincoloScollegaCapitoloUscita" class="aggiornaVincoloAction" method="scollegaCapitoloUscita">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaCapitoliUscita.*,
+            		totaleStanziamentoUscita0,
+            		totaleStanziamentoUscita1,
+            		totaleStanziamentoUscita2
+            	</param>
+            </result>
+        </action>
+        
+        <action name="controllaCapitoliAssociatiAlVincolo" class="aggiornaVincoloAction" method="controllaCapitoliAssociati">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*
+            	</param>
+            </result>
+        </action>
+        
+        
+    </package>
+</struts>

@@ -1,0 +1,35 @@
+Index: src/main/webapp/js/local/predocumento/predocumento.js
+===================================================================
+--- src/main/webapp/js/local/predocumento/predocumento.js	(revision 14740)
++++ src/main/webapp/js/local/predocumento/predocumento.js	(working copy)
+@@ -475,19 +475,18 @@
+         caricaListaCausale.call(this, 'ajax/leggiCausaliPreDocumentoEntrata.do', '#causaleEntrata', uid, false, false);
+     };
+ 
++    /**
++     * Carica la lista delle Causali di Entrata non annullate e popola la select relativa
++     * @param uid doAutoselect (boolean) se effettuare l'autoselect
++     * @return (function(number) => void) la funzione occupantesi del caricamento delle causali
++     */
++    exports.caricaListaCausaleEntrataNonAnnullate = function(doAutoselect) {
++        return function(uid) {
++            caricaListaCausale.call(this, 'ajax/leggiCausaliPreDocumentoEntrata_nonAnnullate.do', '#causaleEntrata', uid, doAutoselect, false);
++        };
++    };
++
+     /**
+-     * Carica la lista delle Causali di Entrata non annullate e popola la select relativa
+-     * @param uid doAutoselect (boolean) se effettuare l'autoselect
+-     * @param appendError  (boolean) se appendere gli errori
+-     * @return (function(number) => void) la funzione occupantesi del caricamento delle causali
+-     */
+-    exports.caricaListaCausaleEntrataNonAnnullate = function(doAutoselect) {
+-        return function(uid) {
+-            caricaListaCausale.call(this, 'ajax/leggiCausaliPreDocumentoEntrata_nonAnnullate.do', '#causaleEntrata', uid, doAutoselect, appendError);
+-        };
+-    };
+-
+-    /**
+      * Carica sede secondaria e modalità di pagamento del soggetto a partire dal codice.
+      */
+     exports.caricaSedeSecondariaEModalitaPagamento = function() {

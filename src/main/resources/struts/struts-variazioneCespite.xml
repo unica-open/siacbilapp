@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="variazioneCespite" extends="capitoloDefault" namespace="/">
+		<result-types>
+			<result-type name="variazioneCespiteJSON" class="it.csi.siac.siaccespapp.frontend.ui.action.variazionecespite.BaseInserisciVariazioneCespiteAction$VariazioneCespiteJSONResult" />
+		</result-types>
+	
+		<!-- COMMON -->
+		<action name="risultatiRicercaVariazioneCespiteAjax" class="risultatiRicercaVariazioneCespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+
+
+		<!-- RIVALUTAZIONE -->
+		<!-- Inserimento -->
+		<action name="inserisciRivalutazioneCespite" class="inserisciRivalutazioneCespiteAction">
+			<result name="success" type="redirectAction">inserisciRivalutazioneCespite_step1</result>
+		</action>
+		<action name="inserisciRivalutazioneCespite_step1" class="inserisciRivalutazioneCespiteAction" method="step1">
+			<result name="success">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step1.jsp</result>
+		</action>
+		<action name="inserisciRivalutazioneCespite_enterStep2" class="inserisciRivalutazioneCespiteAction" method="enterStep2">
+			<result name="success" type="redirectAction">inserisciRivalutazioneCespite_step2</result>
+			<result name="input">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step1.jsp</result>
+		</action>
+		<action name="inserisciRivalutazioneCespite_step2" class="inserisciRivalutazioneCespiteAction" method="step2">
+			<result name="success">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step2.jsp</result>
+		</action>
+		<action name="inserisciRivalutazioneCespite_backToStep1" class="inserisciRivalutazioneCespiteAction" method="backToStep1">
+			<result name="success" type="redirectAction">inserisciRivalutazioneCespite_step1</result>
+		</action>
+		
+		<action name="inserisciRivalutazioneCespite_enterStep3" class="inserisciRivalutazioneCespiteAction" method="enterStep3">
+			<result name="success" type="redirectAction">inserisciRivalutazioneCespite_step3</result>
+			<result name="input">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step2.jsp</result>
+		</action>
+		
+		<action name="inserisciRivalutazioneCespite_step3" class="inserisciRivalutazioneCespiteAction" method="step3">
+			<result name="success">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step3.jsp</result>
+		</action>
+		<action name="inserisciRivalutazioneCespite_backToStep2" class="inserisciRivalutazioneCespiteAction" method="backToStep2">
+			<result name="success" type="redirectAction">inserisciRivalutazioneCespite_step2</result>
+		</action>
+		
+		<!-- Arrivo da anagrafica cespite -->
+		<action name="inserisciRivalutazioneCespite_enterStep3Directly" class="inserisciRivalutazioneCespiteAction" method="enterStep3Directly">
+			<result name="success" type="redirectAction">inserisciRivalutazioneCespite_step3</result>
+			<result name="input">/jsp/cespiti/cespite/risultatiRicercaCespite.jsp</result>
+		</action>
+		
+		<action name="inserisciRivalutazioneCespite_backToRicerca" class="inserisciRivalutazioneCespiteAction" method="backToRicerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaCespite</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		
+		<action name="inserisciRivalutazioneCespite_inserisciVariazione" class="inserisciRivalutazioneCespiteAction" method="inserisciVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRivalutazioneCespite_aggiornaVariazione" class="inserisciRivalutazioneCespiteAction" method="aggiornaVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRivalutazioneCespite_eliminaVariazione" class="inserisciRivalutazioneCespiteAction" method="eliminaVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRivalutazioneCespite_caricaVariazione" class="inserisciRivalutazioneCespiteAction" method="caricaVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		<!-- Ricerca -->
+		<action name="ricercaRivalutazioneCespite" class="ricercaRivalutazioneCespiteAction">
+			<result name="success">jsp/cespiti/variazionecespite/ricercaVariazioneCespite.jsp</result>
+		</action>
+		<action name="ricercaRivalutazioneCespite_effettuaRicerca" class="ricercaRivalutazioneCespiteAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaRivalutazioneCespite</result>
+			<result name="input">jsp/cespiti/variazionecespite/ricercaVariazioneCespite.jsp</result>
+		</action>
+		<action name="risultatiRicercaRivalutazioneCespite" class="risultatiRicercaRivalutazioneCespiteAction">
+			<result name="success">jsp/cespiti/variazionecespite/risultatiRicercaVariazioneCespite.jsp</result>
+		</action>
+		<action name="risultatiRicercaRivalutazioneCespite_elimina" class="risultatiRicercaRivalutazioneCespiteAction" method="elimina">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaRivalutazioneCespite_caricaVariazione" class="risultatiRicercaRivalutazioneCespiteAction" method="caricaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,informazioni.*,variazioneCespite.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaRivalutazioneCespite_aggiorna" class="risultatiRicercaRivalutazioneCespiteAction" method="aggiorna">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaRivalutazioneCespite_consulta" class="risultatiRicercaRivalutazioneCespiteAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRivalutazioneCespite</param>
+				<param name="variazioneCespite.uid">${variazioneCespite.uid}</param>
+			</result>
+			<result name="input">jsp/cespiti/variazionecespite/risultatiRicercaVariazioneCespite.jsp</result>
+		</action>
+		<!-- Consultazione -->
+		<action name="consultaRivalutazioneCespite" class="consultaRivalutazioneCespiteAction">
+			<result name="success">jsp/cespiti/variazionecespite/consultaVariazioneCespite.jsp</result>
+		</action>
+		
+		<!-- Per la ricerca da consulta cespite -->
+		<action name="risultatiRicercaRivalutazioneCespiteAjax" class="risultatiRicercaRivalutazioneCespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+
+
+		<!-- SVALUTAZIONE -->
+		<!-- Inserimento -->
+		<action name="inserisciSvalutazioneCespite" class="inserisciSvalutazioneCespiteAction">
+			<result name="success" type="redirectAction">inserisciSvalutazioneCespite_step1</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_step1" class="inserisciSvalutazioneCespiteAction" method="step1">
+			<result name="success">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step1.jsp</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_enterStep2" class="inserisciSvalutazioneCespiteAction" method="enterStep2">
+			<result name="success" type="redirectAction">inserisciSvalutazioneCespite_step2</result>
+			<result name="input">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step1.jsp</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_step2" class="inserisciSvalutazioneCespiteAction" method="step2">
+			<result name="success">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step2.jsp</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_backToStep1" class="inserisciSvalutazioneCespiteAction" method="backToStep1">
+			<result name="success" type="redirectAction">inserisciSvalutazioneCespite_step1</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_enterStep3" class="inserisciSvalutazioneCespiteAction" method="enterStep3">
+			<result name="success" type="redirectAction">inserisciSvalutazioneCespite_step3</result>
+			<result name="input">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step2.jsp</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_step3" class="inserisciSvalutazioneCespiteAction" method="step3">
+			<result name="success">jsp/cespiti/variazionecespite/inserisciVariazioneCespite_step3.jsp</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_backToStep2" class="inserisciSvalutazioneCespiteAction" method="backToStep2">
+			<result name="success" type="redirectAction">inserisciSvalutazioneCespite_step2</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_enterStep3Directly" class="inserisciSvalutazioneCespiteAction" method="enterStep3Directly">
+			<result name="success" type="redirectAction">inserisciSvalutazioneCespite_step3</result>
+			<result name="input">/jsp/cespiti/cespite/risultatiRicercaCespite.jsp</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_backToRicerca" class="inserisciSvalutazioneCespiteAction" method="backToRicerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaCespite</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		<action name="inserisciSvalutazioneCespite_inserisciVariazione" class="inserisciSvalutazioneCespiteAction" method="inserisciVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciSvalutazioneCespite_aggiornaVariazione" class="inserisciSvalutazioneCespiteAction" method="aggiornaVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciSvalutazioneCespite_eliminaVariazione" class="inserisciSvalutazioneCespiteAction" method="eliminaVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciSvalutazioneCespite_caricaVariazione" class="inserisciSvalutazioneCespiteAction" method="caricaVariazione">
+			<result name="success" type="variazioneCespiteJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<!-- Ricerca -->
+		<action name="ricercaSvalutazioneCespite" class="ricercaSvalutazioneCespiteAction">
+			<result name="success">jsp/cespiti/variazionecespite/ricercaVariazioneCespite.jsp</result>
+		</action>
+		<action name="ricercaSvalutazioneCespite_effettuaRicerca" class="ricercaSvalutazioneCespiteAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaSvalutazioneCespite</result>
+			<result name="input">jsp/cespiti/variazionecespite/ricercaVariazioneCespite.jsp</result>
+		</action>
+		<action name="risultatiRicercaSvalutazioneCespite" class="risultatiRicercaSvalutazioneCespiteAction">
+			<result name="success">jsp/cespiti/variazionecespite/risultatiRicercaVariazioneCespite.jsp</result>
+		</action>
+		<action name="risultatiRicercaSvalutazioneCespite_elimina" class="risultatiRicercaSvalutazioneCespiteAction" method="elimina">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaSvalutazioneCespite_caricaVariazione" class="risultatiRicercaSvalutazioneCespiteAction" method="caricaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,informazioni.*,variazioneCespite.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaSvalutazioneCespite_aggiorna" class="risultatiRicercaSvalutazioneCespiteAction" method="aggiorna">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaSvalutazioneCespite_consulta" class="risultatiRicercaSvalutazioneCespiteAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaSvalutazioneCespite</param>
+				<param name="variazioneCespite.uid">${variazioneCespite.uid}</param>
+			</result>
+			<result name="input">jsp/cespiti/variazionecespite/risultatiRicercaVariazioneCespite.jsp</result>
+		</action>
+		<!-- Consultazione -->
+		<action name="consultaSvalutazioneCespite" class="consultaSvalutazioneCespiteAction">
+			<result name="success">jsp/cespiti/variazionecespite/consultaVariazioneCespite.jsp</result>
+		</action>
+		
+		<!-- Per la ricerca da consulta cespite -->
+		<action name="risultatiRicercaSvalutazioneCespiteAjax" class="risultatiRicercaSvalutazioneCespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+	</package>
+</struts>

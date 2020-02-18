@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="genPrimaNotaIntegrataDocumento" extends="gengsaCommon" namespace="/">
+			<!-- Completa -->
+			<!-- Spesa -->
+		<action name="completaDocumentoSpesaInsPrimaNotaIntegrataFIN" class="completaDocumentoSpesaInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaDocumentoSpesaInsPrimaNotaIntegrataFIN</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<action name="completaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1" class="completaDocumentoSpesaInsPrimaNotaIntegrataFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaDocumentoSpesaInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaDocumentoSpesaInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaDocumentoSpesaInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaDocumentoSpesaInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_enterDettaglio" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_dettaglio</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_dettaglio" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="dettaglio">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_backToStep1" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_proponiContiDaCausaleEP" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_eliminaConto" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		
+		
+			<!-- Entrata -->
+		<action name="completaDocumentoEntrataInsPrimaNotaIntegrataFIN" class="completaDocumentoEntrataInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaDocumentoEntrataInsPrimaNotaIntegrataFIN</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<action name="completaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1" class="completaDocumentoEntrataInsPrimaNotaIntegrataFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaDocumentoEntrataInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaDocumentoEntrataInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaDocumentoEntrataInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaDocumentoEntrataInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_enterDettaglio" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_dettaglio</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_dettaglio" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="dettaglio">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_backToStep1" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_proponiContiDaCausaleEP" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_eliminaConto" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		
+		
+		
+		
+		
+		
+			<!-- Validazione -->
+			<!-- Spesa -->
+		<action name="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN" class="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<!-- SIAC-5333 -->
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINdaCDUDocumento" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoSpesaInsPrimaNotaIntegrataFINdaCDUDocumento</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoDaAggiornare">${uidDocumento}</param>
+			</result>
+		</action>
+		<action name="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFINdaCDUDocumento" class="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoDaAggiornare">${uidDocumento}</param>
+			</result>
+		</action>
+		<action name="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1" class="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaValidaDocumentoSpesaInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_enterDettaglio" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_dettaglio</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_dettaglio" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="dettaglio">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_backToStep1" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_proponiContiDaCausaleEP" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_eliminaConto" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaValidaDocumentoSpesaInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		
+		
+			<!-- Entrata -->
+		<action name="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN" class="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinFIN</param>
+			</result>
+		</action>
+		<!-- SIAC-5333 -->
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINdaCDUDocumento" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoEntrataInsPrimaNotaIntegrataFINDaCDUDocumento</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoDaAggiornare">${uidDocumento}</param>
+			</result>
+		</action>
+		<action name="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFINDaCDUDocumento" class="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input" type="redirectAction">
+				<param name="actionName">aggiornaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumentoDaAggiornare">${uidDocumento}</param>
+			</result>
+		</action>
+		<action name="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1" class="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaValidaDocumentoEntrataInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_enterDettaglio" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="enterDettaglio">
+			<result name="success" type="redirectAction">completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_dettaglio</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciDocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_dettaglio" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="dettaglio">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_backToStep1" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_ottieniListaConti" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_proponiContiDaCausaleEP" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="proponiContiDaCausaleEP">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_eliminaConto" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_aggiornaConto" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_inserisciPrimaNota" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="inserisciPrimaNota">
+			<result name="success" type="redirectAction">completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataFINAction" method="aggiornaPrimaNota">
+			<result name="success" type="redirectAction">completaValidaDocumentoEntrataInsPrimaNotaIntegrataFIN_step1</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/gestisciSubdocumento.jsp</result>
+		</action>
+		<!-- Aggiornamento -->
+		<action name="aggiornaPrimaNotaIntegrataDocumentoFIN" class="aggiornaPrimaNotaIntegrataDocumentoFINAction">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaIntegrataDocumentoFIN_enterPage</result>
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataDocumentoFIN_enterPage" class="aggiornaPrimaNotaIntegrataDocumentoFINAction" method="enterPage">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.jsp</result>
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataDocumentoFIN_aggiorna" class="aggiornaPrimaNotaIntegrataDocumentoFINAction" method="aggiorna">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.jsp</result>
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataDocumentoFIN_ottieniListaConti" class="aggiornaContoPrimaNotaIntegrataDocumentoFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataDocumentoFIN_aggiornaConto" class="aggiornaContoPrimaNotaIntegrataDocumentoFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataDocumentoFIN_eliminaConto" class="aggiornaContoPrimaNotaIntegrataDocumentoFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataDocumentoFIN_inserisciConto" class="aggiornaContoPrimaNotaIntegrataDocumentoFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataDocumentoFIN_salvaDatiQuota" class="aggiornaContoPrimaNotaIntegrataDocumentoFINAction" method="salvaDatiQuota">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+			<result name="ask" type="customMessagesJSON" />
+		</action>
+		
+		<!-- SIAC-5176 ratei e risconti per documento -->
+		<action name="gestioneRiscontiPrimaNotaIntegrataDocumentoFIN" class="gestioneRateiERiscontiPrimaNotaIntegrataDocumentoFINAction">
+			<result name="success" type="redirectAction">gestioneRateiRiscontiDocumentoFIN_enterPageRisconti</result>
+		</action>
+		<action name="gestioneRateiPrimaNotaIntegrataDocumentoFIN" class="gestioneRateiERiscontiPrimaNotaIntegrataDocumentoFINAction">
+			<result name="success" type="redirectAction">gestioneRateiRiscontiDocumentoFIN_enterPageRatei</result>
+		</action>
+		<action name="gestioneRateiRiscontiDocumentoFIN_enterPageRatei" class="gestioneRateiERiscontiPrimaNotaIntegrataDocumentoFINAction" method="enterPageRatei">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/rateirisconti/rateiRiscontiDaDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/rateirisconti/rateiRiscontiDaDocumento.jsp</result>
+		</action>
+		<action name="gestioneRateiRiscontiDocumentoFIN_enterPageRisconti" class="gestioneRateiERiscontiPrimaNotaIntegrataDocumentoFINAction" method="enterPageRisconti">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/rateirisconti/rateiRiscontiDaDocumento.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/rateirisconti/rateiRiscontiDaDocumento.jsp</result>
+		</action>
+		<action name="gestioneRateiRiscontiPrimaNotaIntegrataDocumentoFIN_ottieniListaConti" class="gestioneRateiERiscontiPrimaNotaIntegrataDocumentoFINAction" method="ottieniListaConti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaElementoScritturaPerElaborazione.*, totaleDare.*, totaleAvere.*,rateo.*</param>
+			</result>
+		</action>
+		<action name="gestioneRateiRiscontiPrimaNotaIntegrataDocumentoFIN_impostaRateoDopoAggiornamento" class="gestioneRateiERiscontiPrimaNotaIntegrataDocumentoFINAction" method="impostaRateoDopoAggiornamento">
+			<result name="success" type="customMessagesJSON"/>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		
+	</package>
+</struts>

@@ -1,0 +1,501 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/classificatori/StrutturaAmministrativoContabileAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/classificatori/StrutturaAmministrativoContabileAjaxAction.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/ajax/classificatori/StrutturaAmministrativoContabileAjaxAction.java	(working copy)
+@@ -1,26 +1,26 @@
+-package it.csi.siac.siacbilapp.frontend.ui.action.ajax.classificatori;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericClassificatoriAjaxAction;
+-import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+-import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
++package it.csi.siac.siacbilapp.frontend.ui.action.ajax.classificatori;
++
++import java.util.List;
++
++import org.apache.commons.lang3.StringUtils;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
++import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericClassificatoriAjaxAction;
++import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
++import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.codifica.ElementoCodificaFactory;
+ import it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService;
+ import it.csi.siac.siaccorser.frontend.webservice.msg.LeggiStrutturaAmminstrativoContabile;
+ import it.csi.siac.siaccorser.frontend.webservice.msg.LeggiStrutturaAmminstrativoContabileResponse;
+-import it.csi.siac.siaccorser.model.AzioneConsentita;
+-import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+-import it.csi.siac.siaccorser.model.TipologiaClassificatore;
+-
+-import java.util.List;
+-
+-import org.apache.commons.lang3.StringUtils;
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+-
+-/**
++import it.csi.siac.siaccorser.model.AzioneConsentita;
++import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
++import it.csi.siac.siaccorser.model.TipologiaClassificatore;
++
++
++/**
+  * Classe per il caricamento <em>AJAX</em> della Struttura Amministrativo Contabile.
+  * 
+  * @author Alessandro Marchino
+@@ -43,58 +43,54 @@
+ 	protected LeggiStrutturaAmminstrativoContabile definisciRequest(Integer id) {
+ 		return model.creaRequestLeggiStrutturaAmminstrativoContabile();
+ 	}
+-
+-	@Override
+-	protected LeggiStrutturaAmminstrativoContabileResponse ottieniResponse(LeggiStrutturaAmminstrativoContabile request) {
+-		LeggiStrutturaAmminstrativoContabileResponse response;
+-		if(StringUtils.isNotBlank(model.getNomeAzioneDecentrata())) {
+-			response = gestisciEventualeAzioneDecentrata(request);
+-		} else if(listInSession != null) {
+-			response = new LeggiStrutturaAmminstrativoContabileResponse();
+-			response.setListaStrutturaAmmContabile(listInSession);
+-		} else {
+-			response = ottieniResponseDaServizio(request);
+-		}
+-		
+-		return response;
+-	}
+-
+-	/**
++
++	@Override
++	protected LeggiStrutturaAmminstrativoContabileResponse ottieniResponse(LeggiStrutturaAmminstrativoContabile request) {
++		if(StringUtils.isNotBlank(model.getNomeAzioneDecentrata())) {
++			return gestisciEventualeAzioneDecentrata(request);
++		}
++		return ottieniResponseDaServizio(request);
++	}
++
++	/**
+ 	 * Gestisce l'eventuale azione decentrata: ottiene le sole SAC relative all'azione, se effettivamente decentrata, o
+ 	 * riconduce al caso base.
+ 	 * 
+ 	 * @param request la request del servizio
+ 	 * 
+-	 * @return la response
+-	 */
+-	private LeggiStrutturaAmminstrativoContabileResponse gestisciEventualeAzioneDecentrata(LeggiStrutturaAmminstrativoContabile request) {
+-		LeggiStrutturaAmminstrativoContabileResponse response;
+-		// Controllo se l'azione sia decentrata: in tal caso mostro solo le SAC corrette
+-		AzioneConsentita azioneConsentita =
+-			ComparatorUtils.findAzioneConsentitaByNomeAzione(sessionHandler.getAzioniConsentite(),
+-				model.getNomeAzioneDecentrata());
+-		if(azioneConsentita != null) {
+-			// Sono decentrato: mostro solo le SAC che mi competono
+-			response = new LeggiStrutturaAmminstrativoContabileResponse();
+-			response.setListaStrutturaAmmContabile(azioneConsentita.getStrutture());
+-		} else {
+-			// Se non sono decentrato, ricado nel caso base
+-			response = ottieniResponseDaServizio(request);
+-		}
+-		return response;
+-	}
+-	
+-	/**
++	 * @return la response
++	 */
++	private LeggiStrutturaAmminstrativoContabileResponse gestisciEventualeAzioneDecentrata(LeggiStrutturaAmminstrativoContabile request) {
++		// Controllo se l'azione sia decentrata: in tal caso mostro solo le SAC corrette
++		AzioneConsentita azioneConsentita =
++			ComparatorUtils.findAzioneConsentitaByNomeAzione(sessionHandler.getAzioniConsentite(),
++				model.getNomeAzioneDecentrata());
++		if(azioneConsentita != null && azioneConsentita.getStrutture() != null && !azioneConsentita.getStrutture().isEmpty()) {
++			// Sono decentrato: mostro solo le SAC che mi competono
++			LeggiStrutturaAmminstrativoContabileResponse response = new LeggiStrutturaAmminstrativoContabileResponse();
++			response.setListaStrutturaAmmContabile(azioneConsentita.getStrutture());
++			return response;
++		}
++		return ottieniResponseDaServizio(request);
++	}
++	
++	/**
+ 	 * Ottiene la response invocando il servizio.
+ 	 * 
+ 	 * @param request la request tramite cui effettuare l'invocazione
+ 	 * 
+-	 * @return la response
+-	 */
+-	private LeggiStrutturaAmminstrativoContabileResponse ottieniResponseDaServizio(LeggiStrutturaAmminstrativoContabile request) {
+-		return classificatoreService.leggiStrutturaAmminstrativoContabile(request);
+-	}
+-
++	 * @return la response
++	 */
++	private LeggiStrutturaAmminstrativoContabileResponse ottieniResponseDaServizio(LeggiStrutturaAmminstrativoContabile request) {
++		if(listInSession != null) {
++			LeggiStrutturaAmminstrativoContabileResponse response = new LeggiStrutturaAmminstrativoContabileResponse();
++			response.setListaStrutturaAmmContabile(listInSession);
++			return response;
++		} 
++		
++		return classificatoreService.leggiStrutturaAmminstrativoContabile(request);
++	}
++
+ 	@Override
+ 	protected void impostaLaResponseInSessione(LeggiStrutturaAmminstrativoContabileResponse response) {
+ 		sessionHandler.setParametro(BilSessionParameter.LISTA_STRUTTURA_AMMINISTRATIVO_CONTABILE,
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/AzioniConsentite.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/AzioniConsentite.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/AzioniConsentite.java	(working copy)
+@@ -1,13 +1,13 @@
+-package it.csi.siac.siacbilapp.frontend.ui.util;
+-
+-import it.csi.siac.siaccorser.model.Azione;
+-import it.csi.siac.siaccorser.model.AzioneConsentita;
+-import it.csi.siac.siaccorser.model.AzioneRichiesta;
+-
+-import java.util.List;
+-
+-/**
+- * Enumeration che contiene una mappatura delle azioni consentite.
++package it.csi.siac.siacbilapp.frontend.ui.util;
++
++import java.util.List;
++
++import it.csi.siac.siaccorser.model.Azione;
++import it.csi.siac.siaccorser.model.AzioneConsentita;
++import it.csi.siac.siaccorser.model.AzioneRichiesta;
++
++/**
++ * Enumeration che contiene una mappatura delle azioni consentite.
+  * 
+  * @author Marchino Alessandro
+  * @version 1.0.0 24/09/2013
+@@ -65,18 +65,20 @@
+ 	DOCUMENTO_SPESA_CONSULTA("OP-SPE-ricDocSpe"),
+ 	DOCUMENTO_SPESA_AGGIORNA("OP-SPE-aggDocSpe"),
+ 	DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA("OP-Spe-aggDocSpeQuietanza"),
+-	DOCUMENTO_SPESA_ANNULLA("OP-SPE-aggDocSpe"),
+-	DOCUMENTO_SPESA_GESTIONE_ACQUISTI("OP-Spe-gestioneAcquisti"),
+-	DOCUMENTO_SPESA_DECENTRATO("OP-SPE-gestisciDocDecentrato"),
+-	
+-	DOCUMENTO_ENTRATA_CONSULTA("OP-ENT-ricDocEnt"),
+-	DOCUMENTO_ENTRATA_AGGIORNA("OP-ENT-aggDocEnt"),
+-	DOCUMENTO_ENTRATA_AGGIORNA_QUIENTANZA("OP-ENT-aggDocEntQuietanza"),
+-	DOCUMENTO_ENTRATA_ANNULLA("OP-ENT-aggDocEnt"),
+-	DOCUMENTO_ENTRATA_DECENTRATO("OP-ENT-gestisciDocDecentrato"),
+-	
+-	PROVVEDIMENTO_SPESA_GESTISCI("OP-SPE-gestProvvedimento"),
+-	// Gestione IVA
++	DOCUMENTO_SPESA_ANNULLA("OP-SPE-aggDocSpe"),
++	DOCUMENTO_SPESA_GESTIONE_ACQUISTI("OP-Spe-gestioneAcquisti"),
++	DOCUMENTO_SPESA_DECENTRATO("OP-SPE-gestisciDocDecentrato"),
++	DOCUMENTO_SPESA_INSERISCI("OP-SPE-insDocSpe"),
++	
++	DOCUMENTO_ENTRATA_CONSULTA("OP-ENT-ricDocEnt"),
++	DOCUMENTO_ENTRATA_AGGIORNA("OP-ENT-aggDocEnt"),
++	DOCUMENTO_ENTRATA_AGGIORNA_QUIENTANZA("OP-ENT-aggDocEntQuietanza"),
++	DOCUMENTO_ENTRATA_ANNULLA("OP-ENT-aggDocEnt"),
++	DOCUMENTO_ENTRATA_DECENTRATO("OP-ENT-gestisciDocDecentrato"),
++	DOCUMENTO_ENTRATA_INSERISCI("OP-ENT-insDocEnt"),
++	
++	PROVVEDIMENTO_SPESA_GESTISCI("OP-SPE-gestProvvedimento"),
++	// Gestione IVA
+ 	GESTIONE_IVA("OP-IVA-gestione"),
+ 	
+ 	// PreDocumento
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/DocumentoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/DocumentoDataAdapter.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/dataadapter/DocumentoDataAdapter.java	(working copy)
+@@ -1,16 +1,16 @@
+ package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.dataadapter;
+ 
+ import java.math.BigDecimal;
++
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BaseDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BooleanStringDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DateDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DocumentoDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.ImportoDocumentoDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.PlainNumberDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.SimpleDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.TypedDataInfo;
+ 
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BaseDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.BooleanStringDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.CurrencyDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DateDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.DocumentoDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.PlainNumberDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.SimpleDataInfo;
+-import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo.TypedDataInfo;
+-
+ /**
+  * Column Adapter per il Documento
+  * 
+@@ -26,13 +26,13 @@
+ 						new DocumentoDataInfo("Documento", "left", "doc_desc","doc_anno","doc_tipo_code","doc_numero"),
+ 						new PlainNumberDataInfo("Quota", "subdoc_numero"),
+ 						new DateDataInfo("Data", "doc_data_emissione"),
+-						new SimpleDataInfo("Stato", "doc_stato_desc"),
+-						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
+-						new BooleanStringDataInfo("Pagato CEC", "<div class=\"pull-centered\">{0}</div>", "subdoc_pagato_cec", "true", "S", "false", "N"),
+-						new CurrencyDataInfo("Importo", "doc_importo")
+-						),
+-				asList(
+-						new SimpleDataInfo("Documento", "doc_numero"),
++						new SimpleDataInfo("Stato", "doc_stato_desc"),
++						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
++						new BooleanStringDataInfo("Pagato CEC", "<div class=\"pull-centered\">{0}</div>", "subdoc_pagato_cec", "true", "S", "false", "N"),
++						new ImportoDocumentoDataInfo("Importo", "left", "subdoc_importo", "doc_importo")
++						),
++				asList(
++						new SimpleDataInfo("Documento", "doc_numero"),
+ 						new PlainNumberDataInfo("Anno", "doc_anno"),
+ 						new SimpleDataInfo("Tipo", "doc_tipo_code"),
+ 						new PlainNumberDataInfo("Quota", "subdoc_numero"),
+@@ -41,7 +41,7 @@
+ 						new SimpleDataInfo("Stato", "doc_stato_desc"),
+ 						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
+ 						new BooleanStringDataInfo("Pagato CEC", "<div class=\"pull-centered\">{0}</div>", "subdoc_pagato_cec", "true", "S", "false", "N"),
+-						new TypedDataInfo<BigDecimal>("Importo", "doc_importo")
++						new TypedDataInfo<BigDecimal>("Importo", "subdoc_importo")
+ 						),
+ 				asList(
+ 						new BaseDataInfo("testo", "Documento {0,number,#}/{1}/{2}", "doc_anno","doc_tipo_code","doc_numero")
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/datainfo/ImportoDocumentoDataInfo.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/datainfo/ImportoDocumentoDataInfo.java	(nonexistent)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/util/datainfo/ImportoDocumentoDataInfo.java	(working copy)
+@@ -0,0 +1,26 @@
++package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.datainfo;
++
++/**
++ * @author Marchino Alessandro
++ * @version 1.0.0 - 18/04/2017
++ */
++public class ImportoDocumentoDataInfo extends PopoverDataInfo {
++
++	/**
++	 * Costruttore
++	 * @param name il nome del campo
++	 * @param dataPlacement il posizionamento del popover
++	 * @param importoSubdocKey l'importo del subdoc
++	 * @param importoDocKey l'imprto del doc
++	 */
++	public ImportoDocumentoDataInfo(String name, String dataPlacement,String importoSubdocKey, String importoDocKey) {
++		super(name,
++				"{1,number,###,##0.00}",
++				dataPlacement,
++				"Importo documento",
++				"{0,number,###,##0.00}",
++				importoSubdocKey,
++				importoDocKey);
++	}
++
++}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/InserisciDocumentoSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/InserisciDocumentoSpesaAction.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/InserisciDocumentoSpesaAction.java	(working copy)
+@@ -9,12 +9,13 @@
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.context.annotation.Scope;
+ import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+-import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+-import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
++import org.springframework.web.context.WebApplicationContext;
++
++import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
++import it.csi.siac.siacbilapp.frontend.ui.util.AzioniConsentite;
++import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
++import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
++import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
+@@ -86,23 +87,34 @@
+ 		
+ 		// Caricamento delle liste
+ 		caricaListe();
+-		// Impostazione del flag per i dati di sospensione
+-		impostaFlagPerDatiSospensione();
+-		
+-		// Per la pulizia
+-		aggiungiInSessionePerPulizia(BilSessionParameter.MODEL_INSERISCI_DOCUMENTO_SPESA);
+-		
++		// Impostazione del flag per i dati di sospensione
++		impostaFlagPerDatiSospensione();
++		
++		// SIAC-4680
++		caricaAzionePerSAC();
++		
++		// Per la pulizia
++		aggiungiInSessionePerPulizia(BilSessionParameter.MODEL_INSERISCI_DOCUMENTO_SPESA);
++		
+ 		// Dati FEL
+ 		caricaDatiFatturaFEL();
+ 		caricaProvvisoriDiCassa();
+ 		
+ 		return SUCCESS;
+-	}
+-	
+-	/**
+-	 * Caricamento delle liste
+-	 */
+-	private void caricaListe(){
++	}
++	
++	/**
++	 * Caricamento dell'azione per la gestione della SAC
++	 */
++	private void caricaAzionePerSAC() {
++		// TODO: gestire anche la decentrata?
++		model.setNomeAzioneSAC(AzioniConsentite.DOCUMENTO_SPESA_INSERISCI.getNomeAzione());
++	}
++
++	/**
++	 * Caricamento delle liste
++	 */
++	private void caricaListe(){
+ 		checkAndObtainListaTipoDocumento(TipoFamigliaDocumento.SPESA, model.getFlagSubordinato(), model.getFlagRegolarizzazione());
+ 		checkAndObtainListaClassiSoggetto();
+ 		checkAndObtainListaCodiceUfficioDestinatarioPCC();
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(working copy)
+@@ -1153,22 +1153,24 @@
+ 		request.setDataOra(new Date());
+ 		request.setRichiedente(getRichiedente());
+ 		request.setBilancio(getBilancio());
+-		
+-		DocumentoSpesa documentoSpesa = getDocumento();
+-		documentoSpesa.setSoggetto(getSoggetto());
+-		// Il tipo di impresa è separato in quanto facoltativo
+-		documentoSpesa.setTipoImpresa(impostaEntitaFacoltativa(getTipoImpresa()));
+-		
+-		request.setDocumentoSpesa(documentoSpesa);
+-		
++		
++		DocumentoSpesa documentoSpesa = getDocumento();
++		documentoSpesa.setSoggetto(getSoggetto());
++		// Il tipo di impresa e' separato in quanto facoltativo
++		documentoSpesa.setTipoImpresa(impostaEntitaFacoltativa(getTipoImpresa()));
++		// SIAC-4679
++		documentoSpesa.setStrutturaAmministrativoContabile(impostaEntitaFacoltativa(documentoSpesa.getStrutturaAmministrativoContabile()));
++		
++		request.setDocumentoSpesa(documentoSpesa);
++		
+ 		return request;
+-	}
+-	
+-	/**
+-	 * Crea una resuest per la ricerca impegno er chiave utilizzando il servizio {@link RicercaImpegnoPerChiaveOttimizzato}
+-	 * @param impegno l'impegno per cui comporre la request
+-	 * @return la request creata
+-	 */
++	}
++	
++	/**
++	 * Crea una resuest per la ricerca impegno per chiave utilizzando il servizio {@link RicercaImpegnoPerChiaveOttimizzato}
++	 * @param impegno l'impegno per cui comporre la request
++	 * @return la request creata
++	 */
+ 	public RicercaImpegnoPerChiaveOttimizzato creaRequestRicercaImpegnoPerChiaveOttimizzato(Impegno impegno) {
+ 		RicercaImpegnoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaImpegnoPerChiaveOttimizzato.class);
+ 		
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/InserisciDocumentoSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/InserisciDocumentoSpesaModel.java	(revision 14597)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/InserisciDocumentoSpesaModel.java	(working copy)
+@@ -54,12 +54,14 @@
+ 	
+ 	private List<Integer> listaUidProvvisori = new ArrayList<Integer>();
+ 	private BigDecimal totaleProvvisori;
+-	
+-	// SIAC-4679
+-	private List<CausaleSospensione> listaCausaleSospensione = new ArrayList<CausaleSospensione>();
+-	
+-	/** Costruttore vuoto di default */
+-	public InserisciDocumentoSpesaModel() {
++	
++	// SIAC-4679
++	private List<CausaleSospensione> listaCausaleSospensione = new ArrayList<CausaleSospensione>();
++	// SIAC-4680
++	private String nomeAzioneSAC;
++	
++	/** Costruttore vuoto di default */
++	public InserisciDocumentoSpesaModel() {
+ 		setTitolo("Inserimento Documenti di Spesa");
+ 	}
+ 
+@@ -272,16 +274,24 @@
+ 	}
+ 	
+ 	/**
+-	 * @return the nomeAzioneSAC
+-	 */
+-	public String getNomeAzioneSAC() {
+-		return AzioniConsentite.PREDOCUMENTO_SPESA_INSERISCI.getNomeAzione();
+-	}
+-	/* Requests */
+-	
+-	/**
+-	 * Crea una request per il servizio di {@link InserisceDocumentoSpesa}.
+-	 * 
++	 * @return the nomeAzioneSAC
++	 */
++	public String getNomeAzioneSAC() {
++		return nomeAzioneSAC;
++	}
++
++	/**
++	 * @param nomeAzioneSAC the nomeAzioneSAC to set
++	 */
++	public void setNomeAzioneSAC(String nomeAzioneSAC) {
++		this.nomeAzioneSAC = nomeAzioneSAC;
++	}
++
++	/* Requests */
++
++	/**
++	 * Crea una request per il servizio di {@link InserisceDocumentoSpesa}.
++	 * 
+ 	 * @return la request creata
+ 	 */
+ 	public InserisceDocumentoSpesa creaRequestInserisceDocumentoSpesa() {
+@@ -303,16 +313,15 @@
+ 	private DocumentoSpesa creaDocumentoPerInserimento() {
+ 		DocumentoSpesa documento = getDocumento();
+ 		documento.setSoggetto(getSoggetto());
+-		documento.setEnte(getEnte());
+-		documento.setStatoOperativoDocumento(StatoOperativoDocumento.INCOMPLETO);
+-		
+-		TipoImpresa tipoImpresa = getTipoImpresa();
+-		if(tipoImpresa != null && tipoImpresa.getUid() != 0) {
+-			documento.setTipoImpresa(tipoImpresa);
+-		}
+-		
+-		if(uidDocumentoCollegato != null) {
+-			// É presente un id di un documento. Effettuo il collegamento
++		documento.setEnte(getEnte());
++		documento.setStatoOperativoDocumento(StatoOperativoDocumento.INCOMPLETO);
++		
++		// SIAC-4679: non passo la SAC se l'uid non e' valorizzato (il controllo DEVE essere presente anche su backend)
++		documento.setTipoImpresa(impostaEntitaFacoltativa(documento.getTipoImpresa()));
++		documento.setStrutturaAmministrativoContabile(impostaEntitaFacoltativa(documento.getStrutturaAmministrativoContabile()));
++		
++		if(uidDocumentoCollegato != null) {
++			// É presente un id di un documento. Effettuo il collegamento
+ 			DocumentoEntrata padre = new DocumentoEntrata();
+ 			padre.setUid(uidDocumentoCollegato.intValue());
+ 			documento.setListaDocumentiEntrataPadre(Arrays.asList(padre));

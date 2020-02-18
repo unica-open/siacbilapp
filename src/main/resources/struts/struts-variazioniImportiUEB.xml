@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="variazioniImportiUEB" extends="capitoloDefault" namespace="/">
+        
+        <result-types>
+			<result-type name="asyncResponsePresentVariazione" class="it.csi.siac.siacbilapp.frontend.ui.action.variazione.VariazioneBaseAction$AsyncResponsePresentVariazioneImportiResult" />
+			<result-type name="specificaVariazioneImportiUEB" class="it.csi.siac.siacbilapp.frontend.ui.action.variazione.VariazioneBaseAction$SpecificaVariazioneImportiUEBResult" />
+		</result-types>
+     
+        <!-- Definisci Variazione - ingresso pagina definisci variazione importi -->
+        <action name="definisciVariazioneImportiUEB" class="definisceVariazioneImportiUEBAction">
+            <result name="success">/jsp/variazione/definisceVariazioneImportiUEB.jsp</result>
+            <result name="input">/jsp/variazione/definisceVariazioneImportiUEB.jsp</result>
+        </action>
+        
+        <action name="leggiCapitoliNellaVariazioneUEB_definizione" class="definisceVariazioneImportiUEBAction" method="leggiCapitoliNellaVariazione">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    totaleStanziamentiEntrata.*,
+                    totaleStanziamentiCassaEntrata.*,
+                    totaleStanziamentiResiduiEntrata.*,
+                    totaleStanziamentiSpesa.*,
+                    totaleStanziamentiCassaSpesa.*,
+                    totaleStanziamentiResiduiSpesa.*
+                </param>
+        	</result>
+        </action>
+           
+         <!-- Definisci Variazione -->
+         <!-- <action name="definisciVariazioneImportiUEB" class="definisceVariazioneImportiUEBAction">
+			<result name="success_UEB">/jsp/variazione/definisceVariazioneImportiUEB.jsp</result>
+			<result name="success_noUEB">/jsp/variazione/definisceVariazioneImporti.jsp</result>
+			<result name="input_UEB">/jsp/variazione/definisceVariazioneImportiUEB.jsp</result>
+			<result name="input_noUEB">/jsp/variazione/definisceVariazioneImporti.jsp</result>
+		</action> -->
+         
+         
+        <action name="effettuaDefinisciVariazioneImportiUEB" class="definisceVariazioneImportiUEBAction" method="definisciVariazione">
+            <result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result> 
+        </action>
+        
+        <action name="definisciAggiornamentoVariazioneImportiUEBAsyncResponse" class="definisceVariazioneImportiUEBAction" method="definisciAsyncResponse">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>        	
+        	<result name="input" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>        	
+        </action>
+        <action name="definisceVariazioneImportiUEB_download" class="definisceVariazioneImportiUEBAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+        
+        <!-- Aggiornamento -->
+        <action name="aggiornaVariazioneImportiUEB" class="aggiornaVariazioneImportiUEBAction">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornamentoVariazioneImportiUEB</param>
+            </result>
+        </action>
+        <action name="aggiornamentoVariazioneImportiUEB" class="aggiornaVariazioneImportiUEBAction" method="enterPage">
+            <result name="success_NO_UEB">/jsp/variazione/aggiornaVariazioneImporti.jsp</result>
+            <result name="success">/jsp/variazione/aggiornaVariazioneImportiUEB.jsp</result>
+        </action>
+        
+        
+        <action name="redirectToDisabledAggiornamentoVariazioneImportiUEB" class="aggiornaVariazioneImportiUEBAction" method="redirezioneVersoPaginaDisabilitata">
+        	<result name="success">/jsp/variazione/aggiornaVariazioneImportiUEBDISABLED.jsp</result>
+        	<result name="input">/jsp/variazione/aggiornaVariazioneImportiUEB.jsp</result>
+        </action>
+ 
+
+
+ 		<action name="salvaAggiornamentoVariazioneImportiUEB" class="aggiornaVariazioneImportiUEBAction" method="salva">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>        	
+        	<result name="input" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>        	
+        </action>
+        
+        <action name="salvaAggiornamentoVariazioneImportiUEBAsyncResponse" class="aggiornaVariazioneImportiUEBAction" method="salvaAsyncResponse">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>        	
+        	<result name="input" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>        	
+        </action>
+        
+        
+
+<!--         <action name="concludiAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiUEBAction" method="concludi"> -->
+<!--         	<result name="success_NO_UEB">/jsp/variazione/aggiornaVariazioneImportiDISABLED.jsp</result> -->
+<!--         	<result name="success_UEB">/jsp/variazione/aggiornaVariazioneImportiUEBDISABLED.jsp</result> -->
+<!--         	<result name="input_NO_UEB">/jsp/variazione/aggiornaVariazioneImporti.jsp</result> -->
+<!--         	<result name="input_UEB">/jsp/variazione/aggiornaVariazioneImportiUEB.jsp</result> -->
+<!--         </action> -->
+
+		<action name="concludiAggiornamentoVariazioneImportiUEB" class="aggiornaVariazioneImportiUEBAction" method="concludi">
+			<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    richiediConfermaQuadratura.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>
+        	<result name="input" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    richiediConfermaQuadratura.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>
+        </action>
+        
+        <action name="concludiAggiornamentoVariazioneImportiUEBAsyncResponse" class="aggiornaVariazioneImportiUEBAction" method="concludiAsyncResponse">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    richiediConfermaQuadratura.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>
+        	<result name="input" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    richiediConfermaQuadratura.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>        	
+        </action>
+        
+        
+<!--         <action name="annullaAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiUEBAction" method="annulla"> -->
+<!--         	<result name="success_NO_UEB">/jsp/variazione/aggiornaVariazioneImportiDISABLED.jsp</result> -->
+<!--         	<result name="success_UEB">/jsp/variazione/aggiornaVariazioneImportiUEBDISABLED.jsp</result> -->
+<!--         	<result name="input_NO_UEB">/jsp/variazione/aggiornaVariazioneImporti.jsp</result> -->
+<!--         	<result name="input_UEB">/jsp/variazione/aggiornaVariazioneImportiUEB.jsp</result> -->
+<!--         </action> -->
+
+		<action name="annullaAggiornamentoVariazioneImportiUEB" class="aggiornaVariazioneImportiUEBAction" method="annulla">
+			<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>
+        	<result name="input" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>
+		</action>
+        
+        <action name="annullaAggiornamentoVariazioneImportiUEBAsyncResponse" class="aggiornaVariazioneImportiUEBAction" method="annullaAsyncResponse">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>
+        	<result name="input" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    isAsyncResponsePresent
+                </param>
+        	</result>
+        </action>
+        
+            <!-- ******** Wizard inserimento ******** -->
+        <!-- STEP 1 -->
+        <!-- <action name="esecuzioneStep1InserimentoVariazioniUEB" class="inserisciVariazioneImportiUEBAction" method="executeStep1">
+            <result name="input">/jsp/variazione/step1/scelta.jsp</result>
+            <result name="importi" type="redirectAction">
+                <param name="actionName">enterStep2InserimentoVariazioniImportiUEB</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="codifiche" type="redirectAction">
+                <param name="actionName">enterStep2InserimentoVariazioniCodifiche</param>
+                <param name="namespace">/</param>
+            </result>
+        </action> -->
+        
+        <!-- STEP 2 -->
+        <action name="enterStep2InserimentoVariazioniImportiUEB" class="inserisciVariazioneImportiUEBAction" method="enterStep2">
+            <result name="success">/jsp/variazione/step2/variazioneStep2UEB.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="returnToStep2InserimentoVariazioniImportiUEB" class="inserisciVariazioneImportiUEBAction" method="returnToStep2">
+            <result name="success">/jsp/variazione/step2/variazioneStep2UEB.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="esecuzioneStep2InserimentoVariazioniImportiUEB" class="inserisciVariazioneImportiUEBAction" method="executeStep2">
+            <result name="input">/jsp/variazione/step2/variazioneStep2UEB.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">enterStep3InserimentoVariazioniImportiConUEB</param>
+                <param name="namespace">/</param>
+            </result> 
+         </action>
+        
+        <!-- STEP 3 -->
+        <action name="enterStep3InserimentoVariazioniImportiConUEB" class="inserisciVariazioneImportiUEBAction" method="enterStep3">
+            <result name="success">/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <!-- <action name="esecuzioneStep3InserimentoVariazioniImportiConUEB" class="inserisciVariazioneImportiUEBAction" method="executeStep3">
+            <result name="success" type="redirectAction">
+                <param name="actionName">enterStep4InserimentoVariazioniImportiUEB</param>
+                <param name="namespace">/</param>
+            </result>
+            <result name="input">/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp</result>
+        </action> -->
+        
+        <action name="esecuzioneStep3InserimentoVariazioniImportiConUEB" class="inserisciVariazioneImportiUEBAction" method="executeStep3">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+		
+		<action name="inserisciVariazioneImportiUEBAction_ottieniResponseExecuteStep3Async" class="inserisciVariazioneImportiUEBAction" method="ottieniResponseExecuteStep3Async">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+		<action name="inserisciVariazioneImportiUEB_download" class="inserisciVariazioneImportiUEBAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+                
+        <!-- STEP 4 -->
+        <action name="enterStep4InserimentoVariazioniImportiUEB" class="inserisciVariazioneImportiUEBAction" method="enterStep4">
+            <result name="success">/jsp/variazione/step4/variazioneStep4.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <!-- Azioni AJAX -->
+        
+        	<!-- @@@@ INSERIMENTO @@@@ -->
+        <!-- ***** Con UEB ***** -->
+        <action name="leggiCapitoliDaInserireNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="leggiCapitoliDaInserireNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.listaUEBDaInserireNellaVariazione.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="leggiCapitoliNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="leggiCapitoliNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                    
+                </param>
+        	</result>
+        </action>
+        
+        <action name="controllaAzioniConsentiteAllUtente_Ueb" class="inserisciVariazioneImportiUEBAction" method="controllaAzioniConsentiteAllUtenteUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			specificaUEB\.utenteAbilitatoAdInserimento,
+        			specificaUEB\.utenteAbilitatoAdAnnullamento
+                </param>
+        	</result>
+        </action>
+        
+        <action name="aggiungiCapitoliDaInserireNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="aggiungiCapitoliDaInserireNellaVariazioneUEB">
+        	<!-- result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.listaUEBDaInserireNellaVariazione.*
+                </param>
+        	</result-->
+        	<result name="success" type="specificaVariazioneImportiUEB" />
+        </action>
+        
+        <action name="aggiungiCapitoliNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="aggiungiCapitoliNellaVariazioneUEB">
+        	<!-- result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                </param>
+        	</result-->
+        	<result name="success" type="specificaVariazioneImportiUEB" />
+        </action>
+        
+        <action name="aggiornaCapitoliDaInserireNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="aggiornaCapitoliDaInserireNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.listaUEBDaInserireNellaVariazione.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="popolaListaAggiornamentoImportiNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="popolaListaAggiornamentoImportiNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="includeProperties">
+        			specificaUEB\.listaUEBDaInserireNellaVariazione.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornaCapitoliNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="aggiornaCapitoliNellaVariazioneUEB">
+        	<!-- result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                </param>
+        	</result-->
+        	<result name="success" type="specificaVariazioneImportiUEB" />
+        </action>
+        
+        <action name="eliminaCapitoliDaInserireNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="eliminaCapitoliDaInserireNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.listaUEBDaInserireNellaVariazione.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="eliminaCapitoliNellaVariazione_importiUeb" class="inserisciVariazioneImportiUEBAction" method="eliminaCapitoliNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="annullaCapitoli_importiUeb" class="inserisciVariazioneImportiUEBAction" method="annullaCapitoloUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="redirezioneVersoNuovoCapitolo_importiUeb" class="inserisciVariazioneImportiUEBAction" method="redirezioneVersoNuovoCapitoloUEB">
+        	<result name="uscita_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        	<result name="uscita_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaGestione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        	<result name="entrata_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        	<result name="entrata_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        </action>
+        
+        <action name="redirezioneVersoNuovaUEB_importiUeb" class="inserisciVariazioneImportiUEBAction" method="redirezioneVersoNuovoUEB">
+        	<result name="uscita_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloUscitaPrevisione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloUscitaPrevisione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloUscitaPrevisione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        	<result name="uscita_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaGestione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloUscitaGestione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloUscitaGestione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloUscitaGestione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        	<result name="entrata_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloEntrataPrevisione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloEntrataPrevisione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloEntrataPrevisione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        	<result name="entrata_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloEntrataGestione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloEntrataGestione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloEntrataGestione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${definisci.annoVariazione}</param>
+        	</result>
+        </action>      
+        
+        
+        	<!-- @@@@ AGGIORNAMENTO @@@@ -->
+        <!-- ***** Con UEB ***** -->
+       <!--  <action name="leggiCapitoliDaInserireNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="leggiCapitoliDaInserireNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                </param>
+        	</result>
+        </action> -->
+        
+        <action name="leggiCapitoliNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="leggiCapitoliNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    totaleStanziamentiEntrata.*,
+                    totaleStanziamentiCassaEntrata.*,
+                    totaleStanziamentiResiduiEntrata.*,
+                    totaleStanziamentiSpesa.*,
+                    totaleStanziamentiCassaSpesa.*,
+                    totaleStanziamentiResiduiSpesa.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="controllaAzioniConsentiteAllUtente_Ueb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="controllaAzioniConsentiteAllUtenteUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+        			specificaUEB\.utenteAbilitatoAdInserimento,
+        			specificaUEB\.utenteAbilitatoAdAnnullamento
+                </param>
+        	</result>
+        </action>
+        
+        <action name="aggiungiCapitoliDaInserireNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="aggiungiCapitoliDaInserireNellaVariazioneUEB">
+        	<!-- result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.listaUEBDaInserireNellaVariazione.*
+                </param>
+        	</result-->
+        	<result name="success" type="specificaVariazioneImportiUEB" />
+        </action>
+        
+        <action name="aggiungiCapitoliNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="aggiungiCapitoliNellaVariazioneUEB">
+        	<!-- result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                </param>
+        	</result-->
+        	<result name="success" type="specificaVariazioneImportiUEB" />
+        </action>
+        
+        <action name="aggiornaCapitoliDaInserireNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="aggiornaCapitoliDaInserireNellaVariazioneUEB">
+        	<!-- result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.listaUEBDaInserireNellaVariazione.*
+                </param>
+        	</result-->
+        	<result name="success" type="specificaVariazioneImportiUEB" />
+        </action>
+        
+        <action name="popolaListaAggiornamentoImportiNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="popolaListaAggiornamentoImportiNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="includeProperties">
+        			specificaUEB\.listaUEBDaInserireNellaVariazione.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornaCapitoliNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="aggiornaCapitoliNellaVariazioneUEB">
+        	<result name="success" type="specificaVariazioneImportiUEB" />
+        </action>
+        
+        <action name="eliminaCapitoliDaInserireNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="eliminaCapitoliDaInserireNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.listaUEBDaInserireNellaVariazione.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="eliminaCapitoliNellaVariazione_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="eliminaCapitoliNellaVariazioneUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="annullaCapitoli_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="annullaCapitoloUEB">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+        		<param name="includeProperties">
+                    errori.*,
+                    messaggi.*,
+                    informazioni.*,
+                    specificaUEB\.elementoImportiVariazione.*,
+                    specificaUEB\.listaUEBNellaVariazioneCollassate.*
+                </param>
+        	</result>
+        </action>
+        
+        <action name="redirezioneVersoNuovoCapitolo_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="redirezioneVersoNuovoCapitoloUEB">
+        	<result name="uscita_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        	<result name="uscita_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaGestione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        	<result name="entrata_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        	<result name="entrata_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        </action>
+        
+        <action name="redirezioneVersoNuovaUEB_importiUeb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="redirezioneVersoNuovoUEB">
+        	<result name="uscita_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloUscitaPrevisione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloUscitaPrevisione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloUscitaPrevisione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        	<result name="uscita_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapUscitaGestione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloUscitaGestione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloUscitaGestione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloUscitaGestione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        	<result name="entrata_previsione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataPrevisione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloEntrataPrevisione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloEntrataPrevisione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloEntrataPrevisione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        	<result name="entrata_gestione" type="redirectAction">
+        		<param name="actionName">inserisciCapEntrataGestione</param>
+                <param name="namespace">/</param>
+                <param name="capitoloEntrataGestione.numeroCapitolo">${specificaUEB.numeroCapitolo}</param>
+                <param name="capitoloEntrataGestione.numeroArticolo">${specificaUEB.numeroArticolo}</param>
+                <param name="capitoloEntrataGestione.numeroUEB">${specificaUEB.numeroUEB}</param>
+                <param name="annoImporti">${annoVariazione}</param>
+        	</result>
+        </action>       
+        <action name="aggiornaVariazioneImportiUEB_download" class="aggiornaVariazioneImportiUEBAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+        
+        
+        <action name="consultaVariazioneImportiUEB" class="consultaVariazioneImportiUEBAction">
+			<result name="success">/jsp/variazione/consultaVariazioneImportiUEB.jsp</result>
+			<result name="input">/jsp/variazione/risultatiRicercaVariazione.jsp</result>
+		</action>
+		
+		<action name="consultaVariazioneImportiUEB_leggiCapitoliNellaVariazione" class="consultaVariazioneImportiUEBAction" method="leggiCapitoliNellaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					totaleStanziamentiEntrata.*,
+					totaleStanziamentiCassaEntrata.*,
+					totaleStanziamentiResiduiEntrata.*,
+					totaleStanziamentiSpesa.*,
+					totaleStanziamentiCassaSpesa.*,
+					totaleStanziamentiResiduiSpesa.*
+				</param>
+			</result>
+		</action>
+		<action name="consultaVariazioneImportiUEB_download" class="consultaVariazioneImportiUEBAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!-- CONSULTA IMPORTI UEB -->
+		<action name="consultaImportiUEBVariazione" class="risultatiRicercaVariazioneAction" method="consultaImportiUEB">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaVariazioneImportiUEB</param>
+				<param name="namespace">/</param>
+				<param name="uidVariazione">${uidVariazioneDaConsultare}</param>
+			</result>
+		</action>
+		
+		
+		<!-- SIAC-5016 -->
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione_Ueb_consultazione" class="consultaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione_Ueb_consultazione" class="consultaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione_Ueb_consultazione" class="consultaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione_Ueb_consultazione" class="consultaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="leggiCapitoliNellaVariazione_Ueb_definizione" class="definisceVariazioneImportiUEBAction" method="leggiCapitoliNellaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					totaleStanziamentiEntrata.*,
+					totaleStanziamentiCassaEntrata.*,
+					totaleStanziamentiResiduiEntrata.*,
+					totaleStanziamentiSpesa.*,
+					totaleStanziamentiCassaSpesa.*,
+					totaleStanziamentiResiduiSpesa.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione_Ueb_definizione" class="definisceVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione_Ueb_definizione" class="definisceVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione_Ueb_definizione" class="definisceVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione_Ueb_definizione" class="definisceVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione_Ueb" class="inserisciVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaUEB\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione_Ueb" class="inserisciVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaUEB\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione_Ueb" class="inserisciVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaUEB\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione_Ueb" class="inserisciVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaUEB\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione_Ueb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione_Ueb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione_Ueb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione_Ueb_aggiornamento" class="aggiornaVariazioneImportiUEBAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+
+		
+
+    </package>
+</struts>

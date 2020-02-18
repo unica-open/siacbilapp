@@ -1,0 +1,274 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java	(revision 12165)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java	(working copy)
+@@ -9,8 +9,6 @@
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.ArithmeticComparator;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.BinaryOperator;
+ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
+ import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
+ import it.csi.siac.siaccorser.model.AzioneConsentita;
+@@ -581,8 +579,7 @@
+ 	 */
+ 	public String inserisciMovimentiIva() {
+ 		final String methodName = "inserisciMovimentiIva";
+-		BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, operator);
++		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'inserimento del movimento iva");
+ 			return SUCCESS;
+@@ -628,8 +625,7 @@
+ 	 */
+ 	public String aggiornaMovimentiIva() {
+ 		final String methodName = "aggiornaMovimentiIva";
+-		BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, operator);
++		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'aggiornamento del movimento iva");
+ 			return SUCCESS;
+@@ -869,7 +865,7 @@
+ 	public String inserisciMovimentiIvaNota() {
+ 		final String methodName = "inserisciMovimentiIvaNota";
+ 		AliquotaSubdocumentoIva asin = model.getAliquotaSubdocumentoIvaNota();
+-		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), false, ArithmeticComparator.LESSER_OR_EQUAL);
++		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), false, true);
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'inserimento del movimento iva per la nota");
+ 			return SUCCESS;
+@@ -904,7 +900,7 @@
+ 	public String aggiornaMovimentiIvaNota() {
+ 		final String methodName = "aggiornaMovimentiIvaNota";
+ 		AliquotaSubdocumentoIva asin = model.getAliquotaSubdocumentoIvaNota();
+-		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), true, ArithmeticComparator.LESSER_OR_EQUAL);
++		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), true, true);
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'aggiornamento del movimento iva per la nota");
+ 			return SUCCESS;
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java	(revision 12165)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java	(working copy)
+@@ -8,8 +8,6 @@
+ import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.ArithmeticComparator;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.BinaryOperator;
+ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
+ import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
+ import it.csi.siac.siaccorser.model.AzioneConsentita;
+@@ -639,8 +637,7 @@
+ 	 */
+ 	public String inserisciMovimentiIva() {
+ 		final String methodName = "inserisciMovimentiIva";
+-		BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, operator);
++		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if (hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'inserimento del movimento iva");
+ 			return SUCCESS;
+@@ -689,8 +686,7 @@
+ 	 */
+ 	public String aggiornaMovimentiIva() {
+ 		final String methodName = "aggiornaMovimentiIva";
+-		BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, operator);
++		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if (hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'aggiornamento del movimento iva");
+ 			return SUCCESS;
+@@ -944,7 +940,7 @@
+ 	public String inserisciMovimentiIvaNota() {
+ 		final String methodName = "inserisciMovimentiIvaNota";
+ 		AliquotaSubdocumentoIva asin = model.getAliquotaSubdocumentoIvaNota();
+-		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), false, ArithmeticComparator.LESSER_OR_EQUAL);
++		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), false, true);
+ 		if (hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'inserimento del movimento iva per la nota");
+ 			return SUCCESS;
+@@ -979,7 +975,7 @@
+ 	public String aggiornaMovimentiIvaNota() {
+ 		final String methodName = "aggiornaMovimentiIvaNota";
+ 		AliquotaSubdocumentoIva asin = model.getAliquotaSubdocumentoIvaNota();
+-		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), true, ArithmeticComparator.LESSER_OR_EQUAL);
++		validateMovimentiIva(asin, model.getListaAliquotaSubdocumentoIvaNota(), true, true);
+ 		if (hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'aggiornamento del movimento iva per la nota");
+ 			return SUCCESS;
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/GenericDocumentoIvaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/GenericDocumentoIvaAction.java	(revision 12165)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/GenericDocumentoIvaAction.java	(working copy)
+@@ -1,17 +1,10 @@
+ package it.csi.siac.siacfin2app.frontend.ui.action.documentoiva;
+ 
+-import java.math.BigDecimal;
+-import java.util.Arrays;
+-import java.util.List;
+-
+-import org.springframework.beans.factory.annotation.Autowired;
+-
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.functor.ArithmeticComparator;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.BinaryOperator;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
+ import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+@@ -48,6 +41,12 @@
+ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
+ 
++import java.math.BigDecimal;
++import java.util.Arrays;
++import java.util.List;
++
++import org.springframework.beans.factory.annotation.Autowired;
++
+ /**
+  * Classe generica di action per il Documento Iva.
+  * 
+@@ -427,7 +426,7 @@
+ 	 * @param operator                     l'operatore di controllo
+ 	 */
+ 	protected void validateMovimentiIva(AliquotaSubdocumentoIva aliquotaSubdocumentoIva, List<AliquotaSubdocumentoIva> listaAliquotaSubdocumentoIva,
+-			boolean validazioneAggiornamento, BinaryOperator<BigDecimal, BigDecimal, Boolean> operator) {
++			boolean validazioneAggiornamento, boolean isNotaCredito) {
+ 		if(aliquotaSubdocumentoIva == null) {
+ 			addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Movimento iva"));
+ 			return;
+@@ -434,9 +433,9 @@
+ 		}
+ 		AliquotaIva aliquotaIva = aliquotaSubdocumentoIva.getAliquotaIva();
+ 		
+-		// Non considero il caso dell'uguaglianza. Ma al momento non mi serve
+-		String errorString = (ArithmeticComparator.GREATER.equals(operator) || ArithmeticComparator.GREATER_OR_EQUAL.equals(operator)) ?
+-				"negativo" : "positivo";
++//		// Non considero il caso dell'uguaglianza. Ma al momento non mi serve
++//		String errorString = (ArithmeticComparator.GREATER.equals(operator) || ArithmeticComparator.GREATER_OR_EQUAL.equals(operator)) ?
++//				"negativo" : "positivo";
+ 		
+ 		checkNotNullNorInvalidUid(aliquotaIva, "Aliquota iva");
+ 		checkNotNull(aliquotaSubdocumentoIva.getImponibile(), "Imponibile");
+@@ -443,13 +442,11 @@
+ 		checkNotNull(aliquotaSubdocumentoIva.getImposta(), "Imposta");
+ 		checkNotNull(aliquotaSubdocumentoIva.getTotale(), "Totale");
+ 		
+-
+-		checkCondition(aliquotaSubdocumentoIva.getImponibile() == null || operator.performOperation(aliquotaSubdocumentoIva.getImponibile(), BigDecimal.ZERO),
+-			ErroreCore.FORMATO_NON_VALIDO.getErrore("Imponibile", ": non deve essere " + errorString));
+-		checkCondition(aliquotaSubdocumentoIva.getImposta() == null || operator.performOperation(aliquotaSubdocumentoIva.getImposta(), BigDecimal.ZERO),
+-			ErroreCore.FORMATO_NON_VALIDO.getErrore("Imposta", ": non deve essere " + errorString));
+-		checkCondition(aliquotaSubdocumentoIva.getTotale() == null || operator.performOperation(aliquotaSubdocumentoIva.getTotale(), BigDecimal.ZERO),
+-			ErroreCore.FORMATO_NON_VALIDO.getErrore("Totale", ": non deve essere " + errorString));
++		if(isNotaCredito){
++			checkCondition(aliquotaSubdocumentoIva.getImponibile().compareTo(BigDecimal.ZERO)<0 , ErroreCore.FORMATO_NON_VALIDO.getErrore("Imponibile", ": deve essere negativo"));
++			checkCondition(aliquotaSubdocumentoIva.getImposta().compareTo(BigDecimal.ZERO)<0 , ErroreCore.FORMATO_NON_VALIDO.getErrore("Impsta", ": deve essere negativo"));
++			checkCondition(aliquotaSubdocumentoIva.getTotale().compareTo(BigDecimal.ZERO)<0 , ErroreCore.FORMATO_NON_VALIDO.getErrore("Totale", ": deve essere negativo"));
++		}
+ 		
+ 		checkCondition(!hasErrori() &&
+ 			ArithmeticComparator.EQUAL.performOperation(
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaEntrataAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaEntrataAction.java	(revision 12165)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaEntrataAction.java	(working copy)
+@@ -5,8 +5,6 @@
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.ArithmeticComparator;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.BinaryOperator;
+ import it.csi.siac.siaccorser.model.errore.ErroreCore;
+ import it.csi.siac.siacfin2app.frontend.ui.model.documentoiva.InserisciDocumentoIvaEntrataModel;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceSubdocumentoIvaEntrata;
+@@ -295,8 +293,7 @@
+ 	 */
+ 	public String inserisciMovimentiIva() {
+ 		final String methodName = "inserisciMovimentiIva";
+-		BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, operator);
++		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'inserimento del movimento iva");
+ 			return SUCCESS;
+@@ -342,8 +339,7 @@
+ 	 */
+ 	public String aggiornaMovimentiIva() {
+ 		final String methodName = "aggiornaMovimentiIva";
+-		BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, operator);
++		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'aggiornamento del movimento iva");
+ 			return SUCCESS;
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaSpesaAction.java	(revision 12165)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/InserisciDocumentoIvaSpesaAction.java	(working copy)
+@@ -5,9 +5,6 @@
+ import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+-import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.ArithmeticComparator;
+-import it.csi.siac.siacbilapp.frontend.ui.util.functor.BinaryOperator;
+ import it.csi.siac.siacbilser.business.utility.BilUtilities;
+ import it.csi.siac.siaccorser.model.errore.ErroreCore;
+ import it.csi.siac.siacfin2app.frontend.ui.model.documentoiva.InserisciDocumentoIvaSpesaModel;
+@@ -470,8 +467,7 @@
+ 	 */
+ 	public String inserisciMovimentiIva() {
+ 		final String methodName = "inserisciMovimentiIva";
+-        BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-        validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, operator);
++        validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), false, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'inserimento del movimento iva");
+ 			return SUCCESS;
+@@ -517,8 +513,7 @@
+ 	 */
+ 	public String aggiornaMovimentiIva() {
+ 		final String methodName = "aggiornaMovimentiIva";
+-		BinaryOperator<BigDecimal, BigDecimal, Boolean> operator = model.getDocumento().getTipoDocumento().isNotaCredito() ? ArithmeticComparator.LESSER_OR_EQUAL : ArithmeticComparator.GREATER_OR_EQUAL;
+-		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, operator);
++		validateMovimentiIva(model.getAliquotaSubdocumentoIva(), model.getListaAliquotaSubdocumentoIva(), true, model.getDocumento().getTipoDocumento().isNotaCredito());
+ 		if(hasErrori()) {
+ 			log.info(methodName, "Errore nella validazione dell'aggiornamento del movimento iva");
+ 			return SUCCESS;
+Index: src/main/webapp/js/local/documento/aggiornaEntrataQuote.js
+===================================================================
+--- src/main/webapp/js/local/documento/aggiornaEntrataQuote.js	(revision 12165)
++++ src/main/webapp/js/local/documento/aggiornaEntrataQuote.js	(working copy)
+@@ -112,8 +112,11 @@
+      * @param data i dati forniti dal servizio
+      */
+     function completaAggiornamentoQuota(data) {
+-        impostaDatiNegliAlert(data.errori, doc.alertErrori, undefined, false);
+-        impostaDatiNegliAlert(data.messaggi, doc.alertMessaggi, undefined, false);
++    	if(impostaDatiNegliAlert(data.errori, doc.alertErrori, undefined, false)) {
++    		impostaDatiNegliAlert(data.messaggi, doc.alertMessaggi, undefined, false);    		
++    		return;
++    	}
++        impostaDatiNegliAlert(data.messaggi, doc.alertMessaggi, undefined, true);
+         // siac 2746
+         impostaDatiNegliAlert(data.informazioni, doc.alertInformazioni, undefined, true);
+ 
+@@ -203,7 +206,9 @@
+             data.proseguireConElaborazione = true;
+             data.proseguireConElaborazioneAttoAmministrativo = true;
+ 
+-            $.postJSON(url, data, endCallback).always(function() {
++            $.postJSON(url, data)
++            .then(endCallback)
++            .always(function() {
+                 spinner.removeClass("activated");
+                 conferma.removeClass("disabled");
+                 conferma.removeAttr("disabled");

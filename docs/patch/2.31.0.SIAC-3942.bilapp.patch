@@ -1,0 +1,109 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoSpesa.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoSpesa.java	(revision 12029)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoSpesa.java	(revision 12039)
+@@ -173,7 +173,7 @@
+ 			return -1;
+ 			
+ 		}
+-		return this.getUid()-other.getUid();
++		return this.getUid() - other.getUid();
+ 	}
+ 	
+ }
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoEntrata.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoEntrata.java	(revision 12029)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegatoEntrata.java	(revision 12039)
+@@ -106,7 +106,7 @@
+ 			return 1;
+ 			
+ 		}
+-		return this.getUid()-other.getUid();
++		return this.getUid() - other.getUid();
+ 	}
+ 
+ }
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java	(revision 12029)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java	(revision 12039)
+@@ -687,57 +687,36 @@
+ 		if(!(obj instanceof ElementoElencoDocumentiAllegato)) {
+ 			return false;
+ 		}
+-		@SuppressWarnings("rawtypes")
+-		ElementoElencoDocumentiAllegato other = (ElementoElencoDocumentiAllegato) obj;
++		ElementoElencoDocumentiAllegato<?, ?, ?, ?, ?> other = (ElementoElencoDocumentiAllegato<?, ?, ?, ?, ?>) obj;
+ 		EqualsBuilder eb = new EqualsBuilder();
+ 		
+-		// Elenco
+-		if(this.elencoDocumentiAllegato == other.elencoDocumentiAllegato) {
+-			return true;
+-		}
+-		if(this.elencoDocumentiAllegato == null || other.elencoDocumentiAllegato == null) {
+-			return false;
+-		}
+-		eb.append(this.elencoDocumentiAllegato.getNumero(), other.elencoDocumentiAllegato.getNumero());
+-		if(!eb.isEquals()) {
+-			return false;
+-		}
++		eb.append(this.elencoDocumentiAllegato != null, other.elencoDocumentiAllegato != null)
++			.append(this.documento != null, other.documento != null)
++			.append(this.documento.getTipoDocumento() != null, other.documento.getTipoDocumento() != null)
++			.append(this.subdocumento != null, other.subdocumento != null)
++			.append(this.movimentoGestione != null, other.movimentoGestione != null);
+ 		
+-		// Documento
+-		if(this.documento == other.documento) {
+-			return true;
++		if(this.elencoDocumentiAllegato != null && other.elencoDocumentiAllegato != null) {
++			eb.append(this.elencoDocumentiAllegato.getNumero(), other.elencoDocumentiAllegato.getNumero());
+ 		}
+-		if(this.documento == null || other.documento == null) {
+-			return false;
++		if(this.documento != null && other.documento != null) {
++			eb.append(this.documento.getAnno(), other.documento.getAnno())
++				.append(this.documento.getNumero(), other.documento.getNumero());
++			
++			if(this.documento.getTipoDocumento() != null && other.documento.getTipoDocumento() != null) {
++				eb.append(this.documento.getTipoDocumento().getCodice(), other.documento.getTipoDocumento().getCodice());
++			}
+ 		}
+-		eb.append(this.documento.getAnno(), other.documento.getAnno())
+-			.append(this.documento.getNumero(), other.documento.getNumero());
+-		if(!eb.isEquals()) {
+-			return false;
++		if(this.subdocumento != null && other.subdocumento != null) {
++			eb.append(this.subdocumento.getNumero(), other.subdocumento.getNumero());
+ 		}
+ 		
+-		// Subdocumento
+-		if(this.subdocumento == other.subdocumento) {
+-			return true;
++		if(this.movimentoGestione != null && other.movimentoGestione != null) {
++			eb.append(this.movimentoGestione.getAnnoMovimento(), other.movimentoGestione.getAnnoMovimento())
++				.append(this.movimentoGestione.getNumero(), other.movimentoGestione.getNumero());
+ 		}
+-		if(this.subdocumento == null || other.subdocumento == null) {
+-			return false;
+-		}
+-		eb.append(this.subdocumento.getNumero(), other.subdocumento.getNumero());
+-		if(!eb.isEquals()) {
+-			return false;
+-		}
++		eb.append(this.getUid(), other.getUid());
+ 		
+-		// Movimento gestione
+-		if(this.movimentoGestione == other.movimentoGestione) {
+-			return true;
+-		}
+-		if(this.movimentoGestione == null || other.movimentoGestione == null) {
+-			return false;
+-		}
+-		eb.append(this.movimentoGestione.getAnnoMovimento(), other.movimentoGestione.getAnnoMovimento())
+-			.append(this.movimentoGestione.getNumero(), other.movimentoGestione.getNumero());
+-		
+ 		return eb.isEquals();
+ 	}
+ 

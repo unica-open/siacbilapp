@@ -1,0 +1,13 @@
+Index: AggiornaVariazioneModel.java
+===================================================================
+--- AggiornaVariazioneModel.java	(revision 10896)
++++ AggiornaVariazioneModel.java	(revision 11004)
+@@ -968,7 +968,7 @@
+ 	 */
+ 	public void popolaStringaProvvedimento(AttoAmministrativo attoAmministrativo) {
+ 		String stringa = "";
+-		if(attoAmministrativo != null){
++		if(attoAmministrativo != null && attoAmministrativo.getTipoAtto() != null){
+ 			stringa = "Provvedimento: " + 
+ 					attoAmministrativo.getAnno() + " / " +
+ 					attoAmministrativo.getNumero() + " / " + 

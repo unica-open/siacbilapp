@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cassaEconomaleStampe" extends="capitoloDefault" namespace="/">
+		<action name="cassaEconomaleStampe" class="genericStampaCECAction">
+			<result name="input">/jsp/cassaEconomale/stampe/elencoStampe.jsp</result>
+			<result name="success">/jsp/cassaEconomale/stampe/elencoStampe.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_giornaleCassa" class="stampaCECGiornaleDiCassaAction">
+			<result name="success">/jsp/cassaEconomale/stampe/stampaGiornaleCassa.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_rendiconto" class="stampaCECRendicontoAction">
+			<result name="success">/jsp/cassaEconomale/stampe/rendiconto/step1.jsp</result>
+		</action>
+		<!-- stampa giornale di cassa -->
+		<action name="cassaEconomaleStampe_caricaUltimaDefinitivaGiornaleDiCassa" class="stampaCECGiornaleDiCassaAction" method="caricaUltimaDefinitiva">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					stampaGiornale.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="cassaEconomaleStampe_stampaGiornaleDiCassa" class="stampaCECGiornaleDiCassaAction" method="stampaGiornaleCassa">
+			<result name="success">/jsp/cassaEconomale/stampe/stampaGiornaleCassa.jsp</result>
+			<result name="input">/jsp/cassaEconomale/stampe/stampaGiornaleCassa.jsp</result>
+			
+		</action>
+		<action name="cassaEconomaleStampe_stampaGiornaleDiCassaValidazione" class="stampaCECGiornaleDiCassaAction" method="stampaGiornaleCassaValidazione">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					
+				</param>
+			</result>
+			<result name="input">/jsp/cassaEconomale/stampe/stampaGiornaleCassa.jsp</result>
+			
+		</action>
+		<!-- stampa rendiconto -->
+		<action name="cassaEconomaleStampe_caricaUltimaDefinitivaRendiconto" class="stampaCECRendicontoAction" method="caricaUltimaDefinitiva">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					stampaRendiconto.*
+				</param>
+			</result>
+		</action>
+		<action name="cassaEconomaleStampe_enterStep2" class="stampaCECRendicontoAction" method="enterStep2">
+			<result name="success" type="redirectAction">cassaEconomaleStampe_step2</result>
+			<result name="input">/jsp/cassaEconomale/stampe/rendiconto/step1.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_step2" class="stampaCECRendicontoAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/stampe/rendiconto/step2.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_backToStep1" class="stampaCECRendicontoAction" method="backToStep1">
+			<result name="success">/jsp/cassaEconomale/stampe/rendiconto/step1.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_enterStep3" class="stampaCECRendicontoAction" method="enterStep3">
+			<result name="success_definitiva" type="redirectAction">cassaEconomaleStampe_step3</result>
+			<result name="success_bozza" type="redirectAction">cassaEconomaleStampe_enterStep4</result>
+			<result name="input">/jsp/cassaEconomale/stampe/rendiconto/step2.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_step3" class="stampaCECRendicontoAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/stampe/rendiconto/step3.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_backToStep2" class="stampaCECRendicontoAction" method="backToStep2">
+			<result name="success">/jsp/cassaEconomale/stampe/rendiconto/step2.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_enterStep4" class="stampaCECRendicontoAction" method="enterStep4">
+			<result name="success" type="redirectAction">cassaEconomaleStampe_step4</result>
+			<result name="input_definitiva">/jsp/cassaEconomale/stampe/rendiconto/step3.jsp</result>
+			<result name="input_bozza">/jsp/cassaEconomale/stampe/rendiconto/step2.jsp</result>
+		</action>
+		<action name="cassaEconomaleStampe_step4" class="stampaCECRendicontoAction" method="step4">
+			<result name="success">/jsp/cassaEconomale/stampe/rendiconto/step4.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaRendicontoCassaDaStampareAjax" class="risultatiRicercaRendicontoCassaDaStampareAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<!-- Ricerca -->
+		
+		<action name="ricercaStampeCassaEconomale" class="ricercaStampeCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/stampe/ricercaStampeCassaEconomale.jsp</result>
+		</action>
+		
+		<action name="effettuaRicercaStampeCassaEconomale" class="ricercaStampeCassaEconomaleAction" method="ricerca">
+			<result name="success" type="redirectAction">risultatiRicercaStampeCassaEconomale</result>
+			<result name="input">/jsp/cassaEconomale/stampe/ricercaStampeCassaEconomale.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaStampeCassaEconomale" class="risultatiRicercaStampeCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/stampe/risultatiRicercaStampaCassaEconomale.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaStampeCassaEconomale_download" class="risultatiRicercaStampeCassaEconomaleAction" method="download">
+			<result name="success" type="stream">
+				<param name="contentType">${contentType}</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<result name="input">/jsp/cassaEconomale/stampe/risultatiRicercaStampaCassaEconomale.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaStampaCassaEconomaleAjax" class="risultatiRicercaStampaCassaEconomaleAjaxAction">
+			<result name="success" type="dataTable">
+				<param name="excludeProperties">aaData\[\d+]\.stampeCassaFile</param>
+			</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="preDocumentoEntrata" extends="capitoloDefault" namespace="/">
+		<result-types>
+			<result-type name="invocazioneAsincronaJSON" class="it.csi.siac.siacfin2app.frontend.ui.action.predocumento.RisultatiRicercaPreDocumentoGenericAction$InvocazioneAsincronaJSONResult" />
+		</result-types>
+	
+
+		<action name="inserisciPreDocumentoEntrata" class="inserisciPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/inserisciPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="inserimentoPreDocumentoEntrata" class="inserisciPreDocumentoEntrataAction" method="inserimento">
+			<result name="aggiorna" type="redirectAction">
+				<param name="actionName">aggiornaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaAggiornare">${uidPreDocumento}</param>
+			</result>
+			<result name="ricerca" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/inserisciPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="inserisciPreDocumentoEntrata_inserimentoRipetizione" class="inserisciPreDocumentoEntrataAction" method="inserimentoRipetizione">
+			<result name="success" type="redirectAction">
+				<param name="actionName">ripetiPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="preDocumento.uid">${preDocumento.uid}</param>
+			</result>
+			<result name="input">/jsp/predocumento/inserisciPreDocumentoEntrata.jsp</result>
+		</action>
+		
+		<action name="aggiornaPreDocumentoEntrata" class="aggiornaPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/aggiornaPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="aggiornamentoPreDocumentoEntrata" class="aggiornaPreDocumentoEntrataAction" method="aggiornamento">
+			<result name="aggiorna" type="redirectAction">
+				<param name="actionName">aggiornaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaAggiornare">${uidPreDocumentoDaAggiornare}</param>
+			</result>
+			<result name="ricerca" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/aggiornaPreDocumentoEntrata.jsp</result>
+		</action>
+		
+		<action name="consultaPreDocumentoEntrata" class="consultaPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/consultaPreDocumentoEntrata.jsp</result>
+		</action>
+
+		<action name="ricercaPreDocumentoEntrata" class="ricercaPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/ricercaPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="effettuaRicercaPreDocumentoEntrata" class="ricercaPreDocumentoEntrataAction" method="ricerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/ricercaPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrata" class="risultatiRicercaPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/risultatiRicercaPreDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrataAjax" class="risultatiRicercaPreDocumentoEntrataAjaxAction">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					sEcho,
+					iTotalRecords,
+					iTotalDisplayRecords,
+					iDisplayStart,
+					iDisplayLength,
+					aaData.*
+				</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrataAggiorna" class="risultatiRicercaPreDocumentoEntrataAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaAggiornare">${uidDaAggiornare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrataAnnulla" class="risultatiRicercaPreDocumentoEntrataAction" method="annulla">
+			<result name="success">/jsp/predocumento/risultatiRicercaPreDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/predocumento/risultatiRicercaPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrataConsulta" class="risultatiRicercaPreDocumentoEntrataAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaConsultare">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrataInserisci" class="risultatiRicercaPreDocumentoEntrataAction" method="inserisci">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrataRipeti" class="risultatiRicercaPreDocumentoEntrataAction" method="ripeti">
+			<result name="success" type="redirectAction">
+				<param name="actionName">ripetiPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="preDocumento.uid">${uidDaAggiornare}</param>
+			</result>
+		</action>
+		
+		<action name="ripetiPreDocumentoEntrata" class="ripetiPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/ripetiPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="ripetiPreDocumentoEntrata_inserimento" class="ripetiPreDocumentoEntrataAction" method="inserimento">
+			<result name="aggiorna" type="redirectAction">
+				<param name="actionName">aggiornaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidPreDocumentoDaAggiornare">${uidPreDocumento}</param>
+			</result>
+			<result name="ricerca" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/ripetiPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="ripetiPreDocumentoEntrata_inserimentoRipetizione" class="ripetiPreDocumentoEntrataAction" method="inserimentoRipetizione">
+			<result name="success" type="redirectAction">
+				<param name="actionName">ripetiPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="preDocumento.uid">${preDocumento.uid}</param>
+			</result>
+			<result name="input">/jsp/predocumento/ripetiPreDocumentoEntrata.jsp</result>
+		</action>
+		
+		
+		<!-- Async -->
+		<action name="risultatiRicercaPreDocumentoEntrataAssocia" class="risultatiRicercaPreDocumentoEntrataAction" method="associa">
+			<result name="success" type="invocazioneAsincronaJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrataDefinisci" class="risultatiRicercaPreDocumentoEntrataAction" method="definisci">
+			<result name="success" type="invocazioneAsincronaJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrata_apriAssociaConModifiche" class="risultatiRicercaPreDocumentoEntrataAction" method="apriAssociaConModifiche">
+			<result name="success">/jsp/predocumento/imputazioniContabiliPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrata_associaConModifiche" class="risultatiRicercaPreDocumentoEntrataAction" method="associaConModifiche">
+			<result name="success" type="invocazioneAsincronaJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPreDocumentoEntrata_aggiornaDataTrasmissione" class="risultatiRicercaPreDocumentoEntrataAction" method="aggiornaDataTrasmissione">
+			<result name="success" type="invocazioneAsincronaJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<!-- SIAC-6090 -->
+		<action name="completaDefinisciPreDocumentoEntrata" class="completaDefinisciPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/completaDefinisciPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="completaDefinisciPreDocumentoEntrata_completaDefinisci" class="completaDefinisciPreDocumentoEntrataAction" method="completaDefinisci">
+			<result name="success">/jsp/common/empty.jsp</result>
+			<result name="input">/jsp/predocumento/completaDefinisciPreDocumentoEntrata.jsp</result>
+		</action>
+		<action name="completaDefinisciPreDocumentoEntrata_cercaTotali" class="completaDefinisciPreDocumentoEntrataAction" method="cercaTotali">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					numeroPreDocumentiIncompleti, numeroPreDocumentiCompleti, numeroPreDocumentiAnnullatiDefiniti, numeroPreDocumentiTotale,
+					importoPreDocumentiIncompleti, importoPreDocumentiCompleti, importoPreDocumentiAnnullatiDefiniti, importoPreDocumentiTotale
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+	</package>
+</struts>

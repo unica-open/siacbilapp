@@ -1,0 +1,1259 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/result/StampaStreamResult.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/result/StampaStreamResult.java	(nonexistent)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/result/StampaStreamResult.java	(working copy)
+@@ -0,0 +1,24 @@
++package it.csi.siac.siacbilapp.frontend.ui.util.result;
++
++import org.apache.struts2.dispatcher.StreamResult;
++
++/**
++ * Result per lo stream della stampa
++ * @author Marchino Alessandro
++ * @version 1.0.0 - 06/04/2017
++ */
++public class StampaStreamResult extends StreamResult {
++
++	/** Per la serializzazione */
++	private static final long serialVersionUID = 1821334476671759764L;
++
++	/** Costruttore di default */
++	public StampaStreamResult() {
++		setContentType("${contentType}");
++		setContentLength("${contentLength}");
++		setInputName("inputStream");
++		setContentDisposition("filename=\"${fileName}\"");
++		setBufferSize(1024);
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAction.java	(working copy)
+@@ -60,11 +60,17 @@
+ 	protected boolean gestisciConsultazioneRendiconto(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
+ 		return instance.hasRendiconto()
+ 				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_CONSULTA_RENDICONTO, listaAzioniConsentite);
+-	}
+-	
+-	@Override
+-	protected String ottieniBaseActionUrl() {
+-		return "risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale";
+-	}
++	}
++	
++	@Override
++	protected boolean gestisciStampaRicevutaRendiconto(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
++		return instance.hasRendiconto()
++				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
++	}
++	
++	@Override
++	protected String ottieniBaseActionUrl() {
++		return "risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale";
++	}
+ 
+ }
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoSpeseCassaEconomaleAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoSpeseCassaEconomaleAjaxAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoSpeseCassaEconomaleAjaxAction.java	(working copy)
+@@ -60,11 +60,17 @@
+ 	protected boolean gestisciConsultazioneRendiconto(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
+ 		return instance.hasRendiconto()
+ 				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_CONSULTA_RENDICONTO, listaAzioniConsentite);
+-	}
+-	
+-	@Override
+-	protected String ottieniBaseActionUrl() {
+-		return "risultatiRicercaAnticipoSpeseCassaEconomale";
+-	}
++	}
++	
++	@Override
++	protected boolean gestisciStampaRicevutaRendiconto(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
++		return instance.hasRendiconto()
++				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
++	}
++	
++	@Override
++	protected String ottieniBaseActionUrl() {
++		return "risultatiRicercaAnticipoSpeseCassaEconomale";
++	}
+ 
+ }
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction.java	(working copy)
+@@ -61,11 +61,17 @@
+ 	protected boolean gestisciConsultazioneRendiconto(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
+ 		return instance.hasRendiconto()
+ 				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_CONSULTA_RENDICONTO, listaAzioniConsentite);
+-	}
+-	
+-	@Override
+-	protected String ottieniBaseActionUrl() {
+-		return "risultatiRicercaAnticipoSpesePerMissioneCassaEconomale";
+-	}
++	}
++	
++	@Override
++	protected boolean gestisciStampaRicevutaRendiconto(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
++		return instance.hasRendiconto()
++				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
++	}
++	
++	@Override
++	protected String ottieniBaseActionUrl() {
++		return "risultatiRicercaAnticipoSpesePerMissioneCassaEconomale";
++	}
+ 
+ }
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaRichiestaEconomaleAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaRichiestaEconomaleAjaxAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/ajax/cassaeconomale/richiestaeconomale/RisultatiRicercaRichiestaEconomaleAjaxAction.java	(working copy)
+@@ -41,28 +41,30 @@
+ 	
+ 	/** Stringhe HTML per azioni consentite */
+ 	private static final String AZIONI_CONSENTITE_BEGIN =
+-			"<div class='btn-group'>" +
+-				"<button class='btn dropdown-toggle' data-placement='left' data-toggle='dropdown' href='#'>Azioni <span class='caret'></span></button>" +
+-				"<ul class='dropdown-menu pull-right'>";
+-	private static final String AZIONI_CONSENTITE_AGGIORNA = 
+-			"<li><a class='aggiornaRichiestaEconomale' data-href='%baseActionUrl%_aggiorna.do?uidRichiesta=%source.uid%'>aggiorna</a></li>";
+-	private static final String AZIONI_CONSENTITE_ANNULLA = 
+-			"<li><a class='annullaRichiestaEconomale' data-prenotata='%prenotata%' data-href='%baseActionUrl%_annulla.do?uidRichiesta=%source.uid%'>annulla</a></li>";
+-	private static final String AZIONI_CONSENTITE_CONSULTA =
+-			"<li><a href='%baseActionUrl%_consulta.do?uidRichiesta=%source.uid%'>consulta</a></li>";
+-	private static final String AZIONI_CONSENTITE_RENDICONTA =
+-			"<li><a href='%baseActionUrl%_rendiconta.do?uidRichiesta=%source.uid%'>rendiconto</a></li>";
+-	private static final String AZIONI_CONSENTITE_AGGIORNA_RENDICONTO = 
+-			"<li><a href='%baseActionUrl%_aggiornaRendiconto.do?uidRichiesta=%rendiconto.uid%'>aggiorna rendiconto</a></li>";
+-	private static final String AZIONI_CONSENTITE_CONSULTA_RENDICONTO = 
+-			"<li><a href='%baseActionUrl%_consultaRendiconto.do?uidRichiesta=%rendiconto.uid%'>consulta rendiconto</a></li>";
++			"<div class='btn-group'>" +
++				"<button class='btn dropdown-toggle' data-placement='left' data-toggle='dropdown' href='#'>Azioni <span class='caret'></span></button>" +
++				"<ul class='dropdown-menu pull-right'>";
++	private static final String AZIONI_CONSENTITE_AGGIORNA =
++			"<li><a class='aggiornaRichiestaEconomale' data-href='%baseActionUrl%_aggiorna.do?uidRichiesta=%source.uid%'>aggiorna</a></li>";
++	private static final String AZIONI_CONSENTITE_ANNULLA =
++			"<li><a class='annullaRichiestaEconomale' data-prenotata='%prenotata%' data-href='%baseActionUrl%_annulla.do?uidRichiesta=%source.uid%'>annulla</a></li>";
++	private static final String AZIONI_CONSENTITE_CONSULTA =
++			"<li><a href='%baseActionUrl%_consulta.do?uidRichiesta=%source.uid%'>consulta</a></li>";
++	private static final String AZIONI_CONSENTITE_RENDICONTA =
++			"<li><a href='%baseActionUrl%_rendiconta.do?uidRichiesta=%source.uid%'>rendiconto</a></li>";
++	private static final String AZIONI_CONSENTITE_AGGIORNA_RENDICONTO =
++			"<li><a href='%baseActionUrl%_aggiornaRendiconto.do?uidRichiesta=%rendiconto.uid%'>aggiorna rendiconto</a></li>";
++	private static final String AZIONI_CONSENTITE_CONSULTA_RENDICONTO =
++			"<li><a href='%baseActionUrl%_consultaRendiconto.do?uidRichiesta=%rendiconto.uid%'>consulta rendiconto</a></li>";
++	
++	private static final String AZIONI_CONSENTITE_STAMPA_RICEVUTA =
++			"<li><a class='stampaRicevutaRichiesta' data-href='%baseActionUrl%_stampaRicevuta.do?uidRichiestaDaStampare=%source.uid%'>stampa ricevuta</a></li>";
++	private static final String AZIONI_CONSENTITE_STAMPA_RICEVUTA_RENDICONTO =
++			"<li><a class='stampaRicevutaRendiconto' data-href='%baseActionUrl%_stampaRicevutaRendiconto.do'>stampa ricevuta rendiconto</a></li>";
++	private static final String AZIONI_CONSENTITE_END = "</ul></div>";
++
++	@Autowired private transient RichiestaEconomaleService richiestaEconomaleService;
+ 	
+-	private static final String AZIONI_CONSENTITE_STAMPA_RICEVUTA = 
+-			"<li><a class='stampaRicevutaRichiesta' data-href='%baseActionUrl%_stampaRicevuta.do?uidRichiestaDaStampare=%source.uid%'>stampa ricevuta</a></li>";
+-	private static final String AZIONI_CONSENTITE_END = "</ul></div>";
+-
+-	@Autowired private transient RichiestaEconomaleService richiestaEconomaleService;
+-	
+ 	/** Costruttore vuoto di default */
+ 	public RisultatiRicercaRichiestaEconomaleAjaxAction() {
+ 		super();
+@@ -108,12 +110,13 @@
+ 		
+ 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
+ 		final boolean gestioneAggiorna = gestisciAggiornamento(instance, listaAzioniConsentite);
+-		final boolean gestioneAnnulla = gestisciAnnullamento(instance, listaAzioniConsentite);
+-		final boolean gestioneConsulta = gestisciConsultazione(instance, listaAzioniConsentite);
+-		final boolean gestioneStampaRicevuta = gestisciStampaRicevuta(instance, listaAzioniConsentite);
+-		final boolean gestioneRendiconta = gestisciRendicontazione(instance, listaAzioniConsentite);
+-		final boolean gestioneAggiornaRendiconto = gestisciAggiornamentoRendiconto(instance, listaAzioniConsentite);
+-		final boolean gestioneConsultaRendiconto = gestisciConsultazioneRendiconto(instance, listaAzioniConsentite);
++		final boolean gestioneAnnulla = gestisciAnnullamento(instance, listaAzioniConsentite);
++		final boolean gestioneConsulta = gestisciConsultazione(instance, listaAzioniConsentite);
++		final boolean gestioneStampaRicevuta = gestisciStampaRicevuta(instance, listaAzioniConsentite);
++		final boolean gestioneStampaRicevutaRendiconto = gestisciStampaRicevutaRendiconto(instance, listaAzioniConsentite);
++		final boolean gestioneRendiconta = gestisciRendicontazione(instance, listaAzioniConsentite);
++		final boolean gestioneAggiornaRendiconto = gestisciAggiornamentoRendiconto(instance, listaAzioniConsentite);
++		final boolean gestioneConsultaRendiconto = gestisciConsultazioneRendiconto(instance, listaAzioniConsentite);
+ 		
+ 		final String baseActionUrl = ottieniBaseActionUrl();
+ 		
+@@ -143,12 +146,15 @@
+ 		if (gestioneConsultaRendiconto) {
+ 			strAzioni.append(AZIONI_CONSENTITE_CONSULTA_RENDICONTO);
+ 		}
+-		if (gestioneStampaRicevuta) {
+-			strAzioni.append(AZIONI_CONSENTITE_STAMPA_RICEVUTA);
+-		}
+-		strAzioni.append(AZIONI_CONSENTITE_END);
+-		
+-		// Sostituzione dei placeholder
++		if (gestioneStampaRicevuta) {
++			strAzioni.append(AZIONI_CONSENTITE_STAMPA_RICEVUTA);
++		}
++		if (gestioneStampaRicevutaRendiconto) {
++			strAzioni.append(AZIONI_CONSENTITE_STAMPA_RICEVUTA_RENDICONTO);
++		}
++		strAzioni.append(AZIONI_CONSENTITE_END);
++		
++		// Sostituzione dei placeholder
+ 		String azioni = creaAzioniFromPattern(PATTERN, map, strAzioni.toString());
+ 		instance.setAzioni(azioni);
+ 	}
+@@ -180,12 +186,25 @@
+ 	 * 
+ 	 * @return <code>true</code> se la richiesta &eacute; stampabile; <code>false</code> in caso contrario
+ 	 */
+-	protected boolean gestisciStampaRicevuta(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
+-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
+-	}
+-
+-	/**
+-	 * Gestione della consultazione: controlla se sia possibile consultare la richiesta.
++	protected boolean gestisciStampaRicevuta(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
++		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
++	}
++	/**
++	 * Gestione della stampa ricevuta del rendiconto: controlla se sia possibile stampare la richiesta.
++	 * 
++	 * @param instance              l'istanza del wrapper
++	 * @param listaAzioniConsentite la lista delle azioni consentite
++	 * 
++	 * @return <code>true</code> se la richiesta &eacute; stampabile; <code>false</code> in caso contrario
++	 */
++	protected boolean gestisciStampaRicevutaRendiconto(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
++		// SIAC-4713
++		// Il valore di default e' FALSE
++		return false;
++	}
++
++	/**
++	 * Gestione della consultazione: controlla se sia possibile consultare la richiesta.
+ 	 * 
+ 	 * @param instance              l'istanza del wrapper
+ 	 * @param listaAzioniConsentite la lista delle azioni consentite
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipopertrasfertadipendenti/RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipopertrasfertadipendenti/RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipopertrasfertadipendenti/RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction.java	(working copy)
+@@ -27,16 +27,7 @@
+ 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
+ 	public String execute() throws Exception {
+ 		// Richiamo il metodo execute della superclasse
+-		return super.execute();
+-	}
+-	
+-	/**
+-	 * Stampa della ricevuta.
+-	 * 
+-	 * @return una stringa corrispondente al risultato dell'invocazione
+-	 */
+-	public String stampaRicevuta() {
+-		return stampaRicevutaGeneric();
+-	}
+-	
+-}
++		return super.execute();
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/RisultatiRicercaAnticipoSpeseCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/RisultatiRicercaAnticipoSpeseCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/RisultatiRicercaAnticipoSpeseCassaEconomaleAction.java	(working copy)
+@@ -28,15 +28,7 @@
+ 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
+ 	public String execute() throws Exception {
+ 		// Richiamo il metodo execute della superclasse
+-		return super.execute();
+-	}
+-	
+-	/**
+-	 * Stampa della ricevuta.
+-	 * 
+-	 * @return una stringa corrispondente al risultato dell'invocazione
+-	 */
+-	public String stampaRicevuta(){
+-		return stampaRicevutaGeneric();
+-	}
+-}
++		return super.execute();
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAction.java	(working copy)
+@@ -27,15 +27,7 @@
+ 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
+ 	public String execute() throws Exception {
+ 		// Richiamo il metodo execute della superclasse
+-		return super.execute();
+-	}
+-	
+-	/**
+-	 * Stampa della ricevuta.
+-	 * 
+-	 * @return una stringa corrispondente al risultato dell'invocazione
+-	 */
+-	public String stampaRicevuta(){
+-		return stampaRicevutaGeneric();
+-	}
+-}
++		return super.execute();
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRisultatiRicercaRichiestaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRisultatiRicercaRichiestaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRisultatiRicercaRichiestaEconomaleAction.java	(working copy)
+@@ -1,28 +1,30 @@
+-package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+-import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+-import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.BaseRisultatiRicercaRichiestaEconomaleModel;
++package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste;
++
++import java.io.ByteArrayInputStream;
++import java.io.InputStream;
++
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.beans.factory.annotation.Autowired;
++
++import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
++import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
++import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.BaseRisultatiRicercaRichiestaEconomaleModel;
+ import it.csi.siac.siaccecser.frontend.webservice.RichiestaEconomaleService;
+ import it.csi.siac.siaccecser.frontend.webservice.StampaCassaEconomaleService;
+ import it.csi.siac.siaccecser.frontend.webservice.msg.AnnullaRichiestaEconomale;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.AnnullaRichiestaEconomaleResponse;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.ControllaAggiornabilitaRichiestaEconomale;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.ControllaAggiornabilitaRichiestaEconomaleResponse;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRichiestaEconomale;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRichiestaEconomaleResponse;
+-import it.csi.siac.siaccorser.model.errore.ErroreCore;
+-import it.csi.siac.siaccorser.model.file.File;
+-
+-import java.io.ByteArrayInputStream;
+-import java.io.InputStream;
+-
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.beans.factory.annotation.Autowired;
+-
+-/**
+- * Classe base di action per i risultati della ricerca della richiesta economale.
+- * 
++import it.csi.siac.siaccecser.frontend.webservice.msg.AnnullaRichiestaEconomaleResponse;
++import it.csi.siac.siaccecser.frontend.webservice.msg.ControllaAggiornabilitaRichiestaEconomale;
++import it.csi.siac.siaccecser.frontend.webservice.msg.ControllaAggiornabilitaRichiestaEconomaleResponse;
++import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRendicontoRichiestaEconomale;
++import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRendicontoRichiestaEconomaleResponse;
++import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRichiestaEconomale;
++import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRichiestaEconomaleResponse;
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
++import it.csi.siac.siaccorser.model.file.File;
++
++/**
++ * Classe base di action per i risultati della ricerca della richiesta economale.
++ * 
+  * @author Marchino Alessandro
+  * @version 1.0.0 - 02/02/2015
+  * 
+@@ -186,43 +188,76 @@
+ 	 */
+ 	public void validateAnnulla() {
+ 		checkNotNull(model.getUidRichiesta(), "Richiesta da annullare");
+-	}
+-	
+-	/**
+-	 * azione stampa ricevuta 
+-	 * @data_modifica 17/04/2015
+-	 * @return una stringa corrispondente al risultato dell'invocazione
+-	 */
+-	protected String stampaRicevutaGeneric() {
+-		final String methodName = "stampaRicevutaGeneric";
+-		StampaRicevutaRichiestaEconomale request =model.creaRequestStampaRicevutaRichiestaEconomale();
+-		logServiceRequest(request);
+-		StampaRicevutaRichiestaEconomaleResponse response = stampaCassaEconomaleService.stampaRicevutaRichiestaEconomale(request);
+-		logServiceResponse(response);
+-		
+-		if(response.hasErrori()) {
+-			log.info(methodName, createErrorInServiceInvocationString(StampaRicevutaRichiestaEconomale.class, response));
+-			addErrori(response);
+-			return INPUT;
+-		}
++	}
++	
++	/**
++	 * azione stampa ricevuta
++	 * @return una stringa corrispondente al risultato dell'invocazione
++	 */
++	public String stampaRicevuta() {
++		final String methodName = "stampaRicevuta";
++		StampaRicevutaRichiestaEconomale request = model.creaRequestStampaRicevutaRichiestaEconomale();
++		logServiceRequest(request);
++		StampaRicevutaRichiestaEconomaleResponse response = stampaCassaEconomaleService.stampaRicevutaRichiestaEconomale(request);
++		logServiceResponse(response);
++		
++		if(response.hasErrori()) {
++			log.info(methodName, createErrorInServiceInvocationString(request, response));
++			addErrori(response);
++			return INPUT;
++		}
+ 		// verifico se la response riporta il file 
+ 		if(response.getReport() == null) {
+ 			log.debug(methodName, "Nessun file presente");
+ 			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore());
+-			return INPUT;
+-		}
++			return INPUT;
++		}
++		
++		handleFileExtraction(response.getReport());
++		return SUCCESS;
++	}
++
++	/**
++	 * Gestione dell'estrazione del file dalla response
++	 * @param il file da estrarre
++	 */
++	private void handleFileExtraction(File file) {
++		final String methodName = "handleFileExtraction";
++		// Creazione dei dati per il file pdf
++		model.setContentType(file.getMimeType());
++		model.setContentLength(file.getDimensione());
++		model.setFileName(file.getNome());
+ 		
+-		//Creazione dei dati per il file pdf
+-		// Prendo il primo file
+-		File file = response.getReport();
+-		model.setContentType(file.getMimeType());
+-		model.setContentLength(file.getDimensione());
+-		model.setFileName(file.getNome());
+-		
+ 		InputStream inputStream = new ByteArrayInputStream(file.getContenuto());
+-		model.setInputStream(inputStream);
+-		
+-		log.debug(methodName, "generazione pdf in corso...");
+-		return SUCCESS;
+-	}
+-}
++		model.setInputStream(inputStream);
++		
++		log.debug(methodName, "generazione pdf in corso...");
++	}
++	
++	/**
++	 * Azione stampa ricevuta del rendiconto
++	 * @return una stringa corrispondente al risultato dell'invocazione
++	 */
++	public String stampaRicevutaRendiconto() {
++		final String methodName = "stampaRicevutaRendiconto";
++		StampaRicevutaRendicontoRichiestaEconomale req = model.creaRequestStampaRicevutaRendicontoRichiestaEconomale();
++		logServiceRequest(req);
++		StampaRicevutaRendicontoRichiestaEconomaleResponse res = stampaCassaEconomaleService.stampaRendicontoRicevutaRichiestaEconomale(req);
++		logServiceResponse(res);
++		
++		if(res.hasErrori()) {
++			log.info(methodName, createErrorInServiceInvocationString(req, res));
++			addErrori(res);
++			return INPUT;
++		}
++		// verifico se la response riporta il file 
++		if(res.getReport() == null) {
++			log.debug(methodName, "Nessun file presente");
++			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore());
++			return INPUT;
++		}
++		handleFileExtraction(res.getReport());
++		return SUCCESS;
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/RisultatiRicercaPagamentoCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/RisultatiRicercaPagamentoCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/RisultatiRicercaPagamentoCassaEconomaleAction.java	(working copy)
+@@ -28,17 +28,7 @@
+ 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
+ 	public String execute() throws Exception {
+ 		// Richiamo il metodo execute della superclasse
+-		return super.execute();
+-	}
+-	
+-	/**
+-	 * Action per stampare la ricevuta direttamente dal risultato di ricerca
+-	 * 
+-	 * @return una stringa corrispondente al risultato dell'invocazione
+-	 */
+-	public String stampaRicevuta(){
+-		
+-		return stampaRicevutaGeneric();
+-	}
+-	
+-}
++		return super.execute();
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamentofatture/RisultatiRicercaPagamentoFattureCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamentofatture/RisultatiRicercaPagamentoFattureCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamentofatture/RisultatiRicercaPagamentoFattureCassaEconomaleAction.java	(working copy)
+@@ -28,16 +28,7 @@
+ 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
+ 	public String execute() throws Exception {
+ 		// Richiamo il metodo execute della superclasse
+-		return super.execute();
+-	}
+-	
+-	/**
+-	 * Stampa della ricevuta.
+-	 * 
+-	 * @return una stringa corrispondente al risultato dell'invocazione
+-	 */
+-	public String stampaRicevuta(){
+-		return stampaRicevutaGeneric();
+-	}
+-	
+-}
++		return super.execute();
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/rimborsospese/RisultatiRicercaRimborsoSpeseCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/rimborsospese/RisultatiRicercaRimborsoSpeseCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/rimborsospese/RisultatiRicercaRimborsoSpeseCassaEconomaleAction.java	(working copy)
+@@ -28,17 +28,7 @@
+ 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
+ 	public String execute() throws Exception {
+ 		// Richiamo il metodo execute della superclasse
+-		return super.execute();
+-	}
+-	
+-	/**
+-	 * Action per stampare la ricevuta direttamente dal risultato di ricerca
+-	 * 
+-	 * @return una stringa corrispondente al risultato dell'invocazione
+-	 */
+-	public String stampaRicevuta(){
+-		
+-		return stampaRicevutaGeneric();
+-	}
+-	
+-}
++		return super.execute();
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/BaseRisultatiRicercaRichiestaEconomaleModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/BaseRisultatiRicercaRichiestaEconomaleModel.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/model/cassaeconomale/richieste/BaseRisultatiRicercaRichiestaEconomaleModel.java	(working copy)
+@@ -1,19 +1,20 @@
+-package it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
+-import it.csi.siac.siacbilapp.frontend.ui.util.converter.BooleanIntegerConverter;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.AnnullaRichiestaEconomale;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.ControllaAggiornabilitaRichiestaEconomale;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomale;
+-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRichiestaEconomale;
+-import it.csi.siac.siaccecser.model.RichiestaEconomale;
+-
+-import java.io.InputStream;
+-import java.util.Date;
+-
+-
+-/**
+- * Classe base di model per i risultati della ricerca della richiesta economale.
++package it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste;
++
++import java.io.InputStream;
++import java.util.Date;
++
++import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
++import it.csi.siac.siacbilapp.frontend.ui.util.converter.BooleanIntegerConverter;
++import it.csi.siac.siaccecser.frontend.webservice.msg.AnnullaRichiestaEconomale;
++import it.csi.siac.siaccecser.frontend.webservice.msg.ControllaAggiornabilitaRichiestaEconomale;
++import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRendicontoRichiestaEconomale;
++import it.csi.siac.siaccecser.frontend.webservice.msg.StampaRicevutaRichiestaEconomale;
++import it.csi.siac.siaccecser.model.RendicontoRichiesta;
++import it.csi.siac.siaccecser.model.RichiestaEconomale;
++
++
++/**
++ * Classe base di model per i risultati della ricerca della richiesta economale.
+  * 
+  * @author Marchino Alessandro,Nazha Ahmad
+  * @version 1.0.0 - 02/02/2015
+@@ -238,13 +239,13 @@
+ 		request.setRichiestaEconomale(richiestaEconomale);
+ 		
+ 		return request;
+-	}
+-	
+-	/**
+-	 * Crea una request per il servizio di {@link InserisceRichiestaEconomale}.
+-	 * 
+-	 * @return la request creata
+-	 */
++	}
++	
++	/**
++	 * Crea una request per il servizio di {@link StampaRicevutaRichiestaEconomale}.
++	 * 
++	 * @return la request creata
++	 */
+ 	public StampaRicevutaRichiestaEconomale creaRequestStampaRicevutaRichiestaEconomale() {
+ 		StampaRicevutaRichiestaEconomale request = creaRequest(StampaRicevutaRichiestaEconomale.class);
+ 		request.setBilancio(getBilancio());
+@@ -256,12 +257,29 @@
+ 		request.setRichiestaEconomale(richiestaEconomale);
+ 		
+ 		return request;
+-	}
+-	
+-	/**
+-	 * Crea una request per il servizio di {@link ControllaAggiornabilitaRichiestaEconomale}.
+-	 * 
+-	 * @return la request creata
++	}
++	
++	/**
++	 * Crea una request per il servizio di {@link StampaRicevutaRendicontoRichiestaEconomale}.
++	 * 
++	 * @return la request creata
++	 */
++	public StampaRicevutaRendicontoRichiestaEconomale creaRequestStampaRicevutaRendicontoRichiestaEconomale() {
++		StampaRicevutaRendicontoRichiestaEconomale req = creaRequest(StampaRicevutaRendicontoRichiestaEconomale.class);
++		req.setBilancio(getBilancio());
++		req.setEnte(getEnte());
++		
++		RendicontoRichiesta rendicontoRichiesta = new RendicontoRichiesta();
++		rendicontoRichiesta.setUid(getUidRichiestaDaStampare());
++		req.setRendicontoRichiesta(rendicontoRichiesta);
++		
++		return req;
++	}
++	
++	/**
++	 * Crea una request per il servizio di {@link ControllaAggiornabilitaRichiestaEconomale}.
++	 * 
++	 * @return la request creata
+ 	 */
+ 	public ControllaAggiornabilitaRichiestaEconomale creaRequestControllaAggiornabilitaRichiestaEconomale() {
+ 		ControllaAggiornabilitaRichiestaEconomale request = creaRequest(ControllaAggiornabilitaRichiestaEconomale.class);
+Index: src/main/resources/struts-capitolo.xml
+===================================================================
+--- src/main/resources/struts-capitolo.xml	(revision 14386)
++++ src/main/resources/struts-capitolo.xml	(working copy)
+@@ -4,13 +4,14 @@
+ 	<package name="capitoloDefault" extends="default, json-default" abstract="true">
+ 		<!--  Package per la definizione delle estensioni comuni a tutti i varii packages di Struts2 e per la definizione centralizzata dello stack degli interceptors. -->
+ 		<result-types>
+-			<result-type name="dataTable" class="it.csi.siac.siacbilapp.frontend.ui.util.result.DataTablesResult" />
+-			<result-type name="customJSON" class="it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult" />
+-			<result-type name="customMessagesJSON" class="it.csi.siac.siacbilapp.frontend.ui.util.result.CustomMessagesJSONResult" />
+-		</result-types>
++			<result-type name="dataTable" class="it.csi.siac.siacbilapp.frontend.ui.util.result.DataTablesResult" />
++			<result-type name="customJSON" class="it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult" />
++			<result-type name="customMessagesJSON" class="it.csi.siac.siacbilapp.frontend.ui.util.result.CustomMessagesJSONResult" />
++			<result-type name="stampaStream" class="it.csi.siac.siacbilapp.frontend.ui.util.result.StampaStreamResult" />
++		</result-types>
++		
++		<interceptors>
+ 		
+-		<interceptors>
+-		
+ 			<!-- Interceptor di log prima e a termine dell'invocazione -->
+ 			<interceptor name="logInterceptor" class="it.csi.siac.siaccommonapp.interceptor.LogInterceptor" />
+ 			
+Index: src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoPerTrasfertaDipendenti.xml
+===================================================================
+--- src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoPerTrasfertaDipendenti.xml	(revision 14386)
++++ src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoPerTrasfertaDipendenti.xml	(working copy)
+@@ -1,10 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8" ?>
+-<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+-<struts>
+-	<package name="cassaEconomaleRichiesteAnticipoPerTrasfertaDipendenti" extends="capitoloDefault" namespace="/">
+-			<!-- Inserimento -->
+-		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction">
+-			<result name="success" type="redirectAction">inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step1</result>
++<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
++<struts>
++	<package name="cassaEconomaleRichiesteAnticipoPerTrasfertaDipendenti" extends="capitoloDefault" namespace="/">
++	
++			<!-- Inserimento -->
++		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction">
++			<result name="success" type="redirectAction">inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step1</result>
+ 			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+ 		</action>
+ 		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step1" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step1">
+@@ -67,19 +68,13 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step3" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep3" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_visualizzaImporti" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="importiCassa">
++			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep3" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_visualizzaImporti" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="importiCassa">
+ 			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+ 		</action>
+ 		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_visualizzaImporti" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="importiCassa">
+@@ -209,32 +204,23 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step3" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep3" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
++			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep3" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		
++		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_stampaRicevuta" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="stampaRicevuta">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_stampaRicevutaRendiconto" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="stampaRicevutaRendiconto">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		
+ 		
+-		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_stampaRicevuta" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="stampaRicevuta">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-				<param name="uidRichiestaDaStampare">${uidRichiestaDaStampare}</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+-		</action>
+-		
+-		
+ 		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjax" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAction">
+ 			<result name="success" type="customJSON">
+ 				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+Index: src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoSpese.xml
+===================================================================
+--- src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoSpese.xml	(revision 14386)
++++ src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoSpese.xml	(working copy)
+@@ -43,19 +43,13 @@
+ 		</action>
+ 		<action name="aggiornaAnticipoSpeseCassaEconomale_visualizzaImporti" class="aggiornaAnticipoSpeseCassaEconomaleAction" method="importiCassa">
+ 			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+-		</action>
+-		<!-- mostra anche il pdf di stampa alla fine  ***ahmad***-->
+-		<action name="inserisciAnticipoSpeseCassaEconomale_completeStep3" class="inserisciAnticipoSpeseCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpese/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		
++		</action>
++		<!-- mostra anche il pdf di stampa alla fine  ***ahmad***-->
++		<action name="inserisciAnticipoSpeseCassaEconomale_completeStep3" class="inserisciAnticipoSpeseCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpese/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		
+ 			<!-- Ricerca -->
+ 		<action name="ricercaAnticipoSpeseCassaEconomale" class="ricercaAnticipoSpeseCassaEconomaleAction">
+ 			<result name="success">/jsp/cassaEconomale/richieste/include/ricerca.jsp</result>
+@@ -195,30 +189,21 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpese/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="aggiornaAnticipoSpeseCassaEconomale_step3" class="aggiornaAnticipoSpeseCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpese/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="aggiornaAnticipoSpeseCassaEconomale_completeStep3" class="aggiornaAnticipoSpeseCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-                <param name="contentType">${contentType}</param>
+-                <param name="contentLength">${contentLength}</param>
+-                <param name="inputName">inputStream</param>
+-                <param name="contentDisposition">filename="${fileName}"</param>
+-                <param name="bufferSize">1024</param>
+-            </result>
+-			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpese/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="risultatiRicercaAnticipoSpeseCassaEconomale_stampaRicevuta" class="risultatiRicercaAnticipoSpeseCassaEconomaleAction" method="stampaRicevuta">
+-			<result name="success" type="stream">
+-                <param name="contentType">${contentType}</param>
+-                <param name="contentLength">${contentLength}</param>
+-                <param name="inputName">inputStream</param>
+-                <param name="contentDisposition">filename="${fileName}"</param>
+-                <param name="bufferSize">1024</param>
+-                <param name="uidRichiestaDaStampare">${uidRichiestaDaStampare}</param>
+-            </result>
+-			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+-		</action>
+-		<action name="risultatiRicercaAnticipoSpeseCassaEconomaleAjax" class="risultatiRicercaAnticipoSpeseCassaEconomaleAjaxAction">
++			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpese/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="aggiornaAnticipoSpeseCassaEconomale_completeStep3" class="aggiornaAnticipoSpeseCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpese/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="risultatiRicercaAnticipoSpeseCassaEconomale_stampaRicevuta" class="risultatiRicercaAnticipoSpeseCassaEconomaleAction" method="stampaRicevuta">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		<action name="risultatiRicercaAnticipoSpeseCassaEconomale_stampaRicevutaRendiconto" class="risultatiRicercaAnticipoSpeseCassaEconomaleAction" method="stampaRicevutaRendiconto">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		<action name="risultatiRicercaAnticipoSpeseCassaEconomaleAjax" class="risultatiRicercaAnticipoSpeseCassaEconomaleAjaxAction">
+ 			<result name="success" type="customJSON">
+ 				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+ 			</result>
+Index: src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoSpesePerMissione.xml
+===================================================================
+--- src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoSpesePerMissione.xml	(revision 14386)
++++ src/main/resources/struts/struts-cassaEconomaleRichiesteAnticipoSpesePerMissione.xml	(working copy)
+@@ -1,10 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8" ?>
+-<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+-<struts>
+-	<package name="cassaEconomaleRichiesteAnticipoSpesePerMissione" extends="capitoloDefault" namespace="/">
+-			<!-- Inserimento -->
+-		<action name="inserisciAnticipoSpesePerMissioneCassaEconomale" class="inserisciAnticipoSpesePerMissioneCassaEconomaleAction">
+-			<result name="success" type="redirectAction">inserisciAnticipoSpesePerMissioneCassaEconomale_step1</result>
++<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
++<struts>
++	<package name="cassaEconomaleRichiesteAnticipoSpesePerMissione" extends="capitoloDefault" namespace="/">
++
++			<!-- Inserimento -->
++		<action name="inserisciAnticipoSpesePerMissioneCassaEconomale" class="inserisciAnticipoSpesePerMissioneCassaEconomaleAction">
++			<result name="success" type="redirectAction">inserisciAnticipoSpesePerMissioneCassaEconomale_step1</result>
+ 			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+ 		</action>
+ 		<action name="inserisciAnticipoSpesePerMissioneCassaEconomale_step1" class="inserisciAnticipoSpesePerMissioneCassaEconomaleAction" method="step1">
+@@ -67,19 +68,13 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="inserisciAnticipoSpesePerMissioneCassaEconomale_step3" class="inserisciAnticipoSpesePerMissioneCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciAnticipoSpesePerMissioneCassaEconomale_completeStep3" class="inserisciAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		
++			<result name="success">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciAnticipoSpesePerMissioneCassaEconomale_completeStep3" class="inserisciAnticipoSpesePerMissioneCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		
+ 		<action name="inserisciAnticipoSpesePerMissioneCassaEconomale_caricaDettaglioRichiestaEconomaleEsterna" class="inserisciAnticipoSpesePerMissioneCassaEconomaleAction" method="caricaDettaglioRichiestaEconomaleEsterna">
+ 			<result name="input" type="customMessagesJSON" />
+ 			<result name="success" type="customJSON">
+@@ -227,21 +222,18 @@
+ 				<param name="bufferSize">1024</param>
+ 			</result>
+ 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
++		</action>
++		
++		<action name="risultatiRicercaAnticipoSpesePerMissioneCassaEconomale_stampaRicevuta" class="risultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAction" method="stampaRicevuta">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		<action name="risultatiRicercaAnticipoSpesePerMissioneCassaEconomale_stampaRicevutaRendiconto" class="risultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAction" method="stampaRicevutaRendiconto">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		
+ 		
+-		<action name="risultatiRicercaAnticipoSpesePerMissioneCassaEconomale_stampaRicevuta" class="risultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAction" method="stampaRicevuta">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-				<param name="uidRichiestaDaStampare">${uidRichiestaDaStampare}</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+-		</action>
+-		
+-		
+ 		<action name="risultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjax" class="risultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction">
+ 			<result name="success" type="customJSON">
+ 				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+Index: src/main/resources/struts/struts-cassaEconomaleRichiestePagamento.xml
+===================================================================
+--- src/main/resources/struts/struts-cassaEconomaleRichiestePagamento.xml	(revision 14386)
++++ src/main/resources/struts/struts-cassaEconomaleRichiestePagamento.xml	(working copy)
+@@ -52,19 +52,13 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="inserisciPagamentoCassaEconomale_step3" class="inserisciPagamentoCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciPagamentoCassaEconomale_completeStep3" class="inserisciPagamentoCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciPagamentoCassaEconomale_visualizzaImporti" class="inserisciPagamentoCassaEconomaleAction" method="importiCassa">
++			<result name="success">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciPagamentoCassaEconomale_completeStep3" class="inserisciPagamentoCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciPagamentoCassaEconomale_visualizzaImporti" class="inserisciPagamentoCassaEconomaleAction" method="importiCassa">
+ 			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+ 		</action>
+ 		<action name="aggiornaPagamentoCassaEconomale_visualizzaImporti" class="aggiornaPagamentoCassaEconomaleAction" method="importiCassa">
+@@ -197,32 +191,19 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="aggiornaPagamentoCassaEconomale_step3" class="aggiornaPagamentoCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="aggiornaPagamentoCassaEconomale_completeStep3" class="aggiornaPagamentoCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		
+-		
+-		<action name="risultatiRicercaPagamentoCassaEconomale_stampaRicevuta" class="risultatiRicercaPagamentoCassaEconomaleAction" method="stampaRicevuta">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-				<param name="uidRichiestaDaStampare">${uidRichiestaDaStampare}</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+-		</action>
+-		<action name="risultatiRicercaPagamentoCassaEconomaleAjax" class="risultatiRicercaPagamentoCassaEconomaleAjaxAction">
++			<result name="success">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="aggiornaPagamentoCassaEconomale_completeStep3" class="aggiornaPagamentoCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/pagamento/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		
++		
++		<action name="risultatiRicercaPagamentoCassaEconomale_stampaRicevuta" class="risultatiRicercaPagamentoCassaEconomaleAction" method="stampaRicevuta">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		<action name="risultatiRicercaPagamentoCassaEconomaleAjax" class="risultatiRicercaPagamentoCassaEconomaleAjaxAction">
+ 			<result name="success" type="customJSON">
+ 				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+ 			</result>
+Index: src/main/resources/struts/struts-cassaEconomaleRichiestePagamentoFatture.xml
+===================================================================
+--- src/main/resources/struts/struts-cassaEconomaleRichiestePagamentoFatture.xml	(revision 14386)
++++ src/main/resources/struts/struts-cassaEconomaleRichiestePagamentoFatture.xml	(working copy)
+@@ -82,19 +82,13 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="inserisciPagamentoFattureCassaEconomale_step3" class="inserisciPagamentoFattureCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciPagamentoFattureCassaEconomale_completeStep3" class="inserisciPagamentoFattureCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciPagamentoFattureCassaEconomale_visualizzaImporti" class="inserisciPagamentoFattureCassaEconomaleAction" method="importiCassa">
++			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciPagamentoFattureCassaEconomale_completeStep3" class="inserisciPagamentoFattureCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciPagamentoFattureCassaEconomale_visualizzaImporti" class="inserisciPagamentoFattureCassaEconomaleAction" method="importiCassa">
+ 			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+ 		</action>
+ 		<action name="aggiornaPagamentoFattureCassaEconomale_visualizzaImporti" class="aggiornaPagamentoFattureCassaEconomaleAction" method="importiCassa">
+@@ -195,32 +189,19 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="aggiornaPagamentoFattureCassaEconomale_step3" class="aggiornaPagamentoFattureCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="aggiornaPagamentoFattureCassaEconomale_completeStep3" class="aggiornaPagamentoFattureCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
++			<result name="success">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="aggiornaPagamentoFattureCassaEconomale_completeStep3" class="aggiornaPagamentoFattureCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/pagamentoFatture/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		
++		<action name="risultatiRicercaPagamentoFattureCassaEconomale_stampaRicevuta" class="risultatiRicercaPagamentoFattureCassaEconomaleAction" method="stampaRicevuta">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		
+ 		
+-		<action name="risultatiRicercaPagamentoFattureCassaEconomale_stampaRicevuta" class="risultatiRicercaPagamentoFattureCassaEconomaleAction" method="stampaRicevuta">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-				<param name="uidRichiestaDaStampare">${uidRichiestaDaStampare}</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+-		</action>
+-		
+-		
+ 		<action name="risultatiRicercaPagamentoFattureCassaEconomaleAjax" class="risultatiRicercaPagamentoFattureCassaEconomaleAjaxAction">
+ 			<result name="success" type="customJSON">
+ 				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+Index: src/main/resources/struts/struts-cassaEconomaleRichiesteRimborsoSpese.xml
+===================================================================
+--- src/main/resources/struts/struts-cassaEconomaleRichiesteRimborsoSpese.xml	(revision 14386)
++++ src/main/resources/struts/struts-cassaEconomaleRichiesteRimborsoSpese.xml	(working copy)
+@@ -52,19 +52,13 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="inserisciRimborsoSpeseCassaEconomale_step3" class="inserisciRimborsoSpeseCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciRimborsoSpeseCassaEconomale_completeStep3" class="inserisciRimborsoSpeseCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="inserisciRimborsoSpeseCassaEconomale_visualizzaImporti" class="inserisciRimborsoSpeseCassaEconomaleAction" method="importiCassa">
++			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciRimborsoSpeseCassaEconomale_completeStep3" class="inserisciRimborsoSpeseCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="inserisciRimborsoSpeseCassaEconomale_visualizzaImporti" class="inserisciRimborsoSpeseCassaEconomaleAction" method="importiCassa">
+ 			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+ 		</action>
+ 		<action name="aggiornaRimborsoSpeseCassaEconomale_visualizzaImporti" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="importiCassa">
+@@ -197,32 +191,19 @@
+ 			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step2.jsp</result>
+ 		</action>
+ 		<action name="aggiornaRimborsoSpeseCassaEconomale_step3" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="step3">
+-			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		<action name="aggiornaRimborsoSpeseCassaEconomale_completeStep3" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="completeStep3">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+-		</action>
+-		
+-		
+-		<action name="risultatiRicercaRimborsoSpeseCassaEconomale_stampaRicevuta" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction" method="stampaRicevuta">
+-			<result name="success" type="stream">
+-				<param name="contentType">${contentType}</param>
+-				<param name="contentLength">${contentLength}</param>
+-				<param name="inputName">inputStream</param>
+-				<param name="contentDisposition">filename="${fileName}"</param>
+-				<param name="bufferSize">1024</param>
+-				<param name="uidRichiestaDaStampare">${uidRichiestaDaStampare}</param>
+-			</result>
+-			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+-		</action>
+-		<action name="risultatiRicercaRimborsoSpeseCassaEconomaleAjax" class="risultatiRicercaRimborsoSpeseCassaEconomaleAjaxAction">
++			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		<action name="aggiornaRimborsoSpeseCassaEconomale_completeStep3" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="completeStep3">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
++		</action>
++		
++		
++		<action name="risultatiRicercaRimborsoSpeseCassaEconomale_stampaRicevuta" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction" method="stampaRicevuta">
++			<result name="success" type="stampaStream" />
++			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
++		</action>
++		<action name="risultatiRicercaRimborsoSpeseCassaEconomaleAjax" class="risultatiRicercaRimborsoSpeseCassaEconomaleAjaxAction">
+ 			<result name="success" type="customJSON">
+ 				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+ 			</result>
+Index: src/main/webapp/js/local/cassaEconomale/richieste/risultatiRicerca.js
+===================================================================
+--- src/main/webapp/js/local/cassaEconomale/richieste/risultatiRicerca.js	(revision 14386)
++++ src/main/webapp/js/local/cassaEconomale/richieste/risultatiRicerca.js	(working copy)
+@@ -19,27 +19,41 @@
+      * @param obj (any)    l'oggetto da mostrare
+      * @param url (string) l'url da invocare
+      */
+-    function mostraModaleConfermaStampaRicevuta(obj, url){
+-        bootbox.dialog('Si sta per elaborare la stampa Ricevuta, vuoi proseguire?', [
+-            {label: 'No, indietro', 'class': 'btn', callback: $.noop},
+-            {label: 'S&iacute;, prosegui', 'class': 'btn', callback: confermaStampaRicevuta.bind(undefined, obj, url)}
+-        ], {animate: true, classes: 'dialogWarn', header: 'Conferma Stampa Ricevuta', backdrop: 'static'});
++    function mostraModaleConfermaStampaRicevuta(obj, url){
++        bootbox.dialog('Si sta per elaborare la stampa Ricevuta, vuoi proseguire?', [
++            {label: 'No, indietro', 'class': 'btn', callback: $.noop},
++            {label: 'S&iacute;, prosegui', 'class': 'btn', callback: confermaStampaRicevuta.bind(undefined, obj, url, 'uid')}
++        ], {animate: true, classes: 'dialogWarn', header: 'Conferma Stampa Ricevuta', backdrop: 'static'});
++    }
++
++    /**
++     * Mostra la modale per la conferma della stampa del rendiconto
++     * @param obj (any)   l'oggetto da mostrare
++     * @param ev  (Event) l'evento scatenante l'invocazione
++     */
++    function mostraModaleConfermaStampaRicevutaRendiconto(obj, ev) {
++        var url = $(ev.target).data('href');
++        bootbox.dialog('Si sta per elaborare la stampa Ricevuta del rendiconto, vuoi proseguire?', [
++            {label: 'No, indietro', 'class': 'btn', callback: $.noop},
++            {label: 'S&iacute;, prosegui', 'class': 'btn', callback: confermaStampaRicevuta.bind(undefined, obj, url, 'uidRendiconto')}
++        ], {animate: true, classes: 'dialogWarn', header: 'Conferma Stampa Ricevuta', backdrop: 'static'});
++    }
++
++    /**
++     * Conferma della stampa della ricevuta
++     * @param obj            (any)    l'oggetto da mostrare
++     * @param url            (string) l'url da invocare
++     * @param fieldToExtract (string) il campo da estrarre
++     */
++    function confermaStampaRicevuta(obj, url, fieldToExtract){
++        var $form = $('<form>', {method: 'POST', action: url});
++        var $input = $('<input>', {type:'hidden', name:'uidRichiestaDaStampare', value: obj[fieldToExtract]});
++        $form.append($input);
++        $('body').append($form);
++        $form.submit();
+     }
+ 
+     /**
+-     * Conferma della stampa della ricevuta
+-     * @param obj (any)    l'oggetto da mostrare
+-     * @param url (string) l'url da invocare
+-     */
+-    function confermaStampaRicevuta(obj, url){
+-        var $form = $('<form>', {method: 'POST', action: url});
+-        var $input = $('<input>', {type:'hidden', name:'uidRichiestaDaStampare', value: obj.uid});
+-        $form.append($input);
+-        $('body').append($form);
+-        $form.submit();
+-    }
+-
+-    /**
+      * Impostazione della tabella.
+      *
+      * @param urlData         (String) l'URL da invocare per ottenere i dati
+@@ -169,13 +183,16 @@
+                     .substituteHandler('click', gestioneAnnullamentoRichiestaEconomale.bind(undefined, oData, urlAnnullamento))
+                     .end()
+                 .find('a.aggiornaRichiestaEconomale')
+-                    .substituteHandler('click', gestioneAggiornamentoRichiestaEconomale.bind(undefined, oData, urlAggiornamento))
+-                .end()
+-                .find('a.stampaRicevutaRichiesta')
+-                    .substituteHandler('click', mostraModaleConfermaStampaRicevuta.bind(undefined, oData, urlStampaRicevuta));
+-        };
+-    }
+-
++                    .substituteHandler('click', gestioneAggiornamentoRichiestaEconomale.bind(undefined, oData, urlAggiornamento))
++                .end()
++                .find('a.stampaRicevutaRichiesta')
++                    .substituteHandler('click', mostraModaleConfermaStampaRicevuta.bind(undefined, oData, urlStampaRicevuta))
++                .end()
++                .find('a.stampaRicevutaRendiconto')
++                    .substituteHandler('click', mostraModaleConfermaStampaRicevutaRendiconto.bind(undefined, oData));
++        };
++    }
++
+     /**
+      * Popola il totale.
+      *

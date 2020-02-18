@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="registrob" extends="gengsaCommon" namespace="/">
+
+		<!-- ricerca -->
+		<action name="ricercaPrimaNotaLiberaINV" class="ricercaPrimaNotaLiberaINVAction">
+			<result name="success">/jsp/cespiti/primaNotaLibera/ricerca.jsp</result>
+		</action>
+	 
+		<action name="ricercaPrimaNotaLiberaINV_effettuaRicerca" class="ricercaPrimaNotaLiberaINVAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaINV</result>
+			<result name="input">/jsp/cespiti/primaNotaLibera/ricerca.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaLiberaINV" class="risultatiRicercaPrimaNotaLiberaINVAction">
+			<result name="success">/jsp/cespiti/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaLiberaINVAjax" class="risultatiRicercaPrimaNotaLiberaINVAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaLiberaINV_aggiorna" class="risultatiRicercaPrimaNotaLiberaINVAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPrimaNotaLiberaINV</param>
+				<param name="primaNotaLibera.uid">${primaNotaLibera.uid}</param>
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaLiberaINV_valida" class="risultatiRicercaPrimaNotaLiberaINVAction" method="valida">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaINV</result>
+			<result name="input">/jsp/cespiti/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaLiberaINV_rifiuta" class="risultatiRicercaPrimaNotaLiberaINVAction" method="rifiuta">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaINV</result>
+			<result name="input">/jsp/cespiti/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaLiberaINV_consulta" class="risultatiRicercaPrimaNotaLiberaINVAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaLiberaINV</param>
+				<param name="primaNotaLibera.uid">${primaNotaLibera.uid}</param>
+			</result>
+		</action>
+		
+		<!-- Consultazione -->
+		<action name="consultaPrimaNotaLiberaINV" class="consultaPrimaNotaLiberaINVAction">
+			<result name="input" type="redirectAction">risultatiRicercaPrimaNotaLiberaINV</result>
+			<result name="success">/jsp/cespiti/primaNotaLibera/consulta.jsp</result>
+		</action>
+		
+		<action name="consultaPrimaNotaLiberaINV_valida" class="consultaPrimaNotaLiberaINVAction" method="valida">
+			<result name="input">/jsp/cespiti/primaNotaLibera/consulta.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaLiberaINV</param>
+				<param name="primaNotaLibera.uid">${primaNotaLibera.uid}</param>
+			</result>
+		</action>
+				
+		<action name="risultatiRicercaPrimaNotaLiberaINV_annulla" class="risultatiRicercaPrimaNotaLiberaINVAction" method="annulla">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaLiberaINV</result>
+			<result name="input">/jsp/cespiti/primaNotaLibera/risultatiRicerca.jsp</result>
+		</action>
+		
+		<action name="dettaglioMovimentiPrimaNotaLiberaINVAction_caricaMovimenti" class="dettaglioMovimentiPrimaNotaLiberaINVAction" method="caricaMovimenti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaMovimentoDettaglio.*, totaleDare, totaleAvere</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+				
+		<action name="dettaglioCespitePrimaNotaLiberaAction_caricaCespitiDaPrimaNota" class="dettaglioCespitePrimaNotaLiberaAction" method="caricaCespitiDaPrimaNota">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaCespite.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+	</package>
+</struts>

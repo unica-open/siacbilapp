@@ -1,0 +1,71 @@
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java	(revision 14013)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java	(working copy)
+@@ -809,14 +809,14 @@
+ 	 * @return la request creata
+ 	 */
+ 	public RegistraPrimaNotaIntegrata creaRequestRegistraPrimaNotaIntegrata (){
+-		RegistraPrimaNotaIntegrata request = creaRequest(RegistraPrimaNotaIntegrata.class);
++		RegistraPrimaNotaIntegrata request = creaRequest(RegistraPrimaNotaIntegrata.class);
++		
++		getPrimaNota().setBilancio(getBilancio());
++		getPrimaNota().setTipoCausale(TipoCausale.Integrata);
++		/* imposto la lista dei movimenti*/
++		getPrimaNota().setListaMovimentiEP(ottieniListaMovimentiEPConAmbito());
++		getPrimaNota().setAmbito(getAmbito());
+ 		
+-		getPrimaNota().setBilancio(getBilancio());
+-		getPrimaNota().setTipoCausale(getCausaleEP().getTipoCausale());
+-		/* imposto la lista dei movimenti*/
+-		getPrimaNota().setListaMovimentiEP(ottieniListaMovimentiEPConAmbito());
+-		getPrimaNota().setAmbito(getAmbito());
+-		
+ 		request.setPrimaNota(getPrimaNota());
+ 		request.setIsAggiornamento(isAggiornamento());
+ 		request.setIsDaValidare(isValidazione());
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/InserisciPrimaNotaLiberaBaseModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/InserisciPrimaNotaLiberaBaseModel.java	(revision 14013)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/InserisciPrimaNotaLiberaBaseModel.java	(working copy)
+@@ -3,12 +3,13 @@
+ import java.util.Date;
+ import java.util.List;
+ 
+-import it.csi.siac.siacgenser.frontend.webservice.msg.InseriscePrimaNota;
+-import it.csi.siac.siacgenser.model.MovimentoEP;
+-import it.csi.siac.siacgenser.model.PrimaNota;
+-/**
+- * Classe di Model per l'inserimento della prima nota libera (comune tra ambito FIN e GSA)
+- *  
++import it.csi.siac.siacgenser.frontend.webservice.msg.InseriscePrimaNota;
++import it.csi.siac.siacgenser.model.MovimentoEP;
++import it.csi.siac.siacgenser.model.PrimaNota;
++import it.csi.siac.siacgenser.model.TipoCausale;
++/**
++ * Classe di Model per l'inserimento della prima nota libera (comune tra ambito FIN e GSA)
++ *  
+  *  @author Elisa Chiari
+  *  @version 1.0.0 - 08/10/2015
+  */
+@@ -48,13 +49,13 @@
+ 	 * 
+ 	 * @return la request creata
+ 	 */
+-	public InseriscePrimaNota creaRequestInseriscePrimaNota( ) {
+-		InseriscePrimaNota request = creaRequest(InseriscePrimaNota.class);
+-		getPrimaNotaLibera().setBilancio(getBilancio());
+-		getPrimaNotaLibera().setTipoCausale(getCausaleEP().getTipoCausale());
+-		/* imposto la lista dei movimenti*/
+-		listaMovimentiEP = getListaMovimentoEP();
+-		for(MovimentoEP mov : listaMovimentiEP){
++	public InseriscePrimaNota creaRequestInseriscePrimaNota( ) {
++		InseriscePrimaNota request = creaRequest(InseriscePrimaNota.class);
++		getPrimaNotaLibera().setBilancio(getBilancio());
++		getPrimaNotaLibera().setTipoCausale(TipoCausale.Libera);
++		/* imposto la lista dei movimenti*/
++		listaMovimentiEP = getListaMovimentoEP();
++		for(MovimentoEP mov : listaMovimentiEP){
+ 			mov.setAmbito(getAmbito());
+ 		}
+ 		getPrimaNotaLibera().setListaMovimentiEP(listaMovimentiEP);

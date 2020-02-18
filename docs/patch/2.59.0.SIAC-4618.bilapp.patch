@@ -1,0 +1,15 @@
+### Eclipse Workspace Patch 1.0
+#P bilapplication
+diff --git src/main/webapp/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp src/main/webapp/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp
+index e6de9bc..4948243 100644
+--- src/main/webapp/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp
++++ src/main/webapp/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp
+@@ -38,7 +38,7 @@
+ 											<s:if test="hasStato"><th>Stato</th></s:if>
+ 											<s:if test="hasNumeroSospeso"><th>N. sospeso</th></s:if>
+ 											<s:if test="hasNumeroMovimento"><th>N. movimento</th></s:if>
+-											<s:if test="hasNumeroMovimentoRendiconto"><th>N. rendiconto</th></s:if>
++											<s:if test="hasNumeroMovimentoRendiconto"><th>N.Movim.Rendic.</th></s:if>
+ 											<s:if test="hasRichiedente"><th>Richiedente</th></s:if>
+ 											<s:if test="hasImporto"><th class="tab_Right"><s:property value="intestazioneImporto"/></th></s:if>
+ 											<th class="tab_Right span1">&nbsp;</th>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+                           
+    
+	<!-- 
+		Per utilizzare il servizio all'interno della propria Action o componente di Spring basta dichiarare un 
+		field a livello di classe in questo modo: 
+		
+		@Autowired
+		private CapitoloUscitaPrevisioneService capitoloUscitaPrevisioneService;	
+	 -->
+	 
+	<!-- ################ Servizi di Bilancio ################# -->
+	
+	<!-- Per il fake sarà:
+	<bean id="capitoloUscitaPrevisioneService" class="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneFakeService">	
+	</bean>  -->
+	
+	<bean id="capitoloService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloService" />
+		<property name="wsdlDocumentUrl" value="http://dev-www.ruparpiemonte.it/siacbilser/CapitoloService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+		<property name="serviceName" value="CapitoloService" />
+		<property name="endpointAddress" value="http://dev-www.ruparpiemonte.it/siacbilser/CapitoloService" />
+	</bean>
+	
+	<bean id="capitoloUscitaPrevisioneService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService" />
+		<property name="wsdlDocumentUrl" value="http://dev-www.ruparpiemonte.it/siacbilser/CapitoloUscitaPrevisioneService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+		<property name="serviceName" value="CapitoloUscitaPrevisioneService" />
+		<property name="endpointAddress" value="http://dev-www.ruparpiemonte.it/siacbilser/CapitoloUscitaPrevisioneService" />
+	</bean>
+	
+	<bean id="classificatoreBilService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService" />
+		<property name="wsdlDocumentUrl" value="http://dev-www.ruparpiemonte.it/siacbilser/ClassificatoreBilService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+		<property name="serviceName" value="ClassificatoreBilService" />
+		<property name="endpointAddress" value="http://dev-www.ruparpiemonte.it/siacbilser/ClassificatoreBilService" />
+	</bean>
+	
+	<!-- ################ Servizi di Core ################# -->
+	
+	<bean id="coreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.CoreService" />
+		<property name="wsdlDocumentUrl" value="http://dev-www.ruparpiemonte.it/siaccorser/CoreService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+		<property name="serviceName" value="CoreService" />
+		<property name="endpointAddress" value="http://dev-www.ruparpiemonte.it/siaccorser/CoreService" />
+	</bean>
+	
+	<bean id="classificatoreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService" />		
+		<property name="wsdlDocumentUrl" value="http://dev-www.ruparpiemonte.it/siaccorser/ClassificatoreService?wsdl" />		
+		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+		<property name="serviceName" value="ClassificatoreService" />
+		<property name="endpointAddress" value="http://dev-www.ruparpiemonte.it/siaccorser/ClassificatoreService" />
+	</bean>	
+	
+	
+</beans>

@@ -1,0 +1,357 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(revision 11032)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(working copy)
+@@ -732,6 +732,12 @@
+ 	public String aggiungiCapitoliNellaVariazione() {
+ 		final String methodName = "aggiungiCapitoliNellaVariazione";
+ 		
++		ElementoCapitoloVariazione elementoCapitoloVariazioneDaAggiungere = model.getSpecificaImporti().getElementoCapitoloVariazione();
++		if (!validaInserimentoCapitoloNellaVariazione(elementoCapitoloVariazioneDaAggiungere, model.getSpecificaImporti().getIgnoraValidazione())) {
++			model.getSpecificaImporti().setIgnoraValidazione(Boolean.FALSE);
++			return SUCCESS;
++		}
++		
+ 		InserisciDettaglioVariazioneImportoCapitolo req = model.creaRequestInserisciDettaglioVariazioneImportoCapitolo();
+ 		
+ 		log.debug(methodName, "richiamo il servizio di inserimento");
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(revision 11031)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(working copy)
+@@ -375,8 +375,9 @@
+ 		final String methodName = "aggiungiCapitoliNellaVariazione";
+ 		
+ 		ElementoCapitoloVariazione elementoCapitoloVariazione = model.getSpecificaImporti().getElementoCapitoloVariazione();
+-		//TODO: valuto quali validazioni effettuare
+-		if(!validaInserimentoCapitoloNellaVariazione(elementoCapitoloVariazione, Boolean.FALSE)){
++		
++		if(!validaInserimentoCapitoloNellaVariazione(elementoCapitoloVariazione, model.getSpecificaImporti().getIgnoraValidazione())){
++			model.getSpecificaImporti().setIgnoraValidazione(Boolean.FALSE);
+ 			return SUCCESS;
+ 		}
+ 		
+@@ -529,5 +530,6 @@
+ 		model.getDefinisci().setAnagraficaInserita(true);
+ 		return SUCCESS;
+ 	}
++	
+ 
+ }
+Index: src/main/webapp/js/local/variazioni/aggiorna.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/aggiorna.importi.js	(revision 11032)
++++ src/main/webapp/js/local/variazioni/aggiorna.importi.js	(working copy)
+@@ -151,30 +151,38 @@
+     /**
+      *  Apre e imposta la modale di conferma prosecuzione dell'azione
+      * */
+-    function gestioneRichiestaProsecuzione(array, url, data, endCallback, tabellaDestinazione, alertErrori, modale) {
+-        bootboxAlert(array[0].descrizione, 'Attenzione', 'dialogWarn', [
+-            {
+-                "label" : "No, indietro"
++	function gestioneRichiestaProsecuzione(array, url, ajaxParam, endCallback, tabellaDestinazione, alertErrori, modale) {
++		bootboxAlert(array[0].descrizione, 'Attenzione', 'dialogWarn', [
++		    {
++		        "label" : "No, indietro"
+                 , "class" : "btn"
+-                , "callback": $.noop
++                , "callback": function(){
++                	tabellaDestinazione.overlay('hide');
++                }
+             }
+-            , {
+-                "label" : "si, prosegui"
+-                , "class" : "btn"
++		    , {
++		        "label" : "si, prosegui"
++	            , "class" : "btn"
+                 , "callback": function() {
+-                    data["specificaImporti.ignoraValidazione"] = true;
+-                    $.postJSON(url, data, function(data) {
+-                        var listaCapitoliDaInserireNellaVariazione = data.specificaImporti.listaCapitoliNellaVariazione;
+-                        var totaliImporti = data.specificaImporti.elementoImportiVariazione;
+-                        alertErrori.slideUp();
+-                        if (impostaDatiNegliAlert(data.errori,alertErrori)) {
+-                            return;
+-                        }
+-                        endCallback(tabellaDestinazione, listaCapitoliDaInserireNellaVariazione, totaliImporti, modale);
+-                    });
++                	tabellaDestinazione.overlay('show');
++                	ajaxParam["specificaImporti.ignoraValidazione"] = true;
++                    $.postJSON(url, ajaxParam)
++            		.then(function(data) {
++            			var errori = data.errori;
++            			var messaggi = data.messaggi;
++            			var tabella = $("#tabellaGestioneVariazioni");
++            			var tabelleGiaInDataTable = $.fn.dataTable.fnTables(true);
++            			// Alert errori
++            			var alertErrori = $("#ERRORI");
++            				if(impostaDatiNegliAlert(errori, alertErrori)) {
++            					return;
++            				}            			
++
++            			return varImp.leggiCapitoliNellaVariazione();
++            		}).always(tabellaDestinazione.overlay.bind(tabellaDestinazione, 'hide'));
+                 }
+-            }]);
+-    }
++		    }]);
++	}
+ 
+     /**
+      * Richiede la conferma di prosecuzione nel caso in cui il servizio abbia
+@@ -200,30 +208,38 @@
+     /**
+      *Gestisce la richiesta di prosecuzione della registrazione
+      * */
+-    function gestioneRichiestaProsecuzioneRegistrazione(array, url, data, endCallback, tabelleGiaInDataTable, tabellaDestinazione, alertErrori) {
+-        bootboxAlert(array[0].descrizione, 'Attenzione', 'dialogWarn', [
++    function gestioneRichiestaProsecuzioneRegistrazione(array, url, ajaxParam, endCallback, tabelleGiaInDataTable, tabellaDestinazione, alertErrori) {
++	    bootboxAlert(array[0].descrizione, 'Attenzione', 'dialogWarn', [
+             {
+                 "label" : "No, indietro"
+                 , "class" : "btn"
+-                , "callback": $.noop
++                , "callback": function(){
++                	tabellaDestinazione.overlay('hide');
++                }
+             }
+             , {
+                 "label" : "si, prosegui"
+                 , "class" : "btn"
+                 , "callback" : function() {
+-                    data["specificaImporti.ignoraValidazione"] = true;
+-                    $.postJSON(url, data, function(data) {
+-                        var listaCapitoliDaInserireNellaVariazione = data.specificaImporti.listaCapitoliNellaVariazione;
+-                        var totaliImporti = data.specificaImporti.elementoImportiVariazione;
+-                        alertErrori.slideUp();
+-                        if (impostaDatiNegliAlert(data.errori,alertErrori)) {
+-                            return;
+-                        }
+-                        endCallback(tabelleGiaInDataTable, tabellaDestinazione, listaCapitoliDaInserireNellaVariazione, totaliImporti);
+-                    });
++                	ajaxParam["specificaImporti.ignoraValidazione"] = true;
++                	tabellaDestinazione.overlay('show');
++                    $.postJSON(url, ajaxParam)
++            		.then(function(data) {
++            			var errori = data.errori;
++            			var messaggi = data.messaggi;
++            			var tabella = $("#tabellaGestioneVariazioni");
++            			var tabelleGiaInDataTable = $.fn.dataTable.fnTables(true);
++            			// Alert errori
++            			var alertErrori = $("#ERRORI");
++            				if(impostaDatiNegliAlert(errori, alertErrori)) {
++            				return;
++            			}            			
++
++            			return varImp.leggiCapitoliNellaVariazione();
++            		}).always(tabellaDestinazione.overlay.bind(tabellaDestinazione, 'hide'));
+                 }
+             }]);
+-    };
++	};
+     /**
+      * Se il servizio viene implementato in modo asincrono permette all'utente di scegliere se rimanere
+      * sulla pagina oppure tornare alla home
+@@ -453,6 +469,9 @@
+         oggettoDaAggiornare.competenza = competenza;
+         oggettoDaAggiornare.residuo = residuo;
+         oggettoDaAggiornare.cassa = cassa;
++        oggettoDaAggiornare.competenzaOriginale = oggettoOriginale.competenzaOriginale || 0;
++		oggettoDaAggiornare.residuoOriginale = oggettoOriginale.residuoOriginale || 0;
++		oggettoDaAggiornare.cassaOriginale = oggettoOriginale.cassaOriginale || 0;
+         oggettoDaAggiornare.daAnnullare = oggettoOriginale.daAnnullare;
+         oggettoDaAggiornare.daInserire = oggettoOriginale.daInserire;
+ 
+@@ -473,6 +492,7 @@
+             }
+ 
+             if(data.messaggi && data.messaggi.length) {
++            	$('#editStanziamenti').modal('hide');
+                 gestioneRichiestaProsecuzione(data.messaggi, url, ajaxParam, completaInserimentoNellaVariazione, tabellaDestinazione, alertErrori, modale);
+                 return;
+             }
+@@ -518,13 +538,17 @@
+ 
+         var url = "aggiungiCapitoliNellaVariazione_aggiornamento.do";
+         var ajaxParam;
+-
++        var importi = capitolo.importiCapitolo || {};
++        
+         oggettoDaInviare.uid = capitolo.uid;
+         oggettoDaInviare.statoOperativoElementoDiBilancio = capitolo.statoOperativoElementoDiBilancio ? capitolo.statoOperativoElementoDiBilancio._name : "";
+         oggettoDaInviare.competenza = $("#competenzaVariazione").val() || 0;
+         oggettoDaInviare.residuo = $("#residuoVariazione").val() || 0;
+         oggettoDaInviare.cassa = $("#cassaVariazione").val() || 0;
+-
++        oggettoDaInviare.competenzaOriginale = importi.stanziamento || 0;
++		oggettoDaInviare.residuoOriginale = importi.stanziamentoResiduo || 0;
++		oggettoDaInviare.cassaOriginale = importi.stanziamentoCassa || 0;
++        
+         oggettoDaInviare = qualify(oggettoDaInviare, "specificaImporti.elementoCapitoloVariazione");
+ 
+         ajaxParam = $.extend(true, {}, oggettoDaInviare/*, oggettoOld*/);
+@@ -542,6 +566,11 @@
+             	$('#tabellaGestioneVariazioni').overlay('hide');
+                 return;
+             }
++            
++            if(messaggi && messaggi.length) {
++				gestioneRichiestaProsecuzioneRegistrazione(messaggi, url, ajaxParam, completaRegistrazione,tabelleGiaInDataTable, tabella, alertErrori);
++				return;
++			}
+ 
+             svuotaFormCapitolo();
+             varImp.leggiCapitoliNellaVariazione();
+Index: src/main/webapp/js/local/variazioni/variazioni.step3.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/variazioni.step3.importi.js	(revision 11031)
++++ src/main/webapp/js/local/variazioni/variazioni.step3.importi.js	(working copy)
+@@ -158,28 +158,35 @@
+ 	/** Apre e imposta la modale di conferma prosecuzione
+ 	 * */
+ 
+-	function gestioneRichiestaProsecuzione(array, url, data, endCallback, tabellaDestinazione, alertErrori, modale) {
++	function gestioneRichiestaProsecuzione(array, url, ajaxParam, endCallback, tabellaDestinazione, alertErrori, modale) {
+ 		bootboxAlert(array[0].descrizione, 'Attenzione', 'dialogWarn', [
+ 		    {
+ 		        "label" : "No, indietro"
+                 , "class" : "btn"
+-                , "callback": $.noop
++                , "callback": function(){
++                	tabellaDestinazione.overlay('hide');
++                }
+             }
+ 		    , {
+ 		        "label" : "si, prosegui"
+ 	            , "class" : "btn"
+                 , "callback": function() {
+-                    data["specificaImporti.ignoraValidazione"] = true;
+-                    $.postJSON(url, data)
+-                    .then(function(data) {
+-                        var listaCapitoliDaInserireNellaVariazione = data.specificaImporti.listaCapitoliNellaVariazione;
+-                        var totaliImporti = data.specificaImporti.elementoImportiVariazione;
+-                        alertErrori.slideUp();
+-                        if (impostaDatiNegliAlert(data.errori,alertErrori)) {
+-                            return;
+-                        }
+-                        endCallback(tabellaDestinazione, listaCapitoliDaInserireNellaVariazione, totaliImporti, modale);
+-                    });
++                	tabellaDestinazione.overlay('show');
++                	ajaxParam["specificaImporti.ignoraValidazione"] = true;
++                    $.postJSON(url, ajaxParam)
++            		.then(function(data) {
++            			var errori = data.errori;
++            			var messaggi = data.messaggi;
++            			var tabella = $("#tabellaGestioneVariazioni");
++            			var tabelleGiaInDataTable = $.fn.dataTable.fnTables(true);
++            			// Alert errori
++            			var alertErrori = $("#ERRORI");
++            				if(impostaDatiNegliAlert(errori, alertErrori)) {
++            					return;
++            				}            			
++
++            			return varImp.leggiCapitoliNellaVariazione();
++            		}).always(tabellaDestinazione.overlay.bind(tabellaDestinazione, 'hide'));
+                 }
+ 		    }]);
+ 	}
+@@ -188,28 +195,35 @@
+ 	/**
+ 	 *Gestisce la richiesta di prosecuzione
+ 	 * */
+-	function gestioneRichiestaProsecuzioneRegistrazione(array, url, data, endCallback, tabelleGiaInDataTable, tabellaDestinazione, alertErrori) {
++	function gestioneRichiestaProsecuzioneRegistrazione(array, url, ajaxParam, endCallback, tabelleGiaInDataTable, tabellaDestinazione, alertErrori) {
+ 	    bootboxAlert(array[0].descrizione, 'Attenzione', 'dialogWarn', [
+             {
+                 "label" : "No, indietro"
+                 , "class" : "btn"
+-                , "callback": $.noop
++                , "callback": function(){
++                	tabellaDestinazione.overlay('hide');
++                }
+             }
+             , {
+                 "label" : "si, prosegui"
+                 , "class" : "btn"
+                 , "callback" : function() {
+-                    data["specificaImporti.ignoraValidazione"] = true;
+-                    $.postJSON(url, data)
+-                    .then(function(data) {
+-                        var listaCapitoliDaInserireNellaVariazione = data.specificaImporti.listaCapitoliNellaVariazione;
+-                        var totaliImporti = data.specificaImporti.elementoImportiVariazione;
+-                        alertErrori.slideUp();
+-                        if (impostaDatiNegliAlert(data.errori,alertErrori)) {
+-                            return;
+-                        }
+-                        endCallback(tabelleGiaInDataTable, tabellaDestinazione, listaCapitoliDaInserireNellaVariazione, totaliImporti);
+-                    });
++                	ajaxParam["specificaImporti.ignoraValidazione"] = true;
++                	tabellaDestinazione.overlay('show');
++                    $.postJSON(url, ajaxParam)
++            		.then(function(data) {
++            			var errori = data.errori;
++            			var messaggi = data.messaggi;
++            			var tabella = $("#tabellaGestioneVariazioni");
++            			var tabelleGiaInDataTable = $.fn.dataTable.fnTables(true);
++            			// Alert errori
++            			var alertErrori = $("#ERRORI");
++            				if(impostaDatiNegliAlert(errori, alertErrori)) {
++            				return;
++            			}            			
++
++            			return varImp.leggiCapitoliNellaVariazione();
++            		}).always(tabellaDestinazione.overlay.bind(tabellaDestinazione, 'hide'));
+                 }
+             }]);
+ 	};
+@@ -406,7 +420,7 @@
+ 	function aggiornaCapitoloNellaVariazione(tabellaSorgente, tabellaDestinazione, riga) {
+ 
+ 		var oggettoOriginale = tabellaSorgente.dataTable().fnGetData(riga);
+-		var url = "aggiornaCapitoliNellaVariazione.do";
++		var url = "aggiornaCapitoliNellaVariazione.do";		
+ 		var ajaxParam;
+ 		// Clone dell'oggetto originale, per effettuare la chiamata
+ 		var oggettoDaAggiornare = {};
+@@ -420,8 +434,12 @@
+ 		oggettoDaAggiornare.competenza = competenza;
+ 		oggettoDaAggiornare.residuo = residuo;
+ 		oggettoDaAggiornare.cassa = cassa;
++		oggettoDaAggiornare.competenzaOriginale = oggettoOriginale.competenzaOriginale || 0;
++		oggettoDaAggiornare.residuoOriginale = oggettoOriginale.residuoOriginale || 0;
++		oggettoDaAggiornare.cassaOriginale = oggettoOriginale.cassaOriginale || 0;
+ 		oggettoDaAggiornare.daAnnullare = oggettoOriginale.daAnnullare;
+ 		oggettoDaAggiornare.daInserire = oggettoOriginale.daInserire;
++		
+ 
+ 		// Qualifico correttamente l'oggetto da inserire
+ 		oggettoDaAggiornare = qualify(oggettoDaAggiornare, "specificaImporti.elementoCapitoloVariazione");
+@@ -438,6 +456,7 @@
+ 				return;
+ 			}
+ 			if(data.messaggi && data.messaggi.length) {
++				$('#editStanziamenti').modal('hide');
+ 				gestioneRichiestaProsecuzione(data.messaggi, url, ajaxParam, completaInserimentoNellaVariazione, tabellaDestinazione, alertErrori, modale);
+ 				return;
+ 			}
+@@ -481,6 +500,7 @@
+ 		var url = "aggiungiCapitoliNellaVariazione.do";
+ 		var ajaxParam;
+ 		var tabella;
++		var importi = capitolo.importiCapitolo || {};
+ 
+ 		$("#divRicercaCapitolo").slideUp();
+ 		tabella = $('#tabellaGestioneVariazioni').overlay('show');
+@@ -492,6 +512,10 @@
+ 		oggettoDaInviare.competenza = $("#competenzaVariazione").val() || 0;
+ 		oggettoDaInviare.residuo = $("#residuoVariazione").val() || 0;
+ 		oggettoDaInviare.cassa = $("#cassaVariazione").val() || 0;
++		oggettoDaInviare.competenzaOriginale = importi.stanziamento || 0;
++		oggettoDaInviare.residuoOriginale = importi.stanziamentoResiduo || 0;
++		oggettoDaInviare.cassaOriginale = importi.stanziamentoCassa || 0;
++		
+ 
+ 		oggettoDaInviare = qualify(oggettoDaInviare, "specificaImporti.elementoCapitoloVariazione");
+ 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <package name="capitolo-common" extends="capitoloDefault" namespace="/">
+    
+        <action name="dettaglioVariazioniCapitolo" class="dettaglioVariazioniCapitoloAction">
+            <result name="success">/jsp/cap/dettaglioVariazioniCap.jsp</result>
+            <result name="input">/jsp/cap/dettaglioVariazioniCap.jsp</result>
+        </action>
+        <action name="dettaglioVariazioniCapitoloAjax" class="dettaglioVariazioniCapitoloAjaxAction">
+            <result name="success" type="dataTable" />
+        </action>
+        
+        <action name="ricercaMovimentiCapitoloAjax_ottieniVariazioniCapitolo" class="ricercaMovimentiCapitoloAjaxAction" method="ottieniVariazioniCapitolo">
+            <result name="success">/jsp/cap/include/consulta_movimenti.jsp</result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="ricercaMovimentiCapitoloAjax_ottieniVariazioniCapitoloEquivalente" class="ricercaMovimentiCapitoloAjaxAction" method="ottieniVariazioniCapitolo">
+            <result name="success">/jsp/cap/include/consulta_gestione_tabella_equivalente.jsp</result>
+            <result name="input" type="customMessagesJSON" />
+        </action>        
+        <action name="ricercaMovimentiCapitoloAjax_ottieniVariazioniCodificheCapitolo" class="ricercaMovimentiCapitoloAjaxAction" method="ottieniVariazioniCodificheCapitolo">
+            <result name="input" type="customMessagesJSON" />
+           <result name="success">/jsp/cap/include/consulta_variazioni_codifiche.jsp</result>
+        </action>
+        <action name="risultatiRicercaMovimentiCapitoloVariazioniCodificheAjax" class="risultatiRicercaVariazioniCodificheCapitoloAjaxAction">
+            <result name="success" type="dataTable" />           
+        </action>       
+        
+    </package>
+</struts>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	    http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/context
+	    http://www.springframework.org/schema/context/spring-context.xsd
+	    http://www.springframework.org/schema/util
+	    http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 
+		Aggancia al contesto di Spring le properties che si trovano nei file 
+		di properties della cartella spring sotto il classpath. I valori potranno 
+		essere referenziati sia nei file di configurazione che da codice tramite 
+		l'annotation @Value, con la sintassi ${property.name} 
+	-->
+	<context:property-placeholder location="classpath:spring/*.properties" />
+
+	<!-- Abilita la validazione JSR-303 -->
+	<!-- 
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/> 
+	<bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/> 
+	-->
+	
+	<!-- ****************************** Handler ********************************* -->
+	<!-- Verificare se spostare in un file del tipo spring-handler.xml -->
+	<bean id="serviceHandlerBean" class="it.csi.siac.siacbilapp.frontend.ui.handler.service.ServiceHandler"
+		scope="prototype">
+		<property name="coreServiceClient" ref="coreServiceClient" />
+		<property name="capitoloUscitaPrevisioneServiceClient" ref="capUscitaPrevisioneServiceClient" />
+		<property name="classificatoreBilServiceClient" ref="classificatoreBilServiceClient" />
+		<property name="classificatoreServiceClient" ref="classificatoreServiceClient" />
+		<!-- 
+		<property name="sessionHandler" ref="sessionHandlerBean" /> 
+		-->
+	</bean>
+	<bean id="logHandlerBean" class="it.csi.siac.siaccorser.util.log.CoreLogHandler">
+		<property name="verbose" value="false" />
+	</bean>
+	
+	<bean id="exceptionHandlerBean" class="it.csi.siac.siacbilapp.frontend.ui.handler.exception.BilExceptionHandler"
+		scope="prototype">
+		<property name="logHandler" ref="logHandlerBean" />
+	</bean>
+	<!--
+	<bean id="loginHandlerBean" class="it.csi.siac.siaccruapp.presentation.handler.login.TestLoginHandler" 
+		scope="request" />
+	-->
+	<bean id="sessionHandlerBean" class="it.csi.siac.siaccommonapp.handler.session.SessionHandler"
+		scope="prototype" />
+
+	<!-- ****************************** Action + Model ************************** -->
+	<!-- Verificare se spostare le Action in un file del tipo spring-action.xml -->
+	<!-- Verificare se spostare i Model in un file del tipo spring-model.xml -->
+	<bean id="genericAction" abstract="true"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.GenericAction" scope="prototype">
+		<!-- 
+		<property name="sessionHandler" ref="sessionHandlerBean" />
+		-->
+		<property name="logHandler" ref="logHandlerBean" />
+		<property name="exceptionHandler" ref="exceptionHandlerBean" />
+		<!-- 
+		<property name="loginHandler" ref="loginHandlerBean" /> 
+		-->
+		<property name="serviceHandler" ref="serviceHandlerBean" />
+		<property name="sessionHandler" ref="sessionHandlerBean" /> 
+	</bean>
+
+	<bean id="azioneRichiestaAction" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.AzioneRichiestaAction" scope="prototype">
+		<property name="model" ref="azioneRichiestaModel" />
+	</bean>
+	<bean id="azioneRichiestaModel" class="it.csi.siac.siaccommonapp.model.AzioneRichiestaModel"
+		scope="prototype" />
+
+	<bean id="capUscitaPrevisioneAction" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.CapUscitaPrevisioneAction"	scope="prototype">
+		<property name="model" ref="capUscitaPrevisioneModel" />
+	</bean>
+	<bean id="capUscitaPrevisioneModel" class="it.csi.siac.siacbilapp.frontend.ui.model.CapUscitaPrevisioneModel"
+		scope="prototype" />
+
+	<bean id="ricercaCapUscitaPrevisioneAction" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.RicercaCapUscitaPrevisioneAction" scope="prototype">
+		<property name="model" ref="ricercaCapUscitaPrevisioneModel" />
+	</bean>
+	<bean id="ricercaCapUscitaPrevisioneModel" 
+		class="it.csi.siac.siacbilapp.frontend.ui.model.RicercaCapUscitaPrevisioneModel" scope="prototype" />
+
+	<bean id="risultatiRicercaCapUscitaPrevisioneAction" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.RisultatiRicercaCapUscitaPrevisioneAction"	scope="prototype">
+		<property name="model" ref="risultatiRicercaCapUscitaPrevisioneModel" />
+	</bean>
+	<bean id="risultatiRicercaCapUscitaPrevisioneModel" 
+		class="it.csi.siac.siacbilapp.frontend.ui.model.RisultatiRicercaCapUscitaPrevisioneModel" scope="prototype" />
+
+	<!-- Fragments action -->
+	<!-- Verificare se spostare in un file del tipo spring-fragments.xml -->
+	<!-- 
+		Valutare in generale se mantenere i seguenti frammenti, o se non spostare il tutto come semplici metodi
+		richiamati da azioni in un package del tipo 'AJAX', estendente il json-default e definente i risultati, 
+		di tipo json, utilizzati dalle chiamate AJAX effettuate dai forms.
+		(NOTA: è molto simile a quanto già presente. Valutare se effettuare le picole modifiche, o 
+		cambiare completamente le classi)
+	-->
+	<bean id="programmiMissioneAction" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.ProgrammiMissioneAction" scope="prototype">
+		<property name="model" ref="programmiMissioneModel" />
+	</bean>
+	<bean id="programmiMissioneModel" class="it.csi.siac.siacbilapp.frontend.ui.model.ProgrammiMissioneModel"
+		scope="prototype" />
+
+	<bean id="macroaggregatiTitoloSpesaAction" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.MacroaggregatiTitoloSpesaAction" scope="prototype">
+		<property name="model" ref="macroaggregatiTitoloSpesaModel" />
+	</bean>
+	<bean id="macroaggregatiTitoloSpesaModel" 
+		class="it.csi.siac.siacbilapp.frontend.ui.model.MacroaggregatiTitoloSpesaModel" scope="prototype" />
+
+	<bean id="pianoDeiContiMacroaggregatoAction" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.PianoDeiContiMacroaggregatoAction"	scope="prototype">
+		<property name="model" ref="pianoDeiContiMacroaggregatoModel" />
+	</bean>
+	<bean id="pianoDeiContiMacroaggregatoModel" 
+		class="it.csi.siac.siacbilapp.frontend.ui.model.PianoDeiContiMacroaggregatoModel" scope="prototype" />
+
+	<!-- ****************************** Client ********************************** -->
+	<!-- Verificare se spostare in un file del tipo spring-client.xml -->
+	<bean id="capUscitaPrevisioneServiceClient"
+		class="it.csi.siac.siacbilser.frontend.webservice.client.CapitoloUscitaPrevisioneServiceClient">
+		<property name="endpoint" value="http://siac.jboss/siacbilser/CapitoloUscitaPrevisioneService?wsdl" />
+	</bean>
+	<bean id="classificatoreBilServiceClient"
+		class="it.csi.siac.siacbilser.frontend.webservice.client.ClassificatoreBilServiceClient">
+		<property name="endpoint" value="http://siac.jboss/siacbilser/ClassificatoreBilService?wsdl" />
+	</bean>
+	<bean id="classificatoreServiceClient"
+		class="it.csi.siac.siaccorser.frontend.webservice.client.ClassificatoreServiceClient">
+		<property name="endpoint" value="http://siac.jboss/siaccorser/ClassificatoreService" />
+	</bean>
+	<bean id="coreServiceClient"
+		class="it.csi.siac.siaccorser.frontend.webservice.client.CoreServiceClient">
+		<property name="endpoint" value="http://siac.jboss/siaccorser/CoreService" />
+	</bean>
+	
+	
+	<!-- *************************** Mie Actions ******************************** -->
+	<bean id="capitoloUscitaPrevisioneActionAM" parent="genericAction"
+		class="it.csi.siac.siacbilapp.frontend.ui.action.CapitoloUscitaPrevisioneActionAM" scope="prototype">
+		<property name="model" ref="capitoloUscitaPrevisioneModelAM" />
+	</bean>
+	<bean id="capitoloUscitaPrevisioneModelAM" scope="prototype" 
+		class="it.csi.siac.siacbilapp.frontend.ui.model.CapitoloUscitaPrevisioneModelAM" />
+	
+	<!-- *************************** Interceptor ******************************** -->
+	<!-- 
+		Momentaneamente posizionato qui. Valutare se necessiti di essere riposizionato in
+		una locazione più consona.
+		Controllare anche qualora non sia d'uopo spostare l'interceptor in un package
+		del tipo it.csi.siac.siacbilapp.frontend.ui.interceptor .
+	-->
+	<bean id="interceptorLogHandler" scope="prototype" 
+			class="it.csi.siac.siacbilapp.frontend.ui.handler.log.InterceptorLogHandlerImpl">
+		<property name="verbose" value="false" />
+	</bean>
+	<bean id="logInterceptor" scope="prototype"
+			class="it.csi.siac.siaccommonapp.interceptor.LogInterceptor">
+		<property name="interceptorLogHandler" ref="interceptorLogHandler" />
+	</bean>
+	
+</beans>

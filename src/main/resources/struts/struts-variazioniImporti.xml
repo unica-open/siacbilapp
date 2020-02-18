@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="variazioniImporti" extends="capitoloDefault" namespace="/">
+	
+		<result-types>
+			<result-type name="asyncResponsePresentVariazione" class="it.csi.siac.siacbilapp.frontend.ui.action.variazione.VariazioneBaseAction$AsyncResponsePresentVariazioneImportiResult" />
+			<result-type name="asyncResponsePresentConRichiestaConfermaVariazione" class="it.csi.siac.siacbilapp.frontend.ui.action.variazione.VariazioneBaseAction$AsyncResponsePresentConRichiestaConfermaVariazioneImportiResult" />
+			<result-type name="specificaVariazioneImporti" class="it.csi.siac.siacbilapp.frontend.ui.action.variazione.VariazioneBaseAction$SpecificaVariazioneImportiResult" />
+		</result-types>
+
+		<!-- Cerca Variazione - ingresso pagina ricerca -->
+		<action name="ricercaVariazione" class="ricercaVariazioneAction">
+			<result name="success">/jsp/variazione/ricercaVariazione.jsp</result>
+		</action>
+
+		 <!-- Ricerca variazioni -->
+		<action name="effettuaRicercaVariazione" class="ricercaVariazioneAction" method="ricercaVariazioni">
+			<result name="success" type="redirectAction">risultatiRicercaVariazione</result>
+			<result name="input">/jsp/variazione/ricercaVariazione.jsp</result>
+		</action>
+
+		<action name="caricaTipoVariazione" class="ricercaVariazioneAction" method="caricaTipoVariazioni">
+			<result type="customJSON">
+				<param name="includeProperties">
+					listaTipoVariazione.*
+				</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaVariazione" class="risultatiRicercaVariazioneAction">
+			<result name="success">/jsp/variazione/risultatiRicercaVariazione.jsp</result>
+		</action>
+
+		<action name="risultatiRicercaVariazioniImportiAjax" class="risultatiRicercaVariazioniImportiAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+
+		<!-- Azioni riferite al CDU GESC017 Consulta Variazione Importi -->
+		<action name="consultaVariazioneImporti" class="consultaVariazioneImportiAction">
+			<result name="success">/jsp/variazione/consultaVariazioneImporti.jsp</result>
+			<result name="input">/jsp/variazione/risultatiRicercaVariazione.jsp</result>
+		</action>
+		
+		<action name="consultaVariazioneImporti_ricercaComponentiCapitoloInVariazione" class="consultaVariazioneImportiAction" method="ricercaComponentiImportoCapitoloInVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					componentiCapitolo.*
+				</param>
+			</result>
+		</action>
+
+		<action name="consultaVariazioneImporti_leggiCapitoliNellaVariazione" class="consultaVariazioneImportiAction" method="leggiCapitoliNellaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					totaleStanziamentiEntrata.*,
+					totaleStanziamentiEntrata1.*,
+					totaleStanziamentiEntrata2.*,
+					totaleStanziamentiCassaEntrata.*,
+					totaleStanziamentiResiduiEntrata.*,
+					totaleStanziamentiSpesa.*,
+					totaleStanziamentiSpesa1.*,
+					totaleStanziamentiSpesa2.*,
+					totaleStanziamentiCassaSpesa.*,
+					totaleStanziamentiResiduiSpesa.*
+				</param>
+			</result>
+		</action>
+		<action name="consultaVariazioneImporti_download" class="consultaVariazioneImportiAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione_consultazione" class="consultaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione_consultazione" class="consultaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione_consultazione" class="consultaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione_consultazione" class="consultaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+
+		<!-- CONSULTA -->
+		<action name="consultaImportiVariazione" class="risultatiRicercaVariazioneAction" method="consultaImporti">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaVariazioneImporti</param>
+				<param name="namespace">/</param>
+				<param name="uidVariazione">${uidVariazioneDaConsultare}</param>
+			</result>
+		</action>
+
+		<!-- Definisci Variazione - ingresso pagina definisci variazione importi -->
+		<action name="definisciVariazioneImporti_chooseGestioneUEB" class="definisceVariazioneImportiAction" method="chooseGestioneUEB">
+			<result name="false" type="redirectAction">definisciVariazioneImporti</result>
+			<result name="true" type="redirectAction">definisciVariazioneImportiUEB</result>
+		</action>
+		
+		<action name="definisciVariazioneImporti" class="definisceVariazioneImportiAction">
+			<result name="success">/jsp/variazione/definisceVariazioneImporti.jsp</result>
+			<result name="input">/jsp/variazione/definisceVariazioneImporti.jsp</result>
+		</action>
+
+		<action name="definisceVariazioneImporti_ricercaComponentiCapitoloInVariazione" class="definisceVariazioneImportiAction" method="ricercaComponentiImportoCapitoloInVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					componentiCapitolo.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="leggiCapitoliNellaVariazione_definizione" class="definisceVariazioneImportiAction" method="leggiCapitoliNellaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					totaleStanziamentiEntrata.*,
+					totaleStanziamentiEntrata1.*,
+					totaleStanziamentiEntrata2.*,
+					totaleStanziamentiCassaEntrata.*,
+					totaleStanziamentiResiduiEntrata.*,
+					totaleStanziamentiSpesa.*,
+					totaleStanziamentiCassaSpesa.*,
+					totaleStanziamentiResiduiSpesa.*,
+					totaleStanziamentiSpesa1.*,
+					totaleStanziamentiSpesa2.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione_definizione" class="definisceVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione_definizione" class="definisceVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione_definizione" class="definisceVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione_definizione" class="definisceVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+
+		 <!-- Definisci Variazione -->
+		<action name="effettuaDefinisciVariazioneImporti" class="definisceVariazioneImportiAction" method="definisciVariazione">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="definisciAggiornamentoVariazioneImportiAsyncResponse" class="definisceVariazioneImportiAction" method="definisciAsyncResponse">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+		
+		<action name="definisceVariazioneImporti_download" class="definisceVariazioneImportiAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<!-- Aggiornamento -->
+		<action name="aggiornaVariazioneImporti_chooseGestioneUEB" class="aggiornaVariazioneImportiAction" method="chooseGestioneUEB">
+			<result name="true" type="redirectAction">aggiornaVariazioneImportiUEB</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaVariazioneImporti</param>
+				<param name="fromInserimento">false</param>
+			</result>
+			<result name="false" type="redirectAction">aggiornaVariazioneImporti</result>
+		</action>
+		
+		<action name="aggiornaVariazioneImporti" class="aggiornaVariazioneImportiAction">
+			<result name="success" type="redirectAction">aggiornamentoVariazioneImporti</result>
+		</action>
+		<action name="aggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiAction" method="enterPage">
+			<result name="success">/jsp/variazione/aggiornaVariazioneImporti.jsp</result>
+			<result name="success_disabled">/jsp/variazione/aggiornaVariazioneImportiDISABLED.jsp</result>
+			<result name="success_from_inserimento">/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp</result>
+		</action>
+
+
+		<action name="redirectToDisabledAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiAction" method="redirezioneVersoPaginaDisabilitata">
+			<result name="success">/jsp/variazione/aggiornaVariazioneImportiDISABLED.jsp</result>
+			<result name="input">/jsp/variazione/aggiornaVariazioneImporti.jsp</result>
+		</action>
+		
+		<action name="redirectToRiepilogoAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiAction" method="redirezioneVersoRiepilogo">
+			<result name="success">/jsp/variazione/step4/variazioneStep4.jsp</result>
+			<result name="input">/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp</result>
+		</action>
+
+ 		<action name="salvaAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiAction" method="salva">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+
+		<action name="salvaAggiornamentoVariazioneImportiAsyncResponse" class="aggiornaVariazioneImportiAction" method="salvaAsyncResponse">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+
+		<action name="concludiAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiAction" method="concludi">
+			<result name="success" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+			<result name="input" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+		</action>
+		<action name="concludiAggiornamentoVariazioneImportiAsyncResponse" class="aggiornaVariazioneImportiAction" method="concludiAsyncResponse">
+			<result name="success" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+			<result name="input" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+		</action>
+		<!-- SIAC 6884 -->
+		<action name="chiudiPropostaAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiAction" method="chiudiProposta">
+			<result name="success" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+			<result name="input" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+		</action>
+		<action name="chiudiPropostaAggiornamentoVariazioneImportiAsyncResponse" class="aggiornaVariazioneImportiAction" method="chiudiPropostaAsyncResponse">
+			<result name="success" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+			<result name="input" type="asyncResponsePresentConRichiestaConfermaVariazione" />
+		</action>
+		
+		
+
+		<action name="annullaAggiornamentoVariazioneImporti" class="aggiornaVariazioneImportiAction" method="annulla">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+
+		<action name="annullaAggiornamentoVariazioneImportiAsyncResponse" class="aggiornaVariazioneImportiAction" method="annullaAsyncResponse">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+
+			<!-- ******** Wizard inserimento ******** -->
+		<!-- STEP 1 -->
+		<action name="sceltaVariazione" class="inserisciVariazioneImportiAction" method="execute">
+			<result name="input">/jsp/failure.jsp</result>
+			<result name="success">/jsp/variazione/step1/scelta.jsp</result>
+		</action>
+		<action name="esecuzioneStep1InserimentoVariazioni" class="inserisciVariazioneImportiAction" method="executeStep1">
+			<result name="input">/jsp/variazione/step1/scelta.jsp</result>
+			<result name="importi" type="redirectAction">enterStep2InserimentoVariazioniImporti</result>
+			<result name="importiUEB" type="redirectAction">enterStep2InserimentoVariazioniImportiUEB</result>
+			<result name="codifiche" type="redirectAction">enterStep2InserimentoVariazioniCodifiche</result>
+		</action>
+
+		<!-- STEP 2 -->
+		<action name="enterStep2InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="enterStep2">
+			<result name="success">/jsp/variazione/step2/variazioneStep2.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+
+		<action name="returnToStep2InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="returnToStep2">
+			<result name="success">/jsp/variazione/step2/variazioneStep2.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		
+		<action name="goToAggiorna" class="inserisciVariazioneImportiAction" method="goToAggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaVariazioneImporti</param>
+				<param name="uidVariazione">${uidVariazione}</param>
+				<param name="fromInserimento">true</param>
+			</result>
+			<result name="input">/jsp/variazione/step4/variazioneStep4_variazioneBilancio.jsp</result>
+		</action>
+
+		<action name="esecuzioneStep2InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="executeStep2">
+			<result name="input">/jsp/variazione/step2/variazioneStep2.jsp</result>
+			<result name="success" type="redirectAction">enterStep4InserimentoVariazioniImporti</result>
+			<result name="go_to_aggiorna" type="redirectAction">goToAggiorna</result>
+		</action>
+
+		<!-- STEP 3 -->
+		<action name="enterStep3InserimentoVariazioniImportiSenzaUEB" class="inserisciVariazioneImportiAction" method="enterStep3">
+			<result name="success">/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<!-- action name="esecuzioneStep3InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="executeStep3">
+			<result name="success" type="redirectAction">enterStep4InserimentoVariazioniImporti</result>
+			<result name="input">/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp</result>
+		</action> -->
+		
+		<action name="esecuzioneStep3InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="executeStep3">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+		
+		<action name="inserisciVariazioneImportiAction_ottieniResponseExecuteStep3Async" class="inserisciVariazioneImportiAction" method="ottieniResponseExecuteStep3Async">
+			<result name="success" type="asyncResponsePresentVariazione" />
+			<result name="input" type="asyncResponsePresentVariazione" />
+		</action>
+		<action name="inserisciVariazioneImporti_download" class="inserisciVariazioneImportiAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+
+		<!-- STEP 4 -->
+		<action name="enterStep4InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="enterStep4">
+			<result name="success">/jsp/variazione/step4/variazioneStep4_variazioneBilancio.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+
+		<!-- Azioni AJAX -->
+
+			<!-- @@@@ INSERIMENTO @@@@ -->
+		<action name="leggiCapitoliNellaVariazione" class="inserisciVariazioneImportiAction" method="leggiCapitoliNellaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					variazioneSenzaCapitoli.*,
+					totaleStanziamentiEntrata.*,
+					totaleStanziamentiCassaEntrata.*,
+					totaleStanziamentiResiduiEntrata.*,
+					totaleStanziamentiSpesa.*,
+					totaleStanziamentiCassaSpesa.*,
+					totaleStanziamentiResiduiSpesa.*
+				</param>
+			</result>
+		</action>
+
+
+		<action name="controllaAzioniConsentiteAllUtente" class="inserisciVariazioneImportiAction" method="controllaAzioniConsentiteAllUtente">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.utenteAbilitatoAdInserimento,
+					specificaImporti\.utenteAbilitatoAdAnnullamento
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiungiCapitoliNellaVariazione" class="inserisciVariazioneImportiAction" method="aggiungiCapitoliNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+
+		<action name="aggiornaCapitoliNellaVariazione" class="inserisciVariazioneImportiAction" method="aggiornaCapitoliNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+
+		<action name="eliminaCapitoliNellaVariazione" class="inserisciVariazioneImportiAction" method="eliminaCapitoliNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+
+		<action name="redirezioneVersoNuovoCapitolo" class="inserisciVariazioneImportiAction" method="redirezioneVersoNuovoCapitolo">
+			<result name="uscita_previsione" type="redirectAction">
+				<param name="actionName">inserisciCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${definisci.annoVariazione}</param>
+			</result>
+			<result name="uscita_gestione" type="redirectAction">
+				<param name="actionName">inserisciCapUscitaGestione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${definisci.annoVariazione}</param>
+			</result>
+			<result name="entrata_previsione" type="redirectAction">
+				<param name="actionName">inserisciCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${definisci.annoVariazione}</param>
+			</result>
+			<result name="entrata_gestione" type="redirectAction">
+				<param name="actionName">inserisciCapEntrataGestione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${definisci.annoVariazione}</param>
+			</result>
+		</action>
+
+		<action name="annullaCapitoli" class="inserisciVariazioneImportiAction" method="annullaCapitolo">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione" class="inserisciVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione" class="inserisciVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione" class="inserisciVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione" class="inserisciVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+
+
+
+
+
+			<!-- @@@@ AGGIORNAMENTO @@@@ -->
+
+		<!-- ***** Senza UEB ***** -->
+		<!-- SIAC 6881 aggiunta listaCapitoliVariazioni -->
+		<action name="leggiCapitoliNellaVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="leggiCapitoliNellaVariazione">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					totaleStanziamentiEntrata.*,
+					totaleStanziamentiEntrata1.*,
+					totaleStanziamentiEntrata2.*,
+					totaleStanziamentiCassaEntrata.*,
+					totaleStanziamentiResiduiEntrata.*,
+					totaleStanziamentiSpesa.*,
+					totaleStanziamentiSpesa1.*,
+					totaleStanziamentiSpesa2.*,
+					totaleStanziamentiCassaSpesa.*,
+					totaleStanziamentiResiduiSpesa.*,
+					listaCapitoliVariazioni.*
+				</param>
+			</result>
+		</action>
+
+		<action name="leggiCapitoliNellaVariazioneImportiAjax" class="leggiCapitoliNellaVariazioneImportiAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+
+		<action name="controllaAzioniConsentiteAllUtente_aggiornamento" class="aggiornaVariazioneImportiAction" method="controllaAzioniConsentiteAllUtente">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.utenteAbilitatoAdInserimento,
+					specificaImporti\.utenteAbilitatoAdAnnullamento
+				</param>
+			</result>
+		</action>
+
+		<action name="aggiungiCapitoliNellaVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="aggiungiCapitoliNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+		
+		<action name="aggiungiCapitoliConComponentiNellaVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="aggiungiCapitoliConComponentiNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+
+		<action name="collegaNuovoCapitolo_aggiornamento" class="aggiornaVariazioneImportiAction" method="collegaNuovoCapitolo">
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="aggiornaCapitoliNellaVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="aggiornaCapitoliNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+
+		<action name="eliminaCapitoliNellaVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="eliminaCapitoliNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaPrevisione_aggiornamento" class="aggiornaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapUscitaGestione_aggiornamento" class="aggiornaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapUscitaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataPrevisione_aggiornamento" class="aggiornaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="effettuaRicercaNellaVariazioneCapEntrataGestione_aggiornamento" class="aggiornaVariazioneImportiAction" method="effettuaRicercaNellaVariazioneCapEntrataGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					elementoCapitoloVariazioneTrovatoNellaVariazione.*
+				</param>
+			</result>
+		</action>
+		
+		<!--  SIAC-6881 -->
+		<action name="caricaComponentiImportoPerNuovoDettaglioVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="caricaComponentiImportoPerNuovoDettaglioVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.competenzaTotaleNuovoAnno0, specificaImporti\.competenzaTotaleNuovoAnno1, specificaImporti\.competenzaTotaleNuovoAnno2,
+					specificaImporti\.componentiCapitoloNuovoDettaglio.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="ricercaComponentiCapitoloInVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="ricercaComponentiImportoCapitoloInVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.componentiCapitoloDettaglio.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="inserisciNuovaComponenteDettaglioVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="inserisciNuovaComponenteDettaglio">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.competenzaTotaleAnno0, specificaImporti\.competenzaTotaleAnno1, specificaImporti\.competenzaTotaleAnno2,
+					specificaImporti\.componentiCapitoloDettaglio.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaComponenteDettaglioVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="aggiornaComponenteDettaglioVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.competenzaTotaleAnno0, specificaImporti\.competenzaTotaleAnno1, specificaImporti\.competenzaTotaleAnno2,
+					specificaImporti\.componentiCapitoloDettaglio.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="eliminaComponenteDettaglioVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="eliminaComponenteDettaglioVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.competenzaTotaleAnno0, specificaImporti\.competenzaTotaleAnno1, specificaImporti\.competenzaTotaleAnno2,
+					specificaImporti\.componentiCapitoloDettaglio.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaCapitoliConComponentiNellaVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="aggiornaCapitoliConComponentiNellaVariazione">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+		
+		<action name="inserisciNuovaComponenteNuovoDettaglioVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="inserisciNuovaComponenteNuovoDettaglio">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.competenzaTotaleNuovoAnno0, specificaImporti\.competenzaTotaleNuovoAnno1, specificaImporti\.competenzaTotaleNuovoAnno2,
+					specificaImporti\.componentiCapitoloNuovoDettaglio.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaComponenteNuovoDettaglioVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="aggiornaComponenteNuovoDettaglioVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.competenzaTotaleNuovoAnno0, specificaImporti\.competenzaTotaleNuovoAnno1, specificaImporti\.competenzaTotaleNuovoAnno2,
+					specificaImporti\.componentiCapitoloNuovoDettaglio.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="eliminaComponenteNuovoDettaglioVariazione_aggiornamento" class="aggiornaVariazioneImportiAction" method="eliminaComponenteNuovoDettaglioVariazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.competenzaTotaleNuovoAnno0, specificaImporti\.competenzaTotaleNuovoAnno1, specificaImporti\.competenzaTotaleNuovoAnno2,
+					specificaImporti\.componentiCapitoloNuovoDettaglio.*
+				</param>
+			</result>
+		</action>
+		<!-- SIAC-6883 -->
+		<action name="ottieniEditabilitaByTipoComponente_aggiornamento" class="aggiornaVariazioneImportiAction" method="ottieniEditabilitaByTipoComponente">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					specificaImporti\.editabileAnno0, specificaImporti\.editabileAnno1, specificaImporti\.editabileAnno2
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaVariazioneImporti_download" class="aggiornaVariazioneImportiAction" method="download">
+			<result name="success" type="stampaStream" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="redirezioneVersoNuovoCapitolo_aggiornamento" class="aggiornaVariazioneImportiAction" method="redirezioneVersoNuovoCapitolo">
+			<result name="uscita_previsione" type="redirectAction">
+				<param name="actionName">inserisciCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${annoVariazione}</param>
+			</result>
+			<result name="uscita_gestione" type="redirectAction">
+				<param name="actionName">inserisciCapUscitaGestione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${annoVariazione}</param>
+			</result>
+			<result name="entrata_previsione" type="redirectAction">
+				<param name="actionName">inserisciCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${annoVariazione}</param>
+			</result>
+			<result name="entrata_gestione" type="redirectAction">
+				<param name="actionName">inserisciCapEntrataGestione</param>
+				<param name="namespace">/</param>
+				<param name="annoImporti">${annoVariazione}</param>
+			</result>
+		</action>
+
+		<action name="annullaCapitoli_aggiornamento" class="aggiornaVariazioneImportiAction" method="annullaCapitolo">
+			<result name="success" type="specificaVariazioneImporti" />
+		</action>
+
+	</package>
+</struts>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="causaleEntrata" extends="capitoloDefault" namespace="/">
+        
+        <action name="inserisciCausaleEntrata" class="inserisciCausaleEntrataAction">
+        	<result name="success">/jsp/causale/inserisciCausaleEntrata.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="inserimentoCausaleEntrataSalva" class="inserisciCausaleEntrataAction" method="salvaCausaleEntrata">
+            <result name="input">/jsp/causale/inserisciCausaleEntrata.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaCausaleEntrata</param>
+                <param name="namespace">/</param>
+                <param name="uidCausaleDaAggiornare">${idCausale}</param>
+            </result>
+        </action>
+        
+ 		<action name="aggiornaCausaleEntrata" class="aggiornaCausaleEntrataAction">
+        	<result name="success">/jsp/causale/aggiornaCausaleEntrata.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="aggiornamentoCausaleEntrata" class="aggiornaCausaleEntrataAction" method="aggiornaCausaleEntrata">
+        	<result name="success">/jsp/causale/aggiornaCausaleEntrata.jsp</result>
+            <result name="input">/jsp/causale/aggiornaCausaleEntrata.jsp</result>
+        </action>
+        
+        <action name="consultaCausaleEntrata" class="consultaCausaleEntrataAction">
+             <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaStoricoCausale.*
+            	</param>
+            </result>
+        </action>
+       
+        <action name="ricercaCausaleEntrata" class="ricercaCausaleEntrataAction">
+        	<result name="success">/jsp/causale/ricercaCausaleEntrata.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="effettuaRicercaCausaleEntrata" class="ricercaCausaleEntrataAction" method="ricercaCausaleEntrata">
+            <result name="input">/jsp/causale/ricercaCausaleEntrata.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">risultatiRicercaCausaleEntrata</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+        <action name="ricercaCausaleEntrata_ricercaDettaglioCausaleEntrata" class="ricercaCausaleEntrataAction" method="ricercaDettaglioCausaleEntrata">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					causale.*
+				</param>
+			</result>
+		</action>
+      
+        <action name="risultatiRicercaCausaleEntrata" class="risultatiRicercaCausaleEntrataAction">
+            <result name="success">/jsp/causale/risultatiRicercaCausaleEntrata.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+       <action name="risultatiRicercaCausaleEntrataAjax" class="risultatiRicercaCausaleEntrataAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        <action name="risultatiRicercaCausaleEntrataAggiorna" class="risultatiRicercaCausaleEntrataAction" method="aggiorna">
+            <result name="input">/jsp/causale/risultatiRicercaCausaleEntrata.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaCausaleEntrata</param>
+            	<param name="namespace">/</param>
+                <param name="uidCausaleDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        <action name="risultatiRicercaCausaleEntrataAnnulla" class="risultatiRicercaCausaleEntrataAction" method="annulla">
+            <result name="success">/jsp/causale/risultatiRicercaCausaleEntrata.jsp</result>
+            <result name="input">/jsp/causale/risultatiRicercaCausaleEntrata.jsp</result>
+        </action>
+        <action name="risultatiRicercaCausaleEntrataConsulta" class="risultatiRicercaCausaleEntrataAction" method="consulta">
+            <result name="success">/jsp/causale/risultatiRicercaCausaleEntrata.jsp</result>
+            <result name="input">/jsp/causale/risultatiRicercaCausaleEntrata.jsp</result>
+        </action>
+
+
+        <action name="ricercaDettaglioCausaleEntrata" class="causalePreDocumentoEntrataAjaxAction" method="ricercaDettaglio">
+            <result name="success" type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">errori.*, causaleEntrata.*</param>
+            </result>
+        </action>
+    </package>
+</struts>

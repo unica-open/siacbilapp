@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="tipoOnere" extends="capitoloDefault" namespace="/">
+		<result-types>
+			<result-type name="aggiornaTipoOnereEntrataJSONResult"
+				class="it.csi.siac.siacfin2app.frontend.ui.action.tipoonere.AggiornaTipoOnereEntrataAction$AggiornaTipoOnereEntrataJSONResult" />
+			<result-type name="aggiornaTipoOnereSpesaJSONResult"
+				class="it.csi.siac.siacfin2app.frontend.ui.action.tipoonere.AggiornaTipoOnereSpesaAction$AggiornaTipoOnereSpesaJSONResult" />
+		</result-types>
+		
+		<!-- INSERIMENTO -->
+		<action name="inserisciTipoOnere" class="inserisciTipoOnereAction">
+			<result name="success">/jsp/tipoOnere/inserisci.jsp</result>
+		</action>
+		<action name="inserimentoTipoOnere" class="inserisciTipoOnereAction" method="inserimento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaTipoOnere</param>
+				<param name="uidTipoOnere">${tipoOnere.uid}</param>
+			</result>
+			<result name="input">/jsp/tipoOnere/inserisci.jsp</result>
+		</action>
+		
+		<!-- AGGIORNAMENTO -->
+		<action name="aggiornaTipoOnere" class="aggiornaTipoOnereAction">
+			<result name="success">/jsp/tipoOnere/aggiorna.jsp</result>
+		</action>
+		<action name="aggiornamentoTipoOnere" class="aggiornaTipoOnereAction" method="aggiornamento">
+			<result name="success">/jsp/tipoOnere/aggiornaDISABLED.jsp</result>
+			<result name="input">/jsp/tipoOnere/aggiorna.jsp</result>
+		</action>
+		<action name="aggiornaTipoOnere_redirectAggiornamento" class="aggiornaTipoOnereAction" method="redirectAggiornamento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaTipoOnere</param>
+				<param name="uidTipoOnere">${tipoOnere.uid}</param>
+			</result>
+		</action>
+		<action name="aggiornaTipoOnere_ottieniListaCausali" class="aggiornaTipoOnereAction" method="ottieniListaCausali">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaCausaleSpesa.*, listaCausaleEntrata.*</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaTipoOnereEntrata_inserisciCausale" class="aggiornaTipoOnereEntrataAction" method="inserisciCausale">
+			<result name="success" type="aggiornaTipoOnereEntrataJSONResult" />
+			<result name="input" type="aggiornaTipoOnereEntrataJSONResult" />
+		</action>
+		<action name="aggiornaTipoOnereEntrata_eliminaCausale" class="aggiornaTipoOnereEntrataAction" method="eliminaCausale">
+			<result name="success" type="aggiornaTipoOnereEntrataJSONResult" />
+			<result name="input" type="aggiornaTipoOnereEntrataJSONResult" />
+		</action>
+		<action name="aggiornaTipoOnereSpesa_inserisciCausale" class="aggiornaTipoOnereSpesaAction" method="inserisciCausale">
+			<result name="success" type="aggiornaTipoOnereSpesaJSONResult" />
+			<result name="input" type="aggiornaTipoOnereSpesaJSONResult" />
+		</action>
+		<action name="aggiornaTipoOnereSpesa_eliminaCausale" class="aggiornaTipoOnereSpesaAction" method="eliminaCausale">
+			<result name="success" type="aggiornaTipoOnereSpesaJSONResult" />
+			<result name="input" type="aggiornaTipoOnereSpesaJSONResult" />
+		</action>
+		
+		<!-- RICERCA -->
+		<action name="ricercaTipoOnere" class="ricercaTipoOnereAction">
+			<result name="success">/jsp/tipoOnere/ricerca.jsp</result>
+		</action>
+		<action name="effettuaRicercaTipoOnere" class="ricercaTipoOnereAction" method="effettuaRicerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="ricercaTipoOnere_aggiorna" class="ricercaTipoOnereAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaTipoOnere</param>
+				<param name="uidTipoOnere">${tipoOnere.uid}</param>
+			</result>
+		</action>
+		<action name="ricercaTipoOnere_consulta" class="ricercaTipoOnereAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaTipoOnere</param>
+				<param name="uidTipoOnere">${tipoOnere.uid}</param>
+			</result>
+		</action>
+		<action name="ricercaTipoOnere_inserisci" class="ricercaTipoOnereAction" method="inserisci">
+			<result name="success" type="redirectAction">inserisciTipoOnere</result>
+		</action>
+		<action name="risultatiRicercaTipoOnereAjax" class="risultatiRicercaTipoOnereAjaxAction">
+			<result name="success" type="dataTable"/>
+		</action>
+		
+		<!-- CONSULTAZIONE -->
+		<action name="consultaTipoOnere" class="consultaTipoOnereAction">
+			<result name="success">/jsp/tipoOnere/consulta.jsp</result>
+		</action>
+	</package>
+</struts>

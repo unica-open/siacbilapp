@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="capitoloDefault" extends="default, json-default" abstract="true">
+		<!--  Package per la definizione delle estensioni comuni a tutti i varii packages di Struts2 e per la definizione centralizzata dello stack degli interceptors. -->
+		<result-types>
+			<result-type name="dataTable" class="it.csi.siac.siacbilapp.frontend.ui.util.result.DataTablesResult" />
+			<result-type name="customJSON" class="it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult" />
+			<result-type name="customMessagesJSON" class="it.csi.siac.siacbilapp.frontend.ui.util.result.CustomMessagesJSONResult" />
+			<result-type name="stampaStream" class="it.csi.siac.siacbilapp.frontend.ui.util.result.StampaStreamResult" />
+		</result-types>
+		
+		<interceptors>
+		
+			<!-- Interceptor di log prima e a termine dell'invocazione -->
+			<interceptor name="logInterceptor" class="it.csi.siac.siaccommonapp.interceptor.LogInterceptor" />
+			
+			<!-- Interceptor per la gestione degli errori di conversione -->
+			<interceptor name="siacConversionErrorInterceptor" class="it.csi.siac.siacbilapp.frontend.ui.util.interceptor.ConversionErrorSIACInterceptor" />
+			
+			<!-- Interceptor per la gestione dei breadcrumb -->
+			<interceptor name="breadCrumbs" class="org.softwareforge.struts2.breadcrumb.BreadCrumbInterceptor">
+				<param name="defaultRewindMode">AUTO</param>
+				<param name="defaultComparator">org.softwareforge.struts2.breadcrumb.NameComparator</param>
+			</interceptor>
+			
+			<!-- Interceptor per il salvataggio del model in sessione -->
+			<interceptor name="putModelInSession" class="it.csi.siac.siacbilapp.frontend.ui.util.interceptor.PutModelInSessionInterceptor" />
+			<!-- Gestione della validazione -->
+			<interceptor name="siacValidationInterceptor" class="it.csi.siac.siacbilapp.frontend.ui.util.interceptor.ValidationSIACInterceptor" />
+			<!-- Gestione dell'abilitazione per il CDU -->
+			<interceptor name="enabledForCDU" class="it.csi.siac.siacbilapp.frontend.ui.util.interceptor.EnabledForCDUInterceptor">
+				<param name="sessionParamName">it.csi.siac.siaccommonapp.session.azioniConsentite</param>
+			</interceptor>
+			
+			<!-- Interceptor di timing -->
+			<interceptor name="timingInterceptor" class="it.csi.siac.siacbilapp.frontend.ui.util.interceptor.TimingInterceptor" />
+			<interceptor name="threadLocalCleaner" class="it.csi.siac.siaccommonapp.interceptor.ThreadLocalCleanerInterceptor" />
+			
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="logInterceptor" />
+				<interceptor-ref name="threadLocalCleaner" />
+				<!-- Default Stack -->
+				<interceptor-ref name="exception" />
+				<interceptor-ref name="alias"/>
+				<interceptor-ref name="servletConfig"/>
+				<interceptor-ref name="i18n"/>
+				<!--interceptor-ref name="enabledForCDU" /-->
+				<interceptor-ref name="putModelInSession"/>
+				<interceptor-ref name="prepare"/>
+				<interceptor-ref name="chain"/>
+				<interceptor-ref name="scopedModelDriven"/>
+				<interceptor-ref name="modelDriven"/>
+				<interceptor-ref name="fileUpload"/>
+				<interceptor-ref name="multiselect"/>
+				<interceptor-ref name="staticParams"/>
+				<interceptor-ref name="params">
+					<param name="excludeParams">dojo\..*,^struts\..*</param>
+					<!-- Aumentata la lunghezza massima del nome dei parametri -->
+					<param name="paramNameMaxLength">10240</param>
+				</interceptor-ref>
+				
+				<!-- Injettato nello stack per la gestione degli errori di conversione -->
+				<interceptor-ref name="siacConversionErrorInterceptor"/>
+
+				<interceptor-ref name="siacValidationInterceptor">
+					<param name="excludeMethods">execute, cerca, copia, visualizza, aggiorna, indietroVersoDiMe</param>
+				</interceptor-ref>
+				<interceptor-ref name="workflow">
+					<param name="excludeMethods">execute, cerca, copia, visualizza, aggiorna, indietroVersoDiMe</param>
+				</interceptor-ref>
+				<interceptor-ref name="debugging"/>
+				
+				<interceptor-ref name="anchorInterceptor" />
+				
+				<!-- Interceptor per breadcrumb -->
+				<interceptor-ref name="breadCrumbs"/>
+				<interceptor-ref name="timingInterceptor" />
+			</interceptor-stack>
+			<interceptor-stack name="myStackWithCorrectionsForInternetExplorer">
+				<interceptor-ref name="myStack" />
+				<interceptor-ref name="cacheCorrectorInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="myStack" />
+		
+	</package>
+</struts>

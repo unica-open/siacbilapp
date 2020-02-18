@@ -1,0 +1,151 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(revision 11034)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(working copy)
+@@ -283,7 +283,6 @@
+ 		
+ 		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
+ 		
+-		
+ 		model.setAnnullaAbilitato(Boolean.FALSE);
+ 		model.setConcludiAbilitato(Boolean.FALSE);
+ 		model.setSalvaAbilitato(Boolean.FALSE);
+@@ -473,6 +472,7 @@
+ 		}
+ 		
+ 		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo());
++		model.setStatoOperativoVariazioneDiBilancio(res.getVariazioneImportoCapitolo().getStatoOperativoVariazioneDiBilancio());
+ 				
+ 		model.setAnnullaAbilitato(Boolean.FALSE);
+ 		model.setConcludiAbilitato(Boolean.FALSE);
+@@ -653,14 +653,11 @@
+ 			}
+ 		}
+ 		
+-		if(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() < 0 ||
+-				capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() < 0 ||	
+-				capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() < 0){
+-				log.debug(methodName, "Gli stanziamenti sono risultati minori di zero");
+-				addErrore(ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("stanziamenti capitolo che si stanno variando minori di zero"));
+-				return false;
+-			}
+-		return true;
++		checkCondition(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("cassa"));
++		checkCondition(capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("competenza"));
++		checkCondition(capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("residuo"));
++		
++		return !hasErrori();
+ 	}
+ 
+ 	/* ******************************************************************************************
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(revision 11034)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(working copy)
+@@ -292,15 +292,11 @@
+ 			}
+ 		}
+ 		
+-			
+-		if(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() < 0 ||
+-			capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() < 0 ||	
+-			capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() < 0){
+-			log.debug(methodName, "Gli stanziamenti sono risultati minori di zero");
+-			addErrore(ErroreBil.STANZIAMENTI_CAPITOLO_UEB_CHE_SI_STANNO_VARIANDO_MINORI_DI_ZERO.getErrore());
+-			return false;
+-		}
+-		return true;
++		checkCondition(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("cassa"));
++		checkCondition(capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("competenza"));
++		checkCondition(capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("residuo"));
++		
++		return !hasErrori();
+ 	}
+ 	
+ 	/* ******************************************************************************************
+Index: src/main/webapp/js/local/variazioni/definisci.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/definisci.importi.js	(revision 11031)
++++ src/main/webapp/js/local/variazioni/definisci.importi.js	(working copy)
+@@ -248,17 +248,24 @@
+         return $.postJSON(url)
+         .then(function(data) {
+             var alertErrori = $('#ERRORI');
++            var alertInformazioni = $('#INFORMAZIONI');
+             var form = $('#aggiornaVariazioneImporti');
+ 
+             alertErrori.slideUp();
+             if (impostaDatiNegliAlert(data.errori,alertErrori)) {
++            	alertInformazioni.slideUp();
++            	alertInformazioni.find("ul").find("li").remove();
+                 form.removeClass('form-submitted');
+                 $('#bottoni').find('button').removeAttr('disabled');
++                $("#spanPulsanteDefinisciVariazione").removeClass("hide");
+                 return;
+             }
+ 
+             if(data.isAsyncResponsePresent === undefined){
++            	 alertInformazioni.slideUp();
++            	 alertInformazioni.find("ul").find("li").remove();
+                 impostaDatiNegliAlert(['COR_ERR_0001 - Errore di sistema: impossibile ottenere la risposta asincrona.'], alertErrori);
++                $("#spanPulsanteDefinisciVariazione").removeClass("hide");
+                 return;
+             }
+ 
+@@ -272,26 +279,32 @@
+                 setTimeout(ottieniResponse, timeout, operazione, --tentativiRimanenti, timeout);
+                 return;
+             }
+-
++           
++            alertInformazioni.slideUp();
++            alertInformazioni.find("ul").find("li").remove();
+             form.removeClass('form-submitted');
+             $('#bottoni').find('button').removeAttr('disabled');
+ 
+             var alertMessaggi = $('#MESSAGGI');
+             impostaDatiNegliAlert(data.messaggi, alertMessaggi);
+-
+-            var alertInformazioni = $('#INFORMAZIONI');
+             impostaDatiNegliAlert(data.informazioni, alertInformazioni,undefined, false);
+-            $('#buttonDefinisciVariazione').hide();
++//            $('#buttonDefinisciVariazione').hide();
+         });
+     }
+ 
+     function definisciVariazione(){
+         var form = $('#effettuaDefinisciVariazioneImporti').addClass('form-submitted');
+-
++        $("#spanPulsanteDefinisciVariazione").addClass("hide");
++        impostaDatiNegliAlert(["COR_INF_0019 -L'elaborazione e' stata attivata."], $("#INFORMAZIONI"));
++        
+         return $.postJSON('effettuaDefinisciVariazioneImporti.do', qualify(form.serializeObject()), function(data) {
+             var alertErrori = $('#ERRORI');
+             alertErrori.slideUp();
+             if (impostaDatiNegliAlert(data.errori,alertErrori)) {
++            	var alertInformazioni = $('#INFORMAZIONI');
++            	$("#spanPulsanteDefinisciVariazione").removeClass("hide");
++            	alertInformazioni.slideUp();
++            	alertInformazioni.find("ul").find("li").remove();
+                 return;
+             }
+             ottieniResponse("definisci", 10, 10000);
+Index: src/main/webapp/jsp/variazione/definisceVariazioneImporti.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/definisceVariazioneImporti.jsp	(revision 11031)
++++ src/main/webapp/jsp/variazione/definisceVariazioneImporti.jsp	(working copy)
+@@ -91,9 +91,11 @@
+ 					  		<p>&nbsp;</p>
+                  			<p class="margin-large">
+ 								<s:include value="/jsp/include/indietro.jsp" />
+-								<s:if test="%{!definizioneEseguita}">
+-									<button  type ="button" id="buttonDefinisciVariazione" type="button" class="btn btn-primary pull-right">definisci variazione</button>
+-								</s:if>
++								<span id="spanPulsanteDefinisciVariazione">
++									<s:if test="%{!definizioneEseguita}">
++										<button  type ="button" id="buttonDefinisciVariazione" type="button" class="btn btn-primary pull-right">definisci variazione</button>
++									</s:if>
++								</span>
+ 							</p>							
+ 					</s:form>
+ 				</div>

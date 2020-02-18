@@ -1,0 +1,407 @@
+From cf83d9cbb4cd8f7c2c62639437bbe6ac91aeff56 Mon Sep 17 00:00:00 2001
+From: lisid <domenico.lisi@consoft.it>
+Date: Mon, 6 Feb 2017 14:22:17 +0100
+Subject: [PATCH] SIAC-4440
+
+aggiunge gestione blocco residui per associa movimento
+SIAC-4440
+
+gestione associa accertamento/impegno
+SIAC-4440
+
+associa documento gestione controllo residui su front-end
+SIAC-4440
+
+correzione bug dopo il testing
+SIAC-4440
+
+correzione messaggio di errore
+SIAC-4440
+
+aggiunta icona informazioni
+---
+ .../frontend/ui/util/AzioniConsentite.java         |  2 ++
+ .../AssociaDocumentoAllegatoAttoAction.java        | 28 ++++++++++---------
+ .../AssociaAccertamentoAllegatoAttoAction.java     |  8 ++++++
+ .../AssociaImpegnoAllegatoAttoAction.java          | 15 ++++++++++-
+ .../AssociaMovimentoAllegatoAttoBaseAction.java    | 11 ++++++++
+ .../AssociaDocumentoAllegatoAttoModel.java         | 15 +++++++++++
+ .../documento/ElementoSubdocumentoDaAssociare.java | 15 ++++++++---
+ .../ElementoSubdocumentoDaAssociareFactory.java    | 31 ++++++++++++++++++++++
+ .../local/allegatoAtto/associaDocumento_step2.js   |  6 +++--
+ .../jsp/allegatoAtto/associa/documento/step2.jsp   |  9 +++++++
+ 10 files changed, 121 insertions(+), 19 deletions(-)
+
+diff --git src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/AzioniConsentite.java src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/AzioniConsentite.java
+index 4829187ee..acd438c7d 100644
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/AzioniConsentite.java
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/AzioniConsentite.java
+@@ -128,6 +128,8 @@ public enum AzioniConsentite {
+ 	ALLEGATO_ATTO_RICERCA("OP-COM-ricAttoAllegato"),
+ 	ALLEGATO_ATTO_INSERISCI_DECENTRATO("OP-COM-insAttoAllegatoDec"),
+ 	ALLEGATO_ATTO_INSERISCI_CENTRALE("OP-COM-insAttoAllegatoCen"),
++	//CR-4440
++	ALLEGATO_ATTO_INSERISCI_NO_RESIDUI("OP-COM-insAllegatoAttoNoRes"),
+ 	
+ 	// Tipo Onere
+ 	TIPO_ONERE_AGGIORNA("OP-COM-gestisciCausaliOnere"),
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/documento/AssociaDocumentoAllegatoAttoAction.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/documento/AssociaDocumentoAllegatoAttoAction.java
+index bca10ab0e..98c062eee 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/documento/AssociaDocumentoAllegatoAttoAction.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/documento/AssociaDocumentoAllegatoAttoAction.java
+@@ -1,11 +1,25 @@
+ package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.associa.documento;
+ 
++import java.math.BigDecimal;
++import java.util.Arrays;
++import java.util.HashMap;
++import java.util.List;
++
++import org.apache.commons.lang.StringUtils;
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.exception.ParamValidationException;
+ import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
++import it.csi.siac.siacbilapp.frontend.ui.util.AzioniConsentite;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
++import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
+ import it.csi.siac.siaccorser.model.errore.ErroreCore;
+ import it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.GenericAssociaAllegatoAttoAction;
+ import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.AggiornaAllegatoAttoModel.TabVisualizzazione;
+@@ -24,18 +38,6 @@ import it.csi.siac.siacfin2ser.model.TipoDocumento;
+ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+ import it.csi.siac.siacfinser.model.soggetto.Soggetto.StatoOperativoAnagrafica;
+ 
+-import java.math.BigDecimal;
+-import java.util.Arrays;
+-import java.util.HashMap;
+-import java.util.List;
+-
+-import org.apache.commons.lang.StringUtils;
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+ /**
+  * Classe di Action per l'associazione tra documento e allegato atto.
+  * 
+@@ -92,6 +94,8 @@ public class AssociaDocumentoAllegatoAttoAction extends GenericAssociaAllegatoAt
+ 			log.error(methodName, "Errore nell'invocazione del caricamento di una lista: " + e.getMessage());
+ 		}
+ 		
++		model.setGestioneResiduiDisabilitata(AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite()).booleanValue());
++		
+ 		return SUCCESS;
+ 	}
+ 	
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaAccertamentoAllegatoAttoAction.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaAccertamentoAllegatoAttoAction.java
+index b0284b43c..da4768bef 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaAccertamentoAllegatoAttoAction.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaAccertamentoAllegatoAttoAction.java
+@@ -98,7 +98,15 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
+ 		
+ 		SubdocumentoEntrata se = model.getSubdocumentoEntrata();
+ 		Accertamento accertamento = se.getAccertamento();
++		
+ 		checkCondition(accertamento.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno"));
++		//CR-4440
++		if(accertamento.getAnnoMovimento() != 0 && !isMovgestAssociabileDaUtente( accertamento)){
++			addErrore(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Account utente non abilitato alla gestione dei Residui negli Elenchi."));
++			return;
++		}
++		
++		
+ 		// Minore o uguale all'anno di esercizio
+ 		checkCondition(accertamento.getAnnoMovimento() <= model.getAnnoEsercizioInt(),
+ 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'anno del movimento deve essere minore o uguale all'anno di esercizio"));
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaImpegnoAllegatoAttoAction.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaImpegnoAllegatoAttoAction.java
+index a28cf11bf..fbd93c282 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaImpegnoAllegatoAttoAction.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaImpegnoAllegatoAttoAction.java
+@@ -11,19 +11,23 @@ import org.springframework.stereotype.Component;
+ import org.springframework.web.context.WebApplicationContext;
+ 
+ import it.csi.siac.siacbilapp.frontend.ui.exception.ParamValidationException;
++import it.csi.siac.siacbilapp.frontend.ui.util.AzioniConsentite;
+ import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
+ import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
++import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
+ import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
+ import it.csi.siac.siaccorser.model.errore.ErroreCore;
++import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
+ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
+ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiave;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
+ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzatoResponse;
+ import it.csi.siac.siacfinser.model.Impegno;
++import it.csi.siac.siacfinser.model.MovimentoGestione;
+ import it.csi.siac.siacfinser.model.SubImpegno;
+ import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
+ import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
+@@ -109,9 +113,16 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
+ 		SubdocumentoSpesa ss = model.getSubdocumentoSpesa();
+ 		Impegno impegno = ss.getImpegno();
+ 		checkCondition(impegno.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno"));
+-		// Minore o uguale all'anno di esercizio
++		//CR-4440
++		if(impegno.getAnnoMovimento() != 0 && !isMovgestAssociabileDaUtente( impegno)){
++			addErrore(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Account utente non abilitato alla gestione dei Residui negli Elenchi."));
++			return;
++		}
++		
+ 		checkCondition(impegno.getAnnoMovimento() <= model.getAnnoEsercizioInt(),
+ 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'anno del movimento deve essere minore o uguale all'anno di esercizio"));
++		
++		
+ 		checkNotNull(impegno.getNumero(), "Numero");
+ 		checkNotNull(ss.getImporto(), "Importo in atto");
+ 		checkCondition(ss.getImporto() == null || ss.getImporto().signum() > 0,
+@@ -141,6 +152,7 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
+ 		if(impegno == null){
+ 			return;
+ 		}
++		
+ 		BigDecimal disponibilita = impegno.getDisponibilitaLiquidare();
+ 		checkCondition(impegno.isValidato(), ErroreFin.IMPEGNO_NON_IN_STATO_DEFINITIVO_NON_LIQUIDABILE.getErrore("impegno non validato"));
+ 		
+@@ -194,6 +206,7 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
+ 		// Ripristino il valore di default
+ 		model.setProseguireConElaborazione(Boolean.FALSE);
+ 	}
++	
+ 
+ 	/**
+ 	 * Calcola l'importo dei subdocumenti afferenti a un dato impegno
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaMovimentoAllegatoAttoBaseAction.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaMovimentoAllegatoAttoBaseAction.java
+index 402a59de0..0488648df 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaMovimentoAllegatoAttoBaseAction.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaMovimentoAllegatoAttoBaseAction.java
+@@ -4,6 +4,8 @@ import java.util.List;
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ 
++import it.csi.siac.siacbilapp.frontend.ui.util.AzioniConsentite;
++import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
+ import it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.GenericAssociaAllegatoAttoAction;
+ import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.AssociaMovimentoAllegatoAttoModel;
+ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+@@ -155,5 +157,14 @@ public class AssociaMovimentoAllegatoAttoBaseAction extends GenericAssociaAllega
+ 	protected boolean numeroMovimentoPresente(MovimentoGestione movimentoGestione) {
+ 		return movimentoGestione != null && movimentoGestione.getNumero() != null;
+ 	}
++	/**
++	 * Controlla che l'utente possa associare il movimento gestione all'allegato atto
++	 * @param movgest il movgest da controllare
++	 * 
++	 * @returns <code>true</code> se l'utente  pu&ograve; associare il movimento gestione, <code>false</code> altrimenti.
++	 * */
++	protected boolean isMovgestAssociabileDaUtente( MovimentoGestione movgest){
++		return ( model.getAnnoEsercizioInt().equals(movgest.getAnnoMovimento())) || !AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite() ); 
++	}
+ }
+ 
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/allegatoatto/AssociaDocumentoAllegatoAttoModel.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/allegatoatto/AssociaDocumentoAllegatoAttoModel.java
+index 6948157e4..7f0ee9057 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/allegatoatto/AssociaDocumentoAllegatoAttoModel.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/allegatoatto/AssociaDocumentoAllegatoAttoModel.java
+@@ -1,5 +1,7 @@
+ package it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto;
+ 
++import it.csi.siac.siacbilapp.frontend.ui.util.AzioniConsentite;
++import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
+ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuotaEntrata;
+ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuotaSpesa;
+@@ -57,6 +59,9 @@ public class AssociaDocumentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
+ 	private List<TipoDocumento> listaTipoDocumento = new ArrayList<TipoDocumento>();
+ 	private Map<Integer, String> mappaUidSubdocumenti = new HashMap<Integer, String>();
+ 	
++	//SIAC-4440
++	private boolean gestioneResiduiDisabilitata;
++	
+ 	/** Costruttore vuoto di default */
+ 	public AssociaDocumentoAllegatoAttoModel() {
+ 		super();
+@@ -249,6 +254,16 @@ public class AssociaDocumentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
+ 		this.mappaUidSubdocumenti = mappaUidSubdocumenti != null ? mappaUidSubdocumenti : new HashMap<Integer, String>();
+ 	}
+ 	
++	public boolean getGestioneResiduiDisabilitata() {
++		return gestioneResiduiDisabilitata;
++	}
++
++	public void setGestioneResiduiDisabilitata(boolean gestioneResiduiDisabilitata) {
++		this.gestioneResiduiDisabilitata = gestioneResiduiDisabilitata;
++	}
++	
++	
++	
+ 	/* **** Request **** */
+ 
+ 	@Override
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociare.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociare.java
+index c3079faf5..44d0183a6 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociare.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociare.java
+@@ -30,8 +30,8 @@ public class ElementoSubdocumentoDaAssociare implements Serializable, ModelWrapp
+ 	private BigDecimal importoDaDedurre;
+ 	private BigDecimal importoIvaSplitReverse;
+ 	private String famiglia;
+-	
+-	
++	//SIAC-4440
++	private boolean associatoAMovgestResiduo;
+ 	
+ 	/** Costruttore vuoto di default */
+ 	public ElementoSubdocumentoDaAssociare() {
+@@ -238,7 +238,14 @@ public class ElementoSubdocumentoDaAssociare implements Serializable, ModelWrapp
+ 	public void setFamiglia(String famiglia) {
+ 		this.famiglia = famiglia;
+ 	}
+-	
+-	
++
++	public boolean isAssociatoAMovgestResiduo() {
++		return associatoAMovgestResiduo;
++	}
++
++	public void setAssociatoAMovgestResiduo(boolean associatoAMovgestResiduo) {
++		this.associatoAMovgestResiduo = associatoAMovgestResiduo;
++	}
++
+ 
+ }
+diff --git src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociareFactory.java src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociareFactory.java
+index bf112e04b..da3368210 100644
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociareFactory.java
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociareFactory.java
+@@ -13,6 +13,8 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
+ import it.csi.siac.siacfin2ser.model.Subdocumento;
+ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
+ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
++import it.csi.siac.siacfinser.model.Accertamento;
++import it.csi.siac.siacfinser.model.Impegno;
+ 
+ /**
+  * Factory per il wrapping dei SubDocumenti da associare all'Allegato Atto.
+@@ -51,6 +53,8 @@ public final class ElementoSubdocumentoDaAssociareFactory extends BaseFactory {
+ 		String soggetto = ottieniStringaSoggetto(s);
+ 		String famiglia = ottieniStringaFamiglia(s.getDocumento());
+ 		BigDecimal importoSplitReverse = ottieniImportoSplitReverse(s);
++		//CR-4440
++		boolean associatoAMovgestResiduo = isAssociatoAMovgestResiduo(s);
+ 		
+ 		
+ 		result.setUid(uid);
+@@ -69,10 +73,37 @@ public final class ElementoSubdocumentoDaAssociareFactory extends BaseFactory {
+ 		result.setDataEmissione(dataEmissione);
+ 		result.setFamiglia(famiglia);
+ 		result.setImportoIvaSplitReverse(importoSplitReverse);
++		result.setAssociatoAMovgestResiduo(associatoAMovgestResiduo);
+ 		
+ 		return result;
+ 	}
+ 
++	private static boolean isAssociatoAMovgestResiduo(Subdocumento<?, ?> s) {
++		Integer annoMovimento = Integer.valueOf(0);
++		Integer annoBilancio = Integer.valueOf(0);
++		if(s instanceof SubdocumentoSpesa){
++			SubdocumentoSpesa subdoc = (SubdocumentoSpesa)s;
++			Impegno impegnoAssociato = subdoc.getImpegno();
++			if(impegnoAssociato  == null || impegnoAssociato.getCapitoloUscitaGestione() == null) {
++				return false;
++			}
++			annoBilancio = impegnoAssociato.getCapitoloUscitaGestione().getBilancio().getAnno();
++			annoMovimento = impegnoAssociato.getAnnoMovimento();
++			return annoBilancio > annoMovimento;	
++		}
++		if(s instanceof SubdocumentoEntrata){
++			SubdocumentoEntrata subdoc = (SubdocumentoEntrata)s;
++			Accertamento accertamentoAssociato = subdoc.getAccertamento();
++			if(accertamentoAssociato  == null || accertamentoAssociato.getCapitoloEntrataGestione() == null) {
++				return false;
++			}
++			annoBilancio = accertamentoAssociato.getCapitoloEntrataGestione().getBilancio().getAnno();
++			annoMovimento = accertamentoAssociato.getAnnoMovimento();
++			return annoBilancio > annoMovimento;
++		}
++		return false;
++	}
++
+ 	/**
+ 	 * Calcola la stringa del soggetto.
+ 	 * 
+diff --git src/main/webapp/js/local/allegatoAtto/associaDocumento_step2.js src/main/webapp/js/local/allegatoAtto/associaDocumento_step2.js
+index 8467ebbd6..1c13d7548 100644
+--- src/main/webapp/js/local/allegatoAtto/associaDocumento_step2.js
++++ src/main/webapp/js/local/allegatoAtto/associaDocumento_step2.js
+@@ -11,6 +11,7 @@
+     function populateTable(url) {
+         var zeroRecords = "Non sono presenti quote corrispondenti ai parametri inseriti";
+         var table = $("#tabellaSubdocumenti");
++        var disabilitataGestioneResidui = $('#HIDDEN_gestioneResiduiDisabilitata').length>0;
+         var opts = {
+             bServerSide: true,
+             sAjaxSource: "risultatiRicercaQuoteDaAssociareAjax.do",
+@@ -52,7 +53,8 @@
+             
+             aoColumnDefs: [
+                 {aTargets: [0], mData: function(source) {
+-                    return "<input type='checkbox' name='listaUidSubdocumenti' data-famiglia='" + source.famiglia + "' value='" + source.uid + "'/>";
++                	var strDisabilita = disabilitataGestioneResidui && source.associatoAMovgestResiduo? 'disabled=""' : "";
++                    return "<input type='checkbox' name='listaUidSubdocumenti' " + strDisabilita + " data-famiglia='" + source.famiglia + "' value='" + source.uid + "'/>";
+                 }, fnCreatedCell: function(nTd, sData, oData) {
+                     $("input", nTd).data("originalSubdocumento", oData);
+                 }},
+@@ -95,7 +97,7 @@
+         var isChecked = $this.prop("checked");
+         // Seleziono tutti i checkboxes e li rendo come il globale
+         return $(tableId).find("tbody")
+-            .find("input[type='checkbox']")
++            .find("input[type='checkbox']").not(':disabled')
+                 .prop("checked", isChecked)
+                 // Invoco il 'change' sul primo elemento della lista per ricalcolare i totali
+                 .first()
+diff --git src/main/webapp/jsp/allegatoAtto/associa/documento/step2.jsp src/main/webapp/jsp/allegatoAtto/associa/documento/step2.jsp
+index 18b03ceca..f816158dd 100644
+--- src/main/webapp/jsp/allegatoAtto/associa/documento/step2.jsp
++++ src/main/webapp/jsp/allegatoAtto/associa/documento/step2.jsp
+@@ -14,6 +14,9 @@
+ 			<div class="span12 contentPage">
+ 				<s:form id="formAssociaDocumentoAllegatoAttoStep2" cssClass="form-horizontal" novalidate="novalidate" action="associaDocumentoAllegatoAtto_completeStep2" method="post">
+ 					<s:hidden name="uidAllegatoAtto" data-maintain="" />
++					<s:if test="gestioneResiduiDisabilitata">
++						<s:hidden id="HIDDEN_gestioneResiduiDisabilitata"  value="%{gestioneResiduiDisabilitata}" />
++					</s:if>
+ 					<s:include value="/jsp/include/messaggi.jsp" />
+ 					<h3><s:property value="denominazioneAllegatoAtto"/></h3>
+ 					<h4>Associa documenti</h4>
+@@ -36,6 +39,12 @@
+ 									Documenti da collegare -
+ 									Totale spesa: <span class="NumInfo" id="spanTotaleSubdocumentiSpesa"><s:property value="totaleSubdocumentiSpesa"/></span> -
+ 									Totale entrata: <span class="NumInfo" id="spanTotaleSubdocumentiEntrata"><s:property value="totaleSubdocumentiEntrata"/></span>
++									<s:if test="gestioneResiduiDisabilitata">
++										<a class="tooltip-test" data-html="true" title="Impossibile selezionare quote legate a movimenti residui." href="#">
++											<i class="icon-info-sign">&nbsp;
++											</i>
++										</a>
++									</s:if>
+ 								</h4>
+ 								<s:hidden id="totaleSubdocumentiSpesa" name="totaleSubdocumentiSpesa" />
+ 								<s:hidden id="totaleSubdocumentiEntrata" name="totaleSubdocumentiEntrata" />
+-- 
+2.11.0.windows.3
+

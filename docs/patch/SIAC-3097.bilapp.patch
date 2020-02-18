@@ -1,0 +1,197 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiAction.java	(revision 8806)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiAction.java	(working copy)
+@@ -262,7 +262,7 @@
+ 		AggiornaVariazioneBilancioResponse response = variazioneDiBilancioService.aggiornaVariazioneBilancio(request);
+ 		logServiceResponse(response);
+ 
+-		// Ottengo l'id dell'attivit√†
++		// Ottengo l'id dell'attivit‡
+ 		extractIdAttivitaIfNotNull(response.getIdAttivita());
+ 
+ 		if (response.hasErrori()) {
+@@ -418,10 +418,10 @@
+ 		}
+ 		model.getSpecificaUEB().setIgnoraValidazione(Boolean.FALSE);
+ 
+-		log.debug(methodName, "Gli importi sono sensati. Controllo di non aver gi√† inserito il capitolo precedentemente");
++		log.debug(methodName, "Gli importi sono sensati. Controllo di non aver gi‡ inserito il capitolo precedentemente");
+ 		if (ComparatorUtils.searchByUid(listaUEBDaInserireNellaVariazione, capitoloDaInserireInVariazione) != null
+ 				|| ComparatorUtils.searchByUid(listaUEBNellaVariazione, capitoloDaInserireInVariazione) != null) {
+-			log.debug(methodName, "Capitolo gi√† presente nella variazione");
++			log.debug(methodName, "Capitolo gi‡ presente nella variazione");
+ 			addErrore(ErroreBil.UEB_GIA_ASSOCIATA_ALLA_VARIAZIONE.getErrore(""));
+ 			return SUCCESS;
+ 		}
+@@ -448,9 +448,9 @@
+ 		List<ElementoCapitoloVariazione> listaUEBNellaVariazione = model.getSpecificaUEB().getListaUEBNellaVariazione();
+ 		List<ElementoCapitoloVariazione> listaUEBNellaVariazioneCollassate = model.getSpecificaUEB().getListaUEBNellaVariazioneCollassate();
+ 
+-		// Se la lista delle UEB da inserire non c'√® o √® vuota torno alla pagina
++		// Se la lista delle UEB da inserire non c'Ë o Ë vuota torno alla pagina
+ 		if (listaUEBDaInserireNellaVariazione == null || listaUEBDaInserireNellaVariazione.isEmpty()) {
+-			log.debug(methodName, "La lista delle UEB da inserire nella variazione √® vuota");
++			log.debug(methodName, "La lista delle UEB da inserire nella variazione Ë vuota");
+ 			return SUCCESS;
+ 		}
+ 
+@@ -531,7 +531,7 @@
+ 
+ 		// Caso base: la lista non ha risultati
+ 		if (listaUEBDaAggiornareNellaVariazione.isEmpty()) {
+-			log.debug(methodName, "La lista di UEB da aggiornare √® vuota");
++			log.debug(methodName, "La lista di UEB da aggiornare Ë vuota");
+ 			return SUCCESS;
+ 		}
+ 
+@@ -640,13 +640,13 @@
+ 				int indice = ComparatorUtils.getIndexByUid(listaUEBNellaVariazione, e);
+ 				listaUEBNellaVariazione.remove(indice);
+ 
+-				// Se lo stato operativo non √® PROVVISORIO esco subito
++				// Se lo stato operativo non Ë PROVVISORIO esco subito
+ 				if (e.getStatoOperativoElementoDiBilancio() != StatoOperativoElementoDiBilancio.PROVVISORIO) {
+ 					continue;
+ 				}
+ 
+ 				log.debug(methodName, "Il capitolo " + e.getAnnoCapitolo() + " / " + e.getNumeroCapitolo() + "/" + e.getNumeroArticolo()
+-						+ " √® in stato provvisorio");
++						+ " Ë in stato provvisorio");
+ 				ServiceResponse response = eliminaCapitoloProvvisorio(e.unwrap());
+ 				valutaResponseEliminazioneCapitoloProvvisorio(response, e);
+ 			}
+@@ -674,7 +674,7 @@
+ 	private void valutaResponseEliminazioneCapitoloProvvisorio(ServiceResponse response, ElementoCapitoloVariazione elemento)
+ 			throws ApplicationException {
+ 		final String methodName = "valutaResponseEliminazioneCapitoloProvvisorio";
+-		log.debug(methodName, "√â possibile eliminare il capitolo provvisorio? " + (response == null ? false : !response.hasErrori()));
++		log.debug(methodName, "… possibile eliminare il capitolo provvisorio? " + (response == null ? false : !response.hasErrori()));
+ 		if (response == null) {
+ 			Errore errore = ErroreCore.ERRORE_DI_SISTEMA.getErrore("Invocazione non possibile per il capitolo " + elemento.getAnnoCapitolo() + " / "
+ 					+ elemento.getNumeroCapitolo() + "/" + elemento.getNumeroArticolo());
+@@ -725,7 +725,7 @@
+ 		numeroUEB++;
+ 		specifica.setNumeroUEB(numeroUEB);
+ 
+-		log.debug(methodName, "Il numero della prossima UEB √® " + numeroUEB);
++		log.debug(methodName, "Il numero della prossima UEB Ë " + numeroUEB);
+ 
+ 		// Comunico all'inserimento l'arrivo dall'aggiornamento
+ 		sessionHandler.setParametro(BilSessionParameter.INSERISCI_NUOVO_DA_AGGIORNAMENTO, Boolean.TRUE);
+@@ -763,7 +763,7 @@
+ 
+ 				Capitolo<?, ?> capitolo = e.unwrap();
+ 				ServiceResponse response = verificaAnnullabilitaCapitolo(capitolo);
+-				log.debug(methodName, "√â possibile annullare il capitolo? " + (response == null ? false : !response.hasErrori()));
++				log.debug(methodName, "… possibile annullare il capitolo? " + (response == null ? false : !response.hasErrori()));
+ 				if (response == null) {
+ 					errore = ErroreCore.ERRORE_DI_SISTEMA.getErrore("Invocazione non possibile per il capitolo" + e.getAnnoCapitolo() + " / "
+ 							+ e.getNumeroCapitolo() + "/" + e.getNumeroArticolo());
+@@ -915,7 +915,7 @@
+ 			if (cassaEditabile
+ 					&& capitoloDaInserireInVariazione.getCassa().compareTo(
+ 							capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getResiduo())) > 0) {
+-				log.debug(methodName, "La cassa inserita √® maggiore della somma tra competenza e residuo");
++				log.debug(methodName, "La cassa inserita Ë maggiore della somma tra competenza e residuo");
+ 				addMessaggio(MessaggioBil.STANZIAMENTO_DI_CASSA_INCONGRUENTE.getMessaggio());
+ 				return false;
+ 			}
+@@ -925,7 +925,7 @@
+ 				capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() < 0 ||	
+ 				capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() < 0){
+ 				log.debug(methodName, "Gli stanziamenti sono risultati minori di zero");
+-				addErrore(ErroreBil.STANZIAMENTI_CAPITOLO_UEB_CHE_SI_STANNO_VARIANDO_MINORI_DI_ZERO.getErrore());
++				addErrore(ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("stanziamenti capitolo che si stanno variando minori di zero"));
+ 				return false;
+ 			}
+ 		return true;
+@@ -967,9 +967,11 @@
+ 	@SkipValidation
+ 	public String aggiungiCapitoliNellaVariazione() {
+ 		final String methodName = "aggiungiCapitoliNellaVariazione";
+-		Capitolo<?, ?> capitoloDaAggiungere = model.getSpecificaImporti().getCapitoloDaAggiungere();
+-		ElementoCapitoloVariazione elementoCapitoloVariazione = ElementoCapitoloVariazioneFactory.getInstance(capitoloDaAggiungere, Boolean.FALSE, model
+-				.getAnnoVariazione(), Boolean.TRUE);
++//		Capitolo<?, ?> capitoloDaAggiungere = model.getSpecificaImporti().getCapitoloDaAggiungere();
++//		ElementoCapitoloVariazione elementoCapitoloVariazione = ElementoCapitoloVariazioneFactory.getInstance(capitoloDaAggiungere, Boolean.FALSE, model
++//				.getAnnoVariazione(), Boolean.TRUE);
++		
++		ElementoCapitoloVariazione elementoCapitoloVariazione = model.getSpecificaImporti().getElementoCapitoloVariazione();
+ 		List<ElementoCapitoloVariazione> listaCapitoliNellaVariazione = model.getSpecificaImporti().getListaCapitoliNellaVariazione();
+ 
+ 		// Se la lista delle variazioni non esiste, la creo
+@@ -983,7 +985,7 @@
+ 		}
+ 		model.getSpecificaImporti().setIgnoraValidazione(Boolean.FALSE);
+ 
+-		// Controllo che il capitolo non sia gi√† presente
++		// Controllo che il capitolo non sia gi‡ presente
+ 		int index = ComparatorUtils.getIndexByUid(listaCapitoliNellaVariazione, elementoCapitoloVariazione);
+ 		log.debug(methodName, "Indice dell'elemento nella lista: " + index);
+ 		if (index > -1) {
+@@ -1074,9 +1076,9 @@
+ 			listaCapitoliNellaVariazione.remove(indiceElementoDaEliminare);
+ 		}
+ 
+-		// Controllo se l'elemento √® stato inserito in stato provvisorio
++		// Controllo se l'elemento Ë stato inserito in stato provvisorio
+ 		if (Boolean.TRUE.equals(elementoCapitoloVariazione.getDaInserire())) {
+-			log.debug(methodName, "Il capitolo √® provvisorio: eliminarlo");
++			log.debug(methodName, "Il capitolo Ë provvisorio: eliminarlo");
+ 			eliminaCapitoloProvvisorio(elementoCapitoloVariazioneConCampiPopolati.unwrap());
+ 		}
+ 
+@@ -1125,7 +1127,7 @@
+ 		// Unwrap del wrapper
+ 		Capitolo<?, ?> capitoloDaAnnullare = elementoCapitoloVariazioneDaAnnullare.unwrap();
+ 
+-		log.debug(methodName, "Invocazione del servizio di verifica annullabilit√†");
++		log.debug(methodName, "Invocazione del servizio di verifica annullabilit‡");
+ 		ServiceResponse response = verificaAnnullabilitaCapitolo(capitoloDaAnnullare);
+ 		if (response == null) {
+ 			addErrore(ErroreCore.ERRORE_DI_SISTEMA.getErrore("Invocazione non possibile per il capitolo"
+Index: src/main/webapp/js/local/variazioni/aggiorna.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/aggiorna.importi.js	(revision 8806)
++++ src/main/webapp/js/local/variazioni/aggiorna.importi.js	(working copy)
+@@ -447,6 +447,7 @@
+     oggettoDaAggiornare.competenza = competenza;
+     oggettoDaAggiornare.residuo = residuo;
+     oggettoDaAggiornare.cassa = cassa;
++    
+     oggettoDaAggiornare.index = riga;
+ 
+     // Qualifico correttamente l'oggetto da inserire
+@@ -592,15 +593,22 @@
+     oggettoDaInviare.descrizione = capitolo.descrizione;
+     oggettoDaInviare.tipoCapitolo = capitolo.tipoCapitolo;
+     oggettoDaInviare.statoOperativoElementoDiBilancio = capitolo.statoOperativoElementoDiBilancio ? capitolo.statoOperativoElementoDiBilancio._name : "";
+-
+-    oggettoDaInviare["importiCapitolo.annoCompetenza"] = annoVariazione;
+-    oggettoDaInviare["importiCapitolo.stanziamento"] = $("#competenzaVariazione").val();
+-    oggettoDaInviare["importiCapitolo.stanziamentoResiduo"] = $("#residuoVariazione").val();
+-    oggettoDaInviare["importiCapitolo.stanziamentoCassa"] = $("#cassaVariazione").val();
+-
+-
+-    oggettoDaInviare = qualify(oggettoDaInviare, "specificaImporti.capitoloDaAggiungere");
+-
++    
++    oggettoDaInviare.cassaOriginale = capitolo.importiCapitolo.stanziamentoCassa;
++    oggettoDaInviare.residuoOriginale = capitolo.importiCapitolo.stanziamentoResiduo;
++    oggettoDaInviare.competenzaOriginale = capitolo.importiCapitolo.stanziamento;
++    oggettoDaInviare.annoImporti = capitolo.importiCapitolo.annoCompetenza;
++    
++    oggettoDaInviare.competenza = $("#competenzaVariazione").val();
++    oggettoDaInviare.residuo = $("#residuoVariazione").val();
++    oggettoDaInviare.cassa = $("#cassaVariazione").val();
++    
++    var denominazione = (capitolo.tipoCapitolo == "CAPITOLO_ENTRATA_PREVISIONE" || capitolo.tipoCapitolo == "CAPITOLO_ENTRATA_GESTIONE") ? "E" : "S";
++    denominazione += "-" + capitolo.annoCapitolo + "/" + capitolo.numeroCapitolo + "/" + capitolo.numeroArticolo;
++    oggettoDaInviare.denominazione = denominazione;
++    	
++    oggettoDaInviare = qualify(oggettoDaInviare, "specificaImporti.elementoCapitoloVariazione");
++    
+     ajaxParam = $.extend(true, {}, oggettoDaInviare/*, oggettoOld*/);
+ 
+     $.postJSON(

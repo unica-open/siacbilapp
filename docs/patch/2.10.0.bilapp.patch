@@ -1,0 +1,38 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(revision 10890)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(working copy)
+@@ -1,5 +1,11 @@
+ package it.csi.siac.siacbilapp.frontend.ui.model.variazione;
+ 
++import java.util.ArrayList;
++import java.util.Date;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++
+ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
+ import it.csi.siac.siacattser.model.AttoAmministrativo;
+ import it.csi.siac.siacattser.model.TipoAtto;
+@@ -38,12 +44,6 @@
+ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+ import it.csi.siac.siaccorser.model.VariabileProcesso;
+ 
+-import java.util.ArrayList;
+-import java.util.Date;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+-
+ /**
+  * Classe di model per l'aggiornamento della variazione. Contiene una mappatura dei tre possibili form considerati.
+  * 
+@@ -790,7 +790,7 @@
+ 		List<ElementoCapitoloVariazione> elementiNellaVariazione = (List<ElementoCapitoloVariazione>) ReflectionUtil.getField(specifica, campoElementiNellaVariazione);
+ 		for(ElementoCapitoloVariazione elementoNellaVariazione : elementiNellaVariazione) {
+ 			DettaglioVariazioneImportoCapitolo transformed = ElementoCapitoloVariazioneFactory.transform(elementoNellaVariazione);
+-			transformed.setAnnoCompetenza(getAnnoCompetenza());
++			transformed.setAnnoCompetenza(getAnnoVariazione());
+ 			listaDettaglioVariazioneImporto.add(transformed);
+ 		}
+ 		

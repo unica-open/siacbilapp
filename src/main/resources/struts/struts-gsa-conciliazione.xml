@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gsaConciliazione" extends="capitoloDefault" namespace="/">
+			<!-- Conciliazione per titolo -->
+		<action name="gestioneConciliazionePerTitolo" class="gestioneConciliazionePerTitoloAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/conciliazione/titolo/gestioneConciliazionePerTitolo.jsp</result>
+		</action>
+		<action name="gestioneConciliazionePerTitolo_ricercaSintetica" class="gestioneConciliazionePerTitoloAction" method="ricercaSintetica">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">filtroRicerca, entrataSpesaRicerca</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerTitolo_elimina" class="gestioneConciliazionePerTitoloAction" method="elimina">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="gestioneConciliazionePerTitolo_ricercaDettaglio" class="gestioneConciliazionePerTitoloAction" method="ricercaDettaglio">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">conciliazionePerTitolo.*</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerTitolo_inserisci" class="gestioneConciliazionePerTitoloAction" method="inserisci">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="gestioneConciliazionePerTitolo_aggiornamento" class="gestioneConciliazionePerTitoloAction" method="aggiornamento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		
+			<!-- Conciliazione per capitolo -->
+		<action name="gestioneConciliazionePerCapitolo" class="gestioneConciliazionePerCapitoloAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/conciliazione/capitolo/gestioneConciliazionePerCapitolo.jsp</result>
+		</action>
+		<action name="gestioneConciliazionePerCapitolo_ricercaCapitolo" class="gestioneConciliazionePerCapitoloAction" method="ricercaCapitolo">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">capitoloRicerca\.uid, filtroRicerca, datiCapitoloRicerca</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerCapitolo_ricercaSintetica" class="gestioneConciliazionePerCapitoloAction" method="ricercaSintetica">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="gestioneConciliazionePerCapitolo_elimina" class="gestioneConciliazionePerCapitoloAction" method="elimina">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="gestioneConciliazionePerCapitolo_ricercaDettaglio" class="gestioneConciliazionePerCapitoloAction" method="ricercaDettaglio">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">elementoConciliazionePerCapitolo.*</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerCapitolo_ricercaCapitoloInserimento" class="gestioneConciliazionePerCapitoloAction" method="ricercaCapitoloInserimento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">capitolo\.uid, capitolo\.categoriaTipologiaTitolo\.uid, capitolo\.macroaggregato\.uid, tipoCapitolo</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerCapitolo_inserisci" class="gestioneConciliazionePerCapitoloAction" method="inserisci">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="gestioneConciliazionePerCapitolo_aggiornamento" class="gestioneConciliazionePerCapitoloAction" method="aggiornamento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		
+			<!-- Conciliazione per beneficiario -->
+		<action name="gestioneConciliazionePerBeneficiario" class="gestioneConciliazionePerBeneficiarioAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/conciliazione/beneficiario/gestioneConciliazionePerBeneficiario.jsp</result>
+		</action>
+		<action name="gestioneConciliazionePerBeneficiario_ricercaSintetica" class="gestioneConciliazionePerBeneficiarioAction" method="ricercaSintetica">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">filtroRicerca</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerBeneficiario_elimina" class="gestioneConciliazionePerBeneficiarioAction" method="elimina">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="gestioneConciliazionePerBeneficiario_ricercaDettaglio" class="gestioneConciliazionePerBeneficiarioAction" method="ricercaDettaglio">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">elementoConciliazionePerBeneficiario.*</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerBeneficiario_inserisci" class="gestioneConciliazionePerBeneficiarioAction" method="inserisci">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">soggetto\.denominazione, informazioni.*</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerBeneficiario_aggiornamento" class="gestioneConciliazionePerBeneficiarioAction" method="aggiornamento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">soggetto\.denominazione, informazioni.*</param>
+			</result>
+		</action>
+		<action name="gestioneConciliazionePerBeneficiario_ricercaCapitoloInserimento" class="gestioneConciliazionePerBeneficiarioAction" method="ricercaCapitoloInserimento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">capitolo\.uid, capitolo\.categoriaTipologiaTitolo\.uid, capitolo\.macroaggregato\.uid, tipoCapitolo</param>
+			</result>
+		</action>
+		
+		
+		<action name="risultatiRicercaConciliazionePerTitoloAjax" class="risultatiRicercaConciliazionePerTitoloAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaConciliazionePerCapitoloAjax" class="risultatiRicercaConciliazionePerCapitoloAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaConciliazionePerBeneficiarioAjax" class="risultatiRicercaConciliazionePerBeneficiarioAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="ricercaContiByConciliazionePerTitolo" class="ricercaContiByConciliazionePerTitoloAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaConto.*</param>
+			</result>
+		</action> 
+	</package>
+</struts>

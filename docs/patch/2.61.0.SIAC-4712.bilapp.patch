@@ -1,0 +1,15 @@
+### Eclipse Workspace Patch 1.0
+#P bilapplication
+diff --git src/main/webapp/js/local/consultazioneEntita/baseConsultazioneEntita.js src/main/webapp/js/local/consultazioneEntita/baseConsultazioneEntita.js
+index 78b81dd..6ebfa98 100644
+--- src/main/webapp/js/local/consultazioneEntita/baseConsultazioneEntita.js
++++ src/main/webapp/js/local/consultazioneEntita/baseConsultazioneEntita.js
+@@ -243,7 +243,7 @@
+         }
+         if(/^<pre/.test(html) && /errori/.test(html)){
+         	//Errore applicativo.
+-        	let parsed;
++        	var parsed;
+         	try {
+         		parsed = JSON.parse(html.replace(/<\/?pre.*?>/g, ''));
+         	} catch (syntaxError){

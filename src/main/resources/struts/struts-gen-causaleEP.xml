@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="causaleEPGEN" extends="capitoloDefault" namespace="/">
+			<!-- Inserimento -->
+		<action name="inserisciCausaleEPFIN" class="inserisciCausaleEPFINAction">
+			<result name="success" type="redirectAction">inserisciCausaleEPFIN_step1</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_step1" class="inserisciCausaleEPFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_annullaStep1" class="inserisciCausaleEPFINAction" method="annullaStep1">
+			<result name="success" type="redirectAction">inserisciCausaleEPFIN_step1</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_completeStep1" class="inserisciCausaleEPFINAction" method="completeStep1">
+			<result name="input">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">inserisciCausaleEPFIN_step2</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_backToStep1" class="inserisciCausaleEPFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">inserisciCausaleEPFIN_step1</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_step2" class="inserisciCausaleEPFINAction" method="step2">
+			<result name="success">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_annullaStep2" class="inserisciCausaleEPFINAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciCausaleEPFIN_step2</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_completeStep2" class="inserisciCausaleEPFINAction" method="completeStep2">
+			<result name="input">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">inserisciCausaleEPFIN_step3</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_step3" class="inserisciCausaleEPFINAction" method="step3">
+			<result name="success">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		
+		<action name="inserisciCausaleEPFIN_ottieniListaTipoEventoFiltrata" class="inserisciCausaleEPFINAction" method="ottieniListaTipoEventoFiltrata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEventoFiltrata.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciCausaleEPFIN_ottieniListaConti" class="inserisciCausaleEPContoOperazioneFINAction" method="ottieniListaConti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoTipoOperazione.*</param>
+			</result>
+		</action>
+		<action name="inserisciCausaleEPFIN_inserisciConto" class="inserisciCausaleEPContoOperazioneFINAction" method="inserisciConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciCausaleEPFIN_aggiornaConto" class="inserisciCausaleEPContoOperazioneFINAction" method="aggiornaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciCausaleEPFIN_eliminaConto" class="inserisciCausaleEPContoOperazioneFINAction" method="eliminaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+			<!-- Ricerca -->
+		<action name="ricercaCausaleEPFIN" class="ricercaCausaleEPFINAction">
+			<result name="success">/jsp/contabilitaGenerale/causali/ricerca.jsp</result>
+		</action>
+		<action name="effettuaRicercaCausaleEPFIN" class="ricercaCausaleEPFINAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/causali/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPFIN" class="risultatiRicercaCausaleEPFINAction">
+			<result name="success">/jsp/contabilitaGenerale/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPFIN_aggiorna" class="risultatiRicercaCausaleEPFINAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaCausaleEPFIN</param>
+				<param name="causaleEP.uid">${causaleEP.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPFIN_valida" class="risultatiRicercaCausaleEPFINAction" method="valida">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPFIN_consulta" class="risultatiRicercaCausaleEPFINAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaCausaleEPFIN</param>
+				<param name="causaleEP.uid">${causaleEP.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPFIN_annulla" class="risultatiRicercaCausaleEPFINAction" method="annulla">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPFIN_elimina" class="risultatiRicercaCausaleEPFINAction" method="elimina">
+			<result name="success" type="redirectAction">risultatiRicercaCausaleEPFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/causali/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaCausaleEPFINAjax" class="risultatiRicercaCausaleEPFINAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+			<!-- Consultazione -->
+		<action name="consultaCausaleEPFIN" class="consultaCausaleEPFINAction">
+			<result name="input" type="redirectAction">risultatiRicercaCausaleEPFIN</result>
+			<result name="success">/jsp/contabilitaGenerale/causali/consulta.jsp</result>
+		</action>
+		
+			<!-- Aggiornamento -->
+		<action name="aggiornaCausaleEPFIN" class="aggiornaCausaleEPFINAction">
+			<result name="input" type="redirectAction">risultatiRicercaCausaleEPFIN</result>
+			<result name="success" type="redirectAction">aggiornaCausaleEPFIN_step1</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_step1" class="aggiornaCausaleEPFINAction" method="step1">
+			<result name="success">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_annullaStep1" class="aggiornaCausaleEPFINAction" method="annullaStep1">
+			<result name="success" type="redirectAction">aggiornaCausaleEPFIN_step1</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_completeStep1" class="aggiornaCausaleEPFINAction" method="completeStep1">
+			<result name="input">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step1.jsp</result>
+			<result name="success" type="redirectAction">aggiornaCausaleEPFIN_step2</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_backToStep1" class="aggiornaCausaleEPFINAction" method="backToStep1">
+			<result name="success" type="redirectAction">aggiornaCausaleEPFIN_step1</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_step2" class="aggiornaCausaleEPFINAction" method="step2">
+			<result name="success">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_annullaStep2" class="aggiornaCausaleEPFINAction" method="annullaStep2">
+			<result name="success" type="redirectAction">aggiornaCausaleEPFIN_step2</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_completeStep2" class="aggiornaCausaleEPFINAction" method="completeStep2">
+			<result name="input">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step2.jsp</result>
+			<result name="success" type="redirectAction">aggiornaCausaleEPFIN_step3</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_step3" class="aggiornaCausaleEPFINAction" method="step3">
+			<result name="success">/jsp/contabilitaGenerale/causali/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		
+		<action name="aggiornaCausaleEPFIN_ottieniListaTipoEventoFiltrata" class="aggiornaCausaleEPFINAction" method="ottieniListaTipoEventoFiltrata">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEventoFiltrata.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="aggiornaCausaleEPFIN_ottieniListaConti" class="aggiornaCausaleEPContoOperazioneFINAction" method="ottieniListaConti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaContoTipoOperazione.*</param>
+			</result>
+		</action>
+		<action name="aggiornaCausaleEPFIN_inserisciConto" class="aggiornaCausaleEPContoOperazioneFINAction" method="inserisciConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaCausaleEPFIN_aggiornaConto" class="aggiornaCausaleEPContoOperazioneFINAction" method="aggiornaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		<action name="aggiornaCausaleEPFIN_eliminaConto" class="aggiornaCausaleEPContoOperazioneFINAction" method="eliminaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, listaContoTipoOperazione.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+<!--    *********************************************************AGGIUNTI IL 13/01/2015 CR-2865 BEGIN ************************************  -->
+		<action name="ricercaCausaleEPFIN_caricaListaClassi" class="ricercaCausaleEPFINAction" method="caricaListaClassi">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClassi.*</param>
+			</result>
+		</action>
+		<action name="ricercaCausaleEPFI_caricaListaTitoli" class="ricercaCausaleEPFINAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaCausaleEPFI_caricaListaClasseSoggetto" class="ricercaCausaleEPFINAction" method="caricaListaClasseSoggetto">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClasseSoggetto.* </param>
+			</result>
+		</action>
+		<action name="ricercaCausaleEPFI_caricaListaTipoEvento" class="ricercaCausaleEPFINAction" method="caricaListaTipoEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEvento.*</param>
+			</result>
+		</action>
+<!--    *********************************************************AGGIUNTI IL 13/01/2015 CR-2865 FINE ************************************  -->
+		
+	</package>
+</struts>

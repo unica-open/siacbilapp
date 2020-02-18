@@ -1,0 +1,16 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/GenericAggiornaDocumentoAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/GenericAggiornaDocumentoAction.java	(revision 11280)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documento/GenericAggiornaDocumentoAction.java	(working copy)
+@@ -223,9 +223,9 @@
+ 					ErroreFin.TOTALE_QUOTE_E_IMPORTI_DOCUMENTO_NON_COERENTI.getErrore("controllare gli importi del documento e gli importi delle quote.")
+ 							);
+ 			BigDecimal nuovoNetto = documento.getImporto().add(documento.getArrotondamento()).add(totaleImponibileOneriRC).subtract(model.getTotaleImportoDaDedurreSuFattura());
+-			checkCondition(nuovoNetto.signum() > 0,
++			checkCondition(nuovoNetto.signum() >= 0,
+ 					ErroreCore.FORMATO_NON_VALIDO.getErrore("netto",
+-							": l'importo netto deve essere maggiore di zero"));
++							": l'importo netto deve essere maggiore o uguale a zero"));
+ 		} catch(ParamValidationException e) {
+ 			log.debug("validazioneImporti", "Arrotondamento errato: " + e.getMessage() + " - Impostazione vecchio netto");
+ 			documento.setArrotondamento(model.getOldArrotondamento());

@@ -1,0 +1,40 @@
+Index: src/main/webapp/js/local/variazioni/risultatiRicerca.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/risultatiRicerca.js	(revision 11155)
++++ src/main/webapp/js/local/variazioni/risultatiRicerca.js	(working copy)
+@@ -48,16 +48,16 @@
+             },
+             aoColumnDefs: [
+                 {aTargets: [0], mData: "numero"},
+-                {aTargets: [1], mData: "applicazione"},
+-                {aTargets: [2], mData: "descrizione"},
+-                {aTargets: [3], mData: function(source) {
++                //{aTargets: [1], mData: "applicazione"},
++                {aTargets: [1], mData: "descrizione"},
++                {aTargets: [2], mData: function(source) {
+                     return source.tipoVariazione.codice + " - " + source.tipoVariazione.descrizione;
+                 }},
+-                {aTargets: [4], mData: "provvedimento"},
+-                {aTargets: [5], mData: function(source) {
++                {aTargets: [3], mData: "provvedimento"},
++                {aTargets: [4], mData: function(source) {
+                     return source.statoVariazione.descrizione;
+                 }},
+-                {aTargets: [6], fnCreatedCell: function (nTd) {
++                {aTargets: [5], fnCreatedCell: function (nTd) {
+                     $('.dropdown-toggle', nTd).dropdown();
+                 }, mData: function (source) {
+                     var pulsante = "";
+Index: src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp	(revision 11155)
++++ src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp	(working copy)
+@@ -26,7 +26,7 @@
+ 							<thead>
+ 								<tr>
+ 									<th scope="col">Numero</th>
+-									<th scope="col">Applicazione</th>
++<!-- 									<th scope="col">Applicazione</th> -->
+ 									<th scope="col">Descrizione</th>
+ 									<th scope="col">Tipo</th>
+ 									<th scope="col">Provvedimento</th>

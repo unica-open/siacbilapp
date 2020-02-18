@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="attoDiLegge" extends="capitoloDefault" namespace="/">
+
+		<!-- Chiamata via AJAX -->
+		<action name="inserisciAttoDiLegge" class="inserisciAttoDiLeggeAction" method="inserisciCDU">
+			<result type="customMessagesJSON" name="success" />
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="aggiornaAttoDiLegge" class="aggiornaAttoDiLeggeAction" method="aggiornaCDU">
+			<result type="customMessagesJSON" name="success" />
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="ricercaAttoDiLegge" class="ricercaAttoDiLeggeAction" method="ricercaCDU">
+			<result type="customJSON" name="success">
+				<param name="includeProperties">errori.*, messaggi.*, informazioni.*, listaAttoDiLegge.*</param>
+			</result>
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="ricercaPuntualeAttoDiLegge" class="ricercaAttoDiLeggeAction" method="ricercaPuntuale">
+			<result type="customJSON" name="success">
+				<param name="includeProperties">errori.*, messaggi.*, informazioni.*, listaAttoDiLegge.*</param>
+			</result>
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="annullaAttoDiLegge" class="ricercaAttoDiLeggeAction" method="cancellaCDU">
+			<result type="customMessagesJSON" name="success" />
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="associaAttoDiLeggeAlCapitolo" class="associaAttoDiLeggeAlCapitoloAction" method="inserisci">
+			<result  type="customMessagesJSON" name="success" />
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="ricercaRelazioniAttoDiLeggeCapitolo" class="associaAttoDiLeggeAlCapitoloAction" method="ricerca">
+			<result type="customJSON" name="success">
+				<param name="includeProperties">errori.*, messaggi.*, informazioni.*, aaData.*</param>
+			</result>
+			<result type="customMessagesJSON" name="input" />
+		</action>
+		
+		<action name="associaAttoDiLeggeAlCapitoloAction_ricercaConsultazione" class="associaAttoDiLeggeAlCapitoloAction" method="ricerca">
+			<result name="success">/jsp/cap/include/consulta_attiDiLegge.jsp</result>
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="ricercaPuntualeRelazioniAttoDiLeggeCapitolo" class="associaAttoDiLeggeAlCapitoloAction" method="ricercaPuntuale">
+			<result type="customJSON" name="success">
+				<param name="includeProperties">errori.*, messaggi.*, informazioni.*, aaData.*</param>
+			</result>
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="annullaRelazioneAttoDiLeggeCapitolo" class="associaAttoDiLeggeAlCapitoloAction" method="cancella">
+			<result type="customMessagesJSON" name="success" />
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+		<action name="aggiornaRelazioneAttoDiLeggeCapitolo" class="associaAttoDiLeggeAlCapitoloAction" method="aggiorna">
+			<result type="customMessagesJSON" name="success" />
+			<result type="customMessagesJSON" name="input" />
+		</action>
+
+	</package>
+</struts>

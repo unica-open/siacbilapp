@@ -1,0 +1,69 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaAction.java	(revision 13798)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/dubbiaesigibilita/InserisciConfigurazioneStampaDubbiaEsigibilitaAction.java	(working copy)
+@@ -21,12 +21,13 @@
+ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilitaResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilita;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaResponse;
+-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
+-import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
+-import it.csi.siac.siacfin2ser.frontend.webservice.msg.AsyncServiceResponse;
+-
+-/**
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaResponse;
++import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
++import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
++import it.csi.siac.siacfin2ser.frontend.webservice.msg.AsyncServiceResponse;
++
++/**
+  * Classe di action per la gestione della configurazioen delle stampe dei fondi a dubbia e difficile esazione
+  * 
+  * @author Alessio Romanato
+@@ -98,12 +99,13 @@
+ 		return SUCCESS;
+ 	}
+ 	
+-	@Override
+-	public void validateSalvaCapitoli() {
+-		List<AccantonamentoFondiDubbiaEsigibilita> listaNelModel = model.getListaAccantonamentoFondiDubbiaEsigibilitaSelezionati();
+-		for(AccantonamentoFondiDubbiaEsigibilita accantonamento : listaNelModel){
+-			checkNotNullNorInvalidUid(accantonamento.getCapitolo(), "capitolo entrata previsione");
+-			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
++	@Override
++	public void validateSalvaCapitoli() {
++		List<AccantonamentoFondiDubbiaEsigibilita> listaNelModel = model.getListaAccantonamentoFondiDubbiaEsigibilitaSelezionati();
++		checkCondition(listaNelModel.size() > 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("fondi a dubbia e difficile esazione"));
++		for(AccantonamentoFondiDubbiaEsigibilita accantonamento : listaNelModel){
++			checkNotNullNorInvalidUid(accantonamento.getCapitolo(), "capitolo entrata previsione");
++			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
+ 			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi1(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
+ 			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi2(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
+ 			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi3(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
+Index: src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js
+===================================================================
+--- src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js	(revision 13798)
++++ src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js	(working copy)
+@@ -440,13 +440,13 @@
+      * @returns (boolean) false per indicare di bloccare l'evento
+      */
+     function salvaCapitoli() {
+-        var $salva = $('#salvaCapitoli');
+-        if (!$salva.hasClass('disabled')) {
+-            var listaAccantonamenti = accantonamentiSelezionati.filter(filterOutUndefined);
+-            var obj = {listaAccantonamentoFondiDubbiaEsigibilitaRendicontoSelezionati: listaAccantonamenti};
+-
+-            $salva.overlay('show');
+-            $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_salvaCapitoli.do', projectToString(obj))
++        var $salva = $('#salvaCapitoli');
++        if (!$salva.hasClass('disabled')) {
++            var listaAccantonamenti = accantonamentiSelezionati.filter(filterOutUndefined);
++            var obj = {listaAccantonamentoFondiDubbiaEsigibilitaSelezionati: listaAccantonamenti};
++
++            $salva.overlay('show');
++            $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_salvaCapitoli.do', projectToString(obj))
+             .then(function(data) {
+                 if(impostaDatiNegliAlert(data.errori, alertErrori)){
+                     return;

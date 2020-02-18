@@ -1,0 +1,62 @@
+Index: src/main/webapp/js/local/capitoloUscitaGestione/inserisci.js
+===================================================================
+--- src/main/webapp/js/local/capitoloUscitaGestione/inserisci.js	(revision 14863)
++++ src/main/webapp/js/local/capitoloUscitaGestione/inserisci.js	(working copy)
+@@ -6,21 +6,20 @@
+ 
+ /* Document ready */
+ !function($) {
+-    'use strict';
+-
+-    $(function () {
+-        var Macroaggregato = $("#macroaggregato");
+-        var caricamentoPianoDeiConti = $.Deferred().resolve();
+-        var $macroaggregato = $("#macroaggregato");
+-
++    'use strict';
++
++    $(function () {
++        var caricamentoPianoDeiConti = $.Deferred().resolve();
++        var $macroaggregato = $("#macroaggregato");
++
+         // Lego le azioni
+-        $("#missione").on("change", CapitoloUscita.caricaProgramma.bind(null, false));
+-        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo.bind(null, false));
+-        $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
+-        $macroaggregato.on("change", Capitolo.caricaPianoDeiConti.bind(null, $macroaggregato));
+-        $("#bottonePdC").on("click", Capitolo.controllaPdC);
+-        // CR SIAC-2559
+-//        $("#bottoneSIOPE").on("click", Capitolo.controllaSIOPE);
++        $("#missione").on("change", CapitoloUscita.caricaProgramma.bind(null, false));
++        $("#programma").on("change", CapitoloUscita.caricaCofogTitolo.bind(null, false));
++        $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
++        $macroaggregato.on("change", Capitolo.caricaPianoDeiConti.bind(null, $macroaggregato, false, true));
++        $("#bottonePdC").on("click", Capitolo.controllaPdC);
++        // CR SIAC-2559
++//        $("#bottoneSIOPE").on("click", Capitolo.controllaSIOPE);
+         if(!$("form[data-disabled-form]").length) {
+             $("#ModalAltriDati").on("click", CapitoloUscita.validaForm);
+         }
+@@ -32,14 +31,14 @@
+         if ($("#FPV").attr("checked") !== "checked") {
+             $("#fpv0").attr("disabled", "disabled");
+             $("#fpv1").attr("disabled", "disabled");
+-            $("#fpv2").attr("disabled", "disabled");
+-        }
+-        // Carica, eventualmente, lo zTree relativo all'Elemento del Piano dei Conti
+-        if (Macroaggregato.val()) {
+-            caricamentoPianoDeiConti = Capitolo.caricaPianoDeiConti(Macroaggregato, false, true);
+-        }
+-        // Carica, eventualmente, lo zTree relativo al SIOPE
+-        // CR SIAC-2559
++            $("#fpv2").attr("disabled", "disabled");
++        }
++        // Carica, eventualmente, lo zTree relativo all'Elemento del Piano dei Conti
++        if ($macroaggregato.val()) {
++            caricamentoPianoDeiConti = Capitolo.caricaPianoDeiConti($macroaggregato, false, true);
++        }
++        // Carica, eventualmente, lo zTree relativo al SIOPE
++        // CR SIAC-2559
+ //        var elementoPdC = parseInt($("#HIDDEN_ElementoPianoDeiContiUid").val(), 10);
+ //        if (!isNaN(elementoPdC) && elementoPdC) {
+ //            caricamentoPianoDeiConti.done(Capitolo.caricaSIOPEDaHidden);

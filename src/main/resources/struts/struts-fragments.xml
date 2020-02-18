@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="fragments" extends="default, json-default" namespace="/fragments">
+
+        <!-- 
+            Valutare qualora questi fragments non siano obsoleti. Con ogni probabilità, si può
+            semplicemente utilizzare un bellissimo
+                <result name="success" type="json" />
+            per restituire il risultato dell'invocazione come stringa JSON (JavaScript Object Notation)
+            alla pagina richiedente, e quindi utilizzare un po' di sano jQuery.
+            Lascerei comunque le Action dichiarate, con il solo metodo 'execute' da implementare.
+            
+            Valutare se possa aver senso costruire un package del tipo
+            it.csi.siac.siacbilapp.frontend.ui.action.fragments
+            per contenere le seguenti Acrions. Ricordarsi che, in caso di modifica, non è
+            questo il luogo da toccare (o meglio: qua bisogna toccare soltanto i result),
+            quanto l'applicationContext.xml di Spring (e/o eventuali ulteriori files di 
+            configurazione di Spring). 
+        -->
+        <action name="programmiMissioneOptions" class="programmiMissioneAction">
+            <result name="success">/jsp/fragments/programmiMissioneOptions.jsp</result>
+        </action>
+        <action name="macroaggregatiTitoloSpesaOptions" class="macroaggregatiTitoloSpesaAction">
+            <result name="success">/jsp/fragments/macroaggregatiTitoloSpesaOptions.jsp</result>
+        </action>
+        <action name="pianoDeiContiMacroaggregatoJSON" class="pianoDeiContiMacroaggregatoAction">
+            <result name="success">/jsp/fragments/pianoDeiContiMacroaggregatoJSON.jsp</result>
+        </action>
+        
+    </package>
+</struts>

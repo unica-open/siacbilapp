@@ -1,0 +1,25 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociareAllegatoAttoSpesa.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociareAllegatoAttoSpesa.java	(revision 14863)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoSubdocumentoDaAssociareAllegatoAttoSpesa.java	(working copy)
+@@ -70,13 +70,13 @@
+ 	 */
+ 	public String getDomStringIva() {
+ 		if(subdocumento.getTipoIvaSplitReverse() == null || subdocumento.getTipoIvaSplitReverse() == null) {
+-			return "";
+-		}
+-		return new StringBuilder()
+-				.append("a href=\"#\" rel=\"popover\" data-original-title=\"Dettagli\" data-content=\"Importo IVA: ")
+-				.append(FormatUtils.formatCurrency(subdocumento.getImportoSplitReverse()))
+-				.append("\" data-trigger=\"hover\">")
+-				.append(subdocumento.getTipoIvaSplitReverse().getDescrizione())
++			return "";
++		}
++		return new StringBuilder()
++				.append("<a href=\"#\" rel=\"popover\" data-original-title=\"Dettagli\" data-content=\"Importo IVA: ")
++				.append(FormatUtils.formatCurrency(subdocumento.getImportoSplitReverse()))
++				.append("\" data-trigger=\"hover\">")
++				.append(subdocumento.getTipoIvaSplitReverse().getDescrizione())
+ 				.append("</a>")
+ 				.toString();
+ 	}

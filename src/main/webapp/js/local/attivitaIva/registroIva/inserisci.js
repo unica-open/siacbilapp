@@ -1,0 +1,12 @@
+/*
+*SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+*SPDX-License-Identifier: EUPL-1.2
+*/
+;(function($) {
+    'use strict';
+    $(function() {
+        $("#gruppoAttivitaIva").on("change", function() {
+            RegistroIva.copiaDescrizione("#gruppoAttivitaIva", "#descrizioneRegistroIva");
+        });
+    });
+}(jQuery));

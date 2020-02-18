@@ -1,0 +1,247 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/SelezionaCapitoloAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/SelezionaCapitoloAction.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/commons/SelezionaCapitoloAction.java	(working copy)
+@@ -24,14 +24,18 @@
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataPrevisione;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataPrevisioneResponse;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestioneResponse;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaPrevisione;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaPrevisioneResponse;
+-import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
+-import it.csi.siac.siacbilser.model.TipoFinanziamento;
+-import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+-import it.csi.siac.siaccorser.model.errore.ErroreCore;
+-
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestioneResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaPrevisione;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaPrevisioneResponse;
++import it.csi.siac.siacbilser.model.CategoriaTipologiaTitolo;
++import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
++import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
++import it.csi.siac.siacbilser.model.TipoFinanziamento;
++import it.csi.siac.siacbilser.model.TipologiaTitolo;
++import it.csi.siac.siacbilser.model.TitoloEntrata;
++import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
++
+ /**
+  * Action per la selezione del Capitolo sul modale.
+  * 
+@@ -321,23 +325,26 @@
+ 	private void innerValidate() {
+ 		checkCondition(model.getCapitolo() != null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("capitolo"), true);
+ 		checkCondition(model.getCapitolo().getAnnoCapitolo() != null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno capitolo"), true);
+-		
+-		List<TipoFinanziamento> listaTipoFinanziamento = sessionHandler.getParametro(BilSessionParameter.LISTA_TIPO_FINANZIAMENTO);
+-		List<StrutturaAmministrativoContabile> listaStrutturaAmministrativoContabile = sessionHandler.getParametro(BilSessionParameter.LISTA_STRUTTURA_AMMINISTRATIVO_CONTABILE);
+-	
+-		TipoFinanziamento tipoFinanziamento = ComparatorUtils.searchByUid(listaTipoFinanziamento, model.getTipoFinanziamento());
+-		model.setTipoFinanziamento(tipoFinanziamento);
+-		
+-		StrutturaAmministrativoContabile strutturaAmministrativoContabile = ComparatorUtils.searchByUidWithChildren(listaStrutturaAmministrativoContabile, model.getStrutturaAmministrativoContabile());
+-		model.setStrutturaAmministrativoContabile(strutturaAmministrativoContabile);
+-	}
+-	
+-	
+-	
+-	
+-
+-	/**
+-	 * Result per la selezione del capitolo con la gestione tipo-CustomJSON
++		
++		List<TipoFinanziamento> listaTipoFinanziamento = sessionHandler.getParametro(BilSessionParameter.LISTA_TIPO_FINANZIAMENTO);
++		List<StrutturaAmministrativoContabile> listaStrutturaAmministrativoContabile = sessionHandler.getParametro(BilSessionParameter.LISTA_STRUTTURA_AMMINISTRATIVO_CONTABILE);
++		// SIAC-4470
++		List<TitoloEntrata> listaTitoloEntrata = sessionHandler.getParametro(BilSessionParameter.LISTA_TITOLO_ENTRATA);
++		List<TipologiaTitolo> listaTipologiaTitolo = sessionHandler.getParametro(BilSessionParameter.LISTA_TIPOLOGIA_TITOLO);
++		List<CategoriaTipologiaTitolo> listaCategoriaTipologiaTitolo = sessionHandler.getParametro(BilSessionParameter.LISTA_CATEGORIA_TIPOLOGIA_TITOLO);
++		List<ElementoPianoDeiConti> listaElementoPianoDeiConti = sessionHandler.getParametro(BilSessionParameter.LISTA_ELEMENTO_PIANO_DEI_CONTI);
++		
++		model.setTipoFinanziamento(ComparatorUtils.searchByUid(listaTipoFinanziamento, model.getTipoFinanziamento()));
++		model.setStrutturaAmministrativoContabile(ComparatorUtils.searchByUidWithChildren(listaStrutturaAmministrativoContabile, model.getStrutturaAmministrativoContabile()));
++		
++		model.setTitoloEntrata(ComparatorUtils.searchByUid(listaTitoloEntrata, model.getTitoloEntrata()));
++		model.setTipologiaTitolo(ComparatorUtils.searchByUid(listaTipologiaTitolo, model.getTipologiaTitolo()));
++		model.setCategoriaTipologiaTitolo(ComparatorUtils.searchByUid(listaCategoriaTipologiaTitolo, model.getCategoriaTipologiaTitolo()));
++		model.setElementoPianoDeiConti(ComparatorUtils.searchByUidWithChildren(listaElementoPianoDeiConti, model.getElementoPianoDeiConti()));
++	}
++
++	/**
++	 * Result per la selezione del capitolo con la gestione tipo-CustomJSON
+ 	 * @author Marchino Alessandro
+ 	 */
+ 	public static class SelezionaCapitoloCustomJSONResult extends CustomJSONResult {
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/SelezionaCapitoloModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/SelezionaCapitoloModel.java	(revision 13699)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/commons/SelezionaCapitoloModel.java	(working copy)
+@@ -3,12 +3,14 @@
+ import java.io.Serializable;
+ import java.util.ArrayList;
+ import java.util.Date;
+-import java.util.List;
+-import java.util.Set;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataGestione;
++import java.util.List;
++import java.util.Set;
++
++import org.apache.commons.lang3.StringUtils;
++
++import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
++import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataGestione;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataPrevisione;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaPrevisione;
+@@ -16,12 +18,13 @@
+ import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
+ import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
+ import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloEGest;
+-import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloEPrev;
+-import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloUGest;
+-import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloUPrev;
+-import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+-
+-/**
++import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloEPrev;
++import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloUGest;
++import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloUPrev;
++import it.csi.siac.siaccorser.model.Codifica;
++import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
++
++/**
+  * Classe di model per la selezione del Capitolo . Contiene una mappatura dei form 
+  * sul modale di ricerca del Capitolo sul modale.
+  * 
+@@ -197,15 +200,20 @@
+ 		RicercaSinteticaCapitoloEGest utility = new RicercaSinteticaCapitoloEGest();
+ 		
+ 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
++		
++		// Classificatori
++		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
++		utility.setCodicePianoDeiConti(extractCodice(getElementoPianoDeiConti()));
++
++		// SIAC-4470
++		utility.setCodiceTitoloEntrata(extractCodice(getTitoloEntrata()));
++		utility.setCodiceTipologia(extractCodice(getTipologiaTitolo()));
++		utility.setCodiceCategoria(extractCodice(getCategoriaTipologiaTitolo()));
++		
++		// StrutturaAmministrativoContabile
++		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
+ 		
+-		// Classificatori
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getElementoPianoDeiConti(), "setElementoPianoDeiConti");
+ 		
+-		// StrutturaAmministrativoContabile
+-		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
+-		
+-		
+ 		// impostazione del capitolo
+ 		if(capitolo != null) {
+ 			utility.setAnnoCapitolo(capitolo.getAnnoCapitolo());
+@@ -231,16 +239,21 @@
+ 		
+ 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
+ 		utility.setRichiediAccantonamentoFondiDubbiaEsigibilita(getRichiediAccantonamentoFondiDubbiaEsigibilita());
+-		
+-		// Classificatori
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getElementoPianoDeiConti(), "setElementoPianoDeiConti");
+-		
+-		// StrutturaAmministrativoContabile
+-		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
+-		
+-		
+-		// impostazione del capitolo
++		
++		// Classificatori
++		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
++		utility.setCodicePianoDeiConti(extractCodice(getElementoPianoDeiConti()));
++		
++		// StrutturaAmministrativoContabile
++		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
++		
++		// SIAC-4470
++		utility.setCodiceTitoloEntrata(extractCodice(getTitoloEntrata()));
++		utility.setCodiceTipologia(extractCodice(getTipologiaTitolo()));
++		utility.setCodiceCategoria(extractCodice(getCategoriaTipologiaTitolo()));
++		
++		
++		// impostazione del capitolo
+ 		if(capitolo != null) {
+ 			utility.setAnnoCapitolo(capitolo.getAnnoCapitolo());
+ 			utility.setNumeroCapitolo(capitolo.getNumeroCapitolo());
+@@ -264,15 +277,15 @@
+ 		RicercaSinteticaCapitoloUGest utility = new RicercaSinteticaCapitoloUGest();
+ 		
+ 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
++		
++		// Classificatori
++		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
++		utility.setCodicePianoDeiConti(extractCodice(getElementoPianoDeiConti()));
++		
++		// StrutturaAmministrativoContabile
++		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
+ 		
+-		// Classificatori
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getElementoPianoDeiConti(), "setElementoPianoDeiConti");
+ 		
+-		// StrutturaAmministrativoContabile
+-		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
+-		
+-		
+ 		// impostazione del capitolo
+ 		if(capitolo != null) {
+ 			utility.setAnnoCapitolo(capitolo.getAnnoCapitolo());
+@@ -297,15 +310,15 @@
+ 		RicercaSinteticaCapitoloUPrev utility = new RicercaSinteticaCapitoloUPrev();
+ 		
+ 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
++		
++		// Classificatori
++		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
++		utility.setCodicePianoDeiConti(extractCodice(getElementoPianoDeiConti()));
++		
++		// StrutturaAmministrativoContabile
++		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
+ 		
+-		// Classificatori
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getTipoFinanziamento(), "setCodiceTipoFinanziamento");
+-		injettaCodiceCodificaNellaRicercaSeValida(utility, getElementoPianoDeiConti(), "setElementoPianoDeiConti");
+ 		
+-		// StrutturaAmministrativoContabile
+-		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());
+-		
+-		
+ 		// impostazione del capitolo
+ 		if(capitolo != null) {
+ 			utility.setAnnoCapitolo(capitolo.getAnnoCapitolo());
+@@ -327,7 +340,16 @@
+ 		}
+ 		ReflectionUtil.invokeSetterMethod(request, "setCodiceStrutturaAmmCont", String.class, strutturaAmministrativoContabile.getCodice());
+ 		
+-		String codiceTipoStrutturaAmmCont = strutturaAmministrativoContabile.getTipoClassificatore().getCodice();
+-		ReflectionUtil.invokeSetterMethod(request, "setCodiceTipoStrutturaAmmCont", String.class, codiceTipoStrutturaAmmCont);
+-	}
+-}
++		String codiceTipoStrutturaAmmCont = strutturaAmministrativoContabile.getTipoClassificatore().getCodice();
++		ReflectionUtil.invokeSetterMethod(request, "setCodiceTipoStrutturaAmmCont", String.class, codiceTipoStrutturaAmmCont);
++	}
++	
++	/**
++	 * Estrae il codice dalla codifica
++	 * @param codifica la codifica il cui codice &eacute; da estrarrre
++	 * @return il codice
++	 */
++	private String extractCodice(Codifica codifica) {
++		return codifica != null && StringUtils.isNotBlank(codifica.getCodice()) ? codifica.getCodice() : null;
++	}
++}

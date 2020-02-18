@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gruppoAttivitaIva" extends="capitoloDefault" namespace="/">
+	
+		<action name="inserisciGruppoAttivitaIva" class="inserisciGruppoAttivitaIvaAction">
+			<result name="success">/jsp/attivitaIva/gruppoAttivitaIva/inserisciGruppoAttivitaIva.jsp</result>
+		</action>
+		<action name="inserimentoGruppoAttivitaIva" class="inserisciGruppoAttivitaIvaAction" method="inserimento">
+			<result name="success">/jsp/attivitaIva/gruppoAttivitaIva/inserisciGruppoAttivitaIvaDisabled.jsp</result>
+			<result name="input">/jsp/attivitaIva/gruppoAttivitaIva/inserisciGruppoAttivitaIva.jsp</result>
+		</action>
+		<action name="inserisciGruppoAttivitaIvaAggiornamento" class="inserisciGruppoAttivitaIvaAction" method="aggiornamento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaGruppoAttivitaIva</param>
+				<param name="namespace">/</param>
+				<param name="uidGruppoAttivitaIva">${uidGruppoAttivitaIva}</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaGruppoAttivitaIva" class="aggiornaGruppoAttivitaIvaAction">
+			<result name="success">/jsp/attivitaIva/gruppoAttivitaIva/aggiornaGruppoAttivitaIva.jsp</result>
+			<result name="input">/jsp/attivitaIva/gruppoAttivitaIva/aggiornaGruppoAttivitaIvaDisabled.jsp</result>
+		</action>
+		<action name="aggiornamentoGruppoAttivitaIva" class="aggiornaGruppoAttivitaIvaAction" method="aggiornamento">
+			<result name="success">/jsp/attivitaIva/gruppoAttivitaIva/aggiornaGruppoAttivitaIvaDisabled.jsp</result>
+			<result name="input">/jsp/attivitaIva/gruppoAttivitaIva/aggiornaGruppoAttivitaIva.jsp</result>
+		</action>
+		
+		<action name="ricercaGruppoAttivitaIva" class="ricercaGruppoAttivitaIvaAction">
+			<result name="success">/jsp/attivitaIva/gruppoAttivitaIva/ricercaGruppoAttivitaIva.jsp</result>
+		</action>
+		<action name="effettuaRicercaGruppoAttivitaIva" class="ricercaGruppoAttivitaIvaAction" method="ricerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaGruppoAttivitaIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/attivitaIva/gruppoAttivitaIva/ricercaGruppoAttivitaIva.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaGruppoAttivitaIva" class="risultatiRicercaGruppoAttivitaIvaAction">
+			<result name="success">/jsp/attivitaIva/gruppoAttivitaIva/risultatiRicercaGruppoAttivitaIva.jsp</result>
+		</action>
+		<action name="risultatiRicercaGruppoAttivitaIvaAjax" class="risultatiRicercaGruppoAttivitaIvaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaGruppoAttivitaIva_elimina" class="risultatiRicercaGruppoAttivitaIvaAction" method="elimina">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaGruppoAttivitaIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/attivitaIva/gruppoAttivitaIva/risultatiRicercaGruppoAttivitaIva.jsp</result>
+		</action>
+		<action name="risultatiRicercaGruppoAttivitaIva_aggiorna" class="risultatiRicercaGruppoAttivitaIvaAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaGruppoAttivitaIva</param>
+				<param name="namespace">/</param>
+				<param name="uidGruppoAttivitaIva">${uidDaAggiornare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaGruppoAttivitaIva_consulta" class="risultatiRicercaGruppoAttivitaIvaAction" method="consulta">
+			<result name="success">/jsp/attivitaIva/gruppoAttivitaIva/modaleConsultazioneGruppoAttivitaIva.jsp</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+				
+	</package>
+</struts>

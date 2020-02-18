@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="progetto" extends="capitoloDefault" namespace="/">
+        
+        <action name="inserisciProgetto" class="inserisciProgettoAction">
+        	<result name="success" type="redirectAction">inserimentoProgetto</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="inserimentoProgetto" class="inserisciProgettoAction" method="enter">
+        	<result name="success">/jsp/progetto/inserisciProgetto.jsp</result>
+        </action>
+        <action name="inserimentoProgettoPulisci" class="inserisciProgettoAction" method="pulisci">
+        	<result name="success">/jsp/progetto/inserisciProgetto.jsp</result>
+        </action>
+        <action name="inserimentoProgettoSalva" class="inserisciProgettoAction" method="salvaProgetto">
+            <result name="input">/jsp/progetto/inserisciProgetto.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaProgetto</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${idProgetto}</param>
+            </result>
+        </action>
+        
+   		 <action name="inserimentoProgettoProsegui" class="inserisciProgettoAction" method="proseguiProgetto">
+            <result name="input">/jsp/progetto/inserisciProgetto.jsp</result>
+            <result name="success" type="redirectAction">inserisciCronoprogramma</result>
+        </action>
+        
+ 		<action name="aggiornaProgetto" class="aggiornaProgettoAction">
+        	<result name="success">/jsp/progetto/aggiornaProgetto.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+        <action name="aggiornamentoProgetto" class="aggiornaProgettoAction" method="aggiornaProgetto">
+        	<result name="success">/jsp/progetto/aggiornaProgetto.jsp</result>
+            <result name="input">/jsp/progetto/aggiornaProgetto.jsp</result>
+        </action>
+        
+        <action name="aggiornaProgettoLeggiCronoprogrammi" class="aggiornaProgettoAction" method="leggiCronoprogrammiAssociati">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		listaElementiVersioneCronoprogramma.*
+            	</param>
+            </result>
+        </action>
+        
+        <action name="aggiornaProgettoAnnullaCronoprogramma" class="aggiornaProgettoAction" method="annullaCronoprogramma">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		informazioni.*,
+            		listaElementiVersioneCronoprogramma.*
+            	</param>
+            </result>
+        </action>
+        
+        <action name="aggiornaProgettoConsultaCronoprogramma" class="aggiornaProgettoAction" method="consultaCronoprogramma">
+            <result name="success" type="customJSON">
+            	<param name="includeProperties">mappaTotaliCronoprogramma.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="aggiornaProgettoConsultaCronoprogrammaGestione" class="aggiornaProgettoAction" method="consultaCronoprogrammaGestione">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaProspettoRiassuntivoCronoprogramma.*
+            	</param>
+            </result>
+        </action>
+        
+        <action name="aggiornaProgettoInserimentoCronoprogramma" class="aggiornaProgettoAction" method="inserimentoCronoprogramma">
+        	<result name="success" type="redirectAction">
+        		<param name="actionName">inserisciNuovoCronoprogramma</param>
+            	<param name="namespace">/</param>
+                <param name="uidProgetto">${uidDaAggiornare}</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornaProgettoPopolaFondoPluriennaleVincolato" class="aggiornaProgettoAction" method="popolaFondoPluriennaleVincolato">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+        			errori.*,
+        			fondoPluriennaleVincolatoEntrata
+        		</param>
+        	</result>
+        </action> 
+        
+        <action name="aggiornaProgettoCalcolaFondoPluriennaleVincolatoComplessivo" class="aggiornaProgettoAction" method="calcolaFondoPluriennaleVincolatoComplessivo">
+        	<result name="success" type="json">
+        		<param name="includeProperties">
+        			mappaFondoPluriennaleVincolatoPerAnno.*
+        		</param>
+        	</result>
+        </action>
+      
+        <action name="aggiornaProgettoCalcolaFondoPluriennaleVincolatoUscita" class="aggiornaProgettoAction" method="calcolaFondoPluriennaleVincolatoUscita">
+        	<result name="success" type="json">
+        		<param name="includeProperties">
+        			listaFondoPluriennaleVincolatoUscitaCronoprogramma.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="aggiornaProgettoCalcolaFondoPluriennaleVincolatoEntrata" class="aggiornaProgettoAction" method="calcolaFondoPluriennaleVincolatoEntrata">
+        	<result name="success" type="json">
+        		<param name="includeProperties">
+        			listaFondoPluriennaleVincolatoEntrata.*  		
+        		</param>
+        	</result>
+        </action>
+        
+        
+        <!-- begin parte aggiunta ahmad -->
+        
+          <action name="aggiornaProgettoCalcolaFondoPluriennaleVincolatoComplessivoCronoprogrammaDaGestioneDaBilancio" class="aggiornaProgettoAction" method="popolaFondoPluriennaleVincolatoComplessivoDaGestioneDaBilancio">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+        			errori.*,
+        			listaFondoPluriennaleVincolatoTotale.*
+        		</param>
+        	</result>
+        </action>
+        
+           <action name="aggiornaProgettoCalcolaFondoPluriennaleVincolatoEntrataCronoprogrammaDaGestioneDaBilancio" class="aggiornaProgettoAction" method="popolaFondoPluriennaleVincolatoEntrataDaGestioneDaBilancio">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+        			errori.*,
+        			listaRiepilogoFondoPluriennaleVincolatoDaGestioneDaBilancioPerEntrate.*
+        		</param>
+        	</result>
+        </action>
+         <action name="aggiornaProgettoCalcolaFondoPluriennaleVincolatoSpesaCronoprogrammaDaGestioneDaBilancio" class="aggiornaProgettoAction" method="popolaFondoPluriennaleVincolatoUscitaDaGestioneDaBilancio">
+        	<result name="success" type="json">
+        		<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+        			errori.*,
+        			listaFondoPluriennaleVincolatoUscitaCronoprogrammaDaGestioneDaBilancio.*
+        		</param>
+        	</result>
+        </action>
+         <action name="aggiornaProgettoAssociaCronoprogrammaPerFPV" class="aggiornaProgettoAction" method="settaCronoprogrammaComeUsatoPerFPV">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">errori.*, informazioni.*, listaElementiVersioneCronoprogramma.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+         <action name="consultaProgettoConsultaCronoprogrammaGestione" class="consultaProgettoAction" method="consultaCronoprogrammaGestione">
+            <result name="success" type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaProspettoRiassuntivoCronoprogramma.*
+            	</param>
+            </result>
+        </action>
+        <!--end parte aggiunta ahmad  -->
+        
+        <action name="aggiornaProgetto_simulaFPV" class="aggiornaProgettoAction" method="simulaFPV">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">errori.*, informazioni.*, listaElementiVersioneCronoprogramma.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="aggiornaProgetto_annullaSimulaFPV" class="aggiornaProgettoAction" method="annullaSimulaFPV">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">errori.*, informazioni.*, listaElementiVersioneCronoprogramma.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="aggiornaProgetto_caricaImpegniCollegati" class="aggiornaProgettoAction" method="caricaImpegniCollegati">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">errori.*, informazioni.*, listaElementiVersioneCronoprogramma.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="consultaProgetto" class="consultaProgettoAction">
+            <result name="success">/jsp/progetto/consultaProgetto.jsp</result>
+            <result name="input">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+        </action>
+       
+       <action name="consultaProgettoCronoprogrammaTotaliEntrata" class="consultaProgettoAction" method="consultaTotaliEntrata">
+        	<result name="success" type="json">
+        		<param name="includeProperties">
+        			mappaTotali.*
+        		</param>
+        	</result>
+        </action>
+        
+        <action name="consultaProgettoCronoprogrammaTotaliUscita" class="consultaProgettoAction" method="consultaTotaliUscita">
+        	<result name="success" type="json">
+        		<param name="includeProperties">
+        			mappaTotali.*
+        		</param>
+        	</result>
+        </action>
+        <action name="ricercaProgetto" class="ricercaProgettoAction">
+        	<result name="success">/jsp/progetto/ricercaProgetto.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+       
+        <action name="effettuaRicercaProgetto" class="ricercaProgettoAction" method="ricercaProgetto">
+            <result name="input">/jsp/progetto/ricercaProgetto.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">risultatiRicercaProgetto</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+      
+        <action name="risultatiRicercaProgetto" class="risultatiRicercaProgettoAction">
+            <result name="success">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        
+       <action name="risultatiRicercaProgettoAjax" class="risultatiRicercaProgettoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaProgettoAggiorna" class="risultatiRicercaProgettoAction" method="aggiorna">
+            <result name="input">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaProgetto</param>
+            	<param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaProgettoAnnulla" class="risultatiRicercaProgettoAction" method="annulla">
+            <result name="success">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+            <result name="input">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+        </action>
+        
+        <action name="risultatiRicercaProgettoConsulta" class="risultatiRicercaProgettoAction" method="consulta">
+            <result name="input">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">consultaProgetto</param>
+            	<param name="namespace">/</param>
+                <param name="uidDaConsultare">${uidDaConsultare}</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaProgettoRiattiva" class="risultatiRicercaProgettoAction" method="riattiva">
+            <result name="input">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+            <result name="success">/jsp/progetto/risultatiRicercaProgetto.jsp</result>
+        </action>
+        
+    </package>
+</struts>

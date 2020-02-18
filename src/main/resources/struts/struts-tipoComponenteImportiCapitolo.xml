@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="tipoComponenteImportiCapitolo" extends="capitoloDefault" namespace="/">
+	
+	 
+	<!-- Azioni riferite alla funzionalità di Inserisci Componente Capitolo -->
+	<!-- Ingresso nella GUI -->
+		<action name="inserisciComponenteCapitolo" class="inserisciComponenteCapitoloAction">
+            <result name="success">/jsp/anagraficaComponenti/inserisciComponenteCapitolo.jsp</result>
+             <result name="input">/jsp/failure.jsp</result>
+		</action>
+		
+		
+		  <action name="inserisciComponenteCapitoloAction_inserimentoCP" class="inserisciComponenteCapitoloAction" method="inserimentoCP">
+            <result name="success">/jsp/anagraficaComponenti/ricercaComponenteCapitolo.jsp</result>
+            <result name="input">/jsp/anagraficaComponenti/inserisciComponenteCapitolo.jsp</result>
+        </action>
+        
+          <action name="aggiornaComponenteCapitoloAction_aggiornamentoCP" class="aggiornaComponenteCapitoloAction" method="aggiornamentoCP">
+            <result name="success" type="redirectAction">risultatiRicercaComponenteCapitolo</result>
+            <result name="input">/jsp/anagraficaComponenti/aggiornaComponenteCapitolo.jsp</result>
+        </action>
+         
+		<!-- Annulla Inserimento Capitolo -->
+		<action name="annullaInserisciComponenteCapitolo" class="inserisciComponenteCapitoloAction" method="annulla">
+            <result name="input">/jsp/anagraficaComponenti/inserisciComponenteCapitolo.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">inserisciComponenteCapitolo</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+	
+		<!-- Annulla aggiornamento Capitolo -->
+        <action name="annullaAggiornaComponenteCapitolo" class="aggiornaComponenteCapitoloAction" method="annulla">
+            <result name="success" type="redirectAction">aggiornaComponenteCapitolo.jsp</result>
+            <result name="input" type="redirectAction">aggiornaComponenteCapitolo</result>
+        </action>
+	
+	
+		 <!-- Azioni della ricerca -->
+        <action name="ricercaComponenteCapitolo" class="ricercaComponenteCapitoloAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/anagraficaComponenti/ricercaComponenteCapitolo.jsp</result>
+        </action>
+           <!-- Risultati di ricerca -->
+        <action name="risultatiRicercaComponenteCapitolo" class="risultatiRicercaComponenteCapitoloAction" method="execute">
+            <result name="input">/jsp/anagraficaComponenti/ricercaComponenteCapitolo.jsp</result>
+            <result name="success">/jsp/anagraficaComponenti/risultatiRicercaComponenteCapitolo.jsp</result>
+        </action>
+        
+        <action name="aggiornaComponenteCapitolo" class="aggiornaComponenteCapitoloAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/anagraficaComponenti/aggiornaComponenteCapitolo.jsp</result>
+        </action>
+        
+        
+           <action name="effettuaRicercaComponenteCapitolo" class="ricercaComponenteCapitoloAction" method="ricercaComponenteCapitolo">
+            <result name="input">/jsp/anagraficaComponenti/ricercaComponenteCapitolo.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaComponenteCapitolo</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+        
+         <!-- Redirezione verso aggiornamento -->
+        <action name="risultatiRicercaComponenteCapitoloAggiorna" class="risultatiRicercaComponenteCapitoloAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaComponenteCapitolo</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        
+        
+         <action name="risultatiRicercaComponenteCapitolo_aggiorna" class="risultatiRicercaComponenteCapitoloAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaComponenteCapitolo</param>
+				<param name="uidComponenteCapitolo">${uidComponenteCapitolo}</param>
+			</result>
+		</action>
+		
+				<action name="risultatiRicercaComponenteCapitoloAction_annulla" class="risultatiRicercaComponenteCapitoloAction" method="annulla">
+			<result name="input">/jsp/anagraficaComponenti/risultatiRicercaComponenteCapitolo.jsp</result>
+			<result name="success" type="redirectAction">risultatiRicercaComponenteCapitolo</result>
+		</action>
+        
+      	<action name="risultatiRicercaComponenteCapitoloAjax" class="risultatiRicercaComponenteCapitoloAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+        
+          <!-- Caricamento AJAX della lista dei 	 -->
+        <action name="inserisciComponenteCapitoloAction_caricaClassificatori" class="inserisciComponenteCapitoloAction"  method="caricaClassificatori"> 
+            <result type="customJSON">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    listaSottoTipo.*,
+                    listaFonteFinanziamento.*,
+                    listaMomento.*,
+                    listaAmbito.*
+                </param>
+            </result>
+        </action>
+        
+        
+                
+        
+      
+	</package>
+</struts>

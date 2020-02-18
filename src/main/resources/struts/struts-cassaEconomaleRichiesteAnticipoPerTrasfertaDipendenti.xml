@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cassaEconomaleRichiesteAnticipoPerTrasfertaDipendenti" extends="capitoloDefault" namespace="/">
+	
+			<!-- Inserimento -->
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction">
+			<result name="success" type="redirectAction">inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step1" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step1">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_copiaRichiesta" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="copiaRichiesta">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_ottieniListaGiustificativi" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="ottieniListaGiustificativi">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleImportiGiustificativi, totaleImportiSpettantiGiustificativi, listaGiustificativo.*</param>
+			</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_addGiustificativo" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="addGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_removeGiustificativo" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="removeGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_updateGiustificativo" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="updateGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_annullaStep1" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">inserisciAnticipoPerTrasfertaDipendentiCassaEconomale</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep1" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step2" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_backToStep1" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_caricaDettaglioPagamento" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_selezionaIban" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, richiestaEconomale\.movimento.*</param>
+			</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_annullaStep2" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step2</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep2" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_step3" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep3" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciAnticipoPerTrasfertaDipendentiCassaEconomale_visualizzaImporti" class="inserisciAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="importiCassa">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_visualizzaImporti" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="importiCassa">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+		</action>
+			<!-- Ricerca -->
+		<action name="ricercaAnticipoPerTrasfertaDipendentiCassaEconomale" class="ricercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/include/ricerca.jsp</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="effettuaRicercaAnticipoPerTrasfertaDipendentiCassaEconomale" class="ricercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_aggiorna" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_consulta" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaAnticipoPerTrasfertaDipendentiCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_rendiconta" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="rendiconta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciRendicontoAnticipoPerTrasfertaDipendentiCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_aggiornaRendiconto" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="aggiornaRendiconto">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRendicontoAnticipoPerTrasfertaDipendentiCassaEconomale</param>
+				<param name="rendicontoRichiesta.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_consultaRendiconto" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="consultaRendiconto">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRendicontoAnticipoPerTrasfertaDipendentiCassaEconomale</param>
+				<param name="rendicontoRichiesta.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_annulla" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="annulla">
+			<result name="success">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+			<!-- Consulta -->
+		<action name="consultaAnticipoPerTrasfertaDipendentiCassaEconomale" class="consultaAnticipoPerTrasfertaDipendentiCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/consulta.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+			<!-- Aggiorna -->
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction">
+			<result name="success" type="redirectAction">aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step1" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step1">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_copiaRichiesta" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="copiaRichiesta">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_ottieniListaGiustificativi" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="ottieniListaGiustificativi">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleImportiGiustificativi, totaleImportiSpettantiGiustificativi, listaGiustificativo.*</param>
+			</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_addGiustificativo" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="addGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_removeGiustificativo" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="removeGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_updateGiustificativo" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleGiustificativiAction" method="updateGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_annullaStep1" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep1" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step2" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_backToStep1" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, rendicontoRichiesta\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_caricaDettaglioPagamento" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, rendicontoRichiesta\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_selezionaIban" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, rendicontoRichiesta\.movimento.*</param>
+			</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_annullaStep2" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step2</param>
+			</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep2" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_step3" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomale_completeStep3" class="aggiornaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_stampaRicevuta" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="stampaRicevuta">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomale_stampaRicevutaRendiconto" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAction" method="stampaRicevutaRendiconto">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+		
+		<action name="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjax" class="risultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+			</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    
+    <!-- Package riferentesi alle responses delle requests via AJAX -->
+    <package name="ajax" extends="capitoloDefault" namespace="/ajax">
+        
+        <!-- GENERALE -->
+        
+        <!-- Caricamento AJAX della lista degli Elementi del Piano dei Conti -->
+        <action name="elementoPianoDeiContiAjax" class="elementoPianoDeiContiAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaElementoCodifica.*
+                </param>
+            </result>
+        </action>
+        
+         <!-- Caricamento AJAX della lista degli Elementi del Piano dei Conti -->
+        <action name="elementoPianoDeiContiFullAjax" class="elementoPianoDeiContiFullAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaElementoCodifica.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Caricamento AJAX della lista delle Strutture Amministrativo Contabili -->
+        <action name="strutturaAmministrativoContabileAjax" class="strutturaAmministrativoContabileAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaElementoCodifica.*
+                </param>
+            </result>
+        </action>
+        
+        
+        <!-- USCITA -->
+        
+        <!-- Caricamento AJAX della lista dei Programmi -->
+        <action name="programmaAjax" class="programmaAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaProgramma.*
+                </param>
+            </result>
+        </action>
+    
+        <!-- Caricamento AJAX della lista dei Cofog -->
+        <action name="cofogAjax" class="classificazioneCofogAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaClassificazioneCofog.*
+                </param>
+            </result>
+        </action>
+        
+         <!-- Caricamento AJAX della lista dei TitoloSpesa -->
+        <action name="titoloSpesaAjax" class="titoloSpesaAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaTitoloSpesa.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Caricamento AJAX della lista dei Macroaggregati -->
+        <action name="macroaggregatoAjax" class="macroaggregatoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaMacroaggregato.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Caricamento AJAX della lista dei SIOPE di spesa -->
+        <action name="siopeSpesaAjax" class="siopeSpesaAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaElementoCodifica.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Caricamento AJAX della lista Titolo Spesa e COFOG-->
+        <action name="titoloSpesaCofogByProgrammaAjax" class="titoloSpesaCofogByProgrammaAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaTitoloSpesa.*,
+                    listaClassificazioneCofog.*
+                </param>
+            </result>
+        </action>
+        <action name="titoloSpesaCofogByProgrammaAjaxWithDefaults" class="titoloSpesaCofogByProgrammaAjaxAction" method="executeWithDefaults">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">errori.*, listaTitoloSpesa.*, listaClassificazioneCofog.*</param>
+            </result>
+        </action>
+        <!-- ENTRATA -->
+        
+        <!-- Caricamento AJAX della lista delle Tipologie Titolo -->
+        <action name="tipologiaTitoloAjax" class="tipologiaTitoloAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaTipologiaTitolo.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Caricamento AJAX della lista delle Categorie Tipologia Titolo -->
+        <action name="categoriaTipologiaTitoloAjax" class="categoriaTipologiaTitoloAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaCategoriaTipologiaTitolo.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Caricamento AJAX della lista dei SIOPE di entrata -->
+        <action name="siopeEntrataAjax" class="siopeEntrataAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaElementoCodifica.*
+                </param>
+            </result>
+        </action>
+        
+        <!-- Per il documento -->
+        <action name="tipoOnereAjax" class="tipoOnereAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaTipoOnere.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="attivitaOnereAjax" class="attivitaOnereAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaAttivitaOnere.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="causale770Ajax" class="causale770AjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                	errori.*,
+                    listaCausale770.*
+                </param>
+            </result>
+        </action>
+        
+      	<action name="sommaNonSoggettaAjax" class="sommaNonSoggettaAjaxAction">
+          <result type="json">
+          	<param name="ignoreHierarchy">false</param>
+          	<param name="enumAsBean">true</param>
+            <param name="includeProperties">
+            	errori.*,
+                codiciSommaNonSoggetta.*
+            </param>
+          </result>
+        </action>
+        
+        <action name="leggiCausaliPreDocumentoSpesa" class="causalePreDocumentoSpesaAjaxAction">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    listaCausale.*
+                </param>
+            </result>
+        </action>
+        <action name="leggiCausaliPreDocumentoEntrata" class="causalePreDocumentoEntrataAjaxAction">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    errori.*,
+                    listaCausale.*
+                </param>
+            </result>
+        </action>
+        <action name="leggiCausaliPreDocumentoEntrata_nonAnnullate" class="causalePreDocumentoEntrataAjaxAction" method="nonAnnullate">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">listaCausale.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON"/>
+        </action>
+        
+        <action name="attivitaIvaAjax" class="attivitaIvaAjaxAction">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    listaAttivitaIva.*
+                </param>
+            </result>
+        </action>
+        <action name="registroIvaAjax" class="registroIvaAjaxAction">
+            <result type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    errori.*,
+                    listaRegistroIva.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="tipoDocumentoAjax_filter" class="tipoDocumentoAjaxAction" method="filter">
+            <result type="json">
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">listaTipoDocumento.*</param>
+            </result>
+        </action>
+    
+    </package>
+    
+</struts>

@@ -1,0 +1,18 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/ordinativo/GenericEmissioneOrdinativiAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/ordinativo/GenericEmissioneOrdinativiAction.java	(revision 11031)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/ordinativo/GenericEmissioneOrdinativiAction.java	(working copy)
+@@ -514,9 +514,12 @@
+ 	 * @param nomeData il nome della data
+ 	 */
+ 	protected void checkDataScadenza(String nomeData) {
++		if(model.getDataScadenza() == null){
++			return;
++		}
+ 		GregorianCalendar date = new GregorianCalendar(model.getBilancio().getAnno(), Calendar.DECEMBER, 31);
+ 		Date finaAnno = date.getTime();
+-		checkCondition(model.getDataOdierna().before(model.getDataScadenza()) && finaAnno.after(model.getDataOdierna()), 
++		checkCondition(model.getDataOdierna().before(model.getDataScadenza()) && finaAnno.after(model.getDataScadenza()), 
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("'"+nomeData+"'", ": deve essere copresa tra la data attuale e la fine dell'anno in corso."));
+ 		
+ 	}

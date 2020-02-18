@@ -1,0 +1,790 @@
+Index: src/main/webapp/js/local/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMovFin.js
+===================================================================
+--- src/main/webapp/js/local/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMovFin.js	(revision 11642)
++++ src/main/webapp/js/local/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMovFin.js	(revision 11651)
+@@ -1,7 +1,7 @@
+ !function($, global) {
+ 
+-	var dataTable;
+-	
++    var dataTable;
++    
+     /**
+      * Caricamento via Ajax della tabella delle richieste e visualizzazione.
+      */
+@@ -55,8 +55,8 @@
+                         });
+                     $(nTd).find("a[href='#aggiornaPdC']")
+                     .substituteHandler("click", function() {
+-                    	$("form").overlay('show');
+-                    	aggiornaPdC(oData.uid, oData.stringaElementoPianoDeiConti, oData.uidPianoDeiContiFIN, oData.tipoElenco);
++                        $("form").overlay('show');
++                        aggiornaPdC(oData.uid, oData.stringaElementoPianoDeiConti, oData.uidPianoDeiContiFIN, oData.tipoElenco);
+                     });
+                     $('.dropdown-toggle', nTd).dropdown();
+                 }}
+@@ -139,8 +139,7 @@
+ 
+         // Se il livello non e' almeno pari a 4, segnalo l'errore
+         if (livello <= 4) {
+-//          bootboxAlert("Selezionare almeno il quinto livello del Piano dei Conti. Livello selezionato: " + livello);
+-        	impostaDatiNegliAlert(["Selezionare almeno il quinto livello del Piano dei Conti. Livello selezionato: " + livello], $("#ERRORI_modaleAggiornaPdC"), false);
++            impostaDatiNegliAlert(["Selezionare almeno il quinto livello del Piano dei Conti. Livello selezionato: " + livello], $("#ERRORI_modaleAggiornaPdC"), false);
+             return;
+         }
+         return livello > 4;
+@@ -197,52 +196,51 @@
+      * effettua la chiamata ajax ed effettua l'aggiornamento dei piani dei conti 
+      */
+     function aggiornaPdC(uidRegistrazione, stringaPdC, uidPianoDeiConti, tipoEvento){
+-    	var $modale = $('#aggiornaPdC');
+-    	$('#ERRORI_modaleAggiornaPdC').slideUp();
+-    	$('#campiEntrata').hide();
+-    	$('#campiSpesa').hide();
+-    	$('#campi' + tipoEvento).slideDown();
+-    	$("#HIDDEN_ElementoPianoDeiContiUidFIN").val(uidPianoDeiConti);
++        $('#ERRORI_modaleAggiornaPdC').slideUp();
++        $('#campiEntrata').hide();
++        $('#campiSpesa').hide();
++        $('#campi' + tipoEvento).slideDown();
++        $("#HIDDEN_ElementoPianoDeiContiUidFIN").val(uidPianoDeiConti);
+ 
+-    	$("#HIDDEN_RegistrazioneUidFin").val(uidRegistrazione);
+-    	
+-       	if(tipoEvento ==="Spesa"){
+-    		caricaClassificatoriSpesa(uidPianoDeiConti);
+-    	}else{
+-    		caricaClassificatoriEntrata(uidPianoDeiConti);
+-    	}
+-       	
+-       	var spinner=$('#spinner');
+-    	//caricaPianoDeicontiFIN(tipoEvento);
+-    	$('#confermaModaleAggiornaPdC').substituteHandler('click', function(){
+-    		uidPianoDeiConti = $("#HIDDEN_ElementoPianoDeiContiUidFIN").val();
++        $("#HIDDEN_RegistrazioneUidFin").val(uidRegistrazione);
++        
++        if(tipoEvento === "Spesa") {
++            caricaClassificatoriSpesa(uidPianoDeiConti);
++        }else{
++            caricaClassificatoriEntrata(uidPianoDeiConti);
++        }
++        
++        var spinner = $('#spinner');
++        
++        $('#confermaModaleAggiornaPdC').substituteHandler('click', function(){
++            uidPianoDeiConti = $("#HIDDEN_ElementoPianoDeiContiUidFIN").val();
+             if(!uidPianoDeiConti) {
+                 impostaDatiNegliAlert(["Necessario selezionare un Piano dei Conti "], $("#ERRORI_modaleAggiornaPdC"));
+                 return;
+             }
+-    		var obj={"uidPianoDeiContiRegMovFinAggiornato": uidPianoDeiConti, "uidRegistrazioneDaAggiornare": uidRegistrazione};
+-    	    spinner.addClass("activated");
+-    		
+-    		$.postJSON("risultatiRicercaRegistrazioneMovFinFINAction_aggiornaPianoDeiContiRegistrazione.do",obj)
+-    		.then(function(data){
+-    			var errori = data.errori;
+-    			var alertErrori = $("ERRORI_modaleAggiornaPdC");
+-    			if(impostaDatiNegliAlert(errori, alertErrori)){
+-    				return;
+-    			}
+-    			return ricaricaTabella();
+-    		})
+-    		.then(dataTable.fnDraw.bind(dataTable))
+-    		.then(function() {
+-				$('#aggiornaPdC').modal('hide');
+-    		})
+-    		.always(spinner.removeClass.bind(spinner,"activated"));
+-    		
+-    	});
+-    	
+-    	$('#chiudiModaleAggiornaPdc').substituteHandler('click', function(){
+-				$('#aggiornaPdC').modal('hide');
+-    	});
++            var obj={"uidPianoDeiContiRegMovFinAggiornato": uidPianoDeiConti, "uidRegistrazioneDaAggiornare": uidRegistrazione};
++            spinner.addClass("activated");
++            
++            $.postJSON("risultatiRicercaRegistrazioneMovFinFINAction_aggiornaPianoDeiContiRegistrazione.do",obj)
++            .then(function(data){
++                var errori = data.errori;
++                var alertErrori = $("ERRORI_modaleAggiornaPdC");
++                if(impostaDatiNegliAlert(errori, alertErrori)){
++                    return;
++                }
++                return ricaricaTabella();
++            })
++            .then(dataTable.fnDraw.bind(dataTable))
++            .then(function() {
++                $('#aggiornaPdC').modal('hide');
++            })
++            .always(spinner.removeClass.bind(spinner,"activated"));
++            
++        });
++        
++        $('#chiudiModaleAggiornaPdc').substituteHandler('click', function(){
++            $('#aggiornaPdC').modal('hide');
++        });
+     }
+ 
+     /**
+@@ -287,12 +285,11 @@
+     * @returns (jQuery.Deferred) l'oggetto deferred corrispondente alla chiamata AJAX
+     **/
+    function caricaPianoDeiConti(obj) {
+-	   var id = obj.val();
++       var id = obj.val();
+        /* Settings dello zTree */
+        var zTreeSettings = $.extend(true, {}, zTreeSettingsBase, {callback: {beforeCheck: controllaLivelloPianoDeiConti, onCheck: impostaValueElementoPianoDeiConti}});
+        /* Spinner */
+        var spinner = $('#spinner');
+-       var self = this;
+        var elementoPianoDeiContiGiaSelezionato = $("#HIDDEN_ElementoPianoDeiContiUidFIN").val();
+        /* Attiva lo spinner */
+        spinner.addClass("activated");
+@@ -308,7 +305,6 @@
+ 
+                var albero;
+                var node;
+-               var isCodiceTitoloImpostato;
+                var isListaElementoPianoDeiContiNonVuota = listaElementoPianoDeiConti && listaElementoPianoDeiConti.length > 0;
+ 
+                if (!selectVuota($('#titoloEntrataFIN').val())) {
+@@ -335,7 +331,7 @@
+ 
+                }
+               
+-   	    		$('#aggiornaPdC').modal('show');
++                   $('#aggiornaPdC').modal('show');
+ 
+            }
+        ).always(
+@@ -367,26 +363,22 @@
+     * preimposta le select con i campi ottenuti 
+     */
+    function caricaClassificatoriSpesa(uidPianoDeiConti){
+-    	var obj = {};
+-    	var $selectMacroaggregato = $('#macroaggregato');
+-    	obj.uidPianoDeicontiRegMovFin = uidPianoDeiConti;
+-    	var objToSend=qualify(obj);
+-    	$.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriSpesaByContoFin.do', {"uidPianoDeiContiRegMovFin" : uidPianoDeiConti}, function(data){
+-    		var alertErrori = $('#ERRORI_modaleAggiornaPdC');
+-    		var errori = data.errori;
+-    		var $selectTitolo = $('#titoloSpesa');
+-    		var $selectMacroaggregato = $('#macroaggregato');
+-    		if(impostaDatiNegliAlert(errori, alertErrori)){
+-    			return;
+-    		}   
++        $.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriSpesaByContoFin.do', {"uidPianoDeiContiRegMovFin" : uidPianoDeiConti}, function(data){
++            var alertErrori = $('#ERRORI_modaleAggiornaPdC');
++            var errori = data.errori;
++            var $selectTitolo = $('#titoloSpesa');
++            var $selectMacroaggregato = $('#macroaggregato');
++            if(impostaDatiNegliAlert(errori, alertErrori)){
++                return;
++            }
+ 
+-    		$selectTitolo.val(data.uidTitoloSpesaConto);
+-    		$selectTitolo.substituteHandler('change',caricaMacroaggregato);
+-    		caricaSelectCodifiche($selectMacroaggregato, data.listaMacroaggregato);
+-    		$selectMacroaggregato.val(data.uidMacroaggregatoConto);
+-    		$selectMacroaggregato.substituteHandler("change", caricaPianoDeiContiSpesa).change();
+-    		
+-    	});
++            $selectTitolo.val(data.uidTitoloSpesaConto);
++            $selectTitolo.substituteHandler('change',caricaMacroaggregato);
++            caricaSelectCodifiche($selectMacroaggregato, data.listaMacroaggregato);
++            $selectMacroaggregato.val(data.uidMacroaggregatoConto);
++            $selectMacroaggregato.substituteHandler("change", caricaPianoDeiContiSpesa).change();
++            
++        });
+     }
+     
+    /**
+@@ -394,7 +386,7 @@
+     * richiama il carica piano dei conti caso spesa 
+     */
+     function caricaPianoDeiContiSpesa(){
+-    	caricaPianoDeiConti($('#macroaggregato'));
++        caricaPianoDeiConti($('#macroaggregato'));
+     }
+     
+     /**
+@@ -402,7 +394,7 @@
+      * richiama il carica piano dei conti caso entrata 
+      */
+     function caricaPianoDeiContiEntrata(){
+-    	caricaPianoDeiConti($('#categoriaTipologiaTitoloFIN'));
++        caricaPianoDeiConti($('#categoriaTipologiaTitoloFIN'));
+     }
+     
+     
+@@ -412,29 +404,29 @@
+      * preimposta le select con i campi ottenuti 
+      */
+     function caricaClassificatoriEntrata(uidPianoDeiConti){
+-    	var obj = {};
+-    	obj.uidPianoDeiContiRegMovFin = uidPianoDeiConti;
+-    	$.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriEntrataByContoFin.do', qualify(obj), function(data){
+-    		var alertErrori = $('#ERRORI_modaleAggiornaPdC');
+-    		var errori = data.errori;
+-    		var $selectTitolo = $('#titoloEntrataFIN');
+-    		var $selectTipologia = $('#tipologiaTitoloFIN');
+-    		var $selectCategoria = $('#categoriaTipologiaTitoloFIN');
+-    		
+-    		if(impostaDatiNegliAlert(errori, alertErrori)){
+-    			return;
+-    		}
+-    		
+-    		$selectTitolo.val(data.uidTitoloEntrataConto);
+-    		$selectTitolo.substituteHandler('change',gestisciTipologia);
+-    		caricaSelectCodifiche($selectTipologia , data.listaTitoloTipologia);
+-    		$selectTipologia.val(data.uidTipologiaTitoloConto);
+-    		$selectTipologia.substituteHandler('change',gestisciCategoria);
+-    		caricaSelectCodifiche($selectCategoria , data.listaTipologiaCategoria);
+-    		$selectCategoria.val(data.uidCategoriaConto);
+-    		$selectCategoria.substituteHandler('change', caricaPianoDeiContiEntrata).change();
++        var obj = {};
++        obj.uidPianoDeiContiRegMovFin = uidPianoDeiConti;
++        $.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriEntrataByContoFin.do', qualify(obj), function(data){
++            var alertErrori = $('#ERRORI_modaleAggiornaPdC');
++            var errori = data.errori;
++            var $selectTitolo = $('#titoloEntrataFIN');
++            var $selectTipologia = $('#tipologiaTitoloFIN');
++            var $selectCategoria = $('#categoriaTipologiaTitoloFIN');
++            
++            if(impostaDatiNegliAlert(errori, alertErrori)){
++                return;
++            }
++            
++            $selectTitolo.val(data.uidTitoloEntrataConto);
++            $selectTitolo.substituteHandler('change',gestisciTipologia);
++            caricaSelectCodifiche($selectTipologia , data.listaTitoloTipologia);
++            $selectTipologia.val(data.uidTipologiaTitoloConto);
++            $selectTipologia.substituteHandler('change',gestisciCategoria);
++            caricaSelectCodifiche($selectCategoria , data.listaTipologiaCategoria);
++            $selectCategoria.val(data.uidCategoriaConto);
++            $selectCategoria.substituteHandler('change', caricaPianoDeiContiEntrata).change();
+ 
+-    	});
++        });
+     }
+     
+     /**
+@@ -481,7 +473,7 @@
+                 );
+             }).always(function() {
+             // Chiudo l'overlay
+-            	$("#macroaggregato").overlay("hide");       
++                $("#macroaggregato").overlay("hide");       
+             });
+     };
+     
+@@ -489,10 +481,10 @@
+      * pulisce e sbianca i campi del Piano dei conti (comprende anche i campi hidden )
+      */
+     function pulisciPDC(){
+-    	//sbianco i campi
++        //sbianco i campi
+         svuotaPDC();
+         //svuoto la select
+-        deseleziona('treePDCFIN')
++        deseleziona('treePDCFIN');
+         //la disabilito
+         $("#bottonePdCFIN").attr("disabled", true).prop('disabled', true);
+     }
+@@ -616,7 +608,7 @@
+                }
+ 
+                opts = listaCategoriaTipologiaTitolo.reduce(function(acc, el) {
+-            	   return acc + '<option value="' + el.uid + '">' + el.codice + ' - ' + el.descrizione + '</option>';
++                   return acc + '<option value="' + el.uid + '">' + el.codice + ' - ' + el.descrizione + '</option>';
+                }, '<option></option>');
+                options.html(opts);
+            }
+@@ -627,18 +619,18 @@
+      * aggiorna la tabella di ricerca dopo avere effettuato l'aggiornamento dei piani dei conti
+      */
+     function ricaricaTabella(){
+-    	if(!dataTable) {
+-    		return $.Deferred().resolve().promise();
+-    	}
+-    	var settings = dataTable.fnSettings();
+-    	var obj = {
+-    		forceRefresh: true,
+-    		iTotalRecords: settings._iRecordsTotal,
+-    		iTotalDisplayRecords: settings._iRecordsDisplay,
+-    		iDisplayStart: settings._iDisplayStart,
+-    		iDisplayLength: settings._iDisplayLength
+-    	};
+-    	return $.postJSON("risultatiRicercaRegistrazioneMovFinFINAjax.do", obj);
++        if(!dataTable) {
++            return $.Deferred().resolve().promise();
++        }
++        var settings = dataTable.fnSettings();
++        var obj = {
++            forceRefresh: true,
++            iTotalRecords: settings._iRecordsTotal,
++            iTotalDisplayRecords: settings._iRecordsDisplay,
++            iDisplayStart: settings._iDisplayStart,
++            iDisplayLength: settings._iDisplayLength
++        };
++        return $.postJSON("risultatiRicercaRegistrazioneMovFinFINAjax.do", obj);
+    }
+ 
+     function clickOnAnnulla() {
+Index: src/main/webapp/jsp/consultazioneEntita/include/selezioneEntitaDiPartenza_soggetto.jsp
+===================================================================
+--- src/main/webapp/jsp/consultazioneEntita/include/selezioneEntitaDiPartenza_soggetto.jsp	(revision 11642)
++++ src/main/webapp/jsp/consultazioneEntita/include/selezioneEntitaDiPartenza_soggetto.jsp	(revision 11651)
+@@ -14,25 +14,25 @@
+ 	<div class="control-group">
+ 		<label class="control-label" for="codiceSoggetto">Codice</label>
+ 		<div class="controls">
+-			<s:textfield id="codiceSoggetto" cssClass="span3" name="soggetto.codiceSoggetto" />
++			<s:textfield id="codiceSoggetto" cssClass="span3" name="codiceSoggetto" />
+ 		</div>
+ 	</div>
+ 	<div class="control-group">
+ 		<label class="control-label" for="denominazioneSoggetto">Denominazione</label>
+ 		<div class="controls">
+-			<s:textfield id="denominazioneSoggetto" cssClass="span4" name="soggetto.denominazione" />
++			<s:textfield id="denominazioneSoggetto" cssClass="span4" name="denominazioneSoggetto" />
+ 		</div>
+ 	</div>
+ 	<div class="control-group">
+ 		<label class="control-label" for="codiceFiscaleSoggetto">Codice Fiscale</label>
+ 		<div class="controls">
+-			<s:textfield id="codiceFiscaleSoggetto" cssClass="span4 uppercase" name="soggetto.codiceFiscale" maxlength="16" />
++			<s:textfield id="codiceFiscaleSoggetto" cssClass="span4 uppercase" name="codiceFiscaleSoggetto" maxlength="16" />
+ 		</div>
+ 	</div>
+ 	<div class="control-group">
+ 		<label class="control-label" for="partitaIvaSoggetto">Partita IVA </label>
+ 		<div class="controls">
+-			<s:textfield id="partitaIvaSoggetto" cssClass="span3" name="soggetto.partitaIva" />
++			<s:textfield id="partitaIvaSoggetto" cssClass="span3" name="partitaIvaSoggetto" />
+ 		</div>
+ 	</div>
+ 	<div class=control-group>
+Index: src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/registrazionemovfin/RisultatiRicercaRegistrazioneMovFinFINAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/registrazionemovfin/RisultatiRicercaRegistrazioneMovFinFINAction.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/registrazionemovfin/RisultatiRicercaRegistrazioneMovFinFINAction.java	(revision 11651)
+@@ -54,7 +54,7 @@
+ 	/** Per la serializzazione */
+ 	private static final long serialVersionUID = 415343708513109578L;
+ 	@Autowired
+-	private ClassificatoreBilService classificatoreBilService;
++	private transient ClassificatoreBilService classificatoreBilService;
+ 
+ 	@Override
+ 	public void prepare() throws Exception {
+@@ -158,7 +158,7 @@
+ 		//il popolamento della lista del TitoloSpesa fa gia nel prepare 
+ 		//1) cerco il padre di titoloSpesa.getUid() con ottieniResponseLeggiClassificatoriBilByIdFiglio
+ 		//2) cerco i figli a partire dalpadre appena trovato al punto 1 tramite ottieniResponseLeggiClassificatoriBilByIdPadre.
+-		//3) popolo la lista dei titoliSpesa trovata al punto 2 nel model:  model.setListaTitoloSpesa(listaTitoloSpesa);
++		//3) popolo la lista dei titoliSpesa trovata al punto 2 nel model.
+ 	
+ 		log.debug(methodName, "Carico la lista dei Macroaggregati spesa da servizio");
+ 		LeggiClassificatoriBilByIdPadreResponse response = ottieniResponseLeggiClassificatoriBilByIdPadre(model.getUidTitoloSpesaConto());
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/registrazionemovfin/risultatiricerca/ElementoRegistrazioneMovFin.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/registrazionemovfin/risultatiricerca/ElementoRegistrazioneMovFin.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/registrazionemovfin/risultatiricerca/ElementoRegistrazioneMovFin.java	(revision 11651)
+@@ -198,8 +198,8 @@
+ 	/**
+ 	 * @return the uidPianoDeicontiFIN
+ 	 */
+-	public Integer getUidPianoDeiContiFIN(){
+-		return registrazioneMovFin != null && registrazioneMovFin.getElementoPianoDeiContiAggiornato() != null ? registrazioneMovFin.getElementoPianoDeiContiAggiornato().getUid() : Integer.valueOf(0);
++	public int getUidPianoDeiContiFIN(){
++		return registrazioneMovFin != null && registrazioneMovFin.getElementoPianoDeiContiAggiornato() != null ? registrazioneMovFin.getElementoPianoDeiContiAggiornato().getUid() : 0;
+ 	}
+ 	
+ 	/**
+@@ -269,7 +269,7 @@
+ 	/**
+ 	 * @return the tipoElenco
+ 	 */
+-	public String  getTipoElenco(){
++	public String getTipoElenco(){
+ 		return registrazioneMovFin != null && registrazioneMovFin.getEvento() != null && registrazioneMovFin.getEvento().getTipoEvento()!= null && registrazioneMovFin.getEvento().getTipoEvento().isTipoSpesa() ? "Spesa" : "Entrata";
+ 	}
+ 	
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/ajax/soggetto/RicercaSoggettoConsultabileAjaxModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/ajax/soggetto/RicercaSoggettoConsultabileAjaxModel.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/ajax/soggetto/RicercaSoggettoConsultabileAjaxModel.java	(revision 11651)
+@@ -33,10 +33,9 @@
+ 		RicercaSinteticaEntitaConsultabile request = new RicercaSinteticaEntitaConsultabile();
+ 		ParametriRicercaSoggettoConsultabile parametriRicercaEntitaConsultabile = new ParametriRicercaSoggettoConsultabile();
+ 		
+-		//TODO popolare i dati della request!!!!
+ 		parametriRicercaEntitaConsultabile.setCodiceSoggetto(codiceSoggetto);
+ 		parametriRicercaEntitaConsultabile.setDenominazione(denominazioneSoggetto);
+-		parametriRicercaEntitaConsultabile.setCodiceFiscale(codiceFiscaleSoggetto);
++		parametriRicercaEntitaConsultabile.setCodiceFiscale(codiceFiscaleSoggetto.toUpperCase());
+ 		parametriRicercaEntitaConsultabile.setPartitaIVA(partitaIvaSoggetto);
+ 		
+ 		request.setParametriRicercaEntitaConsultabile(parametriRicercaEntitaConsultabile);
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/MandatoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/MandatoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/MandatoDataAdapter.java	(revision 11651)
+@@ -28,12 +28,14 @@
+ 						new BaseDataInfo("Creditore", "{0}-{1}","soggetto_code", "soggetto_desc"),
+ 						new BaseDataInfo("Cod. Mod. Pag.","{0}-{1}" ,"accredito_tipo_code", "accredito_tipo_desc"),
+ 						new SimpleDataInfo("Stato", "ord_stato_desc"),
+-						new CurrencyDataInfo("Importo", "importo"),
+ 						new BaseDataInfo("Quietanza","{0}/{1}","provc_anno", "provc_numero"),
+ 						new DateDataInfo("Data quietanza", "provc_data_convalida"),
+-						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc")
+-						//new BaseDataInfo("nome colonna con due dati separati da trattino", "{0} - {1}", "dato1", "dato2")
+-						),
++						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc"),
++						new CurrencyDataInfo("Importo", "importo")
++
++			            //new BaseDataInfo("nome colonna con due dati separati da trattino", "{0} - {1}", "dato1", "dato2")
++						
++				),
+ 				
+ 				asList(
+ 			            new BaseDataInfo("Mandato", "{0}-{1}", "ord_numero", "ord_desc"),
+@@ -41,12 +43,15 @@
+ 						new BaseDataInfo("Creditore", "{0}-{1}","soggetto_code", "soggetto_desc"),
+ 						new BaseDataInfo("Cod. Mod. Pag.","{0}-{1}" ,"accredito_tipo_code", "accredito_tipo_desc"),
+ 						new SimpleDataInfo("Stato", "ord_stato_desc"),
+-						new CurrencyDataInfo("Importo", "importo"),
+ 						new BaseDataInfo("Quietanza","{0}/{1}","provc_anno", "provc_numero"),
+ 						new DateDataInfo("Data quietanza", "provc_data_convalida"),
+-						new BaseDataInfo("Provv.", "{0}/{1} {2}", "attoamm_anno","attoamm_numero", "attoamm_stato_desc" ),
+-				        new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
+-				        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc")
++						new SimpleDataInfo("Provvedimento", "attoamm_numero"),
++						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
++						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc"),
++						new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
++				        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc"),
++						new CurrencyDataInfo("Importo", "importo")
++
+ 						),
+ 				asList(
+ 						new BaseDataInfo("testo", "Mandato {0}", "ord_numero")
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/AccertamentoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/AccertamentoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/AccertamentoDataAdapter.java	(revision 11651)
+@@ -21,22 +21,30 @@
+ 		super(
+ 			asList(
+ 	            	new NumeroAccertamentoDataInfo("Accertamento", "left", "accertamento_desc", "accertamento_anno","accertamento_numero" ),
+-	            	new CurrencyDataInfo("Importo", "importo"),
+ 	            	new BaseDataInfo("Soggetto", "{0}-{1}","soggetto_code", "soggetto_desc"),
+ 	            	new SimpleDataInfo("Stato", "accertamento_stato_desc"),
+ 	            	new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno","capitolo_numero", "capitolo_articolo"),
+-	            	new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc")
++	            	new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc"),
++	            	new CurrencyDataInfo("Importo", "importo")
++
+ 					),
+ 			asList(
+-					new BaseDataInfo("Accertamento","{0}/{1}", "accertamento_anno", "accertamento_numero"),
+-					new SimpleDataInfo("Accertamento descrizione", "accertamento_desc"),
+-					new CurrencyDataInfo("Importo", "importo"),
++					//SIAC-3760
++					new SimpleDataInfo("Accertamento", "accertamento_numero"),
++					new SimpleDataInfo("Anno","accertamento_anno"),
++					new SimpleDataInfo("Descrizione accertamento", "accertamento_desc"),
+ 		            new BaseDataInfo("Soggetto", "{0}-{1}","soggetto_code", "soggetto_desc"),
+-					new SimpleDataInfo("Stato", "accertamento_stato_desc"),
+-					new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno","capitolo_numero", "capitolo_articolo"),
+-					new BaseDataInfo("Provv.", "{0}/{1} {2}", "attoamm_anno","attoamm_numero", "attoamm_stato_desc" ),
+-			        new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
+-			        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc")
++					new SimpleDataInfo("Stato", "accertamento_stato_desc"),					
++					new SimpleDataInfo("N.Capitolo", "capitolo_numero"),
++					new SimpleDataInfo("N.Articolo", "capitolo_articolo"),
++					new SimpleDataInfo("Anno capitolo", "capitolo_anno"),
++					new SimpleDataInfo("Provvedimento", "attoamm_numero"),
++					new SimpleDataInfo("Anno provv.", "attoamm_anno"),
++					new SimpleDataInfo("Stato provv.", "attoamm_stato_desc"),
++			        new BaseDataInfo("Tipo provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
++			        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc"),
++					new CurrencyDataInfo("Importo", "importo")
++
+ 					),
+ 			asList(
+ 					new BaseDataInfo("testo", "Accertamento {0}", "ord_numero")
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ElencoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ElencoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ElencoDataAdapter.java	(revision 11651)
+@@ -23,18 +23,20 @@
+ 						new SimpleDataInfo("stato", "eldoc_stato_desc"),
+ 						new BaseDataInfo("Fonte", "{0}/{1}", "eldoc_sysesterno_anno","eldoc_sysesterno_numero"),
+ 						new DateDataInfo("Data trasmissione", "eldoc_data_trasmissione"),
++						new CurrencyDataInfo("Differenza", "eldoc_totale_differenza"),
+ 						new CurrencyDataInfo("Importo entrate", "eldoc_totale_quoteentrate"),
+-						new CurrencyDataInfo("Importo spese", "eldoc_totale_quotespese"),
+-						new CurrencyDataInfo("Differenza", "eldoc_totale_differenza")
++						new CurrencyDataInfo("Importo spese", "eldoc_totale_quotespese")
+ 						),
+ 				asList(
+-						new BaseDataInfo("Elenco", "{0}/{1}", "eldoc_anno","eldoc_numero"),
+-						new SimpleDataInfo("stato", "eldoc_stato_desc"),
++						//new BaseDataInfo("Elenco", "{0}/{1}", "eldoc_anno","eldoc_numero"),
++						new SimpleDataInfo("Elenco", "eldoc_numero"),
++						new SimpleDataInfo("Anno", "eldoc_anno"),
++						new SimpleDataInfo("Stato", "eldoc_stato_desc"),
+ 						new BaseDataInfo("Fonte", "{0}/{1}", "eldoc_sysesterno_anno","eldoc_sysesterno_numero"),
+ 						new DateDataInfo("Data trasmissione", "eldoc_data_trasmissione"),
++						new CurrencyDataInfo("Differenza", "eldoc_totale_differenza"),
+ 						new CurrencyDataInfo("Importo entrate", "eldoc_totale_quoteentrate"),
+-						new CurrencyDataInfo("Importo spese", "eldoc_totale_quotespese"),
+-						new CurrencyDataInfo("Differenza", "eldoc_totale_differenza")
++						new CurrencyDataInfo("Importo spese", "eldoc_totale_quotespese")
+ 						),
+ 				asList(
+ 						new BaseDataInfo("testo", "Elenco {0}/{1}", "eldoc_anno","eldoc_numero")
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/CapitoloSpesaDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/CapitoloSpesaDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/CapitoloSpesaDataAdapter.java	(revision 11651)
+@@ -38,7 +38,10 @@
+ 				        new SimpleDataInfo("P.d.c. finanziario", "classif_pdc_code")
+ 						),
+ 				asList(
+-						new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno", "capitolo_numero", "capitolo_articolo"),
++						//new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno", "capitolo_numero", "capitolo_articolo"),
++						new SimpleDataInfo("Capitolo", "capitolo_numero"),
++						new SimpleDataInfo("Anno", "capitolo_anno"),
++						new SimpleDataInfo("Articolo", "capitolo_articolo"),
+ 						new SimpleDataInfo("Tipo Capitolo", "elem_tipo_code"),
+ 						new SimpleDataInfo("Descrizione Capitolo", "capitolo_desc"),
+ 						new SimpleDataInfo("Descrizione Articolo", "articolo_desc"),
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/VariazioneDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/VariazioneDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/VariazioneDataAdapter.java	(revision 11651)
+@@ -30,7 +30,9 @@
+ 						new SimpleDataInfo("Variazione", "variazione_num"),
+ 						new SimpleDataInfo("Applicazione", "variazione_applicazione"),
+ 						new BaseDataInfo("Tipo","{0}-{1}" ,"variazione_tipo_code", "variazione_tipo_desc"),
+-						new BaseDataInfo("Provv.", "{0}/{1} {2}", "attoamm_anno","attoamm_numero", "attoamm_stato_desc" ),
++						new SimpleDataInfo("Provvedimento", "attoamm_numero"),
++						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
++						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc"),
+ 				        new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
+ 				        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc"),
+ 						new SimpleDataInfo("Stato", "variazione_stato_tipo_desc")
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/AllegatoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/AllegatoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/AllegatoDataAdapter.java	(revision 11651)
+@@ -23,12 +23,14 @@
+ 						new SimpleDataInfo("Versione invio firma", "attoal_versione_invio_firma"),
+ 						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc")
+ 				),
+-				asList(
++				asList( //SIAC-3760
+ 						new SimpleDataInfo("Causale", "attoal_causale"),
+ 						new DateDataInfo("Data scadenza", "attoal_data_scadenza"),
+ 						new SimpleDataInfo("Stato", "attoal_stato"),
+ 						new SimpleDataInfo("Versione invio firma", "attoal_versione_invio_firma"),
+-						new BaseDataInfo("N. Provv.", "{0} - {1} - {2} - {3} ", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" ),
++						new SimpleDataInfo("Provvedimento", "attoamm_numero"),
++						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
++						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc"),
+ 						new BaseDataInfo("Struttura Amm. Cont.", "{0} {1} {2}", "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc")
+ 				),
+ 				asList(new BaseDataInfo("testo", "Allegato {0}/{1}", "attoamm_anno","attoamm_numero"))
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ReversaleDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ReversaleDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ReversaleDataAdapter.java	(revision 11651)
+@@ -29,12 +29,17 @@
+ 						),
+ 	
+ 				asList(
+-			            new BaseDataInfo("Reversale", "{0} - {1}", "ord_numero", "ord_desc"),
++			            new BaseDataInfo("Reversale", "ord_numero"),
++			            new SimpleDataInfo("Descrizione", "ord_desc"),
+ 						new BaseDataInfo("Debitore", "{0}-{1}","soggetto_code", "soggetto_desc"),
+ 						new SimpleDataInfo("Stato", "ord_stato_desc"),
+ 						new CurrencyDataInfo("Importo", "importo"),
+-						new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno","capitolo_numero", "capitolo_articolo"),
+-						new BaseDataInfo("Provv.", "{0}/{1} {2}", "attoamm_anno","attoamm_numero", "attoamm_stato_desc" ),
++						new SimpleDataInfo("N.Capitolo", "capitolo_numero"),
++						new SimpleDataInfo("N.Articolo", "capitolo_articolo"),
++						new SimpleDataInfo("Anno capitolo", "capitolo_anno"),
++						new SimpleDataInfo("Provvedimento", "attoamm_numero"),
++						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
++						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc"),
+ 				        new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
+ 				        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc")
+ 						),
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/CapitoloEntrataDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/CapitoloEntrataDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/CapitoloEntrataDataAdapter.java	(revision 11651)
+@@ -37,7 +37,9 @@
+ 					new SimpleDataInfo("P.d.c. finanziario", "classif_pdc_code")
+ 					),
+ 				asList(
+-					new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno", "capitolo_numero", "capitolo_articolo"),
++					new SimpleDataInfo("N.Capitolo", "capitolo_numero"),
++					new SimpleDataInfo("N.Articolo", "capitolo_articolo"),
++					new SimpleDataInfo("Anno capitolo", "capitolo_anno"),
+ 					new SimpleDataInfo("Tipo Capitolo", "elem_tipo_code"),
+ 					new SimpleDataInfo("Descrizione Capitolo", "capitolo_desc"),
+ 					new SimpleDataInfo("Descrizione Articolo", "articolo_desc"),
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/SoggettoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/SoggettoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/SoggettoDataAdapter.java	(revision 11651)
+@@ -20,15 +20,13 @@
+ 						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
+ 						new SimpleDataInfo("Codice Fiscale", "soggetto_codice_fiscale"),
+ 						new SimpleDataInfo("Partita IVA", "soggetto_partita_iva"),
+-						new SimpleDataInfo("Matricola", "soggetto_matricola"),
+-						new BaseDataInfo("Mod. Pag.", "{0}-{1}", "soggetto_mod_pag_code", "soggetto_mod_pag_desc")
++						new SimpleDataInfo("Matricola", "soggetto_matricola")
+ 					  ),
+ 				asList(
+ 						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
+ 						new SimpleDataInfo("Codice Fiscale", "soggetto_codice_fiscale"),
+ 						new SimpleDataInfo("Partita IVA", "soggetto_partita_iva"),
+-						new SimpleDataInfo("Matricola", "soggetto_matricola"),
+-						new BaseDataInfo("Mod. Pag.", "{0}-{1}", "soggetto_mod_pag_code", "soggetto_mod_pag_desc")
++						new SimpleDataInfo("Matricola", "soggetto_matricola")
+ 					  ),
+ 				asList(new BaseDataInfo("testo", " Soggetto {0}-{1}", "soggetto_code", "soggetto_desc"))
+ 			);
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/DocumentoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/DocumentoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/DocumentoDataAdapter.java	(revision 11651)
+@@ -26,7 +26,11 @@
+ 						new CurrencyDataInfo("Importo", "doc_importo")
+ 						),
+ 				asList(
+-						new BaseDataInfo("Documento", "{0}/{1}/{2} {3}", "doc_anno","doc_numero","doc_tipo_code","doc_desc"),
++						//new BaseDataInfo("Documento", "{0}/{1}/{2} {3}", "doc_anno","doc_numero","doc_tipo_code","doc_desc"),
++						new SimpleDataInfo("Documento", "doc_numero"),
++						new SimpleDataInfo("Anno", "doc_anno"),
++						new SimpleDataInfo("Tipo", "doc_tipo_code"),
++						new SimpleDataInfo("Descrizione", "doc_desc"),
+ 						new DateDataInfo("Data", "doc_data_emissione"),
+ 						new SimpleDataInfo("Stato", "doc_stato_desc"),
+ 						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/LiquidazioneDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/LiquidazioneDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/LiquidazioneDataAdapter.java	(revision 11651)
+@@ -5,6 +5,7 @@
+ import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.model.datainfo.CurrencyDataInfo;
+ import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.model.datainfo.NumeroLiquidazioneDataInfo;
+ import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.model.datainfo.NumeroProvvedimentoDataInfo;
++import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.model.datainfo.SimpleDataInfo;
+ 
+ /**
+  * Column Adapter per la Liquidazione
+@@ -20,7 +21,8 @@
+ 		super(
+ 				asList(
+ 						new NumeroLiquidazioneDataInfo("Liquidazione", "left", "liq_numero", "liq_desc"),
+-						new CurrencyDataInfo("Importo", "liq_importo"),
++						new SimpleDataInfo("Anno", "liq_anno"),
++						new SimpleDataInfo("Stato", "liq_stato"),
+ 						new BaseDataInfo("Creditore","{0} - {1}" ,"soggetto_code", "soggetto_desc"),
+ 						new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno","capitolo_numero", "capitolo_articolo"),
+ 						new BaseDataInfo("Impegno", "{0,number,#}/{1, number,#}", "movgest_anno","movgest_numero"),
+@@ -31,18 +33,31 @@
+ 							"attoamm_tipo_desc", 
+ 							"attoamm_sac_code", 
+ 							"attoamm_sac_desc", 
+-							"attoamm_stato_desc")
++							"attoamm_stato_desc"),
++						new CurrencyDataInfo("Importo", "liq_importo")
++
++						
+ 						//new DataInfo("nome colonna con due dati separati da trattino", "{0} - {1}", "dato1", "dato2")
+ 						),
+ 				asList(
+-						new BaseDataInfo("Liquidazione", "{0} - {1}", "liq_numero", "liq_desc"),
+-						new CurrencyDataInfo("Importo", "liq_importo"),
++						//SIAC-3760
++						new BaseDataInfo("Liquidazione","{0,number,#}", "liq_numero"),
++						new SimpleDataInfo("Descrizione", "liq_desc"),
++						new SimpleDataInfo("Anno", "liq_anno"),
++						new SimpleDataInfo("Stato", "liq_stato"),
+ 						new BaseDataInfo("Creditore","{0} - {1}" ,"soggetto_code", "soggetto_desc"),
+-						new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno","capitolo_numero", "capitolo_articolo"),
+-						new BaseDataInfo("Impegno", "{0,number,#}/{1, number,#}", "movgest_anno","movgest_numero"),
+-						new BaseDataInfo("Provv.", "{0}/{1} {2}", "attoamm_anno","attoamm_numero", "attoamm_stato_desc" ),
++						new SimpleDataInfo("N.Capitolo", "capitolo_numero"),
++						new SimpleDataInfo("N.Articolo", "capitolo_articolo"),
++						new SimpleDataInfo("Anno capitolo", "capitolo_anno"),
++						new BaseDataInfo("Impegno", "{0, number,#}","movgest_numero"),
++						new BaseDataInfo("Anno impegno", "{0,number,#}", "movgest_anno"),
++						new SimpleDataInfo("Provvedimento", "attoamm_numero"),
++						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
++						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc"),
+ 				        new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
+-				        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc")
++				        new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc"),
++						new CurrencyDataInfo("Importo", "liq_importo")
++
+ 						),
+ 				asList(
+ 						new BaseDataInfo("testo", "Liquidazione {0,number,#}", "liq_numero")
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ImpegnoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ImpegnoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ImpegnoDataAdapter.java	(revision 11651)
+@@ -24,18 +24,26 @@
+ 				asList(
+ 			            new AnnoImpegnoDataInfo("Impegno", "left", "impegno_anno", "impegno_numero", "impegno_desc"),
+ 			            new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc"),
+-			            new CurrencyDataInfo("Importo", "impegno_importo"),
+ 			            new SimpleDataInfo("Stato", "impegno_stato"),
+-			            new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc")
++			            new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
++			            new CurrencyDataInfo("Importo", "impegno_importo")
++
+ 						),
+ 				asList(
+-			            new BaseDataInfo("Impegno", "{0}/{1} {2}", "impegno_anno", "impegno_numero", "impegno_desc"),
+-			            new BaseDataInfo("Provv.", "{0}/{1} {2}", "attoamm_anno","attoamm_numero", "attoamm_stato_desc" ),
++						//SIAC-3760
++			            //new BaseDataInfo("Impegno", "{0}/{1} {2}", "impegno_anno", "impegno_numero", "impegno_desc"),
++						new BaseDataInfo("Impegno", "{0, number,#}","impegno_numero"),
++						new BaseDataInfo("Anno impegno", "{0,number,#}", "impegno_anno"),
++			            new SimpleDataInfo("Descrizione","impegno_desc"),
++						new SimpleDataInfo("Provvedimento", "attoamm_numero"),
++						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
++						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc"),
+ 			            new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
+ 			            new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc"),
+-			            new CurrencyDataInfo("Importo", "impegno_importo"),
+ 			            new SimpleDataInfo("Stato", "impegno_stato"),
+-			            new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc")
++			            new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
++			            new CurrencyDataInfo("Importo", "impegno_importo")
++
+ 						
+ 						),
+ 				asList(
+Index: src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ProvvedimentoDataAdapter.java
+===================================================================
+--- src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ProvvedimentoDataAdapter.java	(revision 11642)
++++ src/main/java/it/csi/siac/siacconsultazioneentitaapp/frontend/ui/model/dataadapter/ProvvedimentoDataAdapter.java	(revision 11651)
+@@ -26,7 +26,7 @@
+ 						),
+ 				asList(
+ 						new SimpleDataInfo("Anno", "attoamm_anno"),
+-						new SimpleDataInfo("Numero", "attoamm_numero"),
++						new SimpleDataInfo("Provvedimento", "attoamm_numero"),
+ 						new BaseDataInfo("Tipo", "{0}-{1}", "attoamm_tipo_code", "attoamm_tipo_desc"),
+ 						new SimpleDataInfo("Oggetto", "attoamm_oggetto"),
+ 						new BaseDataInfo("Strutt. Amm.","{0}-{1}", "attoamm_sac_code", "attoamm_sac_desc"),

@@ -1,0 +1,796 @@
+### Eclipse Workspace Patch 1.0
+#P bilapplication
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/BaseInserisciAggiornaContoPrimaNotaIntegrataAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/BaseInserisciAggiornaContoPrimaNotaIntegrataAction.java
+index 9de518b..262413b 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/BaseInserisciAggiornaContoPrimaNotaIntegrataAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/BaseInserisciAggiornaContoPrimaNotaIntegrataAction.java
+@@ -254,6 +254,18 @@
+ 	}
+ 	
+ 	/**
++	 * Aggiornamento del conto dalla classe di conciliazione
++	 * @return una stringa corrispondente al risultato dell'invocazione
++	 */
++	public String ottieniContiDaClasseDiConciliazione() {
++		int idx = model.getIndiceConto().intValue();
++		ElementoScritturaPrimaNotaIntegrata elementoScrittura = model.getListaElementoScritturaPerElaborazione().get(idx);
++		model.setListaContoDaClasseConciliazione(elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione());
++		model.setIndiceConto(null);
++		return SUCCESS;
++	}
++	
++	/**
+ 	  * Validazione per il metodo {@link #aggiornaContoDaClasseDiConciliazioneConti()}.
+ 	 */
+ 	public void validateAggiornaContoDaClasseDiConciliazioneConti(){
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/documento/InserisciPrimaNotaIntegrataSubdocumentoBaseAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/documento/InserisciPrimaNotaIntegrataSubdocumentoBaseAction.java
+index b9a7005..6cd0f6b 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/documento/InserisciPrimaNotaIntegrataSubdocumentoBaseAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/documento/InserisciPrimaNotaIntegrataSubdocumentoBaseAction.java
+@@ -664,5 +664,17 @@
+ 	protected Soggetto ottieniSoggetto() {
+ 		return model.getDocumento() != null ? model.getDocumento().getSoggetto() : null;
+ 	}
++	
++	/**
++	 * Aggiornamento del conto dalla classe di conciliazione
++	 * @return una stringa corrispondente al risultato dell'invocazione
++	 */
++	public String ottieniContiDaClasseDiConciliazione() {
++		int idx = model.getIndiceConto().intValue();
++		ElementoScritturaPrimaNotaIntegrata elementoScrittura = model.getListaElementoScritturaPerElaborazione().get(idx);
++		model.setListaContoDaClasseConciliazione(elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione());
++		model.setIndiceConto(null);
++		return SUCCESS;
++	}
+ }
+ 
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/notacredito/InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/notacredito/InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseAction.java
+index 294f81b..37f0f0d 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/notacredito/InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/notacredito/InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseAction.java
+@@ -650,5 +650,17 @@
+ 	protected Soggetto ottieniSoggetto() {
+ 		return model.getDocumento() != null ? model.getDocumento().getSoggetto() : null;
+ 	}
++	
++	/**
++	 * Aggiornamento del conto dalla classe di conciliazione
++	 * @return una stringa corrispondente al risultato dell'invocazione
++	 */
++	public String ottieniContiDaClasseDiConciliazione() {
++		int idx = model.getIndiceConto().intValue();
++		ElementoScritturaPrimaNotaIntegrata elementoScrittura = model.getListaElementoScritturaPerElaborazione().get(idx);
++		model.setListaContoDaClasseConciliazione(elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione());
++		model.setIndiceConto(null);
++		return SUCCESS;
++	}
+ }
+ 
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java
+index ef0fa3a..3e3a061 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotaintegrata/BaseInserisciAggiornaPrimaNotaIntegrataBaseModel.java
+@@ -98,6 +98,9 @@
+ 	private ClassificatoreGerarchico classificatoreGerarchico;
+ 	private Conto contoDaSostituire;
+ 	
++	//SIAC-4805
++	List<Conto> listaContoDaClasseConciliazione = new ArrayList<Conto>();
++	
+ 	/**
+ 	 * @return the uidPrimaNota
+ 	 */
+@@ -538,6 +541,24 @@
+ 	}
+ 	
+ 	/**
++	 * Gets the lista conto da classe conciliazione.
++	 *
++	 * @return the lista conto da classe conciliazione
++	 */
++	public List<Conto> getListaContoDaClasseConciliazione() {
++		return listaContoDaClasseConciliazione;
++	}
++
++	/**
++	 * Sets the lista conto da classe conciliazione.
++	 *
++	 * @param listaContoDaClasseConciliazione the new lista conto da classe conciliazione
++	 */
++	public void setListaContoDaClasseConciliazione(List<Conto> listaContoDaClasseConciliazione) {
++		this.listaContoDaClasseConciliazione = listaContoDaClasseConciliazione;
++	}
++
++	/**
+ 	 * @return the ambitoFIN
+ 	 */
+ 	public Ambito getAmbitoFIN() {
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrata.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrata.java
+index 7bba781..0846759 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrata.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrata.java
+@@ -1,12 +1,15 @@
+ package it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata;
+ 
+ import java.io.Serializable;
++import java.util.ArrayList;
++import java.util.List;
+ 
+ import org.apache.commons.lang3.builder.EqualsBuilder;
+ import org.apache.commons.lang3.builder.HashCodeBuilder;
+ 
+ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
+ import it.csi.siac.siacgenser.model.ClasseDiConciliazione;
++import it.csi.siac.siacgenser.model.Conto;
+ import it.csi.siac.siacgenser.model.ContoTipoOperazione;
+ import it.csi.siac.siacgenser.model.MovimentoDettaglio;
+ import it.csi.siac.siacgenser.model.OperazioneSegnoConto;
+@@ -19,6 +22,8 @@
+  * 
+  * @author Paggio Simona
+  * @version 1.0.0 - 28/04/2015
++ * @author Elisa Chiari
++ * @version 1.1.0 - 20/04/2017
+  *
+  */
+ public class ElementoScritturaPrimaNotaIntegrata implements Serializable {
+@@ -30,6 +35,7 @@
+ 	private ClasseDiConciliazione classeDiConcilazione;
+ 	private boolean aggiornamentoImportoManuale;
+ 	private Boolean daClasseConciliazione;
++	private List<Conto> contiSelezionabiliDaClasseDiConciliazione = new ArrayList<Conto>();
+ 
+ 	/**
+ 	 * Costruttore di wrap.
+@@ -56,6 +62,23 @@
+ 	 */
+ 	public ElementoScritturaPrimaNotaIntegrata(MovimentoDettaglio movimentoDettaglio, ContoTipoOperazione contoTipoOperazione, boolean aggiornamentoImportoManuale) {
+ 		this(movimentoDettaglio, contoTipoOperazione, aggiornamentoImportoManuale, contoTipoOperazione.getClasseDiConciliazione());
++	}
++	
++	/**
++	 * Costruttore di wrap.
++	 *
++	 * @param movimentoDettaglio 							il movimento da wrappare
++	 * @param contoTipoOperazione							il conto da wrappare
++	 * @param aggiornamentoImportoManuale 					se l'aggiornamento dell'importo sia di tipo manuale
++	 * @param listaContiSelezionabiliDaClasseConciliazione 	la lista dei conti selezionabili da classe conciliazione
++	 */
++	public ElementoScritturaPrimaNotaIntegrata(MovimentoDettaglio movimentoDettaglio, ContoTipoOperazione contoTipoOperazione, boolean aggiornamentoImportoManuale, List<Conto> listaContiSelezionabiliDaClasseConciliazione) {
++		super();
++		this.movimentoDettaglio = movimentoDettaglio;
++		this.contoTipoOperazione = contoTipoOperazione;
++		this.aggiornamentoImportoManuale = aggiornamentoImportoManuale;
++		this.classeDiConcilazione = contoTipoOperazione.getClasseDiConciliazione();
++		this.contiSelezionabiliDaClasseDiConciliazione = listaContiSelezionabiliDaClasseConciliazione ;
+ 	}
+ 	
+ 	/**
+@@ -137,6 +160,24 @@
+ 	}
+ 	
+ 	/**
++	 * Gets the conti selezionabili da classe di conciliazione.
++	 *
++	 * @return the conti selezionabili da classe di conciliazione
++	 */
++	public List<Conto> getContiSelezionabiliDaClasseDiConciliazione() {
++		return contiSelezionabiliDaClasseDiConciliazione != null? contiSelezionabiliDaClasseDiConciliazione : new ArrayList<Conto>();
++	}
++
++	/**
++	 * Sets the conti selezionabili da classe di conciliazione.
++	 *
++	 * @param contiSelezionabiliDaClasseDiConciliazione the new conti selezionabili da classe di conciliazione
++	 */
++	public void setContiSelezionabiliDaClasseDiConciliazione(List<Conto> contiSelezionabiliDaClasseDiConciliazione) {
++		this.contiSelezionabiliDaClasseDiConciliazione = contiSelezionabiliDaClasseDiConciliazione;
++	}
++
++	/**
+ 	 * @return the dare
+ 	 */
+ 	public String getDare() {
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrataFactory.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrataFactory.java
+index 1fa8900..06b7aeb 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrataFactory.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/primanotaintegrata/ElementoScritturaPrimaNotaIntegrataFactory.java
+@@ -106,9 +106,10 @@
+ 		int numeroRiga = 0;
+ 		for (ContoTipoOperazione cTOp : listaCTOp) {
+ 			Boolean daClasseConciliazione = null;
++			List<Conto> conti = new ArrayList<Conto>();
+ 			if(cTOp.getClasseDiConciliazione() !=null){
+ 				daClasseConciliazione = Boolean.TRUE;
+-				List<Conto> conti = mappaConti.get(cTOp.getClasseDiConciliazione());
++				conti = mappaConti.get(cTOp.getClasseDiConciliazione());
+ 				if(cTOp.getConto() == null && conti != null && conti.size() == 1){
+ 					cTOp.setConto(conti.get(0));
+ 				}
+@@ -122,7 +123,7 @@
+ 				movDettaglio.setImporto(importo);
+ 			}
+ 			// nella modalita aggiornamento metto false perche' al momento il valore e' preso da causale e non dal campo di comodo
+-			ElementoScritturaPrimaNotaIntegrata nuovoElemento = new ElementoScritturaPrimaNotaIntegrata(movDettaglio, cTOp, false);
++			ElementoScritturaPrimaNotaIntegrata nuovoElemento = new ElementoScritturaPrimaNotaIntegrata(movDettaglio, cTOp, false,conti);
+ 			nuovoElemento.setDaClasseConciliazione(daClasseConciliazione);
+ 			listaScritture.add(nuovoElemento);
+ 			numeroRiga++;
+diff --git src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/impegno/CompletaImpegnoInsContoPrimaNotaIntegrataGSAAction.java src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/impegno/CompletaImpegnoInsContoPrimaNotaIntegrataGSAAction.java
+index b99c33b..6ecba83 100644
+--- src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/impegno/CompletaImpegnoInsContoPrimaNotaIntegrataGSAAction.java
++++ src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/impegno/CompletaImpegnoInsContoPrimaNotaIntegrataGSAAction.java
+@@ -75,7 +75,7 @@
+ 		ricalcolaTotali();
+ 		return SUCCESS;
+ 	}
+-
++	
+ 	/**
+ 	* Ottiene la lista dei wrapper delle scritture da visualizzare.
+ 	* @return la lista creata 
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataAccertamento.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataAccertamento.xml
+index d0182be..b52833c 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataAccertamento.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataAccertamento.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -63,6 +69,12 @@
+ 		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataDocumento.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataDocumento.xml
+index d51d911..a3e0520 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataDocumento.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataDocumento.xml
+@@ -40,6 +40,12 @@
+ 		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -105,6 +111,12 @@
+ 		</action>
+ 		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
++		</action>
++		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
+ 		</action>
+ 		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+@@ -177,6 +189,12 @@
+ 		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -243,6 +261,12 @@
+ 		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataImpegno.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataImpegno.xml
+index 59fdb63..8458a22 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataImpegno.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataImpegno.xml
+@@ -36,6 +36,12 @@
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 			<result name="input" type="customMessagesJSON" />
+ 		</action>
++		<action name="completaValidaImpegnoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaImpegnoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaImpegnoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazione" class="completaValidaImpegnoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazione">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 			<result name="input" type="customMessagesJSON" />
+@@ -87,6 +93,12 @@
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 			<result name="input" type="customMessagesJSON" />
+ 		</action>
++		<action name="completaImpegnoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaImpegnoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action>
+ 		
+ 	</package>
+ </struts>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataLiquidazione.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataLiquidazione.xml
+index 90c9404..62408c6 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataLiquidazione.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataLiquidazione.xml
+@@ -22,6 +22,12 @@
+          <action name="completaValidaLiquidazioneInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaLiquidazioneInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaLiquidazioneInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaLiquidazioneInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaLiquidazioneInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaLiquidazioneInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -68,6 +74,12 @@
+         <action name="completaLiquidazioneInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaLiquidazioneInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaLiquidazioneInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaLiquidazioneInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+         <action name="completaLiquidazioneInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaLiquidazioneInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneEntrata.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneEntrata.xml
+index aec25d7..307ad2b 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneEntrata.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneEntrata.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaModificaMovimentoGestioneEntrataInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaModificaMovimentoGestioneEntrataInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaModificaMovimentoGestioneEntrataInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -63,6 +69,12 @@
+ 		<action name="completaModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaModificaMovimentoGestioneEntrataInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaModificaMovimentoGestioneEntrataInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaModificaMovimentoGestioneEntrataInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaModificaMovimentoGestioneEntrataInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneSpesa.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneSpesa.xml
+index 3b89500..bbb37f7 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneSpesa.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataModificaMovimentoGestioneSpesa.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -63,6 +69,12 @@
+ 		<action name="completaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataNotaCredito.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataNotaCredito.xml
+index 5598374..21f7596 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataNotaCredito.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataNotaCredito.xml
+@@ -38,6 +38,12 @@
+ 		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -108,6 +114,12 @@
+ 		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaValidaSubdocumentoSpesaNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -176,6 +188,12 @@
+ 		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -244,6 +262,12 @@
+ 		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSA_proponiContiDaCausaleEP" class="completaValidaSubdocumentoEntrataNotaCreditoInsPrimaNotaIntegrataGSAAction" method="proponiContiDaCausaleEP">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataOrdinativo.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataOrdinativo.xml
+index 51e67b7..8f6f4a8 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataOrdinativo.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataOrdinativo.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -63,6 +69,12 @@
+ 		<action name="completaOrdinativoIncassoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaOrdinativoIncassoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaOrdinativoIncassoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -106,6 +118,12 @@
+ 		<action name="completaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -148,6 +166,12 @@
+ 		<action name="completaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataRendicontoRichiesta.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataRendicontoRichiesta.xml
+index c96b36f..cc24723 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataRendicontoRichiesta.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataRendicontoRichiesta.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaRendicontoRichiestaInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaRendicontoRichiestaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaRendicontoRichiestaInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaRendicontoRichiestaInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaRendicontoRichiestaInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaRendicontoRichiestaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -64,6 +70,12 @@
+ 		<action name="completaRendicontoRichiestaInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaRendicontoRichiestaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaRendicontoRichiestaInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaRendicontoRichiestaInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaRendicontoRichiestaInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaRendicontoRichiestaInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataRichiestaEconomale.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataRichiestaEconomale.xml
+index 2611de3..48f9dc8 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataRichiestaEconomale.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataRichiestaEconomale.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -64,6 +70,12 @@
+ 		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataSubAccertamento.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataSubAccertamento.xml
+index 94961ff..f5bbc2e 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataSubAccertamento.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataSubAccertamento.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaSubAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaSubAccertamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubAccertamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaSubAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaSubAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -63,6 +69,12 @@
+ 		<action name="completaSubAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaSubAccertamentoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubAccertamentoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaSubAccertamentoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaSubAccertamentoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/resources/struts/struts-gsa-primaNotaIntegrataSubImpegno.xml src/main/resources/struts/struts-gsa-primaNotaIntegrataSubImpegno.xml
+index 361743a..1ff0218 100644
+--- src/main/resources/struts/struts-gsa-primaNotaIntegrataSubImpegno.xml
++++ src/main/resources/struts/struts-gsa-primaNotaIntegrataSubImpegno.xml
+@@ -21,6 +21,12 @@
+ 		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaValidaSubImpegnoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaValidaSubImpegnoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+@@ -63,6 +69,12 @@
+ 		<action name="completaSubImpegnoInsPrimaNotaIntegrataGSA_ottieniListaConti" class="completaSubImpegnoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaConti">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
++		<action name="completaSubImpegnoInsPrimaNotaIntegrataGSA_ottieniContiDaClasseDiConciliazione" class="completaSubImpegnoInsContoPrimaNotaIntegrataGSAAction" method ="ottieniContiDaClasseDiConciliazione">
++			<result name="input" type="customMessagesJSON" />
++			<result name="success" type="customJSON">
++				<param name="includeProperties">listaContoDaClasseConciliazione.*</param>
++			</result>
++		</action> 
+ 		<action name="completaSubImpegnoInsPrimaNotaIntegrataGSA_ottieniListaContiIniziale" class="completaSubImpegnoInsContoPrimaNotaIntegrataGSAAction" method="ottieniListaContiIniziale">
+ 			<result name="success" type="contoPrimaNotaIntegrata" />
+ 		</action>
+diff --git src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.movimento.reg.js src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.movimento.reg.js
+index 9f1ad65..bb20e26 100644
+--- src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.movimento.reg.js
++++ src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.movimento.reg.js
+@@ -161,7 +161,7 @@
+         var idx = e.data[1];
+         var str = "";
+ 
+-        if(elementoStruttura.movimentoDettalgio && elementoStruttura.movimentoDettaglio.conto && elementoStruttura.movimentoDettaglio.conto.descrizione) {
++        if(elementoStruttura.movimentoDettaglio && elementoStruttura.movimentoDettaglio.conto && elementoStruttura.movimentoDettaglio.conto.descrizione) {
+             str = " " + elementoStruttura.movimentoDettaglio.conto.descrizione;
+         }
+         $("#modaleEliminazioneElementoSelezionato").html(str);
+@@ -231,18 +231,18 @@
+         caricaElencoScrittureFromAction("_ottieniListaContiIniziale");
+     }
+     
+-    function popolaElencoContiConciliazione(classeDiConciliazione){
+-    	var uidClassificatoreGerarchico = $("#HIDDEN_uidClassificatoreGerarchico").val();
+-    	if(!uidClassificatoreGerarchico){
++    function popolaElencoContiConciliazione(classeDiConciliazione,index){
++    	
++    	if(index === undefined){
+     		return;
+     	}
+     	var select = $("#contiConciliazionePerTitoloModale");
+-    	var obj = {'conciliazionePerTitolo.classificatoreGerarchico.uid': uidClassificatoreGerarchico, 'conciliazionePerTitolo.classeDiConciliazione': classeDiConciliazione};
+-    	$.postJSON('ricercaContiByConciliazionePerTitolo.do', obj, function(data) {
++    	var obj = {'indiceConto': index};
++    	$.postJSON(baseUrl + "_ottieniContiDaClasseDiConciliazione.do", obj, function(data) {
+ 			 if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+ 	             return;
+ 	         }
+-	         popolaSelect(select, data.listaConto, true);
++	         popolaSelect(select, data.listaContoDaClasseConciliazione, true);
+         });
+     }
+  
+@@ -393,13 +393,13 @@
+     /**
+      * Gestisce le diverse impostazioni della modale a seconda del tipo di classe di conciliazione
+      * */
+-    function gestisciClassiConciliazione(classeDiconciliazione){
++    function gestisciClassiConciliazione(classeDiconciliazione,index){
+     	if(classeDiconciliazione === "CONTI"){
+     		return impostaModalePerClasseConti();
+     	}
+     	$("#selezioneContoGuidata").slideDown();
+     	$("#selezioneContoTestuale").slideUp();
+-    	popolaElencoContiConciliazione(classeDiconciliazione);
++    	popolaElencoContiConciliazione(classeDiconciliazione,index);
+     	$("#pulsanteSelezionaConto").substituteHandler('click',aggiornamentoContoDaClasseConciliazione);
+     }
+     
+@@ -410,7 +410,7 @@
+     	var index = e.data[1];
+     	var classeDiconciliazione = e.data[0] && e.data[0].classeDiConcilazione._name;
+     	$("#HIDDEN_indiceModale").val(index);
+-    	gestisciClassiConciliazione(classeDiconciliazione);
++    	gestisciClassiConciliazione(classeDiconciliazione,index);
+     	$('#ERRORI_modaleDettaglio').slideUp();
+     	$("#modaleDettaglioConti").modal("show");
+     }
+diff --git src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.subdocumento.js src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.subdocumento.js
+index abeeba5..b3b0cc6 100644
+--- src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.subdocumento.js
++++ src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.subdocumento.js
+@@ -159,13 +159,13 @@
+     /**
+      * Gestisce le diverse impostazioni della modale a seconda del tipo di classe di conciliazione
+      * */
+-    function gestisciClassiConciliazione(classeDiconciliazione){
++    function gestisciClassiConciliazione(classeDiconciliazione, index){
+     	if(classeDiconciliazione === "CONTI"){
+     		return impostaModalePerClasseConti();
+     	}
+     	$("#selezioneContoGuidata").slideDown();
+     	$("#selezioneContoTestuale").slideUp();
+-    	popolaElencoContiConciliazione(classeDiconciliazione);
++    	popolaElencoContiConciliazione(classeDiconciliazione, index);
+     	$("#pulsanteSelezionaConto").click(aggiornamentoContoDaClasseConciliazione);
+     }
+     
+@@ -177,7 +177,7 @@
+     	var index = e.data[1];
+     	var classeDiconciliazione = e.data[0] && e.data[0].classeDiConcilazione._name;
+     	$("#HIDDEN_indiceModale").val(index);
+-    	gestisciClassiConciliazione(classeDiconciliazione);
++    	gestisciClassiConciliazione(classeDiconciliazione, index);
+     	$("#modaleDettaglioConti").modal("show");
+     }
+ 
+@@ -248,7 +248,8 @@
+     	var uisContoSelezionato = ($("#contiConciliazionePerTitoloModale").val() != null && $("#contiConciliazionePerTitoloModale").val() != "" )
+     		? $("#contiConciliazionePerTitoloModale").val() : 0;
+         var obj = {'contoDaSostituire.uid' : uisContoSelezionato, 'indiceConto': index};
+-        
++        var url = baseUrl + "_aggiornaContoDaClasseDiConciliazione.do";
++        chiamaAggiornamentoContoClasseConciliazione(obj, url);
+     }
+ 
+     /**
+@@ -262,18 +263,17 @@
+         popolaTabella(data.listaElementoScritturaPerElaborazione);
+     }
+     
+-    function popolaElencoContiConciliazione(classeDiConciliazione){
+-    	var uidClassificatoreGerarchico = $("#HIDDEN_uidClassificatoreGerarchico").val();
+-    	if(!uidClassificatoreGerarchico){
++    function popolaElencoContiConciliazione(classeDiConciliazione, index){
++    	if(index === undefined){
+     		return;
+     	}
+     	var select = $("#contiConciliazionePerTitoloModale");
+-    	var obj = {'conciliazionePerTitolo.classificatoreGerarchico.uid': uidClassificatoreGerarchico, 'conciliazionePerTitolo.classeDiConciliazione': classeDiConciliazione};
+-    	$.postJSON('ricercaContiByConciliazionePerTitolo.do', obj, function(data) {
++    	var obj = {'indiceConto': index};
++    	$.postJSON(baseUrl + "_ottieniContiDaClasseDiConciliazione.do", obj, function(data) {
+ 			 if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+ 	             return;
+ 	         }
+-	         popolaSelect(select, data.listaConto, true);
++	         popolaSelect(select, data.listaContoDaClasseConciliazione, true);
+         });
+     }
+     

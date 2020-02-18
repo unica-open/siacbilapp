@@ -1,0 +1,257 @@
+Index: src/main/webapp/js/variazioni/aggiorna.importi.ueb.js
+===================================================================
+--- src/main/webapp/js/variazioni/aggiorna.importi.ueb.js	(revision 10366)
++++ src/main/webapp/js/variazioni/aggiorna.importi.ueb.js	(revision 10370)
+@@ -621,7 +621,9 @@
+     if(annoEsercizio !== annoVariazione) {
+         $("#cassaVariazioneUEB").attr("disabled", "disabled");
+     }
+-    if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++    //if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++    // CR-xxxx
++    if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento") {
+         $("#residuoVariazioneUEB").attr("disabled", "disabled");
+     }
+ 
+Index: src/main/webapp/js/variazioni/variazioni.step3.importi.ueb.js
+===================================================================
+--- src/main/webapp/js/variazioni/variazioni.step3.importi.ueb.js	(revision 10366)
++++ src/main/webapp/js/variazioni/variazioni.step3.importi.ueb.js	(revision 10370)
+@@ -226,7 +226,9 @@
+         if(annoEsercizio !== annoVariazione ) {
+             $("#cassaVariazioneUEB").attr("disabled", "disabled");
+         }
+-        if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento" || tipoApplicazione === "Gestione") {
++        //if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento" || tipoApplicazione === "Gestione") {
++        // CR-xxxx
++        if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento") {
+             $("#residuoVariazioneUEB").attr("disabled", "disabled");
+         }
+ 
+Index: src/main/webapp/js/variazioni/aggiorna.importi.js
+===================================================================
+--- src/main/webapp/js/variazioni/aggiorna.importi.js	(revision 10366)
++++ src/main/webapp/js/variazioni/aggiorna.importi.js	(revision 10370)
+@@ -128,7 +128,9 @@
+             if(annoEsercizio !== annoVariazione) {
+                 $("#cassaVariazione").attr("disabled", "disabled");
+             }
+-            if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++            //if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++            // CR-xxxx
++            if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento") {
+                 $("#residuoVariazione").attr("disabled", "disabled");
+             }
+ 
+@@ -394,7 +396,9 @@
+     if(annoEsercizio !== annoVariazione) {
+         $("#cassaVariazioneModal").attr("disabled", "disabled");
+     }
+-    if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++    //if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++    // CR SIAC-2934
++    if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento") {
+         $("#residuoVariazioneModal").attr("disabled", "disabled");
+     }
+ 
+Index: src/main/webapp/js/variazioni/variazioni.step3.importi.js
+===================================================================
+--- src/main/webapp/js/variazioni/variazioni.step3.importi.js	(revision 10366)
++++ src/main/webapp/js/variazioni/variazioni.step3.importi.js	(revision 10370)
+@@ -189,7 +189,9 @@
+         if(annoEsercizio !== annoVariazione) {
+             $("#cassaVariazioneModal").attr("disabled", "disabled");
+         }
+-        if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++        //if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++        // CR SIAC-2934
++        if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento") {
+             $("#residuoVariazioneModal").attr("disabled", "disabled");
+         }
+ 
+@@ -492,7 +494,9 @@
+                 if(annoEsercizio !== annoVariazione) {
+                     $("#cassaVariazione").attr("disabled", "disabled");
+                 }
+-                if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++                //if(annoEsercizio !== annoVariazione || (tipoApplicazione === "Gestione" || tipoApplicazione === "Assestamento")) {
++                // CR-xxxx
++                if(annoEsercizio !== annoVariazione || tipoApplicazione === "Assestamento") {
+                     $("#residuoVariazione").attr("disabled", "disabled");
+                 }
+ 
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiAction.java	(revision 10366)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiAction.java	(revision 10370)
+@@ -336,9 +336,9 @@
+ 
+ 	/* **************************************************************************
+ 	 * **************************************************************************
+-	 * *** Interazioni AJAX con la pagina di specificazione della variazione **** **************************************************************************
+-	 * *************************************************************************
+-	 */
++	 * *** Interazioni AJAX con la pagina di specificazione della variazione ****
++	 * **************************************************************************
++	 * **************************************************************************/
+ 
+ 	/* ******** Con gestione UEB ******** */
+ 
+@@ -886,8 +886,10 @@
+ 		// Controlla se la variazione si riferisce all'anno di bilancio
+ 		boolean variazioneStessoAnno = model.getAnnoEsercizioInt().equals(model.getAnnoVariazione());
+ 
+-		boolean residuoEditabile = variazioneStessoAnno && !"Assestamento".equalsIgnoreCase(model.getApplicazione())
+-				&& !"Gestione".equalsIgnoreCase(model.getApplicazione());
++		boolean residuoEditabile = variazioneStessoAnno
++				&& !"Assestamento".equalsIgnoreCase(model.getApplicazione());
++		// CR-xxxx
++//				&& !"Gestione".equalsIgnoreCase(model.getApplicazione());
+ 		boolean cassaEditabile = variazioneStessoAnno;
+ 
+ 		boolean importiInvalidi = capitoloDaInserireInVariazione.getCompetenza() == null
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiAction.java	(revision 10366)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiAction.java	(revision 10370)
+@@ -707,7 +707,10 @@
+ 		// Controlla se la variazione si riferisce all'anno di bilancio
+ 		boolean variazioneStessoAnno = model.getAnnoEsercizioInt().equals(model.getDefinisci().getAnnoVariazione());
+ 
+-		boolean residuoEditabile = variazioneStessoAnno && !"Assestamento".equalsIgnoreCase(model.getDefinisci().getTipoApplicazione()) && !"Gestione".equalsIgnoreCase(model.getDefinisci().getTipoApplicazione());
++		boolean residuoEditabile = variazioneStessoAnno
++				&& !"Assestamento".equalsIgnoreCase(model.getDefinisci().getTipoApplicazione());
++		// CR-xxxx
++//				&& !"Gestione".equalsIgnoreCase(model.getDefinisci().getTipoApplicazione());
+ 		boolean cassaEditabile = variazioneStessoAnno;
+ 
+ 		boolean importiInvalidi = capitoloDaInserireInVariazione.getCompetenza() == null
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/LoggingHandler.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/LoggingHandler.java	(revision 10366)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/LoggingHandler.java	(revision 10370)
+@@ -1,6 +1,7 @@
+ package it.csi.siac.siacbilapp.frontend.ui.util.proxy;
+ 
+ import java.io.ByteArrayOutputStream;
++import java.io.IOException;
+ import java.util.Set;
+ 
+ import javax.xml.namespace.QName;
+@@ -9,6 +10,7 @@
+ import javax.xml.ws.handler.soap.SOAPHandler;
+ import javax.xml.ws.handler.soap.SOAPMessageContext;
+ 
++import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndCheckedException;
+ import it.csi.siac.siaccommon.util.log.LogUtil;
+ 
+ /**
+@@ -21,10 +23,12 @@
+ 	public boolean handleMessage(final SOAPMessageContext context) {
+ 		final SOAPMessage msg = context.getMessage();
+ 		final boolean request = ((Boolean) context.get(SOAPMessageContext.MESSAGE_OUTBOUND_PROPERTY)).booleanValue();
+-		if (request) { // This is a request message.
+-			logMessage(msg);
+-		} else { // This is the response message
+-			logMessage(msg);
++		if (request) {
++			// This is a request message.
++			logRequestMessage(msg);
++		} else {
++			// This is the response message
++			logResponseMessage(msg);
+ 		}
+ 		return true;
+ 	}
+@@ -31,22 +35,84 @@
+ 
+ 	@Override
+ 	public boolean handleFault(final SOAPMessageContext context) {
+-		logMessage(context.getMessage());
++		logErrorMessage(context.getMessage());
+ 		return false;
+ 	}
+ 
+-	private void logMessage(final SOAPMessage msg) {
+-		final String methodName = "logMessage";
++	/**
++	 * Writes the message to the given appendable.
++	 * 
++	 * @param appendable the appndable to which add the message
++	 * @param soapMessage the message to write
++	 * @throws FrontEndCheckedException if an exception in writing the message is raised
++	 */
++	private void writeMessage(Appendable appendable, final SOAPMessage soapMessage) throws FrontEndCheckedException {
++		ByteArrayOutputStream baos = null;
+ 		try {
+ 			// Write the message to the output stream
+-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+-			msg.writeTo(baos);
+-			log.debug(methodName, baos.toString());
++			baos = new ByteArrayOutputStream();
++			soapMessage.writeTo(baos);
++			appendable.append(baos.toString());
+ 			baos.close();
+ 		} catch (final Exception e) {
+-			log.error(methodName, "Caught exception: " + e.getMessage(), e);
++			if(baos != null) {
++				try {
++					baos.close();
++				} catch (IOException e1) {
++					throw new FrontEndCheckedException("IOException in closing stream: " + e1, e1);
++				}
++			}
++			throw new FrontEndCheckedException("Exception in handling message writing: " + e.getMessage(), e);
+ 		}
+ 	}
++	
++	/**
++	 * Logs the request message
++	 * @param requestMessage the request
++	 */
++	private void logRequestMessage(final SOAPMessage requestMessage) {
++		final String methodName = "logRequestMessage";
++		StringBuilder sb = new StringBuilder();
++		sb.append("REQUEST:\n");
++		try {
++			writeMessage(sb, requestMessage);
++			log.debug(methodName, sb.toString());
++		} catch(FrontEndCheckedException e) {
++			log.error(methodName, "Caught exception for request message: " + e.getMessage(), e);
++		}
++	}
++	
++	/**
++	 * Logs the response message
++	 * @param responseMessage the response
++	 */
++	private void logResponseMessage(final SOAPMessage msg) {
++		final String methodName = "logResponseMessage";
++		StringBuilder sb = new StringBuilder();
++		sb.append("RESPONSE:\n");
++		try {
++			writeMessage(sb, msg);
++			log.debug(methodName, sb.toString());
++		} catch(FrontEndCheckedException e) {
++			log.error(methodName, "Caught exception for response message: " + e.getMessage(), e);
++		}
++	}
++	
++	/**
++	 * Logs the error message
++	 * @param errorMessage the error
++	 */
++	private void logErrorMessage(final SOAPMessage msg) {
++		final String methodName = "logErrorMessage";
++		StringBuilder sb = new StringBuilder();
++		sb.append("ERROR:\n");
++		try {
++			writeMessage(sb, msg);
++			log.debug(methodName, sb.toString());
++		} catch(FrontEndCheckedException e) {
++			log.error(methodName, "Caught exception for error message: " + e.getMessage(), e);
++		}
++	}
+ 
+ 	@Override
+ 	public void close(final MessageContext context) {

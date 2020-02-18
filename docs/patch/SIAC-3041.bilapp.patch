@@ -1,0 +1,12 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/RisultatiRicercaDocumentoSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/RisultatiRicercaDocumentoSpesaModel.java	(revision 8689)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/RisultatiRicercaDocumentoSpesaModel.java	(working copy)
+@@ -291,6 +291,7 @@
+ 		
+ 		request.setDataOra(new Date());
+ 		request.setRichiedente(getRichiedente());
++		request.setBilancio(getBilancio());
+ 		
+ 		DocumentoSpesa documento = new DocumentoSpesa();
+ 		documento.setUid(uidDaAnnullare);

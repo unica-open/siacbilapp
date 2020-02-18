@@ -1,0 +1,535 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(revision 11858)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(working copy)
+@@ -1,11 +1,15 @@
+ package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
+ 
++import java.io.StringReader;
+ import java.math.BigDecimal;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import javax.xml.bind.JAXB;
++
+ import org.apache.struts2.interceptor.validation.SkipValidation;
+ import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.beans.factory.annotation.Autowired;
+ 
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step3.SpecificaVariazioneImportoModel;
+@@ -32,9 +36,15 @@
+ import it.csi.siac.siacbilser.model.errore.ErroreBil;
+ import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
+ import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
++import it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService;
++import it.csi.siac.siaccorser.frontend.webservice.msg.GetDettaglioOperazioneAsincrona;
++import it.csi.siac.siaccorser.frontend.webservice.msg.GetDettaglioOperazioneAsincronaResponse;
+ import it.csi.siac.siaccorser.model.AzioneConsentita;
++import it.csi.siac.siaccorser.model.DettaglioOperazioneAsincrona;
+ import it.csi.siac.siaccorser.model.ServiceResponse;
+ import it.csi.siac.siaccorser.model.errore.ErroreCore;
++import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
++import it.csi.siac.siacfin2ser.frontend.webservice.msg.AsyncServiceResponse;
+ 
+ /**
+  * Classe di action per la variazione degli importi.
+@@ -49,6 +59,8 @@
+ 	/** Per la serializzazione */
+ 	private static final long serialVersionUID = 8768814561401283421L;
+ 
++	@Autowired protected transient OperazioneAsincronaService operazioneAsincronaService;
++	
+ 	@Override
+ 	@BreadCrumb("%{model.titolo}")
+ 	public String enterStep2() {
+@@ -114,34 +126,116 @@
+ 	public String executeStep3() {
+ 		final String methodName = "executeStep3";
+ 		log.debug(methodName, "Richiamo il servizio per l'inserimento della variazione");
+-
+-		// Creazione della request
+-		SpecificaVariazioneModel modelSpecifica = model.isGestioneUEB() ? model.getSpecificaUEB() : model.getSpecificaImporti();
+ 		
+ 		AggiornaAnagraficaVariazioneBilancio request = model.creaRequestAggiornaAnagraficaVariazioneBilancio();
+ 		
+-		AggiornaAnagraficaVariazioneBilancioResponse response = variazioneDiBilancioService.aggiornaAnagraficaVariazioneBilancio(request);
++		AsyncServiceResponse res = variazioneDiBilancioService.aggiornaAnagraficaVariazioneBilancioAsync(wrapRequestToAsync(request));
++		log.debug(methodName, "Operazione asincrona avviata. IdOperazioneAsincrona: "+ res.getIdOperazioneAsincrona());
++		
++		if (res.hasErrori()) {
++			log.debug(methodName, "Invocazione servizio aggiornaAnagraficaVariazioneBilancioAsync terminata con fallimento");
++			addErrori(res);
++			return INPUT;
++		}
++		
++		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
++
++		// Creazione della request
++//		SpecificaVariazioneModel modelSpecifica = model.isGestioneUEB() ? model.getSpecificaUEB() : model.getSpecificaImporti();
++//		
++//		AggiornaAnagraficaVariazioneBilancio request = model.creaRequestAggiornaAnagraficaVariazioneBilancio();
++//		
++//		AggiornaAnagraficaVariazioneBilancioResponse response = variazioneDiBilancioService.aggiornaAnagraficaVariazioneBilancio(request);
++//			
++//		if(response.hasErrori()){
++//			addErrori(response);
++//			return INPUT;
++//		}
++//		
++//		if (!Boolean.TRUE.equals(response.getIsQuadraturaCorretta())) {
++//			addMessaggio(ErroreBil.PROSECUZIONE_NONOSTANTE_QUADRATURA_NON_CORRETTA.getErrore());
++//		}
++//		if(!Boolean.TRUE.equals(response.getIsProvvedimentoPresenteDefinitivo())) {
++//			addMessaggio(ErroreBil.PROVVEDIMENTO_VARIAZIONE_NON_PRESENTE.getErrore());
++//		}
++//		
++//		if(hasMessaggi()) {
++//			setMessaggiInSessionePerActionSuccessiva();
++//		}
++//		
++//		modelSpecifica.setNumeroVariazione(response.getVariazioneImportoCapitolo().getNumero());
+ 			
+-		if(response.hasErrori()){
+-			addErrori(response);
++		return SUCCESS;
++
++	}
++
++	
++	/**
++	 * Metodo utilizzato per controllare se il servizio asincrono di salvataggio abbia o meno terminato l'esecuzione.
++	 * In caso di risposta affermativa, vengono impostati gli eventuali errori, messaggi e informazioni.
++	 * @return il risultato dell'invocazione (SUCCESS)
++	 */
++	public String ottieniResponseExecuteStep3Async(){
++		String methodName = "salvaAsyncResponse";
++		
++		model.setIsAsyncResponsePresent(Boolean.FALSE);
++		Integer idOperazioneAsincrona = model.getIdOperazioneAsincrona();
++		
++		GetDettaglioOperazioneAsincrona reqDOA = new GetDettaglioOperazioneAsincrona();
++		reqDOA.setOpAsincId(idOperazioneAsincrona);
++		reqDOA.setCodice("SERVICE_RESPONSE");
++		reqDOA.setParametriPaginazione(new ParametriPaginazione(0, Integer.MAX_VALUE));
++		reqDOA.setRichiedente(model.getRichiedente());
++		GetDettaglioOperazioneAsincronaResponse resDOA = operazioneAsincronaService.getDettaglioOperazioneAsincrona(reqDOA);
++		
++		if (resDOA.hasErrori()) {
++			log.debug(methodName, "Invocazione servizio getDettaglioOperazioneAsincrona terminata con fallimento");
++			addErrori(resDOA);
++			return INPUT;
++		}
++		
++		AggiornaAnagraficaVariazioneBilancioResponse res = null;
++		
++		if(resDOA.getElencoPaginato()!=null){
++			for(DettaglioOperazioneAsincrona doa : resDOA.getElencoPaginato()){
++				
++				res = JAXB.unmarshal(new StringReader(doa.getServiceResponse()), AggiornaAnagraficaVariazioneBilancioResponse.class);
++				break;
++
++			}
++		}
++		
++		if(res==null){
++			log.debug(methodName, "Il servizio asincrono non ha ancora risposto. Continuare il polling.");
+ 			return INPUT;
+ 		}
+ 		
+-		if (!Boolean.TRUE.equals(response.getIsQuadraturaCorretta())) {
++		log.debug(methodName, "Il servizio asincrono ha risposto.");
++		model.setIsAsyncResponsePresent(Boolean.TRUE);
++		
++		//Il servizio asincrono ha dato risposta.
++		if(res.hasErrori()){
++			addErrori(res);
++			return INPUT;
++		}
++		
++		if (!Boolean.TRUE.equals(res.getIsQuadraturaCorretta())) {
+ 			addMessaggio(ErroreBil.PROSECUZIONE_NONOSTANTE_QUADRATURA_NON_CORRETTA.getErrore());
+ 		}
+-		if(!Boolean.TRUE.equals(response.getIsProvvedimentoPresenteDefinitivo())) {
++		if(!Boolean.TRUE.equals(res.getIsProvvedimentoPresenteDefinitivo())) {
+ 			addMessaggio(ErroreBil.PROVVEDIMENTO_VARIAZIONE_NON_PRESENTE.getErrore());
+ 		}
++	
++		// Creazione della request
++		SpecificaVariazioneModel modelSpecifica = model.isGestioneUEB() ? model.getSpecificaUEB() : model.getSpecificaImporti();
++		modelSpecifica.setNumeroVariazione(res.getVariazioneImportoCapitolo().getNumero());
+ 		
+ 		if(hasMessaggi()) {
+ 			setMessaggiInSessionePerActionSuccessiva();
+ 		}
+ 		
+-		modelSpecifica.setNumeroVariazione(response.getVariazioneImportoCapitolo().getNumero());
+-			
+ 		return SUCCESS;
+-
++		
+ 	}
+ 
+ 	@Override
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java	(revision 11858)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java	(working copy)
+@@ -71,6 +71,10 @@
+ 	private Integer numeroVariazione;
+ 	private StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio;
+ 	
++	private Integer idOperazioneAsincrona;
++
++	private Boolean isAsyncResponsePresent = Boolean.FALSE;
++	
+ 	/** Costruttore vuoto di default */
+ 	public InserisciVariazioneModel() {
+ 		scelta = new SceltaVariazioneModel();
+@@ -312,6 +316,34 @@
+ 	}
+ 	
+ 	/**
++	 * @return the asyncServiceResponse
++	 */
++	public Integer getIdOperazioneAsincrona() {
++		return idOperazioneAsincrona;
++	}
++
++	/**
++	 * @param idOperazioneAsincrona the idOperazioneAsincronaToSet
++	 */
++	public void setIdOperazioneAsincrona(Integer idOperazioneAsincrona) {
++		this.idOperazioneAsincrona = idOperazioneAsincrona;
++	}
++
++	/**
++	 * @return the isAsyncResponsePresent 
++	 */
++	public Boolean getIsAsyncResponsePresent() {
++		return isAsyncResponsePresent;
++	}
++
++	/**
++	 * @param isAsyncResponsePresent
++	 */
++	public void setIsAsyncResponsePresent(Boolean isAsyncResponsePresent) {
++		this.isAsyncResponsePresent = isAsyncResponsePresent;
++	}
++	
++	/**
+ 	 * Verifica se il residuo sia modificabile
+ 	 * @return <code>true</code> se &egrave; possibile modificare il residuo tramite la variazione, <code>false</code> altrimenti
+ 	 */
+@@ -857,6 +889,5 @@
+ 		dettaglioVariazioneImportoCapitolo.setVariazioneImportoCapitolo(variazioneImportoCapitolo);
+ 		request.setDettaglioVariazioneImportoCapitolo(dettaglioVariazioneImportoCapitolo);
+ 		return request;
+-	}
+-	
++	}	
+ }
+Index: src/main/resources/struts/struts-variazioniImporti.xml
+===================================================================
+--- src/main/resources/struts/struts-variazioniImporti.xml	(revision 11858)
++++ src/main/resources/struts/struts-variazioniImporti.xml	(working copy)
+@@ -173,11 +173,22 @@
+ 			<result name="success">/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp</result>
+ 			<result name="input">/jsp/failure.jsp</result>
+ 		</action>
+-		<action name="esecuzioneStep3InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="executeStep3">
++		<!-- action name="esecuzioneStep3InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="executeStep3">
+ 			<result name="success" type="redirectAction">enterStep4InserimentoVariazioniImporti</result>
+ 			<result name="input">/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp</result>
++		</action> -->
++		
++		<action name="esecuzioneStep3InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="executeStep3">
++			<result name="success" type="asyncResponsePresentVariazione" />
++			<result name="input" type="asyncResponsePresentVariazione" />
++		</action>
++		
++		<action name="inserisciVariazioneImportiAction_ottieniResponseExecuteStep3Async" class="inserisciVariazioneImportiAction" method="ottieniResponseExecuteStep3Async">
++			<result name="success" type="asyncResponsePresentVariazione" />
++			<result name="input" type="asyncResponsePresentVariazione" />
+ 		</action>
+ 
++
+ 		<!-- STEP 4 -->
+ 		<action name="enterStep4InserimentoVariazioniImporti" class="inserisciVariazioneImportiAction" method="enterStep4">
+ 			<result name="success">/jsp/variazione/step4/variazioneStep4.jsp</result>
+Index: src/main/resources/struts/struts-variazioniImportiUEB.xml
+===================================================================
+--- src/main/resources/struts/struts-variazioniImportiUEB.xml	(revision 11858)
++++ src/main/resources/struts/struts-variazioniImportiUEB.xml	(working copy)
+@@ -4,6 +4,9 @@
+ <struts>
+     <package name="variazioniImportiUEB" extends="capitoloDefault" namespace="/">
+         
++        <result-types>
++			<result-type name="asyncResponsePresentVariazione" class="it.csi.siac.siacbilapp.frontend.ui.action.variazione.VariazioneBaseAction$AsyncResponsePresentVariazioneImportiResult" />
++		</result-types>
+      
+         <!-- Definisci Variazione - ingresso pagina definisci variazione importi -->
+         <action name="definisciVariazioneImportiUEB" class="definisceVariazioneImportiUEBAction">
+@@ -275,13 +278,23 @@
+             <result name="input">/jsp/failure.jsp</result>
+         </action>
+         
+-        <action name="esecuzioneStep3InserimentoVariazioniImportiConUEB" class="inserisciVariazioneImportiUEBAction" method="executeStep3">
++        <!-- <action name="esecuzioneStep3InserimentoVariazioniImportiConUEB" class="inserisciVariazioneImportiUEBAction" method="executeStep3">
+             <result name="success" type="redirectAction">
+                 <param name="actionName">enterStep4InserimentoVariazioniImportiUEB</param>
+                 <param name="namespace">/</param>
+             </result>
+             <result name="input">/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp</result>
+-        </action>
++        </action> -->
++        
++        <action name="esecuzioneStep3InserimentoVariazioniImportiConUEB" class="inserisciVariazioneImportiUEBAction" method="executeStep3">
++			<result name="success" type="asyncResponsePresentVariazione" />
++			<result name="input" type="asyncResponsePresentVariazione" />
++		</action>
++		
++		<action name="inserisciVariazioneImportiUEBAction_ottieniResponseExecuteStep3Async" class="inserisciVariazioneImportiUEBAction" method="ottieniResponseExecuteStep3Async">
++			<result name="success" type="asyncResponsePresentVariazione" />
++			<result name="input" type="asyncResponsePresentVariazione" />
++		</action>
+                 
+         <!-- STEP 4 -->
+         <action name="enterStep4InserimentoVariazioniImportiUEB" class="inserisciVariazioneImportiUEBAction" method="enterStep4">
+Index: src/main/webapp/js/local/variazioni/variazioni.step3.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/variazioni.step3.importi.js	(revision 11858)
++++ src/main/webapp/js/local/variazioni/variazioni.step3.importi.js	(working copy)
+@@ -10,6 +10,7 @@
+ 	varImp.annullaCapitolo = annullaCapitolo;
+ 	varImp.registraImportiNellaVariazione = registraImportiNellaVariazione;
+ 	varImp.effettuaNuovaRicerca = effettuaNuovaRicerca;
++	varImp.salvaEProsegui = salvaEProsegui;
+ 
+ 	/* ************************************************************* ***/
+ 	/* ****************  UTILITIES  ********************************** ***/
+@@ -793,6 +794,73 @@
+             varImp.leggiCapitoliNellaVariazione();
+         }).always(form.removeClass.bind(form, 'form-submitted'));
+ 	};
++	/**
++	 * Gestisce la chiamata asincrona al servizio di aggiornamento dell'anagrafica
++	 * */
++	function salvaEProsegui(){
++		var form = $('form');
++        var obj = qualify(form.serializeObject());
++        form.addClass('form-submitted');
++        $('#spinner_salvaEProseguiButton').addClass('activated');
++
++        return $.postJSON('esecuzioneStep3InserimentoVariazioniImporti.do', obj)
++        .then(function(data) {
++            var alertErrori = $('#ERRORI');
++            alertErrori.slideUp();
++            if (impostaDatiNegliAlert(data.errori,alertErrori)) {
++            	resettaSpinnerFormSubmitted();
++                return;
++            }
++            ottieniResponse(10, 10000);
++        });
++	}
++	
++	function resettaSpinnerFormSubmitted(){
++        $('form').removeClass('form-submitted');
++        $('[data-spinner-async]').removeClass('activated'); 
++    } 
++
++	
++    function ottieniResponse(tentativiRimanenti, timeout){
++    	var form = $('form');
++        var collapse = $('#collapseVariazioni').overlay('show');
++        var url = 'inserisciVariazioneImportiAction_ottieniResponseExecuteStep3Async.do';
++        return $.postJSON(url)
++        .then(function(data) {
++            var alertErrori = $('#ERRORI');
++            var form = $('form');
++
++            alertErrori.slideUp();
++            if (impostaDatiNegliAlert(data.errori,alertErrori)) {
++            	form.removeClass('form-submitted');
++            	resettaSpinnerFormSubmitted();
++                return;
++            }
++
++            if(data.isAsyncResponsePresent === undefined){
++                impostaDatiNegliAlert(['COR_ERR_0001 - Errore di sistema: impossibile ottenere la risposta asincrona.'], alertErrori);
++                resettaSpinnerFormSubmitted();
++                return;
++            }
++
++
++            if(!data.isAsyncResponsePresent){
++                if(tentativiRimanenti<=0){
++                    //se i tentativi rimanenti sono azzerati chiedo se vuoi continuare ricorsione se sì continuo, altrimenti return.
++                	$('#collapseVariazioni').overlay('hide');                	
++                    return;
++                }
++
++                setTimeout(ottieniResponse, timeout, --tentativiRimanenti, timeout);
++                return;
++
++
++            }
++//            resettaSpinnerFormSubmitted();
++
++            document.location = 'enterStep4InserimentoVariazioniImporti.do';
++        });
++    }
+ 
+ 	/* ****************************************************************** ***/
+ 	/* ****************  CALLBACK VARI DOPO CHIAMATA AL SERVIZIO  ******* ***/
+@@ -870,7 +938,8 @@
+     $("#annullaCapitoloButton").on("click", VariazioniImporti.annullaCapitolo);
+     $("#competenzaVariazione").on("blur", VariazioniImporti.impostaValoreCassaSeApplicabile).gestioneDeiDecimali();
+     $("#nuovaRicerca").on("click", VariazioniImporti.effettuaNuovaRicerca);
+-
++    $("#salvaEProseguiButton").on("click", VariazioniImporti.salvaEProsegui);
++    
+     VariazioniImporti.leggiCapitoliNellaVariazione();
+ 
+     $("form").substituteHandler("reset", function() {
+Index: src/main/webapp/js/local/variazioni/variazioni.step3.importi.ueb.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/variazioni.step3.importi.ueb.js	(revision 11858)
++++ src/main/webapp/js/local/variazioni/variazioni.step3.importi.ueb.js	(working copy)
+@@ -9,6 +9,7 @@
+ 	varImp.redirezioneNuovoUEB = redirezioneNuovoUEB;
+ 	varImp.effettuaNuovaRicerca = effettuaNuovaRicerca;
+ 	varImp.impostaValoreCassaSeApplicabile = impostaValoreCassaSeApplicabile;
++	varImp.salvaEProsegui = salvaEProsegui;
+ 		
+     /**
+      * Imposta i dati nella tabella, relativamente all'indice selezionato.
+@@ -41,25 +42,71 @@
+     }
+ 
+     /**
+-     * Callback per la chiamata AJAX nell'inserimento per una nuova variazione.
+-     */
+-//    function postChiamataAjaxInserireNellaVariazioneElimina(data, tabellaDestinazione, idModale, idAlert) {
+-//        var errori = data.errori;
+-//        var listaCapitoliDaInserireNellaVariazione = data.specificaUEB.listaUEBDaInserireNellaVariazione;
+-//        var alertErrori = (idAlert !== undefined ? $("#" + idAlert) : undefined);
+-//
+-//        // Controllo gli eventuali errori, messaggi, informazioni
+-//        if(idAlert !== undefined) {
+-//            // Nascondo gli alert
+-//            alertErrori.slideUp();
+-//            if(impostaDatiNegliAlert(errori, alertErrori)) {
+-//                return;
+-//            }
+-//        }
+-//        impostaDataTableUEBDaInserireNellaVariazione(tabellaDestinazione, listaCapitoliDaInserireNellaVariazione);
+-//        // Chiudo il modale
+-//        $("#" + idModale).modal("hide");
+-//    }
++	 * Gestisce la chiamata asincrona al servizio di aggiornamento dell'anagrafica
++	 * */
++	function salvaEProsegui(){
++		var form = $('form');
++        var obj = qualify(form.serializeObject());
++        form.addClass('form-submitted');
++        $('#spinner_salvaEProseguiButton').addClass('activated');
++
++        return $.postJSON('esecuzioneStep3InserimentoVariazioniImportiConUEB.do', obj)
++        .then(function(data) {
++            var alertErrori = $('#ERRORI');
++            alertErrori.slideUp();
++            if (impostaDatiNegliAlert(data.errori,alertErrori)) {
++            	resettaSpinnerFormSubmitted();
++                return;
++            }
++            ottieniResponse(10, 10000);
++        });
++	}
++	
++	function resettaSpinnerFormSubmitted(){
++        $('form').removeClass('form-submitted');
++        $('[data-spinner-async]').removeClass('activated'); 
++    } 
++
++	
++    function ottieniResponse(tentativiRimanenti, timeout){
++    	var form = $('form');
++        var collapse = $('#collapseVariazioni').overlay('show');
++        var url = 'inserisciVariazioneImportiUEBAction_ottieniResponseExecuteStep3Async.do';
++        return $.postJSON(url)
++        .then(function(data) {
++            var alertErrori = $('#ERRORI');
++            var form = $('form');
++
++            alertErrori.slideUp();
++            if (impostaDatiNegliAlert(data.errori,alertErrori)) {
++            	resettaSpinnerFormSubmitted();        	
++                return;
++            }
++
++            if(data.isAsyncResponsePresent === undefined){
++                impostaDatiNegliAlert(['COR_ERR_0001 - Errore di sistema: impossibile ottenere la risposta asincrona.'], alertErrori);
++                resettaSpinnerFormSubmitted();
++                return;
++            }
++
++
++            if(!data.isAsyncResponsePresent){
++                if(tentativiRimanenti<=0){
++                    //se i tentativi rimanenti sono azzerati chiedo se vuoi continuare ricorsione se sì continuo, altrimenti return.
++                	$('#collapseVariazioni').overlay('hide');                	
++                    return;
++                }
++
++                setTimeout(ottieniResponse, timeout, --tentativiRimanenti, timeout);
++                return;
++
++
++            }
++
++
++            document.location = 'enterStep4InserimentoVariazioniImportiUEB.do';
++        });
++    }
+ 
+ 	/**
+ 	 * Chiamata Ajax per ottenere la lista dei Capitoli associati alla variazione
+@@ -1488,7 +1535,8 @@
+         $("#annullaCapitoloButton").on("click", VariazioniImportiUEB.annullaCapitolo);
+         $("#redirezioneNuovaUEBButton").on("click", VariazioniImportiUEB.redirezioneNuovoUEB);
+         $("#nuovaRicerca").on("click", VariazioniImportiUEB.effettuaNuovaRicerca);
+-
++        $("#salvaEProseguiButton").on("click", VariazioniImportiUEB.salvaEProsegui);
++        
+         $("#competenzaVariazioneUEB").on("blur", VariazioniImportiUEB.impostaValoreCassaSeApplicabile);
+ 
+         VariazioniImportiUEB.leggiCapitoliNellaVariazione();
+Index: src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp	(revision 11858)
++++ src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancio.jsp	(working copy)
+@@ -201,7 +201,8 @@
+ 						<p>
+ 							<s:a cssClass="btn" action="returnToStep2InserimentoVariazioniImporti" id="pulsanteRedirezioneIndietro">indietro</s:a>
+ 							<button type="button" class="btn btn-link reset">annulla</button>
+-							<s:submit cssClass="btn btn-primary pull-right" value="salva e prosegui"/>
++							<button id="salvaEProseguiButton" type="button" class="btn btn-primary pull-right">&nbsp;salva e prosegui&nbsp;<i class="icon-spin icon-refresh spinner" id="spinner_salvaEProseguiButton" data-spinner-async></i></button>
++							<%-- <s:submit cssClass="btn btn-primary pull-right" value="salva e prosegui"/> --%>
+ 						</p>
+ 					</div>
+ 					<%-- Modale modifica stanziamenti per aggiornamento stanziamenti --%>		
+Index: src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp	(revision 11858)
++++ src/main/webapp/jsp/variazione/step3/variazioneStep3_variazioneBilancioUEB.jsp	(working copy)
+@@ -201,7 +201,7 @@
+ 							<p>
+ 								<s:a cssClass="btn" action="returnToStep2InserimentoVariazioniImporti" id="pulsanteRedirezioneIndietro">indietro</s:a>
+ 								<button type="button" class="btn btn-link reset">annulla</button>
+-								<s:submit cssClass="btn btn-primary pull-right" value="salva e prosegui"/>
++								<button id="salvaEProseguiButton" type="button" class="btn btn-primary pull-right">&nbsp;salva e prosegui&nbsp;<i class="icon-spin icon-refresh spinner" id="spinner_salvaEProseguiButton" data-spinner-async></i></button>
+ 							</p>
+ 						</div>
+ 					</div>

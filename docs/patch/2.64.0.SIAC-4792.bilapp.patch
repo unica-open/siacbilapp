@@ -1,0 +1,98 @@
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRichiestaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRichiestaEconomaleAction.java	(revision 14698)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/BaseRichiestaEconomaleAction.java	(working copy)
+@@ -332,13 +332,14 @@
+ 	protected void impostazioneDatiSoggetto(RichiestaEconomale richiestaEconomale, Soggetto soggetto) {
+ 		richiestaEconomale.setSoggetto(soggetto);
+ 		
+-		// Spiattello i dati sulla richiesta economale
+-		richiestaEconomale.setMatricola(soggetto.getMatricola());
+-		richiestaEconomale.setNome(soggetto.getNome());
+-		richiestaEconomale.setCognome(soggetto.getCognome());
+-		richiestaEconomale.setCodiceFiscale(soggetto.getCodiceFiscale());
+-	}
+-	
++		// Spiattello i dati sulla richiesta economale
++		richiestaEconomale.setMatricola(soggetto.getMatricola());
++		richiestaEconomale.setNome(soggetto.getNome());
++		// SIAC-4792: se il soggetto non ha cognome (persona giuridica) prendo la denominazione
++		richiestaEconomale.setCognome(StringUtils.isNotBlank(soggetto.getCognome()) ? soggetto.getCognome() : soggetto.getDenominazione());
++		richiestaEconomale.setCodiceFiscale(soggetto.getCodiceFiscale());
++	}
++	
+ 	/**
+ 	 * SIAC-4584
+ 	 * <br/>
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleAction.java	(revision 14698)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamento/BaseInserisciAggiornaPagamentoCassaEconomaleAction.java	(working copy)
+@@ -24,12 +24,13 @@
+ import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
+ import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+ 
+-import java.math.BigDecimal;
+-import java.util.List;
+-
+-import org.springframework.beans.factory.annotation.Autowired;
+-
+-/**
++import java.math.BigDecimal;
++import java.util.List;
++
++import org.apache.commons.lang3.StringUtils;
++import org.springframework.beans.factory.annotation.Autowired;
++
++/**
+  * Classe base di action per l'inserimento del pagamento.
+  * 
+  * @author Paggio Simona
+@@ -191,13 +192,14 @@
+ 		richiestaEconomale.setSoggetto(soggetto);
+ 		
+ 		// Spiattello i dati sulla richiesta economale
+-		//richiestaEconomale.setMatricola(soggetto.getMatricola());
+-		richiestaEconomale.setCodiceBeneficiario(soggetto.getCodiceSoggetto());
+-		richiestaEconomale.setNome(soggetto.getNome());
+-		richiestaEconomale.setCognome(soggetto.getCognome());
+-		richiestaEconomale.setCodiceFiscale(soggetto.getCodiceFiscale());
+-	}
+-	
++		//richiestaEconomale.setMatricola(soggetto.getMatricola());
++		richiestaEconomale.setCodiceBeneficiario(soggetto.getCodiceSoggetto());
++		richiestaEconomale.setNome(soggetto.getNome());
++		// SIAC-4792: se il soggetto non ha cognome (persona giuridica) prendo la denominazione
++		richiestaEconomale.setCognome(StringUtils.isNotBlank(soggetto.getCognome()) ? soggetto.getCognome() : soggetto.getDenominazione());
++		richiestaEconomale.setCodiceFiscale(soggetto.getCodiceFiscale());
++	}
++	
+ 	@Override
+ 	protected boolean isValidTipoRichiestaEconomale(RichiestaEconomale richiestaEconomale) {
+ 		return richiestaEconomale != null
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamentofatture/BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamentofatture/BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction.java	(revision 14698)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/pagamentofatture/BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction.java	(working copy)
+@@ -292,13 +292,14 @@
+ 		richiestaEconomale.setSoggetto(soggetto);
+ 		
+ 		// Spiattello i dati sulla richiesta economale
+-		//richiestaEconomale.setMatricola(soggetto.getMatricola());
+-		richiestaEconomale.setCodiceBeneficiario(soggetto.getCodiceSoggetto());
+-		richiestaEconomale.setNome(soggetto.getNome());
+-		richiestaEconomale.setCognome(soggetto.getCognome());
+-		richiestaEconomale.setCodiceFiscale(soggetto.getCodiceFiscale());
+-	}
+-	
++		//richiestaEconomale.setMatricola(soggetto.getMatricola());
++		richiestaEconomale.setCodiceBeneficiario(soggetto.getCodiceSoggetto());
++		richiestaEconomale.setNome(soggetto.getNome());
++		// SIAC-4792: se il soggetto non ha cognome (persona giuridica) prendo la denominazione
++		richiestaEconomale.setCognome(StringUtils.isNotBlank(soggetto.getCognome()) ? soggetto.getCognome() : soggetto.getDenominazione());
++		richiestaEconomale.setCodiceFiscale(soggetto.getCodiceFiscale());
++	}
++	
+ 	/**
+ 	 * Ricerca delle quote per il documento di spesa.
+ 	 * 

@@ -1,0 +1,416 @@
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/registrazionemovfin/risultatiricerca/ElementoRegistrazioneMovFin.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/registrazionemovfin/risultatiricerca/ElementoRegistrazioneMovFin.java	(revision 10833)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/util/wrapper/registrazionemovfin/risultatiricerca/ElementoRegistrazioneMovFin.java	(working copy)
+@@ -185,21 +185,26 @@
+ 	/**
+ 	 * @return the stringaConto
+ 	 */
+-	public String getStringaConto() {
+-		return registrazioneMovFin != null && registrazioneMovFin.getConto() != null ? registrazioneMovFin.getConto().getCodice() : "";
++	public String getStringaContoAggiornato() {
++		
++		if(isContoInizialeUgualeContoAggiornato()){
++			return "";
++		}
++		
++		return registrazioneMovFin != null && registrazioneMovFin.getElementoPianoDeiContiAggiornato()  != null ? registrazioneMovFin.getElementoPianoDeiContiAggiornato() .getCodice() : "";
+ 	}
+ 	
+ 	/**
+ 	 * @return the stringaElementoPianoDeiConti
+ 	 */
+-	public String getStringaElementoPianoDeiConti() {
+-		return registrazioneMovFin != null && registrazioneMovFin.getElementoPianoDeiContiAggiornato() != null ? registrazioneMovFin.getElementoPianoDeiContiAggiornato().getCodice() : "";
++	public String getStringaContoIniziale() {
++		return registrazioneMovFin != null && registrazioneMovFin.getElementoPianoDeiContiIniziale() != null ? registrazioneMovFin.getElementoPianoDeiContiIniziale().getCodice() : "";
+ 	}
+ 	/**
+ 	 * @return the uidPianoDeicontiFIN
+ 	 */
+-	public Integer getUidPianoDeiContiFIN(){
+-		return registrazioneMovFin != null && registrazioneMovFin.getElementoPianoDeiContiAggiornato() != null ? registrazioneMovFin.getElementoPianoDeiContiAggiornato().getUid() : Integer.valueOf(0);
++	public int getUidPianoDeiContiFIN(){
++		return registrazioneMovFin != null && registrazioneMovFin.getElementoPianoDeiContiAggiornato() != null ? registrazioneMovFin.getElementoPianoDeiContiAggiornato().getUid() : 0;
+ 	}
+ 	
+ 	/**
+@@ -269,7 +274,7 @@
+ 	/**
+ 	 * @return the tipoElenco
+ 	 */
+-	public String  getTipoElenco(){
++	public String getTipoElenco(){
+ 		return registrazioneMovFin != null && registrazioneMovFin.getEvento() != null && registrazioneMovFin.getEvento().getTipoEvento()!= null && registrazioneMovFin.getEvento().getTipoEvento().isTipoSpesa() ? "Spesa" : "Entrata";
+ 	}
+ 	
+@@ -283,4 +288,10 @@
+ //		//Arrays.asList("NCD-INS","NCD-AGG", "NDI-INS", "NDI-AGG", "NCP-INS", "NCP-AGG", "NCE-INS", "NCE-AGG", "NCV-INS", "NCV-INS", "NEP-INS");
+ //		return evento.getCodice().startsWith("N");
+ 	}
++	
++	private boolean isContoInizialeUgualeContoAggiornato(){
++		//conto iniziale dovrebbe essere sempre !=null
++		return registrazioneMovFin !=null && registrazioneMovFin.getElementoPianoDeiContiAggiornato() !=null 
++				&&  registrazioneMovFin.getElementoPianoDeiContiIniziale().getUid() == registrazioneMovFin.getElementoPianoDeiContiAggiornato().getUid();
++	}
+ }
+Index: src/main/webapp/js/local/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMovFin.js
+===================================================================
+--- src/main/webapp/js/local/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMovFin.js	(revision 10833)
++++ src/main/webapp/js/local/contabilitaGenerale/registrazione/risultatiRicercaRegistrazioneMovFin.js	(working copy)
+@@ -1,7 +1,7 @@
+ !function($, global) {
+ 
+-	var dataTable;
+-	
++    var dataTable;
++    
+     /**
+      * Caricamento via Ajax della tabella delle richieste e visualizzazione.
+      */
+@@ -46,8 +46,8 @@
+                 {aTargets: [0], mData: "stringaMovimento"},
+                 {aTargets: [1], mData: "stringaStatoOperativoRegistrazioneMovFin"},
+                 {aTargets: [2], mData: "stringaDataRegistrazione"},
+-                {aTargets: [3], mData: "stringaElementoPianoDeiConti"},
+-                {aTargets: [4], mData: "stringaConto"},
++                {aTargets: [3], mData: "stringaContoIniziale"},
++                {aTargets: [4], mData: "stringaContoAggiornato"},
+                 {aTargets: [5], mData: "azioni", fnCreatedCell: function (nTd, sData, oData) {
+                     $(nTd).find("a[href='#msgAnnulla']")
+                         .substituteHandler("click", function() {
+@@ -55,8 +55,8 @@
+                         });
+                     $(nTd).find("a[href='#aggiornaPdC']")
+                     .substituteHandler("click", function() {
+-                    	$("form").overlay('show');
+-                    	aggiornaPdC(oData.uid, oData.stringaElementoPianoDeiConti, oData.uidPianoDeiContiFIN, oData.tipoElenco);
++                        $("form").overlay('show');
++                        aggiornaPdC(oData.uid, oData.stringaContoIniziale, oData.uidPianoDeiContiFIN, oData.tipoElenco);
+                     });
+                     $('.dropdown-toggle', nTd).dropdown();
+                 }}
+@@ -139,8 +139,7 @@
+ 
+         // Se il livello non e' almeno pari a 4, segnalo l'errore
+         if (livello <= 4) {
+-//          bootboxAlert("Selezionare almeno il quinto livello del Piano dei Conti. Livello selezionato: " + livello);
+-        	impostaDatiNegliAlert(["Selezionare almeno il quinto livello del Piano dei Conti. Livello selezionato: " + livello], $("#ERRORI_modaleAggiornaPdC"), false);
++            impostaDatiNegliAlert(["Selezionare almeno il quinto livello del Piano dei Conti. Livello selezionato: " + livello], $("#ERRORI_modaleAggiornaPdC"), false);
+             return;
+         }
+         return livello > 4;
+@@ -197,52 +196,51 @@
+      * effettua la chiamata ajax ed effettua l'aggiornamento dei piani dei conti 
+      */
+     function aggiornaPdC(uidRegistrazione, stringaPdC, uidPianoDeiConti, tipoEvento){
+-    	var $modale = $('#aggiornaPdC');
+-    	$('#ERRORI_modaleAggiornaPdC').slideUp();
+-    	$('#campiEntrata').hide();
+-    	$('#campiSpesa').hide();
+-    	$('#campi' + tipoEvento).slideDown();
+-    	$("#HIDDEN_ElementoPianoDeiContiUidFIN").val(uidPianoDeiConti);
++        $('#ERRORI_modaleAggiornaPdC').slideUp();
++        $('#campiEntrata').hide();
++        $('#campiSpesa').hide();
++        $('#campi' + tipoEvento).slideDown();
++        $("#HIDDEN_ElementoPianoDeiContiUidFIN").val(uidPianoDeiConti);
+ 
+-    	$("#HIDDEN_RegistrazioneUidFin").val(uidRegistrazione);
+-    	
+-       	if(tipoEvento ==="Spesa"){
+-    		caricaClassificatoriSpesa(uidPianoDeiConti);
+-    	}else{
+-    		caricaClassificatoriEntrata(uidPianoDeiConti);
+-    	}
+-       	
+-       	var spinner=$('#spinner');
+-    	//caricaPianoDeicontiFIN(tipoEvento);
+-    	$('#confermaModaleAggiornaPdC').substituteHandler('click', function(){
+-    		uidPianoDeiConti = $("#HIDDEN_ElementoPianoDeiContiUidFIN").val();
++        $("#HIDDEN_RegistrazioneUidFin").val(uidRegistrazione);
++        
++        if(tipoEvento === "Spesa") {
++            caricaClassificatoriSpesa(uidPianoDeiConti);
++        }else{
++            caricaClassificatoriEntrata(uidPianoDeiConti);
++        }
++        
++        var spinner = $('#spinner');
++        
++        $('#confermaModaleAggiornaPdC').substituteHandler('click', function(){
++            uidPianoDeiConti = $("#HIDDEN_ElementoPianoDeiContiUidFIN").val();
+             if(!uidPianoDeiConti) {
+                 impostaDatiNegliAlert(["Necessario selezionare un Piano dei Conti "], $("#ERRORI_modaleAggiornaPdC"));
+                 return;
+             }
+-    		var obj={"uidPianoDeiContiRegMovFinAggiornato": uidPianoDeiConti, "uidRegistrazioneDaAggiornare": uidRegistrazione};
+-    	    spinner.addClass("activated");
+-    		
+-    		$.postJSON("risultatiRicercaRegistrazioneMovFinFINAction_aggiornaPianoDeiContiRegistrazione.do",obj)
+-    		.then(function(data){
+-    			var errori = data.errori;
+-    			var alertErrori = $("ERRORI_modaleAggiornaPdC");
+-    			if(impostaDatiNegliAlert(errori, alertErrori)){
+-    				return;
+-    			}
+-    			return ricaricaTabella();
+-    		})
+-    		.then(dataTable.fnDraw.bind(dataTable))
+-    		.then(function() {
+-				$('#aggiornaPdC').modal('hide');
+-    		})
+-    		.always(spinner.removeClass.bind(spinner,"activated"));
+-    		
+-    	});
+-    	
+-    	$('#chiudiModaleAggiornaPdc').substituteHandler('click', function(){
+-				$('#aggiornaPdC').modal('hide');
+-    	});
++            var obj={"uidPianoDeiContiRegMovFinAggiornato": uidPianoDeiConti, "uidRegistrazioneDaAggiornare": uidRegistrazione};
++            spinner.addClass("activated");
++            
++            $.postJSON("risultatiRicercaRegistrazioneMovFinFINAction_aggiornaPianoDeiContiRegistrazione.do",obj)
++            .then(function(data){
++                var errori = data.errori;
++                var alertErrori = $("ERRORI_modaleAggiornaPdC");
++                if(impostaDatiNegliAlert(errori, alertErrori)){
++                    return;
++                }
++                return ricaricaTabella();
++            })
++            .then(dataTable.fnDraw.bind(dataTable))
++            .then(function() {
++                $('#aggiornaPdC').modal('hide');
++            })
++            .always(spinner.removeClass.bind(spinner,"activated"));
++            
++        });
++        
++        $('#chiudiModaleAggiornaPdc').substituteHandler('click', function(){
++            $('#aggiornaPdC').modal('hide');
++        });
+     }
+ 
+     /**
+@@ -287,12 +285,11 @@
+     * @returns (jQuery.Deferred) l'oggetto deferred corrispondente alla chiamata AJAX
+     **/
+    function caricaPianoDeiConti(obj) {
+-	   var id = obj.val();
++       var id = obj.val();
+        /* Settings dello zTree */
+        var zTreeSettings = $.extend(true, {}, zTreeSettingsBase, {callback: {beforeCheck: controllaLivelloPianoDeiConti, onCheck: impostaValueElementoPianoDeiConti}});
+        /* Spinner */
+        var spinner = $('#spinner');
+-       var self = this;
+        var elementoPianoDeiContiGiaSelezionato = $("#HIDDEN_ElementoPianoDeiContiUidFIN").val();
+        /* Attiva lo spinner */
+        spinner.addClass("activated");
+@@ -308,7 +305,6 @@
+ 
+                var albero;
+                var node;
+-               var isCodiceTitoloImpostato;
+                var isListaElementoPianoDeiContiNonVuota = listaElementoPianoDeiConti && listaElementoPianoDeiConti.length > 0;
+ 
+                if (!selectVuota($('#titoloEntrataFIN').val())) {
+@@ -335,7 +331,7 @@
+ 
+                }
+               
+-   	    		$('#aggiornaPdC').modal('show');
++                   $('#aggiornaPdC').modal('show');
+ 
+            }
+        ).always(
+@@ -367,26 +363,24 @@
+     * preimposta le select con i campi ottenuti 
+     */
+    function caricaClassificatoriSpesa(uidPianoDeiConti){
+-    	var obj = {};
+-    	var $selectMacroaggregato = $('#macroaggregato');
+-    	obj.uidPianoDeicontiRegMovFin = uidPianoDeiConti;
+-    	var objToSend=qualify(obj);
+-    	$.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriSpesaByContoFin.do', {"uidPianoDeiContiRegMovFin" : uidPianoDeiConti}, function(data){
+-    		var alertErrori = $('#ERRORI_modaleAggiornaPdC');
+-    		var errori = data.errori;
+-    		var $selectTitolo = $('#titoloSpesa');
+-    		var $selectMacroaggregato = $('#macroaggregato');
+-    		if(impostaDatiNegliAlert(errori, alertErrori)){
+-    			return;
+-    		}   
++	   	var obj = {};
++        obj.uidPianoDeicontiRegMovFin = uidPianoDeiConti;
++        $.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriSpesaByContoFin.do', {"uidPianoDeiContiRegMovFin" : uidPianoDeiConti}, function(data){
++            var alertErrori = $('#ERRORI_modaleAggiornaPdC');
++            var errori = data.errori;
++            var $selectTitolo = $('#titoloSpesa');
++            var $selectMacroaggregato = $('#macroaggregato');
++            if(impostaDatiNegliAlert(errori, alertErrori)){
++                return;
++            }
+ 
+-    		$selectTitolo.val(data.uidTitoloSpesaConto);
+-    		$selectTitolo.substituteHandler('change',caricaMacroaggregato);
+-    		caricaSelectCodifiche($selectMacroaggregato, data.listaMacroaggregato);
+-    		$selectMacroaggregato.val(data.uidMacroaggregatoConto);
+-    		$selectMacroaggregato.substituteHandler("change", caricaPianoDeiContiSpesa).change();
+-    		
+-    	});
++            $selectTitolo.val(data.uidTitoloSpesaConto);
++            $selectTitolo.substituteHandler('change',caricaMacroaggregato);
++            caricaSelectCodifiche($selectMacroaggregato, data.listaMacroaggregato);
++            $selectMacroaggregato.val(data.uidMacroaggregatoConto);
++            $selectMacroaggregato.substituteHandler("change", caricaPianoDeiContiSpesa).change();
++            
++        });
+     }
+     
+    /**
+@@ -394,7 +388,7 @@
+     * richiama il carica piano dei conti caso spesa 
+     */
+     function caricaPianoDeiContiSpesa(){
+-    	caricaPianoDeiConti($('#macroaggregato'));
++        caricaPianoDeiConti($('#macroaggregato'));
+     }
+     
+     /**
+@@ -402,7 +396,7 @@
+      * richiama il carica piano dei conti caso entrata 
+      */
+     function caricaPianoDeiContiEntrata(){
+-    	caricaPianoDeiConti($('#categoriaTipologiaTitoloFIN'));
++        caricaPianoDeiConti($('#categoriaTipologiaTitoloFIN'));
+     }
+     
+     
+@@ -412,29 +406,29 @@
+      * preimposta le select con i campi ottenuti 
+      */
+     function caricaClassificatoriEntrata(uidPianoDeiConti){
+-    	var obj = {};
+-    	obj.uidPianoDeiContiRegMovFin = uidPianoDeiConti;
+-    	$.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriEntrataByContoFin.do', qualify(obj), function(data){
+-    		var alertErrori = $('#ERRORI_modaleAggiornaPdC');
+-    		var errori = data.errori;
+-    		var $selectTitolo = $('#titoloEntrataFIN');
+-    		var $selectTipologia = $('#tipologiaTitoloFIN');
+-    		var $selectCategoria = $('#categoriaTipologiaTitoloFIN');
+-    		
+-    		if(impostaDatiNegliAlert(errori, alertErrori)){
+-    			return;
+-    		}
+-    		
+-    		$selectTitolo.val(data.uidTitoloEntrataConto);
+-    		$selectTitolo.substituteHandler('change',gestisciTipologia);
+-    		caricaSelectCodifiche($selectTipologia , data.listaTitoloTipologia);
+-    		$selectTipologia.val(data.uidTipologiaTitoloConto);
+-    		$selectTipologia.substituteHandler('change',gestisciCategoria);
+-    		caricaSelectCodifiche($selectCategoria , data.listaTipologiaCategoria);
+-    		$selectCategoria.val(data.uidCategoriaConto);
+-    		$selectCategoria.substituteHandler('change', caricaPianoDeiContiEntrata).change();
++        var obj = {};
++        obj.uidPianoDeiContiRegMovFin = uidPianoDeiConti;
++        $.postJSON('risultatiRicercaRegistrazioneMovFinFINAction_leggiClassificatoriEntrataByContoFin.do', qualify(obj), function(data){
++            var alertErrori = $('#ERRORI_modaleAggiornaPdC');
++            var errori = data.errori;
++            var $selectTitolo = $('#titoloEntrataFIN');
++            var $selectTipologia = $('#tipologiaTitoloFIN');
++            var $selectCategoria = $('#categoriaTipologiaTitoloFIN');
++            
++            if(impostaDatiNegliAlert(errori, alertErrori)){
++                return;
++            }
++            
++            $selectTitolo.val(data.uidTitoloEntrataConto);
++            $selectTitolo.substituteHandler('change',gestisciTipologia);
++            caricaSelectCodifiche($selectTipologia , data.listaTitoloTipologia);
++            $selectTipologia.val(data.uidTipologiaTitoloConto);
++            $selectTipologia.substituteHandler('change',gestisciCategoria);
++            caricaSelectCodifiche($selectCategoria , data.listaTipologiaCategoria);
++            $selectCategoria.val(data.uidCategoriaConto);
++            $selectCategoria.substituteHandler('change', caricaPianoDeiContiEntrata).change();
+ 
+-    	});
++        });
+     }
+     
+     /**
+@@ -481,7 +475,7 @@
+                 );
+             }).always(function() {
+             // Chiudo l'overlay
+-            	$("#macroaggregato").overlay("hide");       
++                $("#macroaggregato").overlay("hide");       
+             });
+     };
+     
+@@ -489,10 +483,10 @@
+      * pulisce e sbianca i campi del Piano dei conti (comprende anche i campi hidden )
+      */
+     function pulisciPDC(){
+-    	//sbianco i campi
++        //sbianco i campi
+         svuotaPDC();
+         //svuoto la select
+-        deseleziona('treePDCFIN')
++        deseleziona('treePDCFIN');
+         //la disabilito
+         $("#bottonePdCFIN").attr("disabled", true).prop('disabled', true);
+     }
+@@ -616,7 +610,7 @@
+                }
+ 
+                opts = listaCategoriaTipologiaTitolo.reduce(function(acc, el) {
+-            	   return acc + '<option value="' + el.uid + '">' + el.codice + ' - ' + el.descrizione + '</option>';
++                   return acc + '<option value="' + el.uid + '">' + el.codice + ' - ' + el.descrizione + '</option>';
+                }, '<option></option>');
+                options.html(opts);
+            }
+@@ -627,18 +621,18 @@
+      * aggiorna la tabella di ricerca dopo avere effettuato l'aggiornamento dei piani dei conti
+      */
+     function ricaricaTabella(){
+-    	if(!dataTable) {
+-    		return $.Deferred().resolve().promise();
+-    	}
+-    	var settings = dataTable.fnSettings();
+-    	var obj = {
+-    		forceRefresh: true,
+-    		iTotalRecords: settings._iRecordsTotal,
+-    		iTotalDisplayRecords: settings._iRecordsDisplay,
+-    		iDisplayStart: settings._iDisplayStart,
+-    		iDisplayLength: settings._iDisplayLength
+-    	};
+-    	return $.postJSON("risultatiRicercaRegistrazioneMovFinFINAjax.do", obj);
++        if(!dataTable) {
++            return $.Deferred().resolve().promise();
++        }
++        var settings = dataTable.fnSettings();
++        var obj = {
++            forceRefresh: true,
++            iTotalRecords: settings._iRecordsTotal,
++            iTotalDisplayRecords: settings._iRecordsDisplay,
++            iDisplayStart: settings._iDisplayStart,
++            iDisplayLength: settings._iDisplayLength
++        };
++        return $.postJSON("risultatiRicercaRegistrazioneMovFinFINAjax.do", obj);
+    }
+ 
+     function clickOnAnnulla() {
+Index: src/main/webapp/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp	(revision 10833)
++++ src/main/webapp/jsp/contabilitaGenerale/registrazione/risultatiRicercaRegistrazione.jsp	(working copy)
+@@ -30,7 +30,7 @@
+ 									<th scope="col">Stato richiesta</th>
+ 									<th scope="col">Data registrazione</th>
+ 									<th scope="col">Conto finanziario</th>
+-									<th scope="col">Conto economico patrimoniale</th>
++									<th scope="col">Conto finanziario aggiornato</th>
+ 									<th scope="col" class="tab_Right">&nbsp; </th>
+ 								</tr>
+ 							</thead>

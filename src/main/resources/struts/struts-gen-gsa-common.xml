@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gengsaCommon" extends="capitoloDefault" namespace="/">
+		<!-- Results -->
+		<result-types>
+			<result-type name="contoPrimaNotaIntegrata" class="it.csi.siac.siacbasegengsaapp.frontend.ui.util.result.ContoPrimaNotaIntegrataResult" />
+			<result-type name="ricercaCausaleEPByEvento" class="it.csi.siac.siacbasegengsaapp.frontend.ui.action.causali.RicercaCausaleEPByEventoAction$RicercaCausaleEPByEventoResult" />
+		</result-types>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- Actions -->
+		<action name="ricercaTipoEventoByEntrataSpesa" class="ricercaTipoEventoByEntrataSpesaAction">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="json">
+				<param name="includeProperties">errori.*, listaTipoEvento.*</param>
+			</result>
+		</action>
+		<action name="dettaglioMovimentiPrimaNotaIntegrataAction_caricaMovimenti" class="dettaglioMovimentiPrimaNotaIntegrataAction" method="caricaMovimenti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaMovimentoDettaglio.*, totaleDare, totaleAvere</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="ricercaEventoByTipoEvento" class="ricercaEventoByTipoEventoAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, listaEvento.*</param>
+			</result>
+		</action>
+		
+		<action name="ricercaCausaleEPByEvento" class="ricercaCausaleEPByEventoAction">
+			<result name="success" type="ricercaCausaleEPByEvento" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="ricercaCausaleEPByEvento_ricercaMinima" class="ricercaCausaleEPByEventoAction" method="ricercaMinima">
+			<result name="success" type="ricercaCausaleEPByEvento" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="ricercaCausaleEPByEvento_ricercaModulare" class="ricercaCausaleEPByEventoAction" method="ricercaModulare">
+			<result name="success" type="ricercaCausaleEPByEvento" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<!-- compilazione guidata  ricerca primaNota -->
+		<action name="ricercaPrimeNote_effettuaRicercaModale" class="ricercaPrimeNoteAction" method = "effettuaRicercaPrimeNote">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*, 
+					listaPrimeNote.*
+				</param>
+			</result>
+		</action>
+		
+		<!--  Ratei e Risconti -->
+		<action name="gestioneRateiERiscontiPrimaNotaIntegrata_inserisciRateo" class="gestioneRateiERiscontiPrimaNotaIntegrataAction" method="inserisciRateo">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					messaggi.*,
+					rateo.*,
+				</param>
+			</result>
+		</action>
+		
+		<action name="gestioneRateiERiscontiPrimaNotaIntegrata_aggiornaRateo" class="gestioneRateiERiscontiPrimaNotaIntegrataAction" method="aggiornaRateo">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					messaggi.*,
+					rateo.*,
+				</param>
+			</result>
+		</action>
+		
+		<action name="gestioneRateiERiscontiPrimaNotaIntegrata_inserisciRisconto" class="gestioneRateiERiscontiPrimaNotaIntegrataAction" method="inserisciRisconto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					messaggi.*,
+					riscontiGiaInseriti.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="gestioneRateiERiscontiPrimaNotaIntegrata_impostaRiscontiInseriti" class="gestioneRateiERiscontiPrimaNotaIntegrataAction" method="impostaRiscontiInseriti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					riscontiGiaInseriti.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="gestioneRateiERiscontiPrimaNotaIntegrata_aggiornaRisconto" class="gestioneRateiERiscontiPrimaNotaIntegrataAction" method="aggiornaRisconto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					messaggi.*,
+					riscontiGiaInseriti.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="gestioneRateiERiscontiPrimaNotaIntegrata_controlloNotaCredito" class="gestioneRateiERiscontiPrimaNotaIntegrataAction" method="controlloNotaCredito">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					messaggi.*,
+					esisteNCDCollegataADocumento.*,
+				</param>
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimeNoteAjax" class="risultatiRicercaPrimeNoteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action> 
+	</package>
+</struts>

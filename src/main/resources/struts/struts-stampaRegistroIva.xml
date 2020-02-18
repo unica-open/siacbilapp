@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <package name="stampaRegistroIva" extends="capitoloDefault" namespace="/">
+    
+        <action name="stampaRegistroIva" class="stampaRegistroIvaAction">
+            <result name="success">/jsp/attivitaIva/stampe/stampaRegistroIva.jsp</result>
+        </action>
+        <action name="effettuaStampaRegistroIva" class="stampaRegistroIvaAction" method="effettuaStampa">
+            <result name="success">/jsp/attivitaIva/stampe/successoStampa.jsp</result>
+            <result name="input">/jsp/attivitaIva/stampe/stampaRegistroIva.jsp</result>
+        </action>
+        <action name="stampaRegistroIva_ottieniTipoChiusuraEPeriodoEIvaACreditoDaGruppo" class="stampaRegistroIvaAction"
+                method="ottieniTipoChiusuraEPeriodoEIvaACreditoDaGruppo">
+            <result name="success" type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    ivaACredito,
+                    tipoChiusura,
+                    listaPeriodo.*
+                </param>
+            </result>
+        </action>
+        <action name="stampaRegistroIva_effettuaStampaMultipla" class="stampaRegistroIvaAction" method="effettuaStampaMultipla">
+            <result name="success" type="customMessagesJSON"/>
+            <result name="input" type="customMessagesJSON"/>
+        </action>  
+        <action name="stampaRegistroIva_mostraPaginaSuccesso" class="stampaRegistroIvaAction" method="mostraPaginaSuccesso">
+            <result name="success">/jsp/attivitaIva/stampe/successoStampa.jsp</result>
+        </action>
+        
+        <action name="stampaLiquidazioneIva" class="stampaLiquidazioneIvaAction">
+            <result name="success">/jsp/attivitaIva/stampe/stampaLiquidazioneIva.jsp</result>
+        </action>
+        <action name="effettuaStampaLiquidazioneIva" class="stampaLiquidazioneIvaAction" method="effettuaStampa">
+            <result name="success">/jsp/attivitaIva/stampe/successoStampa.jsp</result>
+            <result name="input">/jsp/attivitaIva/stampe/stampaLiquidazioneIva.jsp</result>
+        </action>
+        <action name="stampaLiquidazioneIva_ottieniTipoChiusuraEPeriodoEIvaACreditoDaGruppo" class="stampaLiquidazioneIvaAction"
+                method="ottieniTipoChiusuraEPeriodoEIvaACreditoDaGruppo">
+            <result name="success" type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">
+                    ivaACredito,
+                    tipoChiusura,
+                    listaPeriodo.*
+                </param>
+            </result>
+        </action>
+        
+        <action name="stampaRiepilogoAnnualeIva" class="stampaRiepilogoAnnualeIvaAction">
+            <result name="success">/jsp/attivitaIva/stampe/stampaRiepilogoAnnualeIva.jsp</result>
+        </action>
+        <action name="effettuaStampaRiepilogoAnnualeIva" class="stampaRiepilogoAnnualeIvaAction" method="effettuaStampa">
+            <result name="success">/jsp/attivitaIva/stampe/successoStampa.jsp</result>
+            <result name="input">/jsp/attivitaIva/stampe/stampaRiepilogoAnnualeIva.jsp</result>
+        </action>
+        
+        <action name="ricercaStampaIva" class="ricercaStampaIvaAction">
+            <result name="success">/jsp/attivitaIva/stampe/ricercaStampaIva.jsp</result>
+        </action>
+        <action name="effettuaRicercaStampaIva" class="ricercaStampaIvaAction" method="ricerca">
+            <result name="success" type="redirectAction">risultatiRicercaStampaIva</result>
+            <result name="input">/jsp/attivitaIva/stampe/ricercaStampaIva.jsp</result>
+        </action>
+        <action name="risultatiRicercaStampaIva" class="risultatiRicercaStampaIvaAction">
+            <result name="success">/jsp/attivitaIva/stampe/risultatiRicercaStampaIva.jsp</result>
+        </action>
+        <action name="risultatiRicercaStampaIva_download" class="risultatiRicercaStampaIvaAction" method="download">
+            <result name="success" type="stream">
+                <param name="contentType">${contentType}</param>
+                <param name="contentLength">${contentLength}</param>
+                <param name="inputName">inputStream</param>
+                <param name="contentDisposition">attachment;filename="${fileName}"</param>
+                <param name="bufferSize">1024</param>
+            </result>
+            <result name="input">/jsp/attivitaIva/stampe/risultatiRicercaStampaIva.jsp</result>
+        </action>
+        <action name="risultatiRicercaStampaIvaAjax" class="risultatiRicercaStampaIvaAjaxAction">
+            <result name="success" type="dataTable">
+                <param name="excludeProperties">aaData\[\d+]\.stampaIva</param>
+            </result>
+        </action>
+
+    </package>
+</struts>

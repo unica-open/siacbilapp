@@ -1,0 +1,1211 @@
+Index: Indenta.xml
+===================================================================
+Index: src/main/webapp/css/common.css
+===================================================================
+--- src/main/webapp/css/common.css	(revision 12618)
++++ src/main/webapp/css/common.css	(working copy)
+@@ -10,6 +10,10 @@
+     clear: both;
+ }
+ 
++.dataTable-scroll-x{
++	overflow-x:auto;
++}
++
+ .table-accordion {
+     width: 100%;
+ }
+Index: src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js
+===================================================================
+--- src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js	(revision 12618)
++++ src/main/webapp/js/local/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.js	(working copy)
+@@ -1,45 +1,75 @@
+ ;(function($, global) {
+     "use strict";
+-    
++    // VARIABILI GENERICHE UTILIZZATE NELLO SCOPE
+     var capitoliModaleSelezionati = {};
+     var capitoliInTemp = {};
+     var accantonamentiSelezionati = {};
+     var countAccantonamentiSelezionati = 0;
+-    
+-    function apriModaleCapitoloDubbiaEsigibilita() {
+-        $("#modaleGuidaCapitolo").modal("show");
+-    }
+-    
+     var baseOptionsDataTable = {
+-		bPaginate : true,
+-        bLengthChange : false,
+-        iDisplayLength : 5,
+-        bSort : false,
+-        bInfo : true,
+-        bAutoWidth : true,
+-        bFilter : false,
+-        bProcessing : true,           
+-        bDestroy : true,
+-        oLanguage : {
+-            sInfo : "_START_ - _END_ di _MAX_ risultati",
+-            sInfoEmpty : "0 risultati",
+-            sProcessing : "Attendere prego...",
+-            sZeroRecords : "Nessun elemento disponibile",
+-            oPaginate : {
+-                sFirst : "inizio",
+-                sLast : "fine",
+-                sNext : "succ.",
+-                sPrevious : "prec.",
+-                sEmptyTable : "Nessun dato disponibile"
++    		bPaginate : true,
++            bLengthChange : false,
++            iDisplayLength : 5,
++            bSort : false,
++            bInfo : true,
++            bAutoWidth : true,
++            bFilter : false,
++            bProcessing : true,
++            bDestroy : true,
++            oLanguage : {
++                sInfo : "_START_ - _END_ di _MAX_ risultati",
++                sInfoEmpty : "0 risultati",
++                sProcessing : "Attendere prego...",
++                sZeroRecords : "Nessun elemento disponibile",
++                oPaginate : {
++                    sFirst : "inizio",
++                    sLast : "fine",
++                    sNext : "succ.",
++                    sPrevious : "prec.",
++                    sEmptyTable : "Nessun dato disponibile"
++                }
+             }
+-        }
+-    };
+-    var opzioniPaginazioneServerSide={
+-		bServerSide:true,
+-		sServerMethod: "POST"            
+-    };
++        };
++        var opzioniPaginazioneServerSide={
++    		bServerSide:true,
++    		sServerMethod: "POST"
++        };
++
+     
+-        
++    // FUNZIONI UTILITA
++    /**
++     * Apre la modale di selezione del capitolo
++     * */
++    function apriModaleCapitoloDubbiaEsigibilita() {
++    	var $modale = $("#modaleGuidaCapitolo");
++    	$('#fieldsetRicercaGuidataCapitolo').find('select').val('');
++    	$('#numeroCapitolo_modale').val('');
++    	$('#numeroArticolo_modale').val('');
++    	if($('#HIDDEN_gestioneUEB').val()==="true"){
++    		$('#numeroUEB_modale').val('');
++    	}
++    	$modale.modal("show");
++    }
++    /**
++     * Seleziona tutti i checkbox nella tabella indicata dall'attributo data-referred-table del pulsante chiamante.
++     *
++     * @returns i checkbox su cui si &eacute; agito.
++     */
++    function checkAllInTable() {
++        var $this = $(this);
++        var tableId = $this.data('referred-table');        
++        var isChecked = $this.prop("checked");
++        // Seleziono tutti i checkboxes e li rendo come il globale
++        return $(tableId).find("tbody")
++            .find("input[type='checkbox']").not(':disabled')
++                .prop("checked", isChecked).each(function(){
++                	$(this).change();
++                });            
++    } 
++    /***
++     * Pulisce la tabella indicata 
++     * 
++     * @param $tabella l'oggetto jQuery che wrappa la tabella
++     * */
+     function cleanDataTable($tabella){
+     	var tabelleGiaInDataTable = $.fn.dataTable.fnTables(true);
+         if($(tabelleGiaInDataTable).filter($tabella).length > 0) {
+@@ -47,6 +77,149 @@
+             $tabella.dataTable().fnDestroy();
+         }
+     }
++    /**
++     * Ottiene il valore della percentuale di accantonamento correttamente formattato in modo null-safe
++     * */
++    function ottieniValorePercentualeAccantonamento(tr, selettore){
++    	var valore;
++    	if(!tr || !selettore){
++    		return +parseLocalNum("0.00");
++    	}
++    	valore = tr.find(selettore).val();
++    	if(!valore){
++    		return;
++    	}
++
++    	return +parseLocalNum(valore);
++    }
++    /**
++     * Definisce quale tipo di media utilizzare (semplice o ponderata) e applica la funzione corrispondente
++     * */
++    function calcolaMedia() {
++    	var tr = $(this).closest('tr');
++    	var fnc = $('#mediaApplicataSemplice').is(':checked') ? calcolaMediaSemplice : calcolaMediaPonderata;
++
++    	var avg;
++
++    	if ($('#riscossioneVirtuosaTrue').is(':checked')) {
++    		avg = fnc(tr, 'input[data-uba=3], input[data-uba=2], input[data-uba=1]');
++    	}
++    	else {
++    		avg = fnc(tr, 'input[data-uba]');
++    	}
++
++    	tr.find('input[data-media], input[data-delta]').val(formatMoney(avg.toString()));
++    }
++    
++    function gestisciCheckedSelezionaTutti(tabella){
++    	var $checkboxes = tabella.find("tbody").find("input[type='checkbox']").not(':disabled');
++		var $checkedCheckboxes = $checkboxes.filter(':checked');
++		var $selezionaTutti = tabella.find('.check-all');
++		var method = ($checkboxes.length >0 &&($checkboxes.length === $checkedCheckboxes.length)? 'attr' : 'removeAttr');
++		$selezionaTutti[method]('checked', 'checked');
++    }
++    /**
++     * Calcola la media semplice degli uba nella tr
++     * */
++    function calcolaMediaSemplice(tr, ubaSel) {
++    	var sum = new BigNumber(0);
++    	var uba = tr.find(ubaSel);
++    	if(uba.length === 0) {
++    		return sum;
++    	}
++
++    	uba.each(function() {
++    		var val = $(this).val();
++    		var num;
++    		if (val) {
++    			num = parseLocalNum(val) || 0;
++    			sum = sum.plus(new BigNumber(num));
++    		}
++    	});
++
++    	return sum.dividedBy(uba.length);
++    }
++    /**
++     * Calcola la media ponderata degli uba presenti nella tr
++     * */
++    function calcolaMediaPonderata(tr) {
++    	var p2 = new BigNumber(0.35);
++    	var p3 = new BigNumber(0.1);
++
++    	var sum = new BigNumber(0);
++
++    	tr.find('input[data-uba=4], input[data-uba=3], input[data-uba=2]').each(function() {
++    		var val = $(this).val();
++    		if (val) {
++    			sum = sum.plus(new BigNumber(parseLocalNum(val)).times(p3));
++    		}
++    	});
++
++    	tr.find('input[data-uba=1], input[data-uba=0]').each(function() {
++    		var val = $(this).val();
++    		if (val) {
++    			sum = sum.plus(new BigNumber(parseLocalNum(val)).times(p2));
++    		}
++    	});
++
++    	return sum;
++    }    
++    /**
++     * Applica la funzione di formattazione del numero se e solo se il type of dell'elemento di di tipo numero
++     * **/
++    function doFormatMoney(el) {
++    	if(typeof el === 'number') {
++    		return el.formatMoney();
++    	}
++    	return '';
++    }
++    /**
++     * Crea la funzione che dataTable utilizza per creare un input di tipo testo in cui inserire gli uba e, se possibile, lo prepopola con i dati presenti nel source utilizzato da datatable 
++     * */
++    function creaInput(fieldname, data, disabled) {
++    	return function(source) {
++    		return '<input type="text" class="input-small soloNumeri decimale text-right" name="' + fieldname + '" value="'  + doFormatMoney(source[fieldname]) + '" '
++    			+ data + ' ' + (disabled ? 'disabled' : '') + '/>';
++    	}
++    }
++    /**
++     * Crea la funzione che verra' poi utilizzata da datatable per creare la select del flag 'accertamentoCassa' e la preseleziona con la source di datatable
++     * */
++	function creaSelectAssociatoCassa(fieldname){
++    	return function (source){
++			var selectedSi = (source.accertatoCassa === true);
++			var options = '<select class="accertamentoCassa span12" name="accertamentoCassa">'
++				+ '<option value="true"' + (source.accertatoCassa? 'selected' : '') + ' >SI</option>'
++				+ '<option value="false"' + (!source.accertatoCassa? 'selected' : '') +' >NO</option>'
++				+ '</select>';
++			return options;
++    	};
++    }
++    /***
++     *  Crea la funzione che dataTable utilizza per creare un input di tipo testo in cui inserire gli uba e, se possibile, lo prepopola con i dati presenti nella variabile accantonamentiSelezionati
++     * */
++    function creaInputTemp(fieldname, data, disabled) {
++    	return function(source) {
++    		var datum = accantonamentiSelezionati[source.capitoloEntrataPrevisione.uid];
++			var valoreDaImpostare = datum && datum[fieldName] ? datum[fieldName] : '';
++    		return '<input type="text" class="input-small soloNumeri decimale text-right" name="' + fieldname + '" value="'  + valoreDaImpostare + '" '
++    			+ data + ' ' + (disabled ? 'disabled' : '') + '/>';
++    	}
++    }
++    /**
++     * Crea la funzione che verra' poi utilizzata da datatable per creare la select del flag 'accertamentoCassa' e la preseleziona con il valore presente nell'iggetto acccantonamentiSelezionati corrispondente
++     * */
++    function creaSelectAssociatoCassaTemp(fieldname){
++    	return function (source){
++    		var datum = accantonamentiSelezionati[source.capitoloEntrataPrevisione.uid];
++			var selectedSi = datum && datum[fieldName];
++			var options = '<select class="accertamentoCassa span12" name="accertamentoCassa">'
++				+ '<option value="true"' + (selectedSi? 'selected' : '') + '>SI</option>'
++				+ '<option value="false"' + (!selectedSi? 'selected' : '') +' >NO</option>'
++				+ '</select>';
++			return options;
++    	};
++    }
+     
+     /**
+      * aggiorna la tabella di ricerca dopo avere effettuato il salvataggio di alcuni accantonamenti
+@@ -54,7 +227,7 @@
+     function ricaricaTabella(tabella, url){
+     	var datatable, settings, obj;
+     	var tabelleGiaInDataTable = $.fn.dataTable.fnTables(true);
+-    	
++
+     	if($(tabelleGiaInDataTable).filter(tabella).length > 0) {
+             return $.Deferred().resolve().promise();
+         }
+@@ -69,13 +242,13 @@
+         };
+         return $.postJSON(url, obj).then(dataTable.fnDraw.bind(dataTable));
+    }
+-    
++
++
++    // MODALE CAPITOLI
+ 
+     /**
+-	 * Ricerca il capitolo Entrata
+-	 * 
++	 * Ricerca il capitolo Entrata Previsione
+ 	 */
+-
+ 	function ricercaCapitoliModale(event) {
+ 		var errori, $form, arrayToSend;
+ 		var $spinner = $('#SPINNER_RicercaCapitolo');
+@@ -85,38 +258,29 @@
+ 		event.stopPropagation();
+ 		event.stopImmediatePropagation();
+ 		event.preventDefault();
+-				
++
+ 		$form = $(event.target).parents('form');
+ 		arrayToSend = unqualify($form.serializeObject(), 1);
+ 		$spinner.addClass('activated');
+-		
++
+ 		$.postJSON('selezionaCapitoliFondiDubbiaEsigibilita.do', arrayToSend)
+ 		.then(function(data) {
+ 			var errori = data.errori;
+ 
+ 			if(impostaDatiNegliAlert(errori, $('#ERRORI_MODALE_CAPITOLO'), true, true)){
+ 				return;
+-			}			
++			}
+ 			gestioneTabellaCapitoliModale();
+ 			divRisultatiRicerca.slideDown();
+-			
++
+ 			$('.modal-body').scrollTop(divRisultatiRicerca.position().top);
+ 		}).always($spinner.removeClass.bind($spinner,'activated'));
+ 	}
+-    
++
+     /**
+ 	 * Crea e gestisce le chiamate ajax per la tabella di risultati
+-	 * 
+-	 * @param urlRicercaEntita
+-	 *            l'url da utilizzare per la ricerca dell'entita
+-	 * @param arrayOfRequestParameters
+-	 *            l'array ottenuto a partire dai parametri di ricerca (cosi'
+-	 *            come richiesto da DataTable)
+-	 * @param arrayIntestazioni
+-	 *            l'array delle stringhe che rappresentano le intestazioni della
+-	 *            tabella
+ 	 */
+-    function gestioneTabellaCapitoliModale() {   	
++    function gestioneTabellaCapitoliModale() {
+     	var opts = {
+     		sAjaxSource : 'risultatiRicercaCapitoloEntrataPrevisioneModaleAjax.do',
+             bAutoWidth:false,
+@@ -131,46 +295,47 @@
+                 $("#risultatiRicercaCapitoloEntrataPrevisione_processing").parent("div")
+                 	.hide();
+                 $("#risultatiRicercaCapitoloEntrataPrevisione").removeClass("hide");
++                gestisciCheckedSelezionaTutti($("#risultatiRicercaCapitoloEntrataPrevisione"));
+             },
+             aoColumnDefs: [
+-				{aTargets: [0], mData: function(src){ 
+-					return '<input type="checkbox" name="capitolo.uid" value="' + src.uid + '" ' 
+-						+ (capitoliInTemp[src.uid] ? 'disabled="disabled"' : '') + '  />';
++				{aTargets: [0], mData: function(src){
++					return '<input type="checkbox" name="capitolo.uid" value="' + src.uid + '" '
++						+ (capitoliInTemp[src.uid] ? 'disabled="disabled"' : '') + (capitoliModaleSelezionati[src.uid] ? 'checked' : '') +'  />';
+ 				}, fnCreatedCell: function(nTd, sData, oData) {
+ 					$('input', nTd).data('capitolo', oData).substituteHandler('change',function(){
+ 						gestisciSelezioneCapitoliModale($(this), oData);
+ 					});
+ 				} },
+-				{aTargets: [1], mData: function(src){ 
++				{aTargets: [1], mData: function(src){
+ 					return src.capitolo;
+ 				}, fnCreatedCell: function(nTd, sData, oData) {
+ 					$(nTd).addClass('tab_Right');
+ 				} },
+-				{aTargets: [2], mData: function(src){ 
++				{aTargets: [2], mData: function(src){
+ 					return src.descrizione;
+ 				} },
+-				{aTargets: [3], mData: function(src){ 
++				{aTargets: [3], mData: function(src){
+ 					return src.classificazione;
+ 				} },
+-				{aTargets: [4], mData: function(src){ 
++				{aTargets: [4], mData: function(src){
+ 					return src.struttAmmResp;
+ 				} },
+-				{aTargets: [5], mData: function(src){ 
++				{aTargets: [5], mData: function(src){
+ 					return src.pdcFinanziario;
+ 				} }
+-			] 
++			]
+         };
+-    	
+-    	var tabella = $("#risultatiRicercaCapitolo");    	
++
++    	var tabella = $("#risultatiRicercaCapitolo");
+     	var opzioniTabellaCapitoli = $.extend(true, {},baseOptionsDataTable, opzioniPaginazioneServerSide, opts );
+     	if ( $.fn.DataTable.fnIsDataTable( tabella.get(0) ) ) {
+     	   tabella.dataTable().fnDestroy();
+ 		}
+     	tabella.dataTable(opzioniTabellaCapitoli);
+ 	}
+-    
++
+     function gestisciSelezioneCapitoliModale(checkbox, capitolo){
+-    
++
+     	if(!checkbox.is(':checked')) {
+     		capitoliModaleSelezionati[capitolo.uid] = undefined;
+     		return;
+@@ -186,18 +351,18 @@
+     			.filter(function(el){
+     				return el !== undefined && el !== null;
+     			})};
+-    	
++
+     	obj.listaCapitoloEntrataPrevisione = obj.listaCapitoloEntrataPrevisione.map(function(elem) {
+     		return {
+-				uid: elem.capitoloEntrataPrevisione.uid, 
+-				annoCapitolo: elem.capitoloEntrataPrevisione.annoCapitolo, 
+-				numeroCapitolo: elem.capitoloEntrataPrevisione.numeroCapitolo, 
+-				numeroArticolo: elem.capitoloEntrataPrevisione.numeroArticolo, 
++				uid: elem.capitoloEntrataPrevisione.uid,
++				annoCapitolo: elem.capitoloEntrataPrevisione.annoCapitolo,
++				numeroCapitolo: elem.capitoloEntrataPrevisione.numeroCapitolo,
++				numeroArticolo: elem.capitoloEntrataPrevisione.numeroArticolo,
+ 				numeroUEB: elem.capitoloEntrataPrevisione.numeroUEB || 1
+-				
++
+ 	    	}
+     	});
+-    	
++
+     	$.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_confermaCapitoli.do', projectToString(obj))
+     	.then(function(data) {
+     		if (impostaDatiNegliAlert(data.errori, $('#ERRORI_MODALE_CAPITOLO'))) {
+@@ -205,32 +370,92 @@
+     		}
+     		capitoliModaleSelezionati = {};
+     		cleanDataTable($('#risultatiRicercaCapitolo'));
+-    		popolaTabellaTempCapitoli(data.listaAccantonamentoFondiDubbiaEsigibilitaTemp);    		
++    		popolaTabellaTempCapitoli(data.listaAccantonamentoFondiDubbiaEsigibilitaTemp);
+         	$('#risultatiRicercaCapitoloEntrataPrevisione').addClass('hide');
+         	$('#modaleGuidaCapitolo').modal('hide');
+-    	});  
++    	});
+ 	}
++//CAPITOLI -> ACCANTONAMENTI: tabella temporanea
++    /**
++     * Chiama la Action per ottenere la lista di capitoli selezionati nella modale
++     * **/
++    function leggiFondiDubbiaEsigibilita() {
++    	return $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_caricaListaAccantonamentoFondi.do', {})
++    	.then(function(data){
++			popolaDataTableRiepilogoCapitoli();
++    	}).always($('#riepilogoCapitoliGiaAssociati_wrapper').overlay.bind($('#riepilogoCapitoliGiaAssociati_wrapper'), 'hide'));
++
++    }
+     
+-    function selezionaTutti(){    	
+-        var $this = $(this);
+-        var table = $this.closest("table");
+-        var checkboxes = table.find("tbody").find("input[type='checkbox']");
+-        var toCheck = $this.prop("checked");
++    function riportaSuCapitoli() {
++    	var srcCap = $('#tempCapitoli input:checked').closest('tr').first();
++    	var trCap = $('#tempCapitoli tbody tr').not(srcCap);
++    	var arrUba = [];
++    	var accertatoCassaCap = '' + srcCap.find('.accertamentoCassa').val();
++    	var u;
++    	if(!srcCap.length>0){
++    		return;
++    	}
++    	for (u = 0; u <= 4; u++) {
++    		arrUba[u] = srcCap.find('[data-uba=' + u + ']').val();
++    	}
++    	
++    	trCap.each(function(idx, el) {
++    		var $el = $(el);
++    		var u;
++    		for (u = 0; u <= 4; u++) {
++    			$el.find('[data-uba=' + u + ']').val(arrUba[u]).blur();
++    			$el.find('.accertamentoCassa').val(accertatoCassaCap);
++    			
++    		}
++    	});
+ 
+-        checkboxes.prop("checked", toCheck).each(function(idx, el) {
+-        	el.trigger('change');
+-        });
++    	trCap.find('[data-uba=0]').trigger('change');
++    	//}
++
++    	return false;
++    }
++    
++    function salvaCapitoli() {
++    	if (!$('#salvaCapitoli').hasClass('disabled')) {
++	    	var obj = {'listaAccantonamentoFondiDubbiaEsigibilitaSelezionati':Object.values(accantonamentiSelezionati)
++	    			.filter(function(el){
++	    				return el !== undefined && el !== null;
++	    			})};
++	    	$('#salvaCapitoli').overlay('show');
++	        $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_salvaCapitoli.do", projectToString(obj))
++	        		//qualify(Object.values(accantonamentiSelezionati), 'listaAccantonamentoFondiDubbiaEsigibilitaSelezionati'))
++	        .then(function(data) {
++	        	if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
++	        		return;
++	        	}
++	        	impostaDatiNegliAlert(["COR_INF_0006 - Operazione effettuata correttamente"],$('#INFORMAZIONI'));
++	        	accantonamentiSelezionati = {};
++	        	$('#riepilogoCapitoliGiaAssociati_wrapper').overlay('show');
++	        	leggiFondiDubbiaEsigibilita();
++	        	return leggiAccantonamentiTempNelModel();
++	        }).always(function() {
++	        	$('#msgElimina').modal('hide');
++	        	$('#salvaCapitoli').overlay('hide');
++	        });
++		}
++
++    	return false;
+     }
+     
+-    function gestisciAccantonamentiSelezionati(nTd, sData, oData, iRow, iCol){
++    /**
++     * Popola opportunamente l'oggetto accantonamenti selezionati
++     * **/
++    function gestisciAccantonamentiSelezionati(nTd, sData, oData){
+     	var uidCapitoloEntrataPrevisione = oData.capitoloEntrataPrevisione.uid || 0;
+     	var tr = $(nTd).closest('tr');
+ 
+     	var checkbox = $(nTd).find('input[type="checkbox"]');
+     	if (checkbox.length > 0) {
+-    		countAccantonamentiSelezionati = countAccantonamentiSelezionati + (checkbox.is(':checked') ? +1 : -1);	
++    		countAccantonamentiSelezionati = countAccantonamentiSelezionati + (checkbox.is(':checked') ? +1 : -1);
+     	}
+     	$('#salvaCapitoli').toggleClass('disabled', countAccantonamentiSelezionati === 0);
++    	$('#pulsanteRiportaSuCapitoli').attr('disabled', countAccantonamentiSelezionati === 0);
+     	if(!tr.find('input[type="checkbox"]').is(':checked')) {
+     		accantonamentiSelezionati[uidCapitoloEntrataPrevisione] = undefined;
+     		return;
+@@ -238,6 +463,7 @@
+ 
+     	accantonamentiSelezionati[uidCapitoloEntrataPrevisione] = {
+ 			capitoloEntrataPrevisione: oData.capitoloEntrataPrevisione,
++			accertatoCassa: tr.find('option:selected', 'select[name="accertamentoCassa"]').val(),
+ 			percentualeAccantonamentoFondi: ottieniValorePercentualeAccantonamento(tr, 'input[name="percentualeAccantonamentoFondi"]'),
+ 	    	percentualeAccantonamentoFondi1: ottieniValorePercentualeAccantonamento(tr, 'input[name="percentualeAccantonamentoFondi1"]'),
+ 	    	percentualeAccantonamentoFondi2: ottieniValorePercentualeAccantonamento(tr, 'input[name="percentualeAccantonamentoFondi2"]'),
+@@ -247,46 +473,36 @@
+ 	    	percentualeDelta: ottieniValorePercentualeAccantonamento(tr, 'input[name="percentualeDelta"]')
+     	};
+     }
+-    
+-    function ottieniValorePercentualeAccantonamento(tr, selettore){
+-    	var valore;
+-    	if(!tr || !selettore){
+-    		return +parseLocalNum("0.00");
+-    	}
+-    	valore = tr.find(selettore).val();
+-    	if(!valore){
+-    		return;
++    /**
++     * associa l'handler gestisci accantonamenti (tabella temporanea)
++     * */
++    function associaHandlerInputAccantonamenti() {
++    	return function (nTd, sData, oData) {
++    		//TODO: migliorare
++			if($(nTd).find('input[type="checkbox"]').length===0){
++				$(nTd).addClass("text-right");
++    		}
++    	$(nTd).find("input")
++			.on("change", function() {
++				gestisciAccantonamentiSelezionati(nTd, sData, oData);
++			});
+     	}
+-    	
+-    	return +parseLocalNum(valore);
+     }
+-    
+-    function popolaDatiSelezionati(tr, oggettoDaPopolare, capitoloEntrataPrevisione){
+-    	if(!tr || !oggettoDaPopolare){
+-    		return;
+-    	}
+-    	
+-    	if(!tr.find('input[type="checkbox"]').is(':checked')) {
+-    		oggettoDaPopolare[capitoloEntrataPrevisione.uid] = undefined;
+-    		return;
+-    	}
++   
++    function leggiAccantonamentiTempNelModel(){
++    	return $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_leggiListaAccantonamentoFondiDubbiaEsigibilitaTemp.do',{})
++    	.then(function(data) {
++    		capitoliInTemp = {};
++    		popolaTabellaTempCapitoli(data.listaAccantonamentoFondiDubbiaEsigibilitaTemp);
++    	});
+ 
+-    	oggettoDaPopolare[uidCapitoloEntrataPrevisione] = {
+-			capitoloEntrataPrevisione: oData.capitoloEntrataPrevisione,
+-			percentualeAccantonamentoFondi: +parseLocalNum(tr.find('input[name="percentualeAccantonamentoFondi"]').val()),
+-	    	percentualeAccantonamentoFondi1: +parseLocalNum(tr.find('input[name="percentualeAccantonamentoFondi1"]').val()),
+-	    	percentualeAccantonamentoFondi2: +parseLocalNum(tr.find('input[name="percentualeAccantonamentoFondi2"]').val()),
+-	    	percentualeAccantonamentoFondi3: +parseLocalNum(tr.find('input[name="percentualeAccantonamentoFondi3"]').val()),
+-	    	percentualeAccantonamentoFondi4: +parseLocalNum(tr.find('input[name="percentualeAccantonamentoFondi4"]').val()),
+-	    	percentualeMediaAccantonamento: +parseLocalNum(tr.find('input[name="percentualeMediaAccantonamento"]').val()),
+-	    	percentualeDelta: +parseLocalNum(tr.find('input[name="percentualeDelta"]').val() || "0")
+-    	};
+     }
+-    
+-    
++
+     function popolaTabellaTempCapitoli(listaAccantonamentoFondiDubbiaEsigibilitaTemp) {
+     	var riscossioneVirtuosaChecked = $('#riscossioneVirtuosaTrue').is(':checked');
+-    	    	
++    	var tabella = $('#tabellaTempCapitoli');
++    	var datatableResult;
++    	
+     	var colonne = [
+     	    {aTargets: [ 0 ], mData: function(source) {
+ 				var datum = accantonamentiSelezionati[source.capitoloEntrataPrevisione.uid];
+@@ -301,40 +517,52 @@
+ 				if(capitolo && capitolo.annoCapitolo && capitolo.numeroCapitolo && capitolo.numeroArticolo != undefined){
+ 					result = capitolo.annoCapitolo + '/' + capitolo.numeroCapitolo + '/' + capitolo.numeroArticolo + stringaUEB;
+ 				}
+-				return result;                   
++				return result;
+ 			}},
+-			{aTargets : [ 2 ], mData : creaInputTemp('percentualeAccantonamentoFondi4', 'data-uba="4"', riscossioneVirtuosaChecked), fnCreatedCell : associaHandlerInputAccantonamenti()},
+-            {aTargets : [ 3 ], mData : creaInputTemp('percentualeAccantonamentoFondi3', 'data-uba="3"' ) ,fnCreatedCell : associaHandlerInputAccantonamenti()},
+-            {aTargets : [ 4 ], mData : creaInputTemp('percentualeAccantonamentoFondi2', 'data-uba="2"'), fnCreatedCell : associaHandlerInputAccantonamenti()},
+-            {aTargets : [ 5 ], mData : creaInputTemp('percentualeAccantonamentoFondi1', 'data-uba="1"', riscossioneVirtuosaChecked), fnCreatedCell : associaHandlerInputAccantonamenti()},
+-            {aTargets : [ 6 ], mData : creaInputTemp('percentualeAccantonamentoFondi', 'data-uba="0"' ), fnCreatedCell : associaHandlerInputAccantonamenti()},
+-            {aTargets : [ 7 ], mData : creaInputTemp('percentualeMediaAccantonamento', 'data-media', true )},
+-            {aTargets : [ 8 ], mData : creaInputTemp('percentualeDelta', 'data-delta' ), fnCreatedCell : associaHandlerInputAccantonamenti()}           
++			{aTargets : [ 2 ], mData : creaSelectAssociatoCassaTemp('accertatoCassa')},
++			{aTargets : [ 3 ], mData : creaInputTemp('percentualeAccantonamentoFondi4', 'data-uba="4"', riscossioneVirtuosaChecked), fnCreatedCell : associaHandlerInputAccantonamenti()},
++            {aTargets : [ 4 ], mData : creaInputTemp('percentualeAccantonamentoFondi3', 'data-uba="3"' ) ,fnCreatedCell : associaHandlerInputAccantonamenti()},
++            {aTargets : [ 5 ], mData : creaInputTemp('percentualeAccantonamentoFondi2', 'data-uba="2"'), fnCreatedCell : associaHandlerInputAccantonamenti()},
++            {aTargets : [ 6 ], mData : creaInputTemp('percentualeAccantonamentoFondi1', 'data-uba="1"', riscossioneVirtuosaChecked), fnCreatedCell : associaHandlerInputAccantonamenti()},
++            {aTargets : [ 7 ], mData : creaInputTemp('percentualeAccantonamentoFondi', 'data-uba="0"' ), fnCreatedCell : associaHandlerInputAccantonamenti()},
++            {aTargets : [ 8 ], mData : creaInputTemp('percentualeMediaAccantonamento', 'data-media', true ),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++            {aTargets : [ 9 ], mData : creaInputTemp('percentualeDelta', 'data-delta' ), fnCreatedCell : associaHandlerInputAccantonamenti()}
+     	];
+     	var opzioniTabellaTemp = {
+     		aaData: listaAccantonamentoFondiDubbiaEsigibilitaTemp,
++    		fnDrawCallback: function() {
++    			
++    			gestisciCheckedSelezionaTutti(tabella);
++    			
++    		},
+     		aoColumnDefs: colonne
+     	}
+     	var opzioniDataTable = $.extend(true,{},baseOptionsDataTable, opzioniTabellaTemp);
+-    	var tabella = $('#tabellaTempCapitoli');
+-    	var datatableResult;
+     	
++
+     	cleanDataTable(tabella);
+-    	datatableResult = tabella.dataTable(opzioniDataTable); 
++    	datatableResult = tabella.dataTable(opzioniDataTable);
+     	datatableResult.$(".soloNumeri").allowedChars({numeric: true});
+     	datatableResult.$(".decimale").gestioneDeiDecimali();
+     	$('#tempCapitoli').removeClass('hide');
+-	    $('#pulsanteRiportaSuCapitoli').toggleClass('disabled', listaAccantonamentoFondiDubbiaEsigibilitaTemp.length <= 1);
++	    $('#pulsanteRiportaSuCapitoli').prop('disabled', listaAccantonamentoFondiDubbiaEsigibilitaTemp.length <= 1);
+     }
+     
++    //ACCANTONAMENTI: FUNZIONALITA? DI RIEPILOGO
+     
++    
++    
++    /***
++     * Chiama il servizio che aggiorna l'accantonamento
++     * */
+     function modificaAccantonamentoFondiDubbiaEsigibilita(oData, nTd) {
+-    	
++
+     	var tr = $(nTd).closest('tr');
+-    	
++
+     	var obj = qualify({
+     		uid: oData.uid,
+     		capitoloEntrataPrevisione: oData.capitoloEntrataPrevisione,
++    		accertatoCassa: tr.find('option:selected', 'select[name="accertamentoCassa"]').val(),
+     		percentualeAccantonamentoFondi: tr.find('input[name="percentualeAccantonamentoFondi"]').val(),
+     		percentualeAccantonamentoFondi1: tr.find('input[name="percentualeAccantonamentoFondi1"]').val(),
+     		percentualeAccantonamentoFondi2: tr.find('input[name="percentualeAccantonamentoFondi2"]').val(),
+@@ -342,7 +570,7 @@
+     		percentualeAccantonamentoFondi4: tr.find('input[name="percentualeAccantonamentoFondi4"]').val(),
+     		percentualeDelta: tr.find('input[name="percentualeDelta"]').val()
+     	}, 'accantonamento');
+-    	
++
+         $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_aggiornaAccantonamento.do", projectToString(obj))
+         	.then(function(data) {
+ 	        	if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
+@@ -352,23 +580,43 @@
+ 	        	$('#riepilogoCapitoliGiaAssociati_wrapper').overlay('show');
+ 	        	leggiFondiDubbiaEsigibilita();
+         });
+-        
++
+         return false;
+     }
+     
++    /**
++     * Chiama il servizio che elimina un certo accantonamento
++     * **/
++    function eliminaAccantonamentoFondiDubbiaEsigibilita(oggettoOriginale){
++    	var oggettoDaEliminare = qualify({uid: oggettoOriginale.uid}, "accantonamento");
++
++        $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_eliminaAccantonamento.do", oggettoDaEliminare)
++        .then(function(data) {
++        	impostaDatiNegliAlert(["COR_INF_0006 - Operazione effettuata correttamente"],$('#INFORMAZIONI'));
++
++        	$('#riepilogoCapitoliGiaAssociati_wrapper').overlay('show');
++        	leggiFondiDubbiaEsigibilita();
++        	//ricaricaTabella($('#riepilogoCapitoliGiaAssociati'), 'risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjax.do');
++        	$('#msgElimina').modal('hide');
++        });
++    }
++    
++    /**
++     * Apre la modale di conferma eliminazione di un accantonamento
++     * */
+     function apriModaleEliminazioneAccantonamentoFondiDubbiaEsigibilita(riga){
+     	var pulsanteEliminazione = $("#pulsanteSiModaleEliminazione");
+     	var oggettoOriginale = $('#riepilogoCapitoliGiaAssociati').dataTable().fnGetData(riga);
+         // Clone dell'oggetto originale, per effettuare la chiamata
+         var oggettoDaEliminare = $.extend(true, {}, oggettoOriginale);
+         var capitolo = oggettoOriginale.capitoloEntrataPrevisione;
+-        
++
+         var elementoSelezionato = $('#spanElementoSelezionatoModaleEliminazione');
+         var descrizioneElementoSelezionato = '';
+         var stringaUEB = ($('HIDDEN_gestioneUEB').val() && capitolo.numeroUEB)? ('/' + capitolo.numeroUEB) : '';
+ 		if(capitolo && capitolo.annoCapitolo && capitolo.numeroCapitolo && capitolo.numeroArticolo !== undefined){
+ 			descrizioneElementoSelezionato = capitolo.annoCapitolo + '/' + capitolo.numeroCapitolo + '/' + capitolo.numeroArticolo + stringaUEB;
+-		}		
++		}
+         elementoSelezionato.html(descrizioneElementoSelezionato);
+         $('#modaleEliminazione').modal('show');
+         //        // Eliminazione
+@@ -377,35 +625,44 @@
+         	eliminaAccantonamentoFondiDubbiaEsigibilita(oggettoDaEliminare);
+         });
+     }
+-    
+-    function eliminaAccantonamentoFondiDubbiaEsigibilita(oggettoOriginale){
+-    	var oggettoDaEliminare = qualify({uid: oggettoOriginale.uid}, "accantonamento");
+ 
+-        $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_eliminaAccantonamento.do", oggettoDaEliminare)
+-        .then(function(data) {
+-        	impostaDatiNegliAlert(["COR_INF_0006 - Operazione effettuata correttamente"],$('#INFORMAZIONI'));
+-
+-        	$('#riepilogoCapitoliGiaAssociati_wrapper').overlay('show');
+-        	leggiFondiDubbiaEsigibilita();
+-        	//ricaricaTabella($('#riepilogoCapitoliGiaAssociati'), 'risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjax.do');
+-        	$('#msgElimina').modal('hide');
+-        });
++    /**
++     * Rende visibile il pulsante di modifica dell'accantonamento solo se il valore digitato e' diverso da quello presente su db
++     * **/
++    function gestisciPulsanteModifica($input, oData){		
++		var fieldName = $input.attr('name');
++		var newFieldValue = $input.val();
++		var savedFieldValue = doFormatMoney(oData[fieldName]);
++		if(newFieldValue === savedFieldValue){			
++			$input.closest('tr').find('a.modifica-accantonamento').removeClass('in');
++		}else{
++			$input.closest('tr').find('a.modifica-accantonamento').addClass('in');
++		}
+     }
+-    
+-    function leggiFondiDubbiaEsigibilita() {
+-    	return $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_caricaListaAccantonamentoFondi.do', {})
+-    	.then(function(data){    		
+-			popolaDataTableRiepilogoCapitoli();
+-    	}).always($('#riepilogoCapitoliGiaAssociati_wrapper').overlay.bind($('#riepilogoCapitoliGiaAssociati_wrapper'), 'hide'));
+-    	
++    /**
++     * imposta la classe css sulla cella e associa all'input un handler per la gestione del pulsante di modifica
++     * */
++    function impostaClasseCssEHanldlerSullaCella(classeCss){
++    	return function(nTd, sData, oData){
++    		$(nTd).addClass(classeCss);
++    		var $input = $(nTd).find('input');
++    		$input.on('change', function(){
++    			gestisciPulsanteModifica($input, oData)
++    		});
++    	}
+     }
+     
++    /***
++     * Popola la tabella di riepilogo dei capitoli
++     * **/
+     function popolaDataTableRiepilogoCapitoli() {
+     	var isRiscossioneVirtuosa = $('#riscossioneVirtuosaTrue').is(':checked');
+     	var opzioniRiepilogo ={
+     		sAjaxSource:'risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjax.do',
+-    	    aoColumnDefs: [ 
+-    	
++    		bAutoWidth : true,
++    		//sScrollX : '80%',
++    	    aoColumnDefs: [
++
+ 	    	    {aTargets : [ 0 ], mData : function(source) {
+ 	    	    	var capitolo = source.capitoloEntrataPrevisione;
+ 				 	var result = "";
+@@ -413,29 +670,35 @@
+ 				 	if(capitolo && capitolo.annoCapitolo && capitolo.numeroCapitolo && capitolo.numeroArticolo!= undefined){
+ 				 		result = capitolo.annoCapitolo + '/' + capitolo.numeroCapitolo + '/' + capitolo.numeroArticolo + stringaUEB;
+ 				 	}
+-				 	return result;                   
++				 	return result;
+ 			 	}},
+-			 	{aTargets : [ 1 ], mData : creaInput('percentualeAccantonamentoFondi4', 'data-uba="4"', isRiscossioneVirtuosa),fnCreatedCell : impostaClasseSullaCella('text-right')},
+-			 	{aTargets : [ 2 ], mData : creaInput('percentualeAccantonamentoFondi3', 'data-uba="3"'),fnCreatedCell : impostaClasseSullaCella('text-right')},
+-			 	{aTargets : [ 3 ], mData : creaInput('percentualeAccantonamentoFondi2', 'data-uba="2"'),fnCreatedCell : impostaClasseSullaCella('text-right')},
+-				{aTargets : [ 4 ], mData : creaInput('percentualeAccantonamentoFondi1', 'data-uba="1"'),fnCreatedCell : impostaClasseSullaCella('text-right')},
+-				{aTargets : [ 5 ], mData : creaInput('percentualeAccantonamentoFondi', 'data-uba="0"', isRiscossioneVirtuosa),fnCreatedCell : impostaClasseSullaCella('text-right')},
+-				{aTargets : [ 6 ], mData : creaInput('percentualeMediaAccantonamentoFondi', 'data-media', true),fnCreatedCell : impostaClasseSullaCella('text-right')},
+-				{aTargets : [ 7 ], mData : creaInput('percentualeDelta', 'data-delta'),fnCreatedCell : impostaClasseSullaCella('text-right')},
+-				{aTargets : [ 8 ], mData : function(source) {
+-					return "<a data-accantonamento-uid='" + source.uid + "' href='' title='modifica le percentuali' role='button' data-toggle='modal'>" +
+-					       "<i class='icon-pencil icon-2x'><span class='nascosto'>modifica</span></i>" +
+-					       "</a>";
++			 	{aTargets : [ 1 ], mData : creaSelectAssociatoCassa('associatoCassa'), fnCreatedCell : function(nTd, sData, oData){
++			 		var $input = $(nTd).find('select');
++		    		$input.on('change', function(){
++		    			gestisciPulsanteModifica($input, oData)
++		    		});
++			 	}},
++			 	{aTargets : [ 2 ], mData : creaInput('percentualeAccantonamentoFondi4', 'data-uba="4"', isRiscossioneVirtuosa),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++			 	{aTargets : [ 3 ], mData : creaInput('percentualeAccantonamentoFondi3', 'data-uba="3"'),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++			 	{aTargets : [ 4 ], mData : creaInput('percentualeAccantonamentoFondi2', 'data-uba="2"'),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++				{aTargets : [ 5 ], mData : creaInput('percentualeAccantonamentoFondi1', 'data-uba="1"'),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++				{aTargets : [ 6 ], mData : creaInput('percentualeAccantonamentoFondi', 'data-uba="0"', isRiscossioneVirtuosa),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++				{aTargets : [ 7 ], mData : creaInput('percentualeMediaAccantonamentoFondi', 'data-media', true),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++				{aTargets : [ 8 ], mData : creaInput('percentualeDelta', 'data-delta'),fnCreatedCell : impostaClasseCssEHanldlerSullaCella('text-right')},
++				{aTargets : [ 9 ], mData : function(source) {
++					return '<a data-accantonamento-uid="' + source.uid + '" href="" title="modifica le percentuali" role="button" class="fade modifica-accantonamento" data-toggle="modal">' +
++					       '<i class="icon-pencil icon-2x"><span class="nascosto">modifica</span></i>' +
++					       '</a>';
+ 					},
+ 				fnCreatedCell : function (nTd, sData, oData, iRow, iCol) {
+-					$(nTd).addClass("text-center")
+-					.find("a")
+-					.substituteHandler("click", function(e) {
++					$(nTd).addClass('text-center')
++					.find('a')
++					.substituteHandler('click', function(e) {
+ 						e.preventDefault();
+ 						modificaAccantonamentoFondiDubbiaEsigibilita(oData, nTd);
+-					});	
++					});
+ 				}},
+-				{aTargets : [ 9 ], mData : function(source) {
++				{aTargets : [ 10 ], mData : function(source) {
+ 					return "<a data-accantonamento-uid='" + source.uid + "' href='#msgElimina' title='elimina' role='button' data-toggle='modal'>" +
+ 					       "<i class='icon-trash icon-2x'><span class='nascosto'>elimina</span></i>" +
+ 					       "</a>";
+@@ -455,175 +718,26 @@
+ 				var nTd = $(nRow).find('td').get(0);
+ 				calcolaMedia.bind(nTd)();
+ 			}
+-				
++
+     	}
+-				
+-    	    	
++
++
+     	var opzioniDataTableRiepilogo = $.extend(true,{},baseOptionsDataTable, opzioniPaginazioneServerSide, opzioniRiepilogo);
+     	var datatableResult;
+-    	
++
+     	cleanDataTable($('#riepilogoCapitoliGiaAssociati'));
+     	datatableResult = $('#riepilogoCapitoliGiaAssociati').dataTable(opzioniDataTableRiepilogo);
+     	datatableResult.$(".soloNumeri").allowedChars({numeric: true});
+     	datatableResult.$(".decimale").gestioneDeiDecimali();
+-    }
+-    
+-    function impostaClasseSullaCella(classeCss){
+-    	return function(nTd){
+-    		$(nTd).addClass(classeCss);
+-    	}
+-    }
+-  
+-    function creaInput(fieldname, data, disabled) {
+-    	return function(source) {    		
+-    		return '<input type="text" class="input-small soloNumeri decimale text-right" name="' + fieldname + '" value="'  + doFormatMoney(source[fieldname]) + '" '
+-    			+ data + ' ' + (disabled ? 'disabled' : '') + '/>';
+-    	}
+-    }
+-    
+-    function doFormatMoney(el) {
+-    	if(typeof el === 'number') {
+-    		return el.formatMoney();
+-    	}
+-    	return '';
+-    }
+-    
+-    function creaInputTemp(fieldname, data, disabled) {
+-    	return function(source) { 
+-    		var datum = accantonamentiSelezionati[source.capitoloEntrataPrevisione.uid];
+-			var valoreDaImpostare = datum && datum[fieldName] ? datum[fieldName] : '';
+-    		return '<input type="text" class="input-small soloNumeri decimale text-right" name="' + fieldname + '" value="'  + valoreDaImpostare + '" '
+-    			+ data + ' ' + (disabled ? 'disabled' : '') + '/>';
+-    	}
+-    }
+-    
+-    function associaHandlerInputAccantonamenti() {
+-    	return function (nTd, sData, oData, iRow, iCol) {				                        
+-			$(nTd).addClass("tab_Right")
+-			.find("input")
+-			.substituteHandler("change", function() {
+-				gestisciAccantonamentiSelezionati(nTd, sData, oData, iRow, iCol);
+-			});
+-    	}
++
+     }
+     
+-    function calcolaMedia() {
+-    	var tr = $(this).closest('tr');
+-    	var fnc = $('#mediaApplicataSemplice').is(':checked') ? calcolaMediaSemplice : calcolaMediaPonderata;
+-    	
+-    	var avg;
+-    	
+-    	if ($('#riscossioneVirtuosaTrue').is(':checked')) {
+-    		avg = fnc(tr, 'input[data-uba=3], input[data-uba=2], input[data-uba=1]');
+-    	}
+-    	else {
+-    		avg = fnc(tr, 'input[data-uba]');
+-    	}
+ 
+-    	tr.find('input[data-media], input[data-delta]').val(formatMoney(avg.toString()));
+-    }
+- 
+-    function calcolaMediaSemplice(tr, ubaSel) {
+-    	var sum = new BigNumber(0);
+-    	var uba = tr.find(ubaSel);
+-    	if(uba.length === 0) {
+-    		return sum;
+-    	}
+-    	
+-    	uba.each(function() {
+-    		var val = $(this).val();
+-    		var num;
+-    		if (val) {
+-    			num = parseLocalNum(val) || 0;
+-    			sum = sum.plus(new BigNumber(num));
+-    		}
+-    	});
+-    	
+-    	return sum.dividedBy(uba.length);
+-    }
+ 
+-    function calcolaMediaPonderata(tr) {
+-    	var p2 = new BigNumber(0.35);
+-    	var p3 = new BigNumber(0.1);
+-    	
+-    	var sum = new BigNumber(0);
+-    	
+-    	tr.find('input[data-uba=4], input[data-uba=3], input[data-uba=2]').each(function() {
+-    		var val = $(this).val();
+-    		if (val) {
+-    			sum = sum.plus(new BigNumber(parseLocalNum(val)).times(p3));
+-    		}
+-    	});
+-    	
+-    	tr.find('input[data-uba=1], input[data-uba=0]').each(function() {
+-    		var val = $(this).val();
+-    		if (val) {
+-    			sum = sum.plus(new BigNumber(parseLocalNum(val)).times(p2));
+-    		}
+-    	});
+-    	
+-    	return sum;
+-    }
+-    
+-    function riportaSuCapitoli() {
+-    	var trCap = $('#tempCapitoli tbody tr');
+-    	
+-    	if (trCap.length > 1) {
+-	    	var srcCap = trCap.first();
+-	    	trCap = trCap.slice(1);
+-	    	
+-	    	trCap.each(function(i) {
+-	    		for (var u = 0; u <= 4; u++) {
+-	    			var v = srcCap.find('[data-uba=' + u + ']').val();
+-	    			$(this).find('[data-uba=' + u + ']').val(v).blur();
+-	    		}
+-	    	});
+-	    	
+-	    	trCap.find('[data-uba=0]').trigger('change');
+-    	}
+-    	
+-    	return false;
+-    }
+ 
+-    function salvaCapitoli() {
+-    	if (!$('#salvaCapitoli').hasClass('disabled')) {
+-	    	var obj = {'listaAccantonamentoFondiDubbiaEsigibilitaSelezionati':Object.values(accantonamentiSelezionati)
+-	    			.filter(function(el){
+-	    				return el !== undefined && el !== null;
+-	    			})};
+-	    	$('#salvaCapitoli').overlay('show');
+-	        $.postJSON("inserisciConfigurazioneStampaDubbiaEsigibilita_salvaCapitoli.do", projectToString(obj))
+-	        		//qualify(Object.values(accantonamentiSelezionati), 'listaAccantonamentoFondiDubbiaEsigibilitaSelezionati'))
+-	        .then(function(data) {
+-	        	if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
+-	        		return;
+-	        	}
+-	        	impostaDatiNegliAlert(["COR_INF_0006 - Operazione effettuata correttamente"],$('#INFORMAZIONI'));
+-	        	accantonamentiSelezionati = {};
+-	        	$('#riepilogoCapitoliGiaAssociati_wrapper').overlay('show');	        	
+-	        	leggiFondiDubbiaEsigibilita();
+-	        	return leggiAccantonamentiTempNelModel();
+-	        }).always(function() {
+-	        	$('#msgElimina').modal('hide');
+-	        	$('#salvaCapitoli').overlay('hide');
+-	        });
+-		}
+-    	
+-    	return false;
+-    }
+-    
+-    function leggiAccantonamentiTempNelModel(){
+-    	return $.postJSON('inserisciConfigurazioneStampaDubbiaEsigibilita_leggiListaAccantonamentoFondiDubbiaEsigibilitaTemp.do',{})
+-    	.then(function(data) {
+-    		capitoliInTemp = {};
+-    		popolaTabellaTempCapitoli(data.listaAccantonamentoFondiDubbiaEsigibilitaTemp);
+-    	});
+-    	
+-    }
+-    	
+     $(function() {
+         $("#pulsanteApriModaleCapitoloDubbiaEsigibilita").on("click", apriModaleCapitoloDubbiaEsigibilita);
+-        
++
+         $("#titoloEntrata").on("change", CapitoloEntrata.caricaTipologia);
+         $("#tipologiaTitolo").on("change", CapitoloEntrata.caricaCategoria);
+         $("#categoriaTipologiaTitolo").on("change", function() {
+@@ -631,21 +745,24 @@
+             Capitolo.caricaPianoDeiConti(this, true);
+         });
+         $("#bottonePdC").on("click", Capitolo.controllaPdC);
+-        
++
+  	    $('#pulsanteRicercaCapitolo').substituteHandler("click", ricercaCapitoliModale);
+- 	    
++
+  	    $('#pulsanteConfermaCapitoli').substituteHandler("click", confermaCapitoliModale);
+  	    $('#pulsanteRiportaSuCapitoli').substituteHandler("click", riportaSuCapitoli);
+  	    $('#salvaCapitoli').substituteHandler("click", salvaCapitoli);
+- 	    
++
+   	   /* Carica lo zTree relativo alla Struttura Amministrativo Contabile */
+         Capitolo.caricaStrutturaAmministrativoContabile();
+- 	    
++
+         leggiFondiDubbiaEsigibilita();
+         leggiAccantonamentiTempNelModel();
+         
+- 	    $('#tabellaTempCapitoli, #riepilogoCapitoliGiaAssociati').substituteHandler('change', 'input[data-uba]', calcolaMedia);
++     // Creo la funzionalita' di selezione multipla
++        $(".check-all").change(checkAllInTable);
++
++ 	    $('#tabellaTempCapitoli, #riepilogoCapitoliGiaAssociati').on('change', 'input[data-uba]', calcolaMedia);
+     });
+-    
+-    
++
++
+ })(jQuery, this);
+Index: src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp
+===================================================================
+--- src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp	(revision 12618)
++++ src/main/webapp/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilita.jsp	(working copy)
+@@ -146,25 +146,28 @@
+ 							<!-- tab temp capitoli -->
+ 							<div id="tempCapitoli" class="hide" role="grid">
+ 								<h4>Capitoli da associare all'accantonamento</h4>
+-								<table class="table table-hover dataTable table-condensed" id="tabellaTempCapitoli">
+-									<thead>
+-										<tr>
+-											<th width="5%">&nbsp;</th>
+-											<th width="25%">Capitolo</th>
+-											<th width="10%">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 4}" /></th>
+-											<th width="10%">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 3}" /></th>
+-											<th width="10%">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 2}" /></th>
+-											<th width="10%">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 1}" /></th>
+-											<th width="10%">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato}" /></th>
+-											<th width="10%">&nbsp;&#37; MEDIA</th>
+-											<th width="10%">&nbsp;&#37; con delta</th>
+-										</tr>
+-									</thead>
+-
+-									<tbody>		
+-									</tbody>
+-								</table>
+-
++								<div class="dataTable-scroll-x">
++									<table class="table table-hover dataTable" id="tabellaTempCapitoli">
++										<thead>
++											<tr>
++												<th width="5%">
++													<input type="checkbox" class="tooltip-test check-all" data-original-title="Seleziona tutti nella pagina corrente" value ="" data-referred-table="#tabellaTempCapitoli" />
++												</th>
++												<th width="15%">Capitolo</th>
++												<th width="10%" class="text-right"><abbr title="Accertato per cassa">Accert. cassa</abbr></th>
++												<th width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 4}" /></th>
++												<th width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 3}" /></th>
++												<th width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 2}" /></th>
++												<th width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 1}" /></th>
++												<th width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato}" /></th>
++												<th width="10%" class="text-right">&nbsp;&#37; MEDIA</th>
++												<th width="10" class="text-right">&nbsp;&#37; con delta</th>
++											</tr>
++										</thead>	
++										<tbody>		
++										</tbody>
++									</table>
++								</div>
+ 								<span class="radio guidata "> <a href="#"
+ 									id="salvaCapitoli" class="btn btn-primary disabled">salva capitoli</a>
+ 								</span>
+@@ -173,31 +176,33 @@
+ 								
+ 
+ 								<span id="SPAN_pulsanteRiportaSuCapitoli" class="radio guidata ">
+-									<a href="#" id="pulsanteRiportaSuCapitoli"
+-									class="disabled btn btn-primary">riporta su tutti i capitoli</a>
++									<button type="button" id="pulsanteRiportaSuCapitoli" disabled="disabled" class="btn btn-primary">riporta su tutti i capitoli</button>
+ 								</span> 
+ 							</div>
+ 						</fieldset>
+ 						<br />
+ 						<div>
+ 							<h4>Capitoli nell'accantonamento</h4>
+-							<table id="riepilogoCapitoliGiaAssociati" class="table table-hover dataTable">
+-								<thead>
+-									<tr role="row">									
+-										<th scope="col">Capitolo</th>
+-										<th scope="col" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 4}" /></th>
+-										<th scope="col" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 3}" /></th>
+-										<th scope="col" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 2}" /></th>
+-										<th scope="col" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 1}" /></th>
+-										<th scope="col" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato}" /></th>
+-										<th scope="col" class="text-right">&nbsp;&#37; MEDIA</th>
+-										<th scope="col" class="text-right">&nbsp;&#37; con delta</th>
+-										<th scope="col" class="text-right">&nbsp;</th>
+-										<th scope="col" class="text-right">&nbsp;</th>
+-									</tr>
+-								</thead>
+-								<tbody></tbody>	
+-							</table>
++							<div class="dataTable-scroll-x">
++								<table id="riepilogoCapitoliGiaAssociati" class="table table-hover dataTable">
++									<thead>
++										<tr role="row">									
++											<th scope="col" width="10%">Capitolo</th>
++											<th scope="col" width="14%"><abbr title="Accertato per cassa">Accert. cassa</abbr></th>
++											<th scope="col" width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 4}" /></th>
++											<th scope="col" width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 3}" /></th>
++											<th scope="col" width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 2}" /></th>
++											<th scope="col" width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato - 1}" /></th>
++											<th scope="col" width="10%" class="text-right">&nbsp;&#37; <s:property value="%{attributiBilancio.ultimoAnnoApprovato}" /></th>
++											<th scope="col" width="10%" class="text-right">&nbsp;&#37; MEDIA</th>
++											<th scope="col" width="10%" class="text-right">&nbsp;&#37; con delta</th>
++											<th scope="col" width="3%" class="text-right">&nbsp;</th>
++											<th scope="col" width="%3" class="text-right">&nbsp;</th>										
++										</tr>
++									</thead>
++									<tbody></tbody>	
++								</table>
++							</div>
+ 						</div>
+ 						<div class="Border_line"></div>
+ 						<p class="margin-large">
+Index: src/main/webapp/jsp/dubbiaEsigibilita/selezionaCapitoloDubbiaEsigibilita_modale.jsp
+===================================================================
+--- src/main/webapp/jsp/dubbiaEsigibilita/selezionaCapitoloDubbiaEsigibilita_modale.jsp	(revision 12618)
++++ src/main/webapp/jsp/dubbiaEsigibilita/selezionaCapitoloDubbiaEsigibilita_modale.jsp	(working copy)
+@@ -150,17 +150,17 @@
+ 				class=" fieldset-heading button-sliding"
+ 				data-target="#selezioneConsultazioneEntitaCollegate">
+ 				<h4>					
+-					<span>Elenco <span id="tipoEntitaTrovata">risultati</span>
+-						trovati
++					<span>Elenco capitoli trovati
+ 					</span>
+ 				</h4>
+ 			</div>
+ 			<div>
+-				<table class="table table-hover"
+-					id="risultatiRicercaCapitolo">
++				<table class="table table-hover" id="risultatiRicercaCapitolo">
+ 					<thead>
+ 						<tr>
+-							<th scope="col"></th>
++							<th scope="col">
++								<input type="checkbox" class="tooltip-test check-all" data-original-title="Seleziona tutti nella pagina corrente" data-referred-table="#risultatiRicercaCapitolo" />
++							</th>
+ 							<th scope="col">Capitolo</th>
+ 							<th scope="col">Descrizione</th>
+ 							<th scope="col">Classificazione</th>

@@ -1,0 +1,21 @@
+Index: src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp	(revision 14792)
++++ src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp	(working copy)
+@@ -29,10 +29,12 @@
+ <!-- 									<th scope="col">Applicazione</th> -->
+ 									<th scope="col">Descrizione</th>
+ 									<th scope="col">Tipo</th>
+-									<th scope="col">Provvedimento</th>
+-									<s:if test="!tipoVariazioneCodifica">
+-										<th scope="col">Provvedimento <abbr title="variazione di bilancio">VdB</abbr></th>
+-									</s:if>
++									<s:if test="tipoVariazioneCodifica">
++										<th scope="col">Provvedimento</th>
++									</s:if><s:else>
++										<th scope="col">Provvedimento PEG</th>
++										<th scope="col">Provvedimento Variazione di Bilancio</th>
++									</s:else>
+ 									<th scope="col">Stato</th>
+ 									<th scope="col">Azioni</th>
+ 								</tr>

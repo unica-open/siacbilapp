@@ -1,0 +1,24 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/RisultatiRicercaPreDocumentoSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/RisultatiRicercaPreDocumentoSpesaAction.java	(revision 13105)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/RisultatiRicercaPreDocumentoSpesaAction.java	(revision 13106)
+@@ -118,7 +118,6 @@
+ 			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+ 		}
+ 		sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA_PREDOCUMENTO, res.getImportoTotale());
+-		sessionHandler.setParametro(BilSessionParameter.RIENTRO, null);
+ 	}
+ 	
+ 	/**
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/RisultatiRicercaPreDocumentoEntrataAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/RisultatiRicercaPreDocumentoEntrataAction.java	(revision 13105)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/predocumento/RisultatiRicercaPreDocumentoEntrataAction.java	(revision 13106)
+@@ -140,7 +140,6 @@
+ 			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+ 		}
+ 		sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA_PREDOCUMENTO, res.getImportoTotale());
+-		sessionHandler.setParametro(BilSessionParameter.RIENTRO, null);
+ 	}
+ 
+ 	/**

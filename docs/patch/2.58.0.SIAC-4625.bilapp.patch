@@ -1,0 +1,25 @@
+Index: src/main/webapp/js/local/progetto/ricercaProgetto.js
+===================================================================
+--- src/main/webapp/js/local/progetto/ricercaProgetto.js	(revision 0)
++++ src/main/webapp/js/local/progetto/ricercaProgetto.js	(revision 0)
+@@ -0,0 +1,7 @@
++!function($) {
++    'use strict';
++    $(function(){
++    	Provvedimento.inizializza();
++    });
++
++}(jQuery);
+Index: src/main/webapp/jsp/progetto/ricercaProgetto.jsp
+===================================================================
+--- src/main/webapp/jsp/progetto/ricercaProgetto.jsp	(revision 14064)
++++ src/main/webapp/jsp/progetto/ricercaProgetto.jsp	(working copy)
+@@ -101,6 +101,6 @@
+ 	<s:include value="/jsp/include/javascript.jsp" />
+ 	<script type="text/javascript" src="${jspath}provvedimento/ztree.js"></script>
+ 	<script type="text/javascript" src="${jspath}provvedimento/ricerca_collapse.js"></script>
+-	<script type="text/javascript" src="${jspath}progetto/progetto.js"></script>
++	<script type="text/javascript" src="${jspath}progetto/ricercaProgetto.js"></script>
+ </body>
+ </html>
+\ No newline at end of file

@@ -1,0 +1,520 @@
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipopertrasfertadipendenti/InserisciRendicontoAnticipoPerTrasfertaDipendentiCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipopertrasfertadipendenti/InserisciRendicontoAnticipoPerTrasfertaDipendentiCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipopertrasfertadipendenti/InserisciRendicontoAnticipoPerTrasfertaDipendentiCassaEconomaleAction.java	(working copy)
+@@ -230,10 +230,23 @@
+ 		super.impostazioneValoriDefaultStep2();
+ 		
+ 		// Copio l'impegno
+-		Impegno impegno = model.getRichiestaEconomaleCopia().getImpegno();
+-		SubImpegno subImpegno = model.getRichiestaEconomaleCopia().getSubImpegno();
+-		
+-		model.setMovimentoGestione(impegno);
+-		model.setSubMovimentoGestione(subImpegno);
+-	}
+-}
++		Impegno impegno = model.getRichiestaEconomaleCopia().getImpegno();
++		SubImpegno subImpegno = model.getRichiestaEconomaleCopia().getSubImpegno();
++		
++		// SIAC-4715
++		model.getRendicontoRichiesta().getMovimento().setDettaglioPagamento(model.getCassaEconomale().getNumeroContoCorrente());
++		
++		model.setMovimentoGestione(impegno);
++		model.setSubMovimentoGestione(subImpegno);
++	}
++	
++	@Override
++	public String selezionaIban() {
++		return SUCCESS;
++	}
++	
++	@Override
++	public String caricaDettaglioPagamento() {
++		return SUCCESS;
++	}
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/AggiornaRendicontoAnticipoSpeseCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/AggiornaRendicontoAnticipoSpeseCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/AggiornaRendicontoAnticipoSpeseCassaEconomaleAction.java	(working copy)
+@@ -1,8 +1,16 @@
+-package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.anticipospese;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+-import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
+-import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException.Level;
++package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.anticipospese;
++
++import java.io.ByteArrayInputStream;
++import java.io.InputStream;
++
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
++import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
++import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
++import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException.Level;
+ import it.csi.siac.siacbilapp.frontend.ui.exception.WebServiceInvocationFailureException;
+ import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+@@ -17,20 +25,12 @@
+ import it.csi.siac.siaccecser.model.Movimento;
+ import it.csi.siac.siaccecser.model.RendicontoRichiesta;
+ import it.csi.siac.siaccorser.model.Errore;
+-import it.csi.siac.siaccorser.model.errore.ErroreCore;
+-import it.csi.siac.siaccorser.model.file.File;
+-
+-import java.io.ByteArrayInputStream;
+-import java.io.InputStream;
+-
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+-/**
+- * Classe di action per l'aggiornamento del rendiconto dell'anticipo spese.
+- * 
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
++import it.csi.siac.siaccorser.model.file.File;
++
++/**
++ * Classe di action per l'aggiornamento del rendiconto dell'anticipo spese.
++ * 
+  * @author Marchino Alessandro - Valentina Triolo
+  * @version 1.0.0 - 18/02/2015
+  *
+@@ -218,7 +218,17 @@
+ 		InputStream inputStream = new ByteArrayInputStream(file.getContenuto());
+ 		model.setInputStream(inputStream);
+ 		
+-		log.debug(methodName, "generazione pdf in corso...");
+-		return SUCCESS;
+-	}
+-}
++		log.debug(methodName, "generazione pdf in corso...");
++		return SUCCESS;
++	}
++	
++	@Override
++	public String selezionaIban() {
++		return SUCCESS;
++	}
++	
++	@Override
++	public String caricaDettaglioPagamento() {
++		return SUCCESS;
++	}
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/AggiornaRendicontoAnticipoSpeseCassaEconomaleGiustificativiAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/AggiornaRendicontoAnticipoSpeseCassaEconomaleGiustificativiAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/AggiornaRendicontoAnticipoSpeseCassaEconomaleGiustificativiAction.java	(working copy)
+@@ -1,15 +1,15 @@
+-package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.anticipospese;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+-import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospese.AggiornaRendicontoAnticipoSpeseCassaEconomaleModel;
+-
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+-/**
+- * Classe di action per l'aggiornamento del rendiconto dell'anticipo spese, azioni sui giustificativi.
+- * 
++package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.anticipospese;
++
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
++import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
++import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospese.AggiornaRendicontoAnticipoSpeseCassaEconomaleModel;
++
++/**
++ * Classe di action per l'aggiornamento del rendiconto dell'anticipo spese, azioni sui giustificativi.
++ * 
+  * @author Marchino Alessandro - Valentina Triolo
+  * @version 1.0.0 - 18/02/2015
+  *
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/InserisciRendicontoAnticipoSpeseCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/InserisciRendicontoAnticipoSpeseCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospese/InserisciRendicontoAnticipoSpeseCassaEconomaleAction.java	(working copy)
+@@ -140,10 +140,23 @@
+ 		super.impostazioneValoriDefaultStep2();
+ 		
+ 		// Copio l'impegno
+-		Impegno impegno = model.getRichiestaEconomaleCopia().getImpegno();
+-		SubImpegno subImpegno = model.getRichiestaEconomaleCopia().getSubImpegno();
+-		
+-		model.setMovimentoGestione(impegno);
+-		model.setSubMovimentoGestione(subImpegno);
+-	}
+-}
++		Impegno impegno = model.getRichiestaEconomaleCopia().getImpegno();
++		SubImpegno subImpegno = model.getRichiestaEconomaleCopia().getSubImpegno();
++		
++		// SIAC-4715
++		model.getRendicontoRichiesta().getMovimento().setDettaglioPagamento(model.getCassaEconomale().getNumeroContoCorrente());
++		
++		model.setMovimentoGestione(impegno);
++		model.setSubMovimentoGestione(subImpegno);
++	}
++	
++	@Override
++	public String selezionaIban() {
++		return SUCCESS;
++	}
++	
++	@Override
++	public String caricaDettaglioPagamento() {
++		return SUCCESS;
++	}
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/AggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/AggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/AggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java	(working copy)
+@@ -214,7 +214,16 @@
+ 	
+ 	@Override
+ 	public String completeStep3() {
+-		return innerCompleteStep3Rendiconto(model.getRendicontoRichiesta() != null ? model.getRendicontoRichiesta() : model.getRendicontoRichiestaCopia());
+-	}
+-
+-}
++		return innerCompleteStep3Rendiconto(model.getRendicontoRichiesta() != null ? model.getRendicontoRichiesta() : model.getRendicontoRichiestaCopia());
++	}
++
++	@Override
++	public String selezionaIban() {
++		return SUCCESS;
++	}
++	
++	@Override
++	public String caricaDettaglioPagamento() {
++		return SUCCESS;
++	}
++}
+Index: src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/InserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/InserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java	(revision 14386)
++++ src/main/java/it/csi/siac/siaccecapp/frontend/ui/action/cassaeconomale/richieste/anticipospesepermissione/InserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction.java	(working copy)
+@@ -118,10 +118,23 @@
+ 		super.impostazioneValoriDefaultStep2();
+ 		
+ 		// Copio l'impegno
+-		Impegno impegno = model.getRichiestaEconomaleCopia().getImpegno();
+-		SubImpegno subImpegno = model.getRichiestaEconomaleCopia().getSubImpegno();
+-		
+-		model.setMovimentoGestione(impegno);
+-		model.setSubMovimentoGestione(subImpegno);
+-	}
+-}
++		Impegno impegno = model.getRichiestaEconomaleCopia().getImpegno();
++		SubImpegno subImpegno = model.getRichiestaEconomaleCopia().getSubImpegno();
++		
++		// SIAC-4715
++		model.getRendicontoRichiesta().getMovimento().setDettaglioPagamento(model.getCassaEconomale().getNumeroContoCorrente());
++		
++		model.setMovimentoGestione(impegno);
++		model.setSubMovimentoGestione(subImpegno);
++	}
++	
++	@Override
++	public String selezionaIban() {
++		return SUCCESS;
++	}
++	
++	@Override
++	public String caricaDettaglioPagamento() {
++		return SUCCESS;
++	}
++}
+Index: src/main/webapp/js/local/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/rendiconto.step2.js
+===================================================================
+--- src/main/webapp/js/local/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/rendiconto.step2.js	(revision 14386)
++++ src/main/webapp/js/local/cassaEconomale/richieste/anticipoPerTrasfertaDipendenti/rendiconto.step2.js	(working copy)
+@@ -75,13 +75,14 @@
+ 
+         // Popolo l'oggetto per la chiamata AJAX
+         obj = {"impegno.annoMovimento": annoMovimento.val(), "impegno.numero": numeroMovimento.val()};
+-        // Attivo gli overlay
+-        joined.overlay("show");
+-
+-        $.postJSON("ricercaImpegnoPerChiave.do", obj, function(data) {
+-            var event;
+-            // Se ho errori, esco
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++        // Attivo gli overlay
++        joined.overlay("show");
++
++        $.postJSON("ricercaImpegnoPerChiave.do", obj)
++        .then(function(data) {
++            var event;
++            // Se ho errori, esco
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+                 $("#containerDisponibileMovimentoGestione").addClass("hide");
+                 $("#datiCapitoloStrutturaMovimentoGestione").addClass("hide");
+                 return;
+@@ -130,14 +131,15 @@
+         	 campoModalitaPagamentoDipendente.val("");
+              return;
+          }
+-         url = baseUrl + "_caricaModalitaPagamentoDipendenteDaCassa.do";
+-         obj = campoModalitaPagamentoCassa.serializeObject();
+-         campoModalitaPagamentoCassa.overlay("show");
+-      // Invocazione del servizio
+-         $.postJSON(url, obj, function(data) {
+-             var movimento;
+-             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-                 // Errori presenti. Esco
++         url = baseUrl + "_caricaModalitaPagamentoDipendenteDaCassa.do";
++         obj = campoModalitaPagamentoCassa.serializeObject();
++         campoModalitaPagamentoCassa.overlay("show");
++         // Invocazione del servizio
++         $.postJSON(url, obj)
++         .then(function(data) {
++             var movimento;
++             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                 // Errori presenti. Esco
+                  return;
+              }
+              if(data.messaggi.length && data.listaModalitaPagamentoSoggettoDifferenteIban && data.listaModalitaPagamentoSoggettoDifferenteIban.length) {
+@@ -146,14 +148,14 @@
+                  return;
+              }
+              movimento = data.rendicontoRichiesta && data.rendicontoRichiesta.movimento;
+-             // Popolo i dati
+-             $("#modalitaPagamentoDipendenteMovimento").val(data.rendicontoRichiesta.movimento.modalitaPagamentoDipendente && data.rendicontoRichiesta.movimento.modalitaPagamentoDipendente.uid || "");
+-             $("#modalitaPagamentoDipendenteMovimento").change();
+-              }).always(function() {
+-        	 campoModalitaPagamentoCassa.overlay("hide");
+-         });
+-    }
+-    
++             // Popolo i dati
++             $("#modalitaPagamentoDipendenteMovimento").val(data.rendicontoRichiesta.movimento.modalitaPagamentoDipendente && data.rendicontoRichiesta.movimento.modalitaPagamentoDipendente.uid || "");
++             $("#modalitaPagamentoDipendenteMovimento").change();
++         }).always(function() {
++             campoModalitaPagamentoCassa.overlay("hide");
++         });
++    }
++    
+     /**
+      * Caricamento dei dati della modalita' di pagamento.
+      */
+@@ -169,13 +171,14 @@
+         url = baseUrl + "_caricaDettaglioPagamento.do";
+         obj = campoModalitaPagamento.serializeObject();
+         modalitaPagamentoSoggetto.val("");
+-        campoModalitaPagamento.overlay("show");
+-
+-        // Invocazione del servizio
+-        $.postJSON(url, obj, function(data) {
+-            var movimento;
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-                // Errori presenti. Esco
++        campoModalitaPagamento.overlay("show");
++
++        // Invocazione del servizio
++        $.postJSON(url, obj)
++        .then(function(data) {
++            var movimento;
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                // Errori presenti. Esco
+                 return;
+             }
+             if(data.messaggi.length && data.listaModalitaPagamentoSoggettoDifferenteIban && data.listaModalitaPagamentoSoggettoDifferenteIban.length) {
+Index: src/main/webapp/js/local/cassaEconomale/richieste/anticipoSpese/rendiconto.step2.js
+===================================================================
+--- src/main/webapp/js/local/cassaEconomale/richieste/anticipoSpese/rendiconto.step2.js	(revision 14386)
++++ src/main/webapp/js/local/cassaEconomale/richieste/anticipoSpese/rendiconto.step2.js	(working copy)
+@@ -76,13 +76,14 @@
+ 
+         // Popolo l'oggetto per la chiamata AJAX
+         obj = {"impegno.annoMovimento": annoMovimento.val(), "impegno.numero": numeroMovimento.val()};
+-        // Attivo gli overlay
+-        joined.overlay("show");
+-
+-        $.postJSON("ricercaImpegnoPerChiave.do", obj, function(data) {
+-            var event;
+-            // Se ho errori, esco
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++        // Attivo gli overlay
++        joined.overlay("show");
++
++        $.postJSON("ricercaImpegnoPerChiave.do", obj)
++        .then(function(data) {
++            var event;
++            // Se ho errori, esco
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+                 $("#containerDisponibileMovimentoGestione").addClass("hide");
+                 $("#datiCapitoloStrutturaMovimentoGestione").addClass("hide");
+                 return;
+@@ -131,14 +132,15 @@
+         	 campoModalitaPagamentoDipendente.val("");
+              return;
+          }
+-         url = baseUrl + "_caricaModalitaPagamentoDipendenteDaCassa.do";
+-         obj = campoModalitaPagamentoCassa.serializeObject();
+-         campoModalitaPagamentoCassa.overlay("show");
+-      // Invocazione del servizio
+-         $.postJSON(url, obj, function(data) {
+-             var movimento;
+-             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-                 // Errori presenti. Esco
++         url = baseUrl + "_caricaModalitaPagamentoDipendenteDaCassa.do";
++         obj = campoModalitaPagamentoCassa.serializeObject();
++         campoModalitaPagamentoCassa.overlay("show");
++         // Invocazione del servizio
++         $.postJSON(url, obj)
++         .then(function(data) {
++             var movimento;
++             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                 // Errori presenti. Esco
+                  return;
+              }
+              if(data.messaggi.length && data.listaModalitaPagamentoSoggettoDifferenteIban && data.listaModalitaPagamentoSoggettoDifferenteIban.length) {
+@@ -170,13 +172,14 @@
+         url = baseUrl + "_caricaDettaglioPagamento.do";
+         obj = campoModalitaPagamento.serializeObject();
+         modalitaPagamentoSoggetto.val("");
+-        campoModalitaPagamento.overlay("show");
+-
+-        // Invocazione del servizio
+-        $.postJSON(url, obj, function(data) {
+-            var movimento;
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-                // Errori presenti. Esco
++        campoModalitaPagamento.overlay("show");
++
++        // Invocazione del servizio
++        $.postJSON(url, obj)
++        .then(function(data) {
++            var movimento;
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                // Errori presenti. Esco
+                 return;
+             }
+             if(data.messaggi.length && data.listaModalitaPagamentoSoggettoDifferenteIban && data.listaModalitaPagamentoSoggettoDifferenteIban.length) {
+@@ -262,13 +265,14 @@
+         }
+ 
+         // Attivo lo spinner
+-        spinner.addClass("activated");
+-        obj = checked.serializeObject();
+-        modalitaPagamentoSoggetto.val("");
+-        $.postJSON(baseUrl + "_selezionaIban.do", obj, function(data) {
+-            if(impostaDatiNegliAlert(data.errori, alertErroriIban)) {
+-                return;
+-            }
++        spinner.addClass("activated");
++        obj = checked.serializeObject();
++        modalitaPagamentoSoggetto.val("");
++        $.postJSON(baseUrl + "_selezionaIban.do", obj)
++        .then(function(data) {
++            if(impostaDatiNegliAlert(data.errori, alertErroriIban)) {
++                return;
++            }
+             // Altro da fare?
+             $("#dettaglioPagamentoMovimento").val(data.rendicontoRichiesta.movimento.dettaglioPagamento);
+             $("#bicMovimento").val(data.rendicontoRichiesta.movimento.bic);
+Index: src/main/webapp/js/local/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto.step2.js
+===================================================================
+--- src/main/webapp/js/local/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto.step2.js	(revision 14386)
++++ src/main/webapp/js/local/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto.step2.js	(working copy)
+@@ -76,13 +76,14 @@
+ 
+         // Popolo l'oggetto per la chiamata AJAX
+         obj = {"impegno.annoMovimento": annoMovimento.val(), "impegno.numero": numeroMovimento.val()};
+-        // Attivo gli overlay
+-        joined.overlay("show");
+-
+-        $.postJSON("ricercaImpegnoPerChiave.do", obj, function(data) {
+-            var event;
+-            // Se ho errori, esco
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++        // Attivo gli overlay
++        joined.overlay("show");
++
++        $.postJSON("ricercaImpegnoPerChiave.do", obj)
++        .then(function(data) {
++            var event;
++            // Se ho errori, esco
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+                 $("#containerDisponibileMovimentoGestione").addClass("hide");
+                 $("#datiCapitoloStrutturaMovimentoGestione").addClass("hide");
+                 return;
+@@ -131,14 +132,15 @@
+         	 campoModalitaPagamentoDipendente.val("");
+              return;
+          }
+-         url = baseUrl + "_caricaModalitaPagamentoDipendenteDaCassa.do";
+-         obj = campoModalitaPagamentoCassa.serializeObject();
+-         campoModalitaPagamentoCassa.overlay("show");
+-      // Invocazione del servizio
+-         $.postJSON(url, obj, function(data) {
+-             var movimento;
+-             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-                 // Errori presenti. Esco
++         url = baseUrl + "_caricaModalitaPagamentoDipendenteDaCassa.do";
++         obj = campoModalitaPagamentoCassa.serializeObject();
++         campoModalitaPagamentoCassa.overlay("show");
++         // Invocazione del servizio
++         $.postJSON(url, obj)
++         .then(function(data) {
++             var movimento;
++             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                 // Errori presenti. Esco
+                  return;
+              }
+              if(data.messaggi.length && data.listaModalitaPagamentoSoggettoDifferenteIban && data.listaModalitaPagamentoSoggettoDifferenteIban.length) {
+@@ -170,13 +172,14 @@
+         url = baseUrl + "_caricaDettaglioPagamento.do";
+         obj = campoModalitaPagamento.serializeObject();
+         modalitaPagamentoSoggetto.val("");
+-        campoModalitaPagamento.overlay("show");
+-
+-        // Invocazione del servizio
+-        $.postJSON(url, obj, function(data) {
+-            var movimento;
+-            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+-                // Errori presenti. Esco
++        campoModalitaPagamento.overlay("show");
++
++        // Invocazione del servizio
++        $.postJSON(url, obj)
++        .then(function(data) {
++            var movimento;
++            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
++                // Errori presenti. Esco
+                 return;
+             }
+             if(data.messaggi.length && data.listaModalitaPagamentoSoggettoDifferenteIban && data.listaModalitaPagamentoSoggettoDifferenteIban.length) {
+@@ -262,13 +265,14 @@
+         }
+ 
+         // Attivo lo spinner
+-        spinner.addClass("activated");
+-        obj = checked.serializeObject();
+-        modalitaPagamentoSoggetto.val("");
+-        $.postJSON(baseUrl + "_selezionaIban.do", obj, function(data) {
+-            if(impostaDatiNegliAlert(data.errori, alertErroriIban)) {
+-                return;
+-            }
++        spinner.addClass("activated");
++        obj = checked.serializeObject();
++        modalitaPagamentoSoggetto.val("");
++        $.postJSON(baseUrl + "_selezionaIban.do", obj)
++        .then(function(data) {
++            if(impostaDatiNegliAlert(data.errori, alertErroriIban)) {
++                return;
++            }
+             // Altro da fare?
+             $("#dettaglioPagamentoMovimento").val(data.rendicontoRichiesta.movimento.dettaglioPagamento);
+             $("#bicMovimento").val(data.rendicontoRichiesta.movimento.bic);

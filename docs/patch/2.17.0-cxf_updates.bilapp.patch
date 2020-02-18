@@ -1,0 +1,486 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/SiacJaxWsPortAdvisedProxyFactoryBean.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/SiacJaxWsPortAdvisedProxyFactoryBean.java	(revision 11355)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/SiacJaxWsPortAdvisedProxyFactoryBean.java	(revision 11356)
+@@ -39,6 +39,7 @@
+ 	
+ 	private Object serviceProxy;
+ 	private final List<Class<?>> advices = new ArrayList<Class<?>>();
++	private boolean logSOAPMessages = false;
+ 	
+ 	/**
+ 	 * Sets the advices: treats the string as comma-separed values and obtains the class defined for each value.
+@@ -59,6 +60,13 @@
+ 			}
+ 		}
+ 	}
++	/**
++	 * Sets the property telling whether to lof the SOAP messages.
++	 * @param logSOAPMessages whether to log the SOAP messages
++	 */
++	public void setLogSOAPMessages(boolean logSOAPMessages) {
++		this.logSOAPMessages = logSOAPMessages;
++	}
+ 	
+ 	@Override
+ 	public Object getObject() {
+@@ -77,7 +85,9 @@
+ 	
+ 	@Override
+ 	public void afterPropertiesSet() {
+-		addLogHandler();
++		if(logSOAPMessages) {
++			addLogHandler();
++		}
+ 		super.afterPropertiesSet();
+ 		createProxy();
+ 	}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/LoggingHandler.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/LoggingHandler.java	(revision 11355)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/proxy/LoggingHandler.java	(revision 11356)
+@@ -72,6 +72,9 @@
+ 	 * @param requestMessage the request
+ 	 */
+ 	private void logRequestMessage(final SOAPMessage requestMessage) {
++		if(!log.isDebugEnabled()) {
++			return;
++		}
+ 		final String methodName = "logRequestMessage";
+ 		StringBuilder sb = new StringBuilder();
+ 		sb.append("REQUEST:\n");
+@@ -88,6 +91,9 @@
+ 	 * @param responseMessage the response
+ 	 */
+ 	private void logResponseMessage(final SOAPMessage msg) {
++		if(!log.isDebugEnabled()) {
++			return;
++		}
+ 		final String methodName = "logResponseMessage";
+ 		StringBuilder sb = new StringBuilder();
+ 		sb.append("RESPONSE:\n");
+@@ -104,6 +110,9 @@
+ 	 * @param errorMessage the error
+ 	 */
+ 	private void logErrorMessage(final SOAPMessage msg) {
++		if(!log.isDebugEnabled()) {
++			return;
++		}
+ 		final String methodName = "logErrorMessage";
+ 		StringBuilder sb = new StringBuilder();
+ 		sb.append("ERROR:\n");
+Index: src/main/resources/spring/serviceClientContext.xml
+===================================================================
+--- src/main/resources/spring/serviceClientContext.xml	(revision 11355)
++++ src/main/resources/spring/serviceClientContext.xml	(revision 11356)
+@@ -45,6 +45,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <bean id="capitoloUscitaPrevisioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+@@ -55,6 +56,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloUscitaPrevisioneService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <bean id="capitoloUscitaGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+@@ -65,6 +67,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloUscitaGestioneService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <bean id="capitoloEntrataPrevisioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+@@ -75,6 +78,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloEntrataPrevisioneService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <bean id="capitoloEntrataGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+@@ -85,6 +89,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/CapitoloEntrataGestioneService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+ 
+@@ -97,6 +102,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/ClassificatoreBilService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+         <qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" />
+     </bean>
+ 
+@@ -109,6 +115,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.att}/AttoDiLeggeService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Variazione di bilancio @@@@@@ -->
+@@ -120,6 +127,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/VariazioneDiBilancioService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Provvedimento @@@@@@ -->
+@@ -131,6 +139,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.att}/ProvvedimentoService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Vincolo @@@@@@ -->
+@@ -142,6 +151,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/VincoloCapitoloService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Progetto @@@@@@ -->
+@@ -153,6 +163,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/ProgettoService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Bilancio @@@@@@ -->
+@@ -164,6 +175,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/BilancioService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Codifiche @@@@@@ -->
+@@ -175,6 +187,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/CodificheService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- ################ Servizi di FIN2 ################# -->
+@@ -188,6 +201,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Documento Spesa @@@@@@ -->
+@@ -199,6 +213,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoSpesaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Documento Entrata @@@@@@ -->
+@@ -210,6 +225,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoEntrataService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ PreDocumento Spesa @@@@@@ -->
+@@ -221,6 +237,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/PreDocumentoSpesaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ PreDocumento Entrata @@@@@@ -->
+@@ -232,6 +249,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/PreDocumentoEntrataService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Documento IVA @@@@@@ -->
+@@ -243,6 +261,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoIvaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Documento IVA Spesa @@@@@@ -->
+@@ -254,6 +273,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoIvaSpesaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Documento IVA Entrata @@@@@@ -->
+@@ -265,6 +285,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/DocumentoIvaEntrataService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Attivita IVA Capitolo @@@@@@ -->
+@@ -276,6 +297,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/AttivitaIvaCapitoloService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Gruppo Attivita IVA @@@@@@ -->
+@@ -287,6 +309,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/GruppoAttivitaIvaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Registro IVA @@@@@@ -->
+@@ -298,6 +321,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/RegistroIvaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Stampa IVA @@@@@@ -->
+@@ -309,6 +333,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.integ}/StampaIvaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Allegato Atto @@@@@@ -->
+@@ -320,6 +345,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.integ}/AllegatoAttoService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Tipo Onere @@@@@@ -->
+@@ -331,6 +357,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/TipoOnereService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Emissione Ordinativo @@@@@@ -->
+@@ -342,6 +369,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.integ}/EmissioneOrdinativiService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ PCC @@@@@@ -->
+@@ -353,6 +381,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/RegistroComunicazioniPCCService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- @@@@@@ Ordine @@@@@@ -->
+@@ -364,6 +393,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin2}/OrdineService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- ################ Servizi di CEC ################# -->
+@@ -377,6 +407,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.cec}/CassaEconomaleService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="richiestaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.RichiestaEconomaleService" />
+@@ -386,6 +417,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.cec}/RichiestaEconomaleService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="stampaCassaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.StampaCassaEconomaleService" />
+@@ -395,6 +427,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.integ}/StampaCassaEconomaleService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     
+     <!-- ################ Servizi di GEN ################# -->
+@@ -406,6 +439,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.gen}/ContoService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="causaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.CausaleService" />
+@@ -415,6 +449,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.gen}/CausaleService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+      <bean id="primaNotaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.PrimaNotaService" />
+@@ -424,6 +459,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.integ}/PrimaNotaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="registrazioneMovFinService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.RegistrazioneMovFinService" />
+@@ -433,6 +469,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.gen}/RegistrazioneMovFinService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="conciliazioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.ConciliazioneService" />
+@@ -442,6 +479,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.gen}/ConciliazioneService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     
+     <!-- ################ Servizi di FEL ################# -->
+@@ -453,6 +491,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fel}/FatturaElettronicaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     
+      <!-- ################ Servizi di consultazione entita collegate ################# -->
+@@ -464,6 +503,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.bil}/ConsultazioneEntitaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     
+     <!-- ################ Servizi di Core ################# -->
+@@ -476,6 +516,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.core}/CoreService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <bean id="classificatoreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+@@ -487,6 +528,8 @@
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
+         <qualifier type="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.NonCachedService" />
++        <!-- Evito di loggare tutta la gerarchia di SAC -->
++        <property name="logSOAPMessages" value="false" />
+     </bean>
+ 
+     <bean id="operazioneAsincronaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+@@ -497,6 +540,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.core}/OperazioneAsincronaService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <bean id="fileService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+@@ -507,6 +551,8 @@
+         <property name="endpointAddress" value="${endpoint.url.service.core}/FileService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <!-- Evito di loggare il byte-array dei file -->
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+     <!-- ################ Servizi di FIN ################# -->
+@@ -518,6 +564,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin}/ClassificatoreFinService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="genericService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.GenericService" />
+@@ -527,6 +574,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin}/GenericService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="movimentoGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService" />
+@@ -537,6 +585,7 @@
+         <property name="customProperties" ref="jaxwsCustomProperties"/>
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="soggettoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.SoggettoService" />
+@@ -546,6 +595,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin}/SoggettoService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="liquidazioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService" />
+@@ -555,6 +605,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin}/LiquidazioneService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+     <bean id="provvisorioService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService" />
+@@ -564,6 +615,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin}/ProvvisorioService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+      <bean id="ordinativoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.OrdinativoService" />
+@@ -573,6 +625,7 @@
+         <property name="endpointAddress" value="${endpoint.url.service.fin}/OrdinativoService" />
+         <property name="lookupServiceOnStartup" value="false" />
+         <property name="advices" value="${service.proxy.advices}" />
++        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+     </bean>
+ 
+ </beans>
+\ No newline at end of file

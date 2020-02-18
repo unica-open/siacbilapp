@@ -1,0 +1,28 @@
+Index: src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/registrazionemovfin/RicercaRegistrazioneMovFinFINAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/registrazionemovfin/RicercaRegistrazioneMovFinFINAction.java	(revision 12295)
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/registrazionemovfin/RicercaRegistrazioneMovFinFINAction.java	(working copy)
+@@ -50,7 +50,9 @@
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("anno o numero movimento", ": i campi devono essere entrambi valorizzati o entrambi non valorizzati"));
+ 		checkCondition(model.getNumeroSubmovimento() == null || model.getNumeroSubmovimento() == 0 || (model.getAnnoMovimento() != null && StringUtils.isNotBlank(model.getNumeroMovimento())),
+ 				ErroreCore.FORMATO_NON_VALIDO.getErrore("numero submovimento", ": valorizzare anche anno e numero movimento"));
+-
++		if(model.getAnnoMovimento() == null && StringUtils.isBlank(model.getNumeroMovimento())){
++			checkNotNullNorInvalidUid(model.getEvento(), "Evento");
++		}
+ 		validaContoFinanziario();
+ 		if (hasErrori()) {
+ 			model.impostoDatiNelModel();
+Index: src/main/webapp/jsp/contabilitaGenerale/registrazione/ricercaRegistrazione.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/registrazione/ricercaRegistrazione.jsp	(revision 12295)
++++ src/main/webapp/jsp/contabilitaGenerale/registrazione/ricercaRegistrazione.jsp	(working copy)
+@@ -53,7 +53,7 @@
+ 									</div>
+ 									
+ 									<div class="control-group">
+-										<label class="control-label" for="evento">Evento<span id="spanEvento"></span></label>
++										<label class="control-label" for="evento">Evento<span id="spanEvento"> *</span></label>
+ 										<div class="controls">
+ 											<s:select list="listaEventi" name="evento.uid" id="evento" headerKey="" headerValue="" cssClass="span6" required="true"
+ 												listValue="%{codice + ' - ' + descrizione}" listKey="uid" disabled="%{evento == null || evento.tipoEvento == null || evento.tipoEvento.uid == 0}" />

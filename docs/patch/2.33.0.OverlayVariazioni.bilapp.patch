@@ -1,0 +1,24 @@
+Index: src/main/webapp/js/local/variazioni/variazioni.step2.codifiche.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/variazioni.step2.codifiche.js	(revision 12186)
++++ src/main/webapp/js/local/variazioni/variazioni.step2.codifiche.js	(working copy)
+@@ -214,6 +214,7 @@
+         	return true;
+         }
+         $("form").removeClass('form-submitted');
++        $('body').overlay('hide');
+         $("#modaleConfermaNoProvvedimento").modal("show");
+         return false;
+     };
+Index: src/main/webapp/js/local/variazioni/variazioni.step2.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/variazioni.step2.js	(revision 12186)
++++ src/main/webapp/js/local/variazioni/variazioni.step2.js	(working copy)
+@@ -214,6 +214,7 @@
+         	return true;
+         }
+         $("form").removeClass('form-submitted');
++        $('body').overlay('hide');
+         $("#modaleConfermaNoProvvedimento").modal("show");
+         return false;
+     };

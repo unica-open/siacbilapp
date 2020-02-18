@@ -1,0 +1,1027 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/RicercaVariazioneAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/RicercaVariazioneAction.java	(revision 14758)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/RicercaVariazioneAction.java	(working copy)
+@@ -1,41 +1,41 @@
+-package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
+-
+-import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
+-import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimento;
+-import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimentoResponse;
++package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
++
++import java.util.ArrayList;
++import java.util.Arrays;
++import java.util.List;
++
++import org.apache.commons.lang3.StringUtils;
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
++import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
++import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimento;
++import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimentoResponse;
+ import it.csi.siac.siacattser.model.TipoAtto;
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.RicercaVariazioneModel;
+ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+-import it.csi.siac.siacbilser.frontend.webservice.VariazioneDiBilancioService;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancio;
+-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodifiche;
+-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+-import it.csi.siac.siacbilser.model.TipoVariazione;
+-import it.csi.siac.siaccorser.model.Bilancio;
+-import it.csi.siac.siaccorser.model.Errore;
+-import it.csi.siac.siaccorser.model.ServiceRequest;
+-import it.csi.siac.siaccorser.model.ServiceResponse;
+-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+-import it.csi.siac.siaccorser.model.errore.ErroreCore;
+-
+-import java.util.ArrayList;
+-import java.util.Arrays;
+-import java.util.List;
+-
+-import org.apache.commons.lang3.StringUtils;
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+-/**
+- * Action per la ricerca dello variazione di bilancio.
+- * 
++import it.csi.siac.siacbilser.frontend.webservice.VariazioneDiBilancioService;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBaseResponse;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancio;
++import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodifiche;
++import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
++import it.csi.siac.siacbilser.model.TipoVariazione;
++import it.csi.siac.siaccorser.model.Bilancio;
++import it.csi.siac.siaccorser.model.Errore;
++import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
++import it.csi.siac.siaccorser.model.ServiceRequest;
++import it.csi.siac.siaccorser.model.errore.ErroreCore;
++
++/**
++ * Action per la ricerca dello variazione di bilancio.
++ * 
+  * @author Daniele Argiolas
+  * @version 1.0.0 - 28/10/2013
+  *
+@@ -74,29 +74,31 @@
+ 	 */
+ 	public String ricercaVariazioni() {
+ 		final String methodName = "ricercaVariazioni";
+-		
+-		/* tipoVariazione true = codifica; false = bilancio */
+-		Boolean tipoVariazione = "codifiche".equalsIgnoreCase(model.getTipologiaSceltaVariazione()) ? Boolean.TRUE : Boolean.FALSE;
+-		ServiceRequest request = null;
+-		ServiceResponse response = null;
+-
+-		log.debug(methodName, "Creazione della request");
+-		/* Se Ricerca Variazioni di Bilancio */
+-		if(Boolean.FALSE.equals(tipoVariazione)) {
+-			request = model.creaRequestRicercaVariazioneBilancio();
+-			logServiceRequest(request);
+-		
+-			log.debug(methodName, "Richiamo il WebService di ricerca");
+-			response = variazioneDiBilancioService.ricercaVariazioneBilancio((RicercaVariazioneBilancio) request);
+-		} else {
+-			request = model.creaRequestRicercaVariazioneCodifiche();
+-			logServiceRequest(request);
+-		
+-			log.debug(methodName, "Richiamo il WebService di ricerca");
+-			response = variazioneDiBilancioService.ricercaVariazioneCodifiche((RicercaVariazioneCodifiche) request);
+-		}
+-			
+-		log.debug(methodName, "Richiamato il WebService di ricerca");
++		
++		/* tipoVariazione true = codifica; false = bilancio */
++		Boolean tipoVariazione = "codifiche".equalsIgnoreCase(model.getTipologiaSceltaVariazione()) ? Boolean.TRUE : Boolean.FALSE;
++		ServiceRequest request;
++		RicercaVariazioneBaseResponse<?> response;
++
++		log.debug(methodName, "Creazione della request");
++		/* Se Ricerca Variazioni di Bilancio */
++		if(Boolean.FALSE.equals(tipoVariazione)) {
++			RicercaVariazioneBilancio req = model.creaRequestRicercaVariazioneBilancio();
++			logServiceRequest(req);
++			request = req;
++		
++			log.debug(methodName, "Richiamo il WebService di ricerca");
++			response = variazioneDiBilancioService.ricercaVariazioneBilancio(req);
++		} else {
++			RicercaVariazioneCodifiche req = model.creaRequestRicercaVariazioneCodifiche();
++			logServiceRequest(req);
++			request = req;
++		
++			log.debug(methodName, "Richiamo il WebService di ricerca");
++			response = variazioneDiBilancioService.ricercaVariazioneCodifiche(req);
++		}
++			
++		log.debug(methodName, "Richiamato il WebService di ricerca");
+ 		logServiceResponse(response);
+ 	
+ 		if(response.hasErrori()) {
+@@ -104,22 +106,15 @@
+ 			addErrori(response);
+ 			return INPUT;
+ 		}
+-		
+-		log.debug(methodName, "Ricerca effettuata con successo");
+-			
+-		Integer totaleElementi;
+-		try {
+-			totaleElementi = (Integer) response.getClass().getMethod("getTotaleElementi").invoke(response);
+-		} catch (Exception e) {
+-			log.error(methodName, "Errore: " + e.getMessage());
+-			totaleElementi = 0;
++		
++		log.debug(methodName, "Ricerca effettuata con successo");
++			
++		int totaleElementi = response.getTotaleElementi();
++		if(totaleElementi == 0){
++			log.debug(methodName, "Nessun risultato ottenuto dalla ricerca");
++			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore(""));
++			return INPUT;
+ 		}
+-		
+-		if(totaleElementi.intValue() == 0){
+-			log.debug(methodName, "Nessun risultato ottenuto dalla ricerca");
+-			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore(""));
+-			return INPUT;
+-		}
+ 			
+ 		log.debug(methodName, "Pulisco la sessione");
+ 		// Ricordare pulire correttamente la sessione 
+@@ -132,19 +127,13 @@
+ 		// Workaround per sopperire al fatto che le requests non siano serializzabili
+ 		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_VARIAZIONI, request);
+ 		sessionHandler.setParametro(BilSessionParameter.TIPO_VARIAZIONE, tipoVariazione);
+-		
+-		log.debug(methodName, "Imposto in sessione la lista VARIAZIONI");
+-		
+-		Object listaRisultati;
+-		try {
+-			listaRisultati = response.getClass().getMethod("getVariazioniDiBilancio").invoke(response);
+-		} catch (Exception e) {
+-			log.error(methodName, "Errore: " + e.getMessage());
+-			throw new IllegalArgumentException("Errore nell'ottenimento delle variazioni di bilancio", e);
+-		}
+-		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_VARIAZIONI, listaRisultati);
+-		sessionHandler.setParametro(BilSessionParameter.RIENTRO_POSIZIONE_START, null);
+-		
++		
++		log.debug(methodName, "Imposto in sessione la lista VARIAZIONI");
++		
++		List<?> listaRisultati = response.getVariazioniDiBilancio();
++		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_VARIAZIONI, listaRisultati);
++		sessionHandler.setParametro(BilSessionParameter.RIENTRO_POSIZIONE_START, null);
++		
+ 		return SUCCESS;
+ 	}
+ 	
+@@ -163,14 +152,13 @@
+ 			listaErrori.add(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("TipoVariazione"));
+ 		} else if	((model.getNumeroVariazione() != null && model.getNumeroVariazione().intValue() != 0) || 
+ 				(StringUtils.isNotBlank(model.getApplicazioneVariazione())) ||
+-				(model.getStatoVariazione() != null) ||
+-				(model.getTipoVariazione() != null) ||
+-				(StringUtils.isNotBlank(model.getDescrizioneVariazione())) ||
+-				(model.getUidProvvedimento()!=null) ||
+-				("importi".equals(model.getTipologiaSceltaVariazione()) && model.getUidProvvedimentoAggiuntivo()!=null)) {
+-			log.debug(methodName, "Ricerca variazione valida");
+-			formValido = true;
+-		}
++				(model.getStatoVariazione() != null) ||
++				(model.getTipoVariazione() != null) ||
++				(StringUtils.isNotBlank(model.getDescrizioneVariazione())) ||
++				(model.getUidProvvedimento()!=null)) {
++			log.debug(methodName, "Ricerca variazione valida");
++			formValido = true;
++		}
+ 		
+ 
+ 		// Controllo della validità del form
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(revision 14758)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java	(working copy)
+@@ -1163,14 +1163,13 @@
+ 		numeroVariazione = variazioneCodifica.getNumero();
+ 		descrizione = variazioneCodifica.getDescrizione();
+ 		tipoVariazione = variazioneCodifica.getTipoVariazione();
+-		uidVariazioneImportoCapitolo = variazioneCodifica.getUid();
+-		dataVariazione = variazioneCodifica.getData();
+-		
+-		@SuppressWarnings("rawtypes")
+-		List<Capitolo> listaCapitoli = variazioneCodifica.getCapitoli();
+-		if(!listaCapitoli.isEmpty()){
+-			TipoCapitolo tipoCapitolo = listaCapitoli.get(0).getTipoCapitolo();
+-			if(tipoCapitolo == TipoCapitolo.CAPITOLO_ENTRATA_PREVISIONE || tipoCapitolo == TipoCapitolo.CAPITOLO_USCITA_PREVISIONE) {
++		uidVariazioneImportoCapitolo = variazioneCodifica.getUid();
++		dataVariazione = variazioneCodifica.getData();
++		
++		List<Capitolo<?, ?>> listaCapitoli = variazioneCodifica.getCapitoli();
++		if(!listaCapitoli.isEmpty()){
++			TipoCapitolo tipoCapitolo = listaCapitoli.get(0).getTipoCapitolo();
++			if(tipoCapitolo == TipoCapitolo.CAPITOLO_ENTRATA_PREVISIONE || tipoCapitolo == TipoCapitolo.CAPITOLO_USCITA_PREVISIONE) {
+ 				applicazione = ApplicazioneVariazione.PREVISIONE;
+ 			} else {
+ 				applicazione = ApplicazioneVariazione.GESTIONE;
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/RicercaVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/RicercaVariazioneModel.java	(revision 14758)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/RicercaVariazioneModel.java	(working copy)
+@@ -50,17 +50,12 @@
+ 	
+ 	private AttoAmministrativo attoAmministrativo;
+ 	private Integer uidProvvedimento;
+-	private TipoAtto tipoAtto;
+-	private StrutturaAmministrativoContabile strutturaAmministrativoContabile;
+-	
+-	private AttoAmministrativo attoAmministrativoAggiuntivo;
+-	private Integer uidProvvedimentoAggiuntivo;
+-	private TipoAtto tipoAttoAggiuntivo;
+-	private StrutturaAmministrativoContabile strutturaAmministrativoContabileAggiuntivo;
+-		
+-	/* Liste */
+-	private List<String> listaApplicazioneVariazione = new ArrayList<String>();
+-	private List<TipoVariazione> listaTipoVariazione = new ArrayList<TipoVariazione>();
++	private TipoAtto tipoAtto;
++	private StrutturaAmministrativoContabile strutturaAmministrativoContabile;
++	
++	/* Liste */
++	private List<String> listaApplicazioneVariazione = new ArrayList<String>();
++	private List<TipoVariazione> listaTipoVariazione = new ArrayList<TipoVariazione>();
+ 	private List<StatoOperativoVariazioneDiBilancio> listaStatoVariazione = new ArrayList<StatoOperativoVariazioneDiBilancio>();
+ 	
+ 	private List<TipoAtto> listaTipoAtto = new ArrayList<TipoAtto>();
+@@ -170,16 +165,15 @@
+ 
+ 
+ 
+-	/**
+-	 * @param statoVariazione the statoVariazione to set
+-	 */
+-	public void setStatoVariazione(
+-			StatoOperativoVariazioneDiBilancio statoVariazione) {
+-		this.statoVariazione = statoVariazione;
+-	}
++	/**
++	 * @param statoVariazione the statoVariazione to set
++	 */
++	public void setStatoVariazione(StatoOperativoVariazioneDiBilancio statoVariazione) {
++		this.statoVariazione = statoVariazione;
++	}
++
+ 
+ 
+-
+ 	/**
+ 	 * @return the uidProvvedimento
+ 	 */
+@@ -207,16 +201,15 @@
+ 
+ 
+ 
+-	/**
+-	 * @param listaApplicazioneVariazione the listaApplicazioneVariazione to set
+-	 */
+-	public void setListaApplicazioneVariazione(
+-			List<String> listaApplicazioneVariazione) {
+-		this.listaApplicazioneVariazione = listaApplicazioneVariazione;
+-	}
++	/**
++	 * @param listaApplicazioneVariazione the listaApplicazioneVariazione to set
++	 */
++	public void setListaApplicazioneVariazione(List<String> listaApplicazioneVariazione) {
++		this.listaApplicazioneVariazione = listaApplicazioneVariazione;
++	}
++
+ 
+ 
+-
+ 	/**
+ 	 * @return the listaTipoVariazione
+ 	 */
+@@ -244,16 +237,15 @@
+ 
+ 
+ 
+-	/**
+-	 * @param listaStatoVariazione the listaStatoVariazione to set
+-	 */
+-	public void setListaStatoVariazione(
+-			List<StatoOperativoVariazioneDiBilancio> listaStatoVariazione) {
+-		this.listaStatoVariazione = listaStatoVariazione;
+-	}
++	/**
++	 * @param listaStatoVariazione the listaStatoVariazione to set
++	 */
++	public void setListaStatoVariazione(List<StatoOperativoVariazioneDiBilancio> listaStatoVariazione) {
++		this.listaStatoVariazione = listaStatoVariazione;
++	}
++
+ 
+ 
+-
+ 	/**
+ 	 * @return the listaTipoAtto
+ 	 */
+@@ -291,90 +283,17 @@
+ 		return strutturaAmministrativoContabile;
+ 	}
+ 
+-	/**
+-	 * @param strutturaAmministrativoContabile the strutturaAmministrativoContabile to set
+-	 */
+-	public void setStrutturaAmministrativoContabile(
+-			StrutturaAmministrativoContabile strutturaAmministrativoContabile) {
+-		this.strutturaAmministrativoContabile = strutturaAmministrativoContabile;
+-	}
+-
+-	/**
+-	 * Gets the atto amministrativo aggiuntivo.
+-	 *
+-	 * @return the atto amministrativo aggiuntivo
+-	 */
+-	public AttoAmministrativo getAttoAmministrativoAggiuntivo() {
+-		return attoAmministrativoAggiuntivo;
+-	}
+-
+-	/**
+-	 * Gets the uid provvedimento aggiuntivo.
+-	 *
+-	 * @return the uid provvedimento aggiuntivo
+-	 */
+-	public Integer getUidProvvedimentoAggiuntivo() {
+-		return uidProvvedimentoAggiuntivo;
+-	}
+-
+-	/**
+-	 * Gets the tipo atto aggiuntivo.
+-	 *
+-	 * @return the tipo atto aggiuntivo
+-	 */
+-	public TipoAtto getTipoAttoAggiuntivo() {
+-		return tipoAttoAggiuntivo;
+-	}
+-
+-	/**
+-	 * Gets the struttura amministrativo contabile aggiuntivo.
+-	 *
+-	 * @return the struttura amministrativo contabile aggiuntivo
+-	 */
+-	public StrutturaAmministrativoContabile getStrutturaAmministrativoContabileAggiuntivo() {
+-		return strutturaAmministrativoContabileAggiuntivo;
+-	}
+-
+-	/**
+-	 * Sets the atto amministrativo aggiuntivo.
+-	 *
+-	 * @param attoAmministrativoAggiuntivo the new atto amministrativo aggiuntivo
+-	 */
+-	public void setAttoAmministrativoAggiuntivo(AttoAmministrativo attoAmministrativoAggiuntivo) {
+-		this.attoAmministrativoAggiuntivo = attoAmministrativoAggiuntivo;
+-	}
+-
+-	/**
+-	 * Sets the uid provvedimento aggiuntivo.
+-	 *
+-	 * @param uidProvvedimentoAggiuntivo the new uid provvedimento aggiuntivo
+-	 */
+-	public void setUidProvvedimentoAggiuntivo(Integer uidProvvedimentoAggiuntivo) {
+-		this.uidProvvedimentoAggiuntivo = uidProvvedimentoAggiuntivo;
+-	}
+-
+-	/**
+-	 * Sets the tipo atto aggiuntivo.
+-	 *
+-	 * @param tipoAttoAggiuntivo the new tipo atto aggiuntivo
+-	 */
+-	public void setTipoAttoAggiuntivo(TipoAtto tipoAttoAggiuntivo) {
+-		this.tipoAttoAggiuntivo = tipoAttoAggiuntivo;
+-	}
+-
+-	/**
+-	 * Sets the struttura amministrativo contabile aggiuntivo.
+-	 *
+-	 * @param strutturaAmministrativoContabileAggiuntivo the new struttura amministrativo contabile aggiuntivo
+-	 */
+-	public void setStrutturaAmministrativoContabileAggiuntivo(StrutturaAmministrativoContabile strutturaAmministrativoContabileAggiuntivo) {
+-		this.strutturaAmministrativoContabileAggiuntivo = strutturaAmministrativoContabileAggiuntivo;
+-	}
+-
+-	/**
+-	 * @return the tipoVariazioneHidden
+-	 */
+-	public String getTipoVariazioneHidden() {
++	/**
++	 * @param strutturaAmministrativoContabile the strutturaAmministrativoContabile to set
++	 */
++	public void setStrutturaAmministrativoContabile(StrutturaAmministrativoContabile strutturaAmministrativoContabile) {
++		this.strutturaAmministrativoContabile = strutturaAmministrativoContabile;
++	}
++
++	/**
++	 * @return the tipoVariazioneHidden
++	 */
++	public String getTipoVariazioneHidden() {
+ 		return tipoVariazioneHidden;
+ 	}
+ 
+@@ -400,21 +319,14 @@
+ 	}
+ 	
+ 	/**
+-	 * @return the stringaProvvedimento
+-	 */
+-	public String getStringaProvvedimento(){
+-		return "provvedimento variazione di PEG";
+-	}
+-	
+-	/**
+-	 * @return the stringaProvvedimento
+-	 */
+-	public String getStringaProvvedimentoAggiuntivo(){
+-		return "provvedimento variazione di bilancio";
+-	}
++	 * @return the stringaProvvedimento
++	 */
++	public String getStringaProvvedimento(){
++		return "provvedimento";
++	}
++
++	/* ==== Override di equals, hashCode, toString ==== */
+ 
+-	/* ==== Override di equals, hashCode, toString ==== */
+-
+ 	@Override
+ 	public boolean equals(Object obj) {
+ 		if (this == obj) {
+@@ -484,12 +396,18 @@
+ 			request.setTipiCapitolo(tipiCapitolo);
+ 		} else if(APPLICAZIONE_PREVISIONE.equalsIgnoreCase(applicazioneVariazione)){
+ 			tipiCapitolo.add(TipoCapitolo.CAPITOLO_ENTRATA_PREVISIONE);
+-			tipiCapitolo.add(TipoCapitolo.CAPITOLO_USCITA_PREVISIONE);
+-			request.setTipiCapitolo(tipiCapitolo);
+-		}
+-			
+-		request.setParametriPaginazione(creaParametriPaginazione());
+-		
++			tipiCapitolo.add(TipoCapitolo.CAPITOLO_USCITA_PREVISIONE);
++			request.setTipiCapitolo(tipiCapitolo);
++		}
++		
++		if(uidProvvedimento!=null && uidProvvedimento.intValue() != 0){
++			AttoAmministrativo attoAmministrativoDaInjettare = new AttoAmministrativo();
++			attoAmministrativoDaInjettare.setUid(uidProvvedimento);
++			request.setAttoAmministrativo(attoAmministrativoDaInjettare);
++		}
++			
++		request.setParametriPaginazione(creaParametriPaginazione());
++		
+ 		return request;
+ 	}
+ 	/**
+@@ -548,22 +466,12 @@
+ 			utility.setTipoVariazione(tipoVariazione);
+ 		}
+ 		if(statoVariazione!=null){
+-			utility.setStatoOperativoVariazioneDiBilancio(statoVariazione);
+-		}
+-		
+-		if(uidProvvedimento!=null && uidProvvedimento.intValue() != 0){
+-			AttoAmministrativo attoAmministrativoDaInjettare = new AttoAmministrativo();
+-			attoAmministrativoDaInjettare.setUid(uidProvvedimento);
+-			utility.setAttoAmministrativo(attoAmministrativoDaInjettare);
+-		}
+-		if(uidProvvedimentoAggiuntivo!=null && uidProvvedimentoAggiuntivo.intValue() != 0){
+-			AttoAmministrativo attoAmministrativoVariazioneDiBilancioDaInjettare = new AttoAmministrativo();
+-			attoAmministrativoVariazioneDiBilancioDaInjettare.setUid(uidProvvedimentoAggiuntivo);
+-			utility.setAttoAmministrativoVariazioneBilancio(attoAmministrativoVariazioneDiBilancioDaInjettare);
+-		}
+-		return utility;
+-	}
+-	
++			utility.setStatoOperativoVariazioneDiBilancio(statoVariazione);
++		}
++		
++		return utility;
++	}
++	
+ 	private VariazioneCodificaCapitolo creaVariazioneCodifica() {
+ 		VariazioneCodificaCapitolo utility = new VariazioneCodificaCapitolo();
+ 		
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/RisultatiRicercaVariazioneModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/RisultatiRicercaVariazioneModel.java	(revision 14758)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/RisultatiRicercaVariazioneModel.java	(working copy)
+@@ -70,8 +70,8 @@
+ 	/**
+ 	 * @param tipoVariazioneCodifica the tipoVariazioneCodifica to set
+ 	 */
+-	public void setTipoVariazioneCodifica(Boolean tipoVariazioneCodifica) {
+-		this.tipoVariazioneCodifica = tipoVariazioneCodifica;
+-	}
+-
+-}
++	public void setTipoVariazioneCodifica(Boolean tipoVariazioneCodifica) {
++		this.tipoVariazioneCodifica = tipoVariazioneCodifica;
++	}
++	
++}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/variazione/ElementoVariazione.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/variazione/ElementoVariazione.java	(revision 14758)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/variazione/ElementoVariazione.java	(working copy)
+@@ -1,14 +1,14 @@
+-package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione;
+-
+-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
+-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+-import it.csi.siac.siacbilser.model.TipoVariazione;
+-
+-import java.io.Serializable;
+-
+-/**
+- * Classe di wrap per la variazione
+- * @author Daniele Argiolas
++package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione;
++
++import java.io.Serializable;
++
++import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
++import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
++import it.csi.siac.siacbilser.model.TipoVariazione;
++
++/**
++ * Classe di wrap per la variazione
++ * @author Daniele Argiolas
+  *
+  */
+ public class ElementoVariazione implements Serializable, ModelWrapper {
+@@ -18,13 +18,17 @@
+ 
+ 	private int uid;
+ 	private Integer numero;
+-	private String applicazione;
+-	private String descrizione;
+-	private TipoVariazione tipoVariazione;
+-	private String provvedimento;
+-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+-	
+-	/** Costruttore vuoto di default */
++	private String applicazione;
++	private String descrizione;
++	private TipoVariazione tipoVariazione;
++	
++	// Provvedimento PEG
++	private String provvedimento;
++	// Provvedimento di bilancio
++	private String provvedimentoBilancio;
++	private StatoOperativoVariazioneDiBilancio statoVariazione;
++	
++	/** Costruttore vuoto di default */
+ 	public ElementoVariazione(){
+ 		super();
+ 	}
+@@ -109,12 +113,26 @@
+ 	 */
+ 	public void setProvvedimento(String provvedimento) {
+ 		this.provvedimento = provvedimento;
+-	}
+-
+-	/**
+-	 * @return the statoVariazione
+-	 */
+-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
++	}
++
++	/**
++	 * @return the provvedimentoBilancio
++	 */
++	public String getProvvedimentoBilancio() {
++		return provvedimentoBilancio;
++	}
++
++	/**
++	 * @param provvedimentoBilancio the provvedimentoBilancio to set
++	 */
++	public void setProvvedimentoBilancio(String provvedimentoBilancio) {
++		this.provvedimentoBilancio = provvedimentoBilancio;
++	}
++
++	/**
++	 * @return the statoVariazione
++	 */
++	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+ 		return statoVariazione;
+ 	}
+ 
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/variazione/ElementoVariazioneFactory.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/variazione/ElementoVariazioneFactory.java	(revision 14758)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/util/wrappers/variazione/ElementoVariazioneFactory.java	(working copy)
+@@ -1,17 +1,18 @@
+-package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione;
+-
+-import java.util.List;
+-
+-import it.csi.siac.siacattser.model.AttoAmministrativo;
+-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+-import it.csi.siac.siacbilser.model.Capitolo;
+-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+-import it.csi.siac.siacbilser.model.TipoCapitolo;
+-import it.csi.siac.siacbilser.model.TipoVariazione;
+-import it.csi.siac.siacbilser.model.VariazioneDiBilancio;
+-
+-/**
+- * Factory per il wrapping delle Variazioni
++package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import it.csi.siac.siacattser.model.AttoAmministrativo;
++import it.csi.siac.siacbilser.model.Capitolo;
++import it.csi.siac.siacbilser.model.TipoCapitolo;
++import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
++import it.csi.siac.siacbilser.model.VariazioneDiBilancio;
++import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
++import it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo;
++
++/**
++ * Factory per il wrapping delle Variazioni
+  * 
+  * @author Daniele Argiolas
+  * @version 1.0.0 12/11/2013
+@@ -35,80 +36,102 @@
+ 	 */
+ 	public static ElementoVariazione getInstance(VariazioneDiBilancio variazione) {
+ 		if(variazione == null) {
+-			return null;
+-		}
+-		ElementoVariazione wrapper = new ElementoVariazione();
+-		
+-		// Campi da injettare
+-		int uid;
+-		Integer numero;
+-		String descrizione;
+-		TipoVariazione tipoVariazione;
+-		StatoOperativoVariazioneDiBilancio statoVariazione;
+-		String applicazione;
+-
+-		// Valorizzazione dei campi
+-		uid = variazione.getUid();
+-		numero = variazione.getNumero();
+-		
+-		descrizione = variazione.getDescrizione() == null ? UNDEFINED : variazione.getDescrizione();
+-		tipoVariazione = variazione.getTipoVariazione();
+-		
+-		AttoAmministrativo attoAmministrativo = ottieniAttoAmministrativo(variazione);
+-		
+-		// Gestione del provvedimento
+-		if(attoAmministrativo != null) {
+-			wrapper.setProvvedimento(attoAmministrativo.getAnno() + "/" + attoAmministrativo.getNumero() + "/" + (attoAmministrativo.getTipoAtto()!= null? attoAmministrativo.getTipoAtto().getCodice() : ""));
+-		} else {
+-			wrapper.setProvvedimento(UNDEFINED);
+-		}
+-		
+-		statoVariazione = variazione.getStatoOperativoVariazioneDiBilancio();
+-		
+-		// Injezione dei campi
+-		wrapper.setUid(uid);
+-		wrapper.setNumero(numero);
+-		
+-		applicazione = ottieniApplicazione(variazione);
+-		wrapper.setApplicazione(applicazione);
+-		
+-		wrapper.setDescrizione(descrizione);
+-		wrapper.setTipoVariazione(tipoVariazione);
+-		wrapper.setStatoVariazione(statoVariazione);
+-		
+-		return wrapper;
+-	}
+-
+-	/**
+-	 * Ottiene l'atto amministrativo a partire dalla variazione di bilancio fornita in input.
+-	 * 
+-	 * @param variazione la variazione da cui estrarre l'atto amministrativo
+-	 * @return l'atto
+-	 * 
+-	 * @throws IllegalArgumentException nel caso in cui non sia stato possibile estrarre l'atto
+-	 */
+-	private static AttoAmministrativo ottieniAttoAmministrativo(VariazioneDiBilancio variazione) {
+-		return ReflectionUtil.invokeNullaryMethod(variazione, "getAttoAmministrativo");
+-	}
+-	
+-	/**
+-	 * Ottiene l'applicazione a partire dalla variazione.
+-	 * <br>
+-	 * <strong>ATTENZIONE!</strong>
+-	 * <br>
+-	 * Ad oggi ottiene solo le applicazioni <code>Previsione</code> e <code>Gestione</code>
+-	 * 
+-	 * @param variazione la variazione da cui estrarre l'applicazione
+-	 * @return l'applicazione
+-	 * 
+-	 * @throws IllegalArgumentException nel caso in cui non sia stato possibile estrarre l'applicazione
+-	 */
+-	private static String ottieniApplicazione(VariazioneDiBilancio variazione) {
+-		List<Capitolo<?, ?>> listaCapitoli = ReflectionUtil.invokeNullaryMethod(variazione, "getCapitoli");
+-		
+-		String result = "";
+-		if(!listaCapitoli.isEmpty()){
+-			TipoCapitolo tipoCapitolo = listaCapitoli.get(0).getTipoCapitolo();
++			return null;
++		}
++		ElementoVariazione wrapper = new ElementoVariazione();
++		popolaDatiBase(variazione, wrapper);
++		if(variazione instanceof VariazioneCodificaCapitolo) {
++			popolaDatiCodifica((VariazioneCodificaCapitolo) variazione, wrapper);
++		} else if(variazione instanceof VariazioneImportoCapitolo) {
++			popolaDatiImporto((VariazioneImportoCapitolo) variazione, wrapper);
++		} else if(variazione instanceof VariazioneImportoSingoloCapitolo) {
++			popolaDatiImportoSingoloCapitolo((VariazioneImportoSingoloCapitolo) variazione, wrapper);
++		}
++		return wrapper;
++	}
++	
++	/**
++	 * Popolamento dei dati di base
++	 * @param variazione la variazione
++	 * @param wrapper il wrapper da popolare
++	 */
++	private static void popolaDatiBase(VariazioneDiBilancio variazione, ElementoVariazione wrapper) {
++		wrapper.setUid(variazione.getUid());
++		wrapper.setNumero(variazione.getNumero());
++		wrapper.setDescrizione(variazione.getDescrizione() == null ? UNDEFINED : variazione.getDescrizione());
++		wrapper.setTipoVariazione(variazione.getTipoVariazione());
++		wrapper.setStatoVariazione(variazione.getStatoOperativoVariazioneDiBilancio());
++	}
++	
++	/**
++	 * Popolamento dei dati della variazione codifica
++	 * @param variazione la variazione
++	 * @param wrapper il wrapper da popolare
++	 */
++	private static void popolaDatiCodifica(VariazioneCodificaCapitolo variazione, ElementoVariazione wrapper) {
++		wrapper.setProvvedimento(componiStringaAttoAmministrativo(variazione.getAttoAmministrativo()));
++		wrapper.setApplicazione(ottieniApplicazione(variazione.getCapitoli()));
++	}
++	
++	/**
++	 * Popolamento dei dati della variazione importi
++	 * @param variazione la variazione
++	 * @param wrapper il wrapper da popolare
++	 */
++	private static void popolaDatiImporto(VariazioneImportoCapitolo variazione, ElementoVariazione wrapper) {
++		wrapper.setProvvedimento(componiStringaAttoAmministrativo(variazione.getAttoAmministrativo()));
++		wrapper.setProvvedimentoBilancio(componiStringaAttoAmministrativo(variazione.getAttoAmministrativoVariazioneBilancio()));
++		wrapper.setApplicazione(ottieniApplicazione(variazione.getCapitoli()));
++	}
++	
++	/**
++	 * Popolamento dei dati della variazione importi
++	 * @param variazione la variazione
++	 * @param wrapper il wrapper da popolare
++	 */
++	private static void popolaDatiImportoSingoloCapitolo(VariazioneImportoSingoloCapitolo variazione, ElementoVariazione wrapper) {
++		// Da deprecare?
++		wrapper.setProvvedimento(componiStringaAttoAmministrativo(variazione.getAttoAmministrativo()));
++		wrapper.setProvvedimentoBilancio(componiStringaAttoAmministrativo(variazione.getAttoAmministrativoVariazioneDiBilancio()));
++		
++		List<Capitolo<?, ?>> list = new ArrayList<Capitolo<?,?>>();
++		list.add(variazione.getCapitolo());
++		wrapper.setApplicazione(ottieniApplicazione(list));
++	}
++	
++	/**
++	 * Composizione della stringa dell'atto amministrativo
++	 * @param attoAmministrativo l'atto
++	 * @return la stringa dell'atto
++	 */
++	private static String componiStringaAttoAmministrativo(AttoAmministrativo attoAmministrativo) {
++		if(attoAmministrativo == null) {
++			return UNDEFINED;
++		}
++		return new StringBuilder()
++				.append(attoAmministrativo.getAnno())
++				.append("/")
++				.append(attoAmministrativo.getNumero())
++				.append(attoAmministrativo.getTipoAtto() != null ? "/" + attoAmministrativo.getTipoAtto().getCodice() : "")
++				.toString();
++	}
++
++	/**
++	 * Ottiene l'applicazione a partire dalla variazione.
++	 * <br>
++	 * <strong>ATTENZIONE!</strong>
++	 * <br>
++	 * Ad oggi ottiene solo le applicazioni <code>Previsione</code> e <code>Gestione</code>
++	 * 
++	 * @param listaCapitoli la lista dei capitoli
++	 * @return l'applicazione
++	 * 
++	 * @throws IllegalArgumentException nel caso in cui non sia stato possibile estrarre l'applicazione
++	 */
++	private static String ottieniApplicazione(List<Capitolo<?, ?>> listaCapitoli) {
++		String result = "";
++		if(!listaCapitoli.isEmpty()){
++			TipoCapitolo tipoCapitolo = listaCapitoli.get(0).getTipoCapitolo();
+ 			if(tipoCapitolo == TipoCapitolo.CAPITOLO_ENTRATA_PREVISIONE || tipoCapitolo == TipoCapitolo.CAPITOLO_USCITA_PREVISIONE) {
+ 				result = "Previsione";
+ 			} else {
+Index: src/main/webapp/js/local/variazioni/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/ricerca.js	(revision 14758)
++++ src/main/webapp/js/local/variazioni/ricerca.js	(working copy)
+@@ -82,13 +82,10 @@
+         $("input[name='tipologiaSceltaVariazione']").on("change", onChangeTipologia);
+         $('#tipoApplicazione').on("change", onChangeTipoApplicazione).trigger('change');
+         $("#applicazioneVariazione").on("change", onChangeTipoApplicazione);
+-        
+-        submitFormOnEnterPress('form');
+-        
+-        var provvedimento = new Provvedimento(undefined, 'Nessun provvedimento selezionato', 'provvedimento variazione di PEG:');
+-    	provvedimento.inizializza();
+-    	
+-    	var provvedimentoVariazioneDiBilancio = new Provvedimento('Aggiuntivo', 'Nessun provvedimento selezionato', 'provvedimento variazione di bilancio:');
+-    	provvedimentoVariazioneDiBilancio.inizializza();
+-    });
+-})(this, jQuery);
++        
++        submitFormOnEnterPress('form');
++        
++        var provvedimento = new Provvedimento(undefined, 'Nessun provvedimento selezionato', 'provvedimento:');
++    	provvedimento.inizializza();
++    });
++})(this, jQuery);
+Index: src/main/webapp/js/local/variazioni/risultatiRicerca.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/risultatiRicerca.js	(revision 14758)
++++ src/main/webapp/js/local/variazioni/risultatiRicerca.js	(working copy)
+@@ -29,43 +29,43 @@
+     /**
+      * Imposta il dataTable per gli Variazioni.
+      *
+-     * @param startPosition {Number} la posizione di inizio
+-     */
+-    function visualizzaTabellaVariazioni (startPosition) {
+-        var tipoVariazioneCodifiche = $('#tipoVariazione').val();
+-        var gestioneUEB = ($('#HIDDEN_gestioneUEB').val() === "true");
+-        var ajaxUrl = tipoVariazioneCodifiche==="true"?"risultatiRicercaVariazioniCodificheAjax.do":"risultatiRicercaVariazioniImportiAjax.do";
+-        var startPositionDaUtilizzare = startPosition || 0;
+-
+-        // Le opzioni base del dataTable
+-        var optionsBase = {
++     * @param startPosition {Number} la posizione di inizio
++     */
++    function visualizzaTabellaVariazioni (startPosition) {
++        var tipoVariazioneCodifiche = $('#tipoVariazione').val() === 'true';
++        var gestioneUEB = ($('#HIDDEN_gestioneUEB').val() === "true");
++        var ajaxUrl = tipoVariazioneCodifiche ? "risultatiRicercaVariazioniCodificheAjax.do" : "risultatiRicercaVariazioniImportiAjax.do";
++        var startPositionDaUtilizzare = startPosition || 0;
++        var options;
++
++        // Le opzioni base del dataTable
++        var optionsBase = {
+             bServerSide: true,
+             sAjaxSource: ajaxUrl,
+             sServerMethod: "POST",
+             iDisplayStart: startPositionDaUtilizzare,
+             fnDrawCallback: function () {
+-                $('#id_num_result').html(" " + this.fnSettings().fnRecordsTotal() + " ");
+-            },
+-            aoColumnDefs: [
+-                {aTargets: [0], mData: "numero"},
+-                //{aTargets: [1], mData: "applicazione"},
+-                {aTargets: [1], mData: "descrizione"},
+-                {aTargets: [2], mData: function(source) {
+-                    return source.tipoVariazione.codice + " - " + source.tipoVariazione.descrizione;
+-                }},
+-                {aTargets: [3], mData: "provvedimento"},
+-                {aTargets: [4], mData: function(source) {
+-                    return source.statoVariazione.descrizione;
+-                }},
+-                {aTargets: [5], fnCreatedCell: function (nTd) {
+-                    $('.dropdown-toggle', nTd).dropdown();
+-                }, mData: function (source) {
+-                    var pulsante = "";
+-                    var link = '<li><a href="consultaImportiVariazione.do?uidVariazioneDaConsultare='+source.uid+'">consulta importi</a></li>';
+-                    if(tipoVariazioneCodifiche === "true"){
+-                        link = '<li><a href="consultaCodificheVariazione.do?uidVariazioneDaConsultare='+source.uid+'">consulta codifiche</a></li>';
+-                    } else if(gestioneUEB){
+-                        link = '<li><a href="consultaImportiUEBVariazione.do?uidVariazioneDaConsultare='+source.uid+'">consulta importi UEB</a></li>';
++                $('#id_num_result').html(" " + this.fnSettings().fnRecordsTotal() + " ");
++            },
++            aoColumnDefs: [
++                {aTargets: [0], mData: defaultPerDataTable('numero')},
++                {aTargets: [1], mData: defaultPerDataTable('descrizione')},
++                {aTargets: [2], mData: function(source) {
++                    return source.tipoVariazione.codice + " - " + source.tipoVariazione.descrizione;
++                }},
++                {aTargets: [3], mData: defaultPerDataTable('provvedimento')},
++                {aTargets: [4 + !tipoVariazioneCodifiche], mData: function(source) {
++                    return source.statoVariazione.descrizione;
++                }},
++                {aTargets: [5 + !tipoVariazioneCodifiche], fnCreatedCell: function (nTd) {
++                    $('.dropdown-toggle', nTd).dropdown();
++                }, mData: function (source) {
++                    var pulsante = "";
++                    var link = '<li><a href="consultaImportiVariazione.do?uidVariazioneDaConsultare='+source.uid+'">consulta importi</a></li>';
++                    if(tipoVariazioneCodifiche){
++                        link = '<li><a href="consultaCodificheVariazione.do?uidVariazioneDaConsultare='+source.uid+'">consulta codifiche</a></li>';
++                    } else if(gestioneUEB){
++                        link = '<li><a href="consultaImportiUEBVariazione.do?uidVariazioneDaConsultare='+source.uid+'">consulta importi UEB</a></li>';
+                     }
+                     pulsante = '<div class="btn-group">' +
+                     '<button class="btn dropdown-toggle" data-toggle="dropdown">Azioni&nbsp;<span class="caret"></span></button>' +
+@@ -72,13 +72,18 @@
+                     '<ul class="dropdown-menu pull-right">' + link + '</ul>' +
+                     '</div>';
+                     return pulsante;
+-                }}
+-            ]
+-        };
+-        var options = $.extend(true, {}, dataTableBaseOptions, optionsBase);
+-        $("#risultatiRicercaVariazioni").dataTable(options);
+-    }
+-
++                }}
++            ]
++        };
++        if(!tipoVariazioneCodifiche) {
++            optionsBase.aoColumnDefs.push({aTargets: [4], mData: defaultPerDataTable('provvedimentoBilancio')});
++        }
++        options = $.extend(true, {}, dataTableBaseOptions, optionsBase);
++        
++
++        $("#risultatiRicercaVariazioni").dataTable(options);
++    }
++
+     $(function() {
+         var startPosition = $("#startPosition").val();
+         // Carico la dataTable
+Index: src/main/webapp/jsp/variazione/ricercaVariazione.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/ricercaVariazione.jsp	(revision 14758)
++++ src/main/webapp/jsp/variazione/ricercaVariazione.jsp	(working copy)
+@@ -80,26 +80,12 @@
+ 									<p>&Egrave; necessario inserire oltre all'anno almeno il numero atto oppure il tipo atto</p>
+ 									<%-- Ricerca come dato aggiuntivo --%>
+ 									<s:include value="/jsp/provvedimento/formRicercaProvvedimento.jsp" />
+-								</div>
+-							</div>
+-							
+-							<div class="margin-large" id="div_provvedimentoVariazioneDiBilancio">
+-								<a class="btn pull-center hide" id="collapseProvv" data-toggle="collapse" data-parent="#div_provvedimentoVariazioneDiBilancio" href="#collapseProvvedimentoAggiuntivo" >
+-									<i class="icon-pencil icon-2x"></i>&nbsp;<span id="SPAN_InformazioniProvvedimentoAggiuntivo"> <s:property value="stringaProvvedimentoAggiuntivo" /></span>
+-									
+-								</a>
+-							</div>
+-							<div id="collapseProvvedimentoAggiuntivo" class="collapse">
+-								<div class="collapse-inner">
+-									<p>&Egrave; necessario inserire oltre all'anno almeno il numero atto oppure il tipo atto</p>
+-									<%-- Ricerca come dato aggiuntivo --%>
+-									<s:include value="/jsp/provvedimento/formRicercaProvvedimentoAggiuntivo.jsp" />
+-								</div>
+-							</div>
+-							
+-							<p class="margin-large">
+-								<s:include value="/jsp/include/indietro.jsp" />
+-								<s:reset value="annulla" cssClass="btn btn-link" />
++								</div>
++							</div>
++							
++							<p class="margin-large">
++								<s:include value="/jsp/include/indietro.jsp" />
++								<s:reset value="annulla" cssClass="btn btn-link" />
+ 								<s:submit cssClass="btn btn-primary pull-right" value="cerca" />
+ 							</p>
+ 						</div>
+Index: src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp
+===================================================================
+--- src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp	(revision 14758)
++++ src/main/webapp/jsp/variazione/risultatiRicercaVariazione.jsp	(working copy)
+@@ -30,6 +30,9 @@
+ 									<th scope="col">Descrizione</th>
+ 									<th scope="col">Tipo</th>
+ 									<th scope="col">Provvedimento</th>
++									<s:if test="!tipoVariazioneCodifica">
++										<th scope="col">Provvedimento <abbr title="variazione di bilancio">VdB</abbr></th>
++									</s:if>
+ 									<th scope="col">Stato</th>
+ 									<th scope="col">Azioni</th>
+ 								</tr>

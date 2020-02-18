@@ -1,0 +1,2744 @@
+Index: src/main/webapp/jsp/capEntrataGestione/inserisciCapEntGestDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capEntrataGestione/inserisciCapEntGestDISABLED.jsp	(revision 15281)
++++ src/main/webapp/jsp/capEntrataGestione/inserisciCapEntGestDISABLED.jsp	(working copy)
+@@ -1,413 +1,347 @@
+-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+-<%@ taglib uri="/struts-tags" prefix="s"%>
+-<%@ taglib uri="/struts-json-tags" prefix="json" %>
+-<%@ taglib uri="http://www.csi.it/taglibs/remincl-1.0" prefix="r"%>
+-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+-
+-<%-- Inclusione head e CSS --%>
+-<s:include value="/jsp/include/head.jsp" />
+-</head>
+-<body>
+-	<%-- Inclusione header --%>
+-	<s:include value="/jsp/include/header.jsp" />
+-	
+-	<%-- Pagina JSP vera e propria --%>
+-	<div class="container-fluid">
+-		<div class="row-fluid">
+-			<div class="span12 ">
+-			
+-				<div class="step-content">
+-					<div class="step-pane active" id="step1">
+-						<s:include value="/jsp/include/messaggi.jsp" />
+-	
+-						<h3>Capitolo <s:property value="capitoloEntrataGestione.numeroCapitolo"/>/<s:property value="capitoloEntrataGestione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloEntrataGestione.numeroUEB"/></s:if></h3>
+-						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
+-							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
+-							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
+-							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
+-						</ul>
+-							
+-						<div id="my-tab-content" class="tab-content" >
+-							<!-- BEGIN Blocco Capitolo -->	
+-		
+-							<div class="tab-pane active" id="capitolo">					
+-								<form action="redirezioneAggiornamentoCapEntrataGestione.do" method="post" id="aggiornamentoCapEntrataGestione" name="formInserimento" data-disabled-form="true">
+-									<%-- Uid del capitolo inserito --%>
+-									<s:hidden value="%{capitoloEntrataGestione.uid}" name="uidDaAggiornare" id="uidCapitoloDaAggiornare" />
+-									<s:hidden name="daAggiornamento" />
+-									<fieldset class="form-horizontal">
+-										<div class="control-group">
+-											<label class="control-label" for="annoda2">Anno</label>
+-											<div class="controls">
+-												<input type="text" id="annoda2" class="lbTextSmall span2" disabled="disabled"
+-														value="${AnnoEsercizioInt}" maxlength="4" />
+-												<s:hidden name="bilancio.anno" value="%{annoEsercizioInt}" />
+-												<s:hidden name="bilancio.uid" />
+-												<span class="al"> 
+-													<label class="radio inline" for="annoa">Capitolo *</label>
+-												</span> 
+-												<input type="text" id="annoa" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloEntrataGestione.numeroCapitolo}" />
+-												<s:hidden name="capitoloEntrataGestione.numeroCapitolo" 
+-														value="%{capitoloEntrataGestione.numeroCapitolo}" />
+-												<span class="al">
+-													<label class="radio inline" for="art">Articolo *</label>
+-												</span> 
+-												<input type="text" id="art" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloEntrataGestione.numeroArticolo}" />
+-												<s:hidden name="capitoloEntrataGestione.numeroArticolo" 
+-														value="%{capitoloEntrataGestione.numeroArticolo}" />
+-												<s:if test="gestioneUEB">
+-													<span class="al">
+-														<label class="radio inline" for="ueb2">
+-															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
+-														</label>
+-													</span>
+-													<input type="text" id="ueb" class="lbTextSmall span2" maxlength="200" disabled="disabled" 
+-															value="${capitoloEntrataGestione.numeroUEB }" />
+-												</s:if>
+-												<s:hidden name="capitoloEntrataGestione.numeroUEB" 
+-														value="%{capitoloEntrataGestione.numeroUEB}" />
+-											</div>
+-										</div>
+-										
+-										<div class="control-group">
+-											<label for="titolo_adv" class="control-label">Descrizione *</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="titolo_adv" disabled="disabled"
+-														class="span10">${capitoloEntrataGestione.descrizione}</textarea>
+-												<s:hidden name="capitoloEntrataGestione.descrizione" 
+-														value="%{capitoloEntrataGestione.descrizione}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="descrart" class="control-label">Descrizione Articolo</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="descart" disabled="disabled"
+-														class="span10">${capitoloEntrataGestione.descrizioneArticolo}</textarea>
+-												<s:hidden name="capitoloEntrataGestione.descrizioneArticolo" 
+-														value="%{capitoloEntrataGestione.descrizioneArticolo}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="Titolo" class="control-label">Titolo *</label>
+-											<div class="controls">
+-												<select id="Titolo" class="span10" disabled="disabled">
+-													<option value="${titoloEntrata.uid}" selected="selected">
+-														${titoloEntrata.codice}-${titoloEntrata.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="titoloEntrata.uid" value="%{titoloEntrata.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="Macroaggregato" class="control-label">Tipologia *
+-												<a class="tooltip-test" title="selezionare prima il Titolo" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Titolo</span>
+-													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Macroaggregato" class="span10" disabled="disabled">
+-													<option value="${tipologiaTitolo.uid}" selected="selected">
+-														${tipologiaTitolo.codice}-${tipologiaTitolo.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="tipologiaTitolo.uid" value="%{tipologiaTitolo.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="Categoria" class="control-label">Categoria *
+-												<a class="tooltip-test" title="selezionare prima la Tipologia" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima la Tipologia</span>
+-													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Categoria" class="span10" disabled="disabled">
+-													<option value="${categoriaTipologiaTitolo.uid}" selected="selected">
+-														${categoriaTipologiaTitolo.codice}-${categoriaTipologiaTitolo.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="tipologiaTitolo.uid" value="%{tipologiaTitolo.uid}" />
+-											</div>
+-										</div>
+-										
+-										<%-- zTree --%>
+-										<div class="control-group">
+-											<label for="pdc" class="control-label">
+-												<abbr title="Piano dei Conti">P.d.C.</abbr> finanziario *
+-												<a class="tooltip-test" title="selezionare prima il Macroaggregato" href="#">
+-													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Macroaggregato</span>
+-													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_ElementoPianoDeiContiUid" name="elementoPianoDeiConti.uid"
+-														value="%{elementoPianoDeiConti.uid}" />
+-												<s:property value="pdcFinanziario"/>
+-											</div>
+-										</div>
+-										<%-- zTree --%>
+-										<div class="control-group">
+-											<label for="bottoneSIOPE" class="control-label">
+-												<abbr title="Sistema Informativo sulle OPerazioni degli Enti pubblici">SIOPE</abbr>
+-												<%--a class="tooltip-test" title="selezionare prima il P.d.C." href="#">
+-													<i class="icon-info-sign">&nbsp;<span class="nascosto">selezionare prima il P.d.C.</span></i>
+-												</a--%>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_SIOPEUid" name="siopeEntrata.uid" data-original-uid="%{siopeEntrata != null ? siopeEntrata.uid : ''}" />
+-												<s:property value="siopeInserito"/>
+-											</div>
+-										</div>
+-										<%-- zTree --%>
+-										<div class="control-group">
+-											<label for="finanz2" class="control-label">
+-												Struttura Amministrativa Responsabile *
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid" 
+-														name="strutturaAmministrativoContabile.uid"
+-														value="%{strutturaAmministrativoContabile.uid}" />
+-												<s:property value="strutturaAmministrativoResponsabile"/>
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="categoriaCapitolo" class="control-label">Tipo capitolo</label>
+-											<div class="controls">
+-												<s:select id="categoriaCapitolo" listKey="uid" list="listaCategoriaCapitolo" name="capitoloEntrataGestione.categoriaCapitolo.uid" cssClass="span10"
+-													listValue="%{codice + '-' + descrizione}" disabled="true" headerKey="" headerValue="" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="flagImpegnabile" class="control-label">Accertabile</label>
+-											<div class="controls">
+-												<s:checkbox id="flagImpegnabile" name="capitoloEntrataGestione.flagImpegnabile" disabled="true" />
+-											</div>
+-										</div>
+-									</fieldset>
+-									
+-									<div class="accordion" id="accordion2">
+-										<div class="accordion-group">
+-											<div class="accordion-heading">
+-												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati" data-parent="#accordion2" href="#collapseOne"> 
+-													Altri dati<span class="icon">&nbsp;</span>
+-												</a>
+-											</div>
+-											<div id="collapseOne" class="accordion-body collapse">
+-												<div class="accordion-inner">
+-													<fieldset class="form-horizontal">
+-				
+-														<div class="control-group">
+-															<label for="finanz" class="control-label">Tipo Finanziamento</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTipoFinanziamento" id="tipoFinanziamento" cssClass="span10"
+-																		name="tipoFinanziamento.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-																<s:hidden name="tipoFinanziamento.uid" value="%{tipoFinanziamento.uid}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
+-															<label for="iva" class="control-label">
+-																Rilevante IVA
+-															</label>
+-															<div class="controls">
+-																<s:checkbox id="iva" disabled="true"
+-																		name="capitoloEntrataGestione.flagRilevanteIva"
+-																		value="%{capitoloEntrataGestione.flagRilevanteIva}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
+-															<label for="memoria" class="control-label">Corsivo per memoria</label>
+-															<div class="controls">
+-																<s:checkbox id="memoria" disabled="true"
+-																	name="capitoloEntrataGestione.flagPerMemoria" />
+-															</div>
+-														</div>
+-														<div class="control-group">
+-															<label for="fondo" class="control-label">Tipo fondo</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
+-																		name="tipoFondo.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-																<s:hidden name="tipoFondo.uid" value="%{tipoFondo.uid}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
+-															<span class="control-label">Entrata</span>
+-															<div class="controls">
+-																<s:iterator value="listaRicorrenteEntrata" var="ricorrente" status="stat">
+-																	<label class="radio inline">
+-																		<input type="radio" name="ricorrenteEntrata.uid" value="<s:property value="%{#ricorrente.uid}" />" <s:if test="%{ricorrenteEntrata.uid == #ricorrente.uid}">checked="checked"</s:if> disabled="disabled">&nbsp;<s:property value="%{#ricorrente.descrizione}" />
+-																	</label>
+-																</s:iterator>
+-															</div>
+-														</div>
+-														<div class="control-group">
+-															<label for="perimetroSanitario" class="control-label">Codifica identificativo del perimetro sanitario</label>
+-															<div class="controls input-append">
+-																<s:select list="listaPerimetroSanitarioEntrata" id="perimetroSanitario" cssClass="span10"
+-																		name="perimetroSanitarioEntrata.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
+-															<label for="transazioneUnioneEuropea" class="control-label">Codifica transazione UE</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTransazioneUnioneEuropeaEntrata" id="transazioneUnioneEuropea" cssClass="span10"
+-																		name="transazioneUnioneEuropeaEntrata.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
+-														<%-- Classificatori Generici --%>
+-														<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+-															<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
+-																<div class="control-group">
+-																	<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
+-																		<s:property value="%{#attr['labelClassificatoreGenerico' + #idx]}"/>
+-																	</label>
+-																	<div class="controls">
+-																		<s:select list="%{#attr['listaClassificatoreGenerico' + #idx]}" id="classificatoreGenerico%{#idx}"
+-																			cssClass="span10" name="%{'classificatoreGenerico' + #idx + '.uid'}" headerKey="" headerValue=""
+-																			listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="true" />
+-																	</div>
+-																</div>
+-															</s:if>
+-														</s:iterator>
+-														<div class="control-group">
+-															<label for="Note" class="control-label">Note</label>
+-															<div class="controls">
+-																<textarea id="Note" disabled="disabled" rows="5" 
+-																		cols="15">${capitoloEntrataGestione.note}</textarea>
+-																<s:hidden name="capitoloEntrataGestione.note" 
+-																		value="%{capitoloEntrataGestione.note}" />
+-															</div>
+-														</div>
+-													</fieldset>
+-												</div>
+-											</div>
+-										</div>
+-									</div>
+-				
+-									<%-- MASCHERA 1 --%>
+-									<%-- Sezione C-D-E --%>
+-									<h4>Stanziamenti</h4>
+-									
+-									<table summary="riepilogo incarichi" class="table table-hover">
+-										<tr>
+-											<th width="20%">&nbsp;</th>
+-											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 0}"/></th>
+-											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
+-											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
+-										</tr>
+-										
+-										<%-- Già accertato --%>
+-										<s:hidden name="importiCapitoloEntrataGestione0.diCuiAccertatoAnno1" />
+-										<s:hidden name="importiCapitoloEntrataGestione0.diCuiAccertatoAnno2" />
+-										<s:hidden name="importiCapitoloEntrataGestione0.diCuiAccertatoAnno3" />
+-										
+-										<tr>
+-											<th>Competenza</th>
+-											<td class="text-right"> 
+-												<label for="imp1" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloEntrataGestione0.stanziamento" />
+-												<s:hidden name="importiCapitoloEntrataGestione0.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3a" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloEntrataGestione1.stanziamento" />
+-												<s:hidden name="importiCapitoloEntrataGestione1.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3b" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloEntrataGestione2.stanziamento" />
+-												<s:hidden name="importiCapitoloEntrataGestione2.stanziamento" />
+-											</td>
+-										</tr>
+-										<tr>
+-											<th>Residuo</th>
+-											<td class="text-right">
+-												<label for="imp2" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloEntrataGestione0.stanziamentoResiduo" />
+-												<s:hidden name="importiCapitoloEntrataGestione0.stanziamentoResiduo" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2a" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2a" name="importiCapitoloEntrataGestione1.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2b" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2b" name="importiCapitoloEntrataGestione2.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-										
+-										<tr>
+-											<th>Cassa</th>
+-											<td class="text-right">
+-												<label for="imp3" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloEntrataGestione0.stanziamentoCassa" />
+-												<s:hidden name="importiCapitoloEntrataGestione0.stanziamentoCassa" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3aa" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3aa" name="importiCapitoloEntrataGestione1.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3bb" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3bb" name="importiCapitoloEntrataGestione2.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-									</table>
+-									
+-									<p>
+-										<s:if test="%{titolo.contains('Inserimento')}">
+-											<s:a action="inserisciCapEntrataGestione" cssClass="btn" >indietro</s:a>
+-										</s:if><s:elseif test="%{daAggiornamento}">
+-											<s:include value="/jsp/include/indietro.jsp" />
+-										</s:elseif><s:else>
+-											<s:url action="redirezioneAggiornamentoCapEntrataGestione" var="url">
+-												<s:param name="uidDaAggiornare">${capitoloEntrataGestione.uid}</s:param>
+-											</s:url>
+-											<s:a href="%{url}" cssClass="btn" >indietro</s:a>
+-										</s:else>
+-										<s:submit cssClass="btn btn-primary pull-right" value="aggiorna"/>
+-									</p>
+-								</form>
+-							</div>
+-							<!-- END Blocco Capitolo -->
+-							<!-- BEGIN Blocco Vincoli -->
+-							<div class="tab-pane active" id="vincoli">
+-								<h3>Vincoli</h3>
+-							</div>
+-							<!-- END Blocco Vincoli -->
+-							<!-- BEGIN Blocco Atti di Legge -->
+-							<div class="tab-pane active" id="attiDiLegge">
+-								<h3>Atti di Legge</h3>
+-								<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
+-							</div>
+-							<!-- END Blocco Atti di Legge -->
+-						</div>
+-					</div>
+-				</div>
+-			</div>
+-		</div>
+-	</div>
+-	<%-- Caricamento del footer --%>
+-	<s:include value="/jsp/include/footer.jsp" />
+-	<s:include value="/jsp/include/javascript.jsp" />
+-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
+-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
+-	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
+-	<script type="text/javascript" src="${jspath}capitoloEntrataGestione/inserisci.js"></script>
+-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+-</body>
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ taglib uri="/struts-tags" prefix="s"%>
++<%@ taglib uri="/struts-json-tags" prefix="json" %>
++<%@ taglib uri="http://www.csi.it/taglibs/remincl-1.0" prefix="r"%>
++<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
++<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
++
++<%-- Inclusione head e CSS --%>
++<s:include value="/jsp/include/head.jsp" />
++</head>
++<body>
++	<%-- Inclusione header --%>
++	<s:include value="/jsp/include/header.jsp" />
++
++	<%-- Pagina JSP vera e propria --%>
++	<div class="container-fluid">
++		<div class="row-fluid">
++			<div class="span12 ">
++
++				<div class="step-content">
++					<div class="step-pane active" id="step1">
++						<s:include value="/jsp/include/messaggi.jsp" />
++
++						<h3>Capitolo <s:property value="capitoloEntrataGestione.numeroCapitolo"/>/<s:property value="capitoloEntrataGestione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloEntrataGestione.numeroUEB"/></s:if></h3>
++						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
++							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
++							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
++							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
++						</ul>
++
++						<div id="my-tab-content" class="tab-content" >
++							<!-- BEGIN Blocco Capitolo -->
++
++							<div class="tab-pane active" id="capitolo">
++								<form action="redirezioneAggiornamentoCapEntrataGestione.do" method="post" id="aggiornamentoCapEntrataGestione" name="formInserimento" data-disabled-form="true">
++									<%-- Uid del capitolo inserito --%>
++									<s:hidden value="%{capitoloEntrataGestione.uid}" name="uidDaAggiornare" id="uidCapitoloDaAggiornare" />
++									<s:hidden name="daAggiornamento" />
++									<fieldset class="form-horizontal">
++										<div class="control-group">
++											<label class="control-label" for="annoda2">Anno</label>
++											<div class="controls">
++												<input type="text" id="annoda2" class="lbTextSmall span2" disabled="disabled" value="${AnnoEsercizioInt}" maxlength="4" />
++												<s:hidden name="bilancio.anno" value="%{annoEsercizioInt}" />
++												<s:hidden name="bilancio.uid" />
++												<span class="al">
++													<label class="radio inline" for="annoa">Capitolo *</label>
++												</span>
++												<s:textfield id="annoa" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloEntrataGestione.numeroCapitolo" />
++												<span class="al">
++													<label class="radio inline" for="art">Articolo *</label>
++												</span>
++												<s:textfield id="art" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloEntrataGestione.numeroArticolo" />
++												<s:if test="gestioneUEB">
++													<span class="al">
++														<label class="radio inline" for="ueb2">
++															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
++														</label>
++													</span>
++													<s:textfield id="ueb" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloEntrataGestione.numeroUEB" />
++												</s:if>
++											</div>
++										</div>
++
++										<div class="control-group">
++											<label for="titolo_adv" class="control-label">Descrizione *</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" cssClass="span10" name="capitoloEntrataGestione.descrizione" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="descrart" class="control-label">Descrizione Articolo</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" cssClass="span10" name="capitoloEntrataGestione.descrizioneArticolo" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="Titolo" class="control-label">Titolo *</label>
++											<div class="controls">
++												<s:select list="Titolo" id="titoloEntrata" cssClass="span10" disabled="true" name="titoloEntrata.uid"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="Macroaggregato" class="control-label">Tipologia *
++												<a class="tooltip-test" title="selezionare prima il Titolo" href="#">
++													<i class="icon-info-sign">&nbsp;
++														<span class="nascosto">selezionare prima il Titolo</span>
++													</i>
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaTipologiaTitolo" id="Macroaggregato" cssClass="span10"
++													name="tipologiaTitolo.uid" headerKey="0" headerValue="" disabled="true"
++													listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="Categoria" class="control-label">Categoria *
++												<a class="tooltip-test" title="selezionare prima la Tipologia" href="#">
++													<i class="icon-info-sign">&nbsp;
++														<span class="nascosto">selezionare prima la Tipologia</span>
++													</i>
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaCategoriaTipologiaTitolo" id="Categoria" cssClass="span10"
++													name="categoriaTipologiaTitolo.uid" headerKey="0" headerValue="" disabled="true"
++													listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++
++										<%-- zTree --%>
++										<div class="control-group">
++											<label for="pdc" class="control-label">
++												<abbr title="Piano dei Conti">P.d.C.</abbr> finanziario *
++												<a class="tooltip-test" title="selezionare prima il Macroaggregato" href="#">
++													<i class="icon-info-sign">&nbsp;
++														<span class="nascosto">selezionare prima il Macroaggregato</span>
++													</i>
++												</a>
++											</label>
++											<div class="controls">
++												<s:property value="pdcFinanziario"/>
++											</div>
++										</div>
++										<%-- zTree --%>
++										<div class="control-group">
++											<label for="bottoneSIOPE" class="control-label">
++												<abbr title="Sistema Informativo sulle OPerazioni degli Enti pubblici">SIOPE</abbr>
++												<%--a class="tooltip-test" title="selezionare prima il P.d.C." href="#">
++													<i class="icon-info-sign">&nbsp;<span class="nascosto">selezionare prima il P.d.C.</span></i>
++												</a--%>
++											</label>
++											<div class="controls">
++												<s:property value="siopeInserito"/>
++											</div>
++										</div>
++										<%-- zTree --%>
++										<div class="control-group">
++											<label for="finanz2" class="control-label">
++												Struttura Amministrativa Responsabile *
++											</label>
++											<div class="controls">
++												<s:property value="strutturaAmministrativoResponsabile"/>
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="categoriaCapitolo" class="control-label">Tipo capitolo</label>
++											<div class="controls">
++												<s:select id="categoriaCapitolo" listKey="uid" list="listaCategoriaCapitolo" name="capitoloEntrataGestione.categoriaCapitolo.uid" cssClass="span10"
++													listValue="%{codice + '-' + descrizione}" disabled="true" headerKey="" headerValue="" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="flagImpegnabile" class="control-label">Accertabile</label>
++											<div class="controls">
++												<s:checkbox id="flagImpegnabile" name="capitoloEntrataGestione.flagImpegnabile" disabled="true" />
++											</div>
++										</div>
++									</fieldset>
++
++									<div class="accordion" id="accordion2">
++										<div class="accordion-group">
++											<div class="accordion-heading">
++												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati" data-parent="#accordion2" href="#collapseOne">
++													Altri dati<span class="icon">&nbsp;</span>
++												</a>
++											</div>
++											<div id="collapseOne" class="accordion-body collapse">
++												<div class="accordion-inner">
++													<fieldset class="form-horizontal">
++
++														<div class="control-group">
++															<label for="finanz" class="control-label">Tipo Finanziamento</label>
++															<div class="controls input-append">
++																<s:select list="listaTipoFinanziamento" id="tipoFinanziamento" cssClass="span10"
++																		name="tipoFinanziamento.uid" headerKey="" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
++															<label for="iva" class="control-label">
++																Rilevante IVA
++															</label>
++															<div class="controls">
++																<s:checkbox id="iva" disabled="true" name="capitoloEntrataGestione.flagRilevanteIva" />
++															</div>
++														</div>
++														<div class="control-group">
++															<label for="memoria" class="control-label">Corsivo per memoria</label>
++															<div class="controls">
++																<s:checkbox id="memoria" disabled="true" name="capitoloEntrataGestione.flagPerMemoria" />
++															</div>
++														</div>
++														<div class="control-group">
++															<label for="fondo" class="control-label">Tipo fondo</label>
++															<div class="controls input-append">
++																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
++																		name="tipoFondo.uid" headerKey="" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
++															<span class="control-label">Entrata</span>
++															<div class="controls">
++																<s:iterator value="listaRicorrenteEntrata" var="ricorrente" status="stat">
++																	<label class="radio inline">
++																		<input type="radio" name="ricorrenteEntrata.uid" value="<s:property value="%{#ricorrente.uid}" />" <s:if test="%{ricorrenteEntrata.uid == #ricorrente.uid}">checked="checked"</s:if> disabled="disabled">&nbsp;<s:property value="%{#ricorrente.descrizione}" />
++																	</label>
++																</s:iterator>
++															</div>
++														</div>
++														<div class="control-group">
++															<label for="perimetroSanitario" class="control-label">Codifica identificativo del perimetro sanitario</label>
++															<div class="controls input-append">
++																<s:select list="listaPerimetroSanitarioEntrata" id="perimetroSanitario" cssClass="span10"
++																		name="perimetroSanitarioEntrata.uid" headerKey="" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
++															<label for="transazioneUnioneEuropea" class="control-label">Codifica transazione UE</label>
++															<div class="controls input-append">
++																<s:select list="listaTransazioneUnioneEuropeaEntrata" id="transazioneUnioneEuropea" cssClass="span10"
++																		name="transazioneUnioneEuropeaEntrata.uid" headerKey="" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<%-- Classificatori Generici --%>
++														<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
++															<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
++																<div class="control-group">
++																	<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
++																		<s:property value="%{#attr['labelClassificatoreGenerico' + #idx]}"/>
++																	</label>
++																	<div class="controls">
++																		<s:select list="%{#attr['listaClassificatoreGenerico' + #idx]}" id="classificatoreGenerico%{#idx}"
++																			cssClass="span10" name="%{'classificatoreGenerico' + #idx + '.uid'}" headerKey="" headerValue=""
++																			listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="true" />
++																	</div>
++																</div>
++															</s:if>
++														</s:iterator>
++														<div class="control-group">
++															<label for="Note" class="control-label">Note</label>
++															<div class="controls">
++																<s:textarea id="Note" disabled="disabled" rows="5" cols="15" name="capitoloEntrataGestione.note" />
++															</div>
++														</div>
++													</fieldset>
++												</div>
++											</div>
++										</div>
++									</div>
++
++									<%-- MASCHERA 1 --%>
++									<%-- Sezione C-D-E --%>
++									<h4>Stanziamenti</h4>
++
++									<table summary="riepilogo incarichi" class="table table-hover">
++										<tr>
++											<th width="20%">&nbsp;</th>
++											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 0}"/></th>
++											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
++											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
++										</tr>
++
++										<%-- Già accertato --%>
++										<s:hidden name="importiCapitoloEntrataGestione0.diCuiAccertatoAnno1" />
++										<s:hidden name="importiCapitoloEntrataGestione0.diCuiAccertatoAnno2" />
++										<s:hidden name="importiCapitoloEntrataGestione0.diCuiAccertatoAnno3" />
++
++										<tr>
++											<th>Competenza</th>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataGestione0.stanziamento" />
++											</td>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataGestione1.stanziamento" />
++											</td>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataGestione2.stanziamento" />
++											</td>
++										</tr>
++										<tr>
++											<th>Residuo</th>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataGestione0.stanziamentoResiduo" />
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right"></td>
++										</tr>
++
++										<tr>
++											<th>Cassa</th>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataGestione0.stanziamentoCassa" />
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right"></td>
++										</tr>
++									</table>
++
++									<p>
++										<s:if test="%{titolo.contains('Inserimento')}">
++											<s:a action="inserisciCapEntrataGestione" cssClass="btn" >indietro</s:a>
++										</s:if><s:elseif test="%{daAggiornamento}">
++											<s:include value="/jsp/include/indietro.jsp" />
++										</s:elseif><s:else>
++											<s:url action="redirezioneAggiornamentoCapEntrataGestione" var="url">
++												<s:param name="uidDaAggiornare">${capitoloEntrataGestione.uid}</s:param>
++											</s:url>
++											<s:a href="%{url}" cssClass="btn" >indietro</s:a>
++										</s:else>
++										<s:submit cssClass="btn btn-primary pull-right" value="aggiorna"/>
++									</p>
++								</form>
++							</div>
++							<!-- END Blocco Capitolo -->
++							<!-- BEGIN Blocco Vincoli -->
++							<div class="tab-pane active" id="vincoli">
++								<h3>Vincoli</h3>
++							</div>
++							<!-- END Blocco Vincoli -->
++							<!-- BEGIN Blocco Atti di Legge -->
++							<div class="tab-pane active" id="attiDiLegge">
++								<h3>Atti di Legge</h3>
++								<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
++							</div>
++							<!-- END Blocco Atti di Legge -->
++						</div>
++					</div>
++				</div>
++			</div>
++		</div>
++	</div>
++	<%-- Caricamento del footer --%>
++	<s:include value="/jsp/include/footer.jsp" />
++	<s:include value="/jsp/include/javascript.jsp" />
++	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
++	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
++	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
++	<script type="text/javascript" src="${jspath}capitoloEntrataGestione/inserisci.js"></script>
++	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
++</body>
+ </html>
+\ No newline at end of file
+Index: src/main/webapp/jsp/capEntrataPrevisione/inserisciCapEntPrevDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capEntrataPrevisione/inserisciCapEntPrevDISABLED.jsp	(revision 15281)
++++ src/main/webapp/jsp/capEntrataPrevisione/inserisciCapEntPrevDISABLED.jsp	(working copy)
+@@ -17,141 +17,113 @@
+ 		<div class="row-fluid">
+ 			<div class="span12 ">
+ 
+-				<div class="step-content">
+-					<div class="step-pane active" id="step1">
+-						<s:include value="/jsp/include/messaggi.jsp" />
+-	
+-						<h3>Capitolo <s:property value="capitoloEntrataPrevisione.numeroCapitolo"/>/<s:property value="capitoloEntrataPrevisione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloEntrataPrevisione.numeroUEB"/></s:if></h3>
+-						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
+-							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
+-							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
+-							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
+-						</ul>
+-	
+-						<div id="my-tab-content" class="tab-content" >
+-							<!-- BEGIN Blocco Capitolo -->
+-	
+-							<div class="tab-pane active" id="capitolo">
+-								<form action="redirezioneAggiornamentoCapEntrataPrevisione.do" method="post" id="aggiornamentoCapEntrataPrevisione" name="formInserimento" data-disabled-form="true">
+-									<%-- Uid del capitolo inserito --%>
++				<div class="step-content">
++					<div class="step-pane active" id="step1">
++						<s:include value="/jsp/include/messaggi.jsp" />
++
++						<h3>Capitolo <s:property value="capitoloEntrataPrevisione.numeroCapitolo"/>/<s:property value="capitoloEntrataPrevisione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloEntrataPrevisione.numeroUEB"/></s:if></h3>
++						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
++							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
++							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
++							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
++						</ul>
++
++						<div id="my-tab-content" class="tab-content" >
++							<!-- BEGIN Blocco Capitolo -->
++
++							<div class="tab-pane active" id="capitolo">
++								<form action="redirezioneAggiornamentoCapEntrataPrevisione.do" method="post" id="aggiornamentoCapEntrataPrevisione" name="formInserimento" data-disabled-form="true">
++									<%-- Uid del capitolo inserito --%>
+ 									<s:hidden value="%{capitoloEntrataPrevisione.uid}" name="uidDaAggiornare" id="uidCapitoloDaAggiornare" />
+ 									<s:hidden name="daAggiornamento" />
+ 									<fieldset class="form-horizontal">
+-										<div class="control-group">
+-											<label class="control-label" for="annoda2">Anno</label>
+-											<div class="controls">
+-												<input type="text" id="annoda2" class="lbTextSmall span2" disabled="disabled"
+-														value="${AnnoEsercizioInt}" maxlength="4" />
+-												<s:hidden name="bilancio.anno" value="%{annoEsercizioInt}" />
+-												<s:hidden name="bilancio.uid" />
+-												<span class="al">
+-													<label class="radio inline" for="annoa">Capitolo *</label>
+-												</span>
+-												<input type="text" id="annoa" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloEntrataPrevisione.numeroCapitolo}" />
+-												<s:hidden name="capitoloEntrataPrevisione.numeroCapitolo"
+-														value="%{capitoloEntrataPrevisione.numeroCapitolo}" />
+-												<span class="al">
+-													<label class="radio inline" for="art">Articolo *</label>
+-												</span>
+-												<input type="text" id="art" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloEntrataPrevisione.numeroArticolo}" />
+-												<s:hidden name="capitoloEntrataPrevisione.numeroArticolo"
+-														value="%{capitoloEntrataPrevisione.numeroArticolo}" />
+-												<s:if test="gestioneUEB">
+-													<span class="al">
+-														<label class="radio inline" for="ueb2">
+-															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
+-														</label>
+-													</span>
+-													<input type="text" id="ueb" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-															value="${capitoloEntrataPrevisione.numeroUEB }" />
+-												</s:if>
+-												<s:hidden name="capitoloEntrataPrevisione.numeroUEB"
+-														value="%{capitoloEntrataPrevisione.numeroUEB}" />
+-											</div>
+-										</div>
+-	
+-										<div class="control-group">
+-											<label for="titolo_adv" class="control-label">Descrizione *</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="titolo_adv" disabled="disabled"
+-														class="span10">${capitoloEntrataPrevisione.descrizione}</textarea>
+-												<s:hidden name="capitoloEntrataPrevisione.descrizione"
+-														value="%{capitoloEntrataPrevisione.descrizione}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="descrart" class="control-label">Descrizione Articolo</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="descart" disabled="disabled"
+-														class="span10">${capitoloEntrataPrevisione.descrizioneArticolo}</textarea>
+-												<s:hidden name="capitoloEntrataPrevisione.descrizioneArticolo"
+-														value="%{capitoloEntrataPrevisione.descrizioneArticolo}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="Titolo" class="control-label">Titolo *</label>
+-											<div class="controls">
+-												<select id="Titolo" class="span10" disabled="disabled">
+-													<option value="${titoloEntrata.uid}" selected="selected">
+-														${titoloEntrata.codice}-${titoloEntrata.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="titoloEntrata.uid" value="%{titoloEntrata.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++										<div class="control-group">
++											<label class="control-label" for="annoda2">Anno</label>
++											<div class="controls">
++												<input type="text" id="annoda2" class="lbTextSmall span2" disabled="disabled" value="${AnnoEsercizioInt}" maxlength="4" />
++												<s:hidden name="bilancio.anno" value="%{annoEsercizioInt}" />
++												<s:hidden name="bilancio.uid" />
++												<span class="al">
++													<label class="radio inline" for="annoa">Capitolo *</label>
++												</span>
++												<s:textfield id="annoa" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloEntrataPrevisione.numeroCapitolo" />
++												<span class="al">
++													<label class="radio inline" for="art">Articolo *</label>
++												</span>
++												<s:textfield id="art" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloEntrataPrevisione.numeroArticolo" />
++												<s:if test="gestioneUEB">
++													<span class="al">
++														<label class="radio inline" for="ueb2">
++															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
++														</label>
++													</span>
++													<s:textfield id="ueb" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloEntrataPrevisione.numeroUEB" />
++												</s:if>
++											</div>
++										</div>
++
++										<div class="control-group">
++											<label for="titolo_adv" class="control-label">Descrizione *</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" cssClass="span10" name="capitoloUscitaPrevisione.descrizione" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="descrart" class="control-label">Descrizione Articolo</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" cssClass="span10" name="capitoloUscitaPrevisione.descrizioneArticolo" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="Titolo" class="control-label">Titolo *</label>
++											<div class="controls">
++												<s:select list="Titolo" id="titoloEntrata" cssClass="span10" disabled="true" name="titoloEntrata.uid"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="Macroaggregato" class="control-label">Tipologia *
+ 												<a class="tooltip-test" title="selezionare prima il Titolo" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Titolo</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Macroaggregato" class="span10" disabled="disabled">
+-													<option value="${tipologiaTitolo.uid}" selected="selected">
+-														${tipologiaTitolo.codice}-${tipologiaTitolo.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="tipologiaTitolo.uid" value="%{tipologiaTitolo.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaTipologiaTitolo" id="Macroaggregato" cssClass="span10"
++													name="tipologiaTitolo.uid" headerKey="0" headerValue="" disabled="true"
++													listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="Categoria" class="control-label">Categoria *
+ 												<a class="tooltip-test" title="selezionare prima la Tipologia" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima la Tipologia</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Categoria" class="span10" disabled="disabled">
+-													<option value="${categoriaTipologiaTitolo.uid}" selected="selected">
+-														${categoriaTipologiaTitolo.codice}-${categoriaTipologiaTitolo.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="tipologiaTitolo.uid" value="%{tipologiaTitolo.uid}" />
+-											</div>
+-										</div>
+-	
+-										<%-- zTree --%>
+-										<div class="control-group">
+-											<label for="pdc" class="control-label">
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaCategoriaTipologiaTitolo" id="Categoria" cssClass="span10"
++													name="categoriaTipologiaTitolo.uid" headerKey="0" headerValue="" disabled="true"
++													listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++
++										<%-- zTree --%>
++										<div class="control-group">
++											<label for="pdc" class="control-label">
+ 												<abbr title="Piano dei Conti">P.d.C.</abbr> finanziario *
+ 												<a class="tooltip-test" title="selezionare prima il Macroaggregato" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Macroaggregato</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_ElementoPianoDeiContiUid" name="elementoPianoDeiConti.uid"
+-														value="%{elementoPianoDeiConti.uid}" />
+-												<s:property value="pdcFinanziario"/>
+-											</div>
+-										</div>
++												</a>
++											</label>
++											<div class="controls">
++												<s:property value="pdcFinanziario"/>
++											</div>
++										</div>
+ 										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="bottoneSIOPE" class="control-label">
+@@ -158,25 +130,21 @@
+ 												<abbr title="Sistema Informativo sulle OPerazioni degli Enti pubblici">SIOPE</abbr>
+ 												<%--a class="tooltip-test" title="selezionare prima il P.d.C." href="#">
+ 													<i class="icon-info-sign">&nbsp;<span class="nascosto">selezionare prima il P.d.C.</span></i>
+-												</a--%>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_SIOPEUid" name="siopeEntrata.uid" data-original-uid="%{siopeEntrata != null ? siopeEntrata.uid : ''}" />
+-												<s:property value="siopeInserito"/>
+-											</div>
+-										</div>
++												</a--%>
++											</label>
++											<div class="controls">
++												<s:property value="siopeInserito"/>
++											</div>
++										</div>
+ 										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="finanz2" class="control-label">
+-												Struttura Amministrativa Responsabile *
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid"
+-														name="strutturaAmministrativoContabile.uid"
+-														value="%{strutturaAmministrativoContabile.uid}" />
+-												<s:property value="strutturaAmministrativoResponsabile"/>
+-											</div>
+-										</div>
++												Struttura Amministrativa Responsabile *
++											</label>
++											<div class="controls">
++												<s:property value="strutturaAmministrativoResponsabile"/>
++											</div>
++										</div>
+ 										<div class="control-group">
+ 											<label for="categoriaCapitolo" class="control-label">Tipo capitolo</label>
+ 											<div class="controls">
+@@ -188,58 +156,52 @@
+ 											<label for="flagImpegnabile" class="control-label">Accertabile</label>
+ 											<div class="controls">
+ 												<s:checkbox id="flagImpegnabile" name="capitoloEntrataPrevisione.flagImpegnabile" disabled="true" />
+-											</div>
+-										</div>
+-									</fieldset>
+-	
+-									<div class="accordion" id="accordion2">
+-										<div class="accordion-group">
+-											<div class="accordion-heading">
+-												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati"
+-														data-parent="#accordion2" href="#collapseOne">
+-													Altri dati<span class="icon">&nbsp;</span>
+-												</a>
+-											</div>
+-											<div id="collapseOne" class="accordion-body collapse">
+-												<div class="accordion-inner">
+-													<fieldset class="form-horizontal">
+-	
+-														<div class="control-group">
+-															<label for="finanz" class="control-label">Tipo Finanziamento</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTipoFinanziamento" id="tipoFinanziamento" cssClass="span10"
+-																		name="tipoFinanziamento.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-																<s:hidden name="tipoFinanziamento.uid" value="%{tipoFinanziamento.uid}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
++											</div>
++										</div>
++									</fieldset>
++
++									<div class="accordion" id="accordion2">
++										<div class="accordion-group">
++											<div class="accordion-heading">
++												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati" data-parent="#accordion2" href="#collapseOne">
++													Altri dati<span class="icon">&nbsp;</span>
++												</a>
++											</div>
++											<div id="collapseOne" class="accordion-body collapse">
++												<div class="accordion-inner">
++													<fieldset class="form-horizontal">
++
++														<div class="control-group">
++															<label for="finanz" class="control-label">Tipo Finanziamento</label>
++															<div class="controls input-append">
++																<s:select list="listaTipoFinanziamento" id="tipoFinanziamento" cssClass="span10"
++																		name="tipoFinanziamento.uid" headerKey="" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
+ 															<label for="iva" class="control-label">
+-																Rilevante IVA
+-															</label>
+-															<div class="controls">
+-																<s:checkbox id="iva" disabled="true"
+-																		name="capitoloEntrataPrevisione.flagRilevanteIva"
+-																		value="%{capitoloEntrataPrevisione.flagRilevanteIva}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
+-															<label for="memoria" class="control-label">Corsivo per memoria</label>
+-															<div class="controls">
+-																<s:checkbox id="memoria" disabled="true"
+-																	name="capitoloEntrataPrevisione.flagPerMemoria" />
+-															</div>
+-														</div>
+-														<div class="control-group">
++																Rilevante IVA
++															</label>
++															<div class="controls">
++																<s:checkbox id="iva" disabled="true" name="capitoloEntrataPrevisione.flagRilevanteIva" />
++															</div>
++														</div>
++														<div class="control-group">
++															<label for="memoria" class="control-label">Corsivo per memoria</label>
++															<div class="controls">
++																<s:checkbox id="memoria" disabled="true" name="capitoloEntrataPrevisione.flagPerMemoria" />
++															</div>
++														</div>
++														<div class="control-group">
+ 															<label for="fondo" class="control-label">Tipo fondo</label>
+ 															<div class="controls input-append">
+-																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
+-																		name="tipoFondo.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-																<s:hidden name="tipoFondo.uid" value="%{tipoFondo.uid}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
++																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
++																		name="tipoFondo.uid" headerKey="" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
+ 															<span class="control-label">Entrata</span>
+ 															<div class="controls">
+ 																<s:iterator value="listaRicorrenteEntrata" var="ricorrente" status="stat">
+@@ -291,100 +253,70 @@
+ 														</div>
+ 													</fieldset>
+ 												</div>
+-											</div>
+-										</div>
+-									</div>
+-	
+-									<h4>Stanziamenti</h4>
+-	
+-									<table summary="riepilogo incarichi" class="table table-hover table-bordered">
+-										<tr>
+-											<th width="20%">&nbsp;</th>
++											</div>
++										</div>
++									</div>
++
++									<h4>Stanziamenti</h4>
++
++									<table summary="riepilogo incarichi" class="table table-hover table-bordered">
++										<tr>
++											<th width="20%">&nbsp;</th>
+ 											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 0}"/></th>
+-											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
+-											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
+-										</tr>
+-	
+-										<tr>
+-											<th>Competenza</th>
+-											<td class="text-right">
+-												<label for="imp1" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp1" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione0.stanziamento" disabled="true" />
+-												<s:hidden name="importiCapitoloEntrataPrevisione0.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3a" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp3a" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione1.stanziamento" disabled="true" />
+-												<s:hidden name="importiCapitoloEntrataPrevisione1.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3b" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp3b" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione2.stanziamento" disabled="true" />
+-												<s:hidden name="importiCapitoloEntrataPrevisione2.stanziamento" />
+-											</td>
+-										</tr>
+-										<tr>
+-											<th><em>di cui gi&agrave; impegnato</em></th>
+-											<td class="text-right">
+-												<s:property value="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno1" />
+-												<s:hidden id="giaImp0" name="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno1" />
+-											</td>
+-											<td class="text-right">
+-												<s:property value="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno2" />
+-												<s:hidden id="giaImp1" name="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno2" />
+-											</td>
+-											<td class="text-right">
+-												<s:property value="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno3" />
+-												<s:hidden id="giaImp2" name="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno2" />
+-											</td>
+-										</tr>
+-										<tr>
+-											<th>Residuo</th>
+-											<td class="text-right">
+-												<label for="imp2" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp2" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione0.stanziamentoResiduo" disabled="true" />
+-												<s:hidden name="importiCapitoloEntrataPrevisione0.stanziamentoResiduo" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2a" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2a" name="importiCapitoloEntrataPrevisione1.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2b" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2b" name="importiCapitoloEntrataPrevisione2.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-	
+-										<tr>
+-											<th>Cassa</th>
+-											<td class="text-right">
+-												<label for="imp3" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp3" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione0.stanziamentoCassa" disabled="true" />
+-												<s:hidden name="importiCapitoloEntrataPrevisione0.stanziamentoCassa" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3aa" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3aa" name="importiCapitoloEntrataPrevisione1.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3bb" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3bb" name="importiCapitoloEntrataPrevisione2.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-									</table>
+-	
+-									<div class="spaceBottom">
+-										<input type="submit" class="btn" value="visualizza totali di previsione"
+-												name="action:visualizzaTotaliPrevisioneCapEntrataPrevisione" />
+-									</div>
+-	
+-									<p>
+-										<%-- Cosa chiamare? --%>
+-										<s:if test="%{titolo.contains('Inserimento')}">
++											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
++											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
++										</tr>
++
++										<tr>
++											<th>Competenza</th>
++											<td class="text-right">
++												<s:textfield id="imp1" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione0.stanziamento" disabled="true" />
++											</td>
++											<td class="text-right">
++												<s:textfield id="imp3a" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione1.stanziamento" disabled="true" />
++											</td>
++											<td class="text-right">
++												<s:textfield id="imp3b" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione2.stanziamento" disabled="true" />
++											</td>
++										</tr>
++										<tr>
++											<th><em>di cui gi&agrave; impegnato</em></th>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno1" />
++											</td>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno2" />
++											</td>
++											<td class="text-right">
++												<s:property value="importiCapitoloEntrataPrevisione0.diCuiImpegnatoAnno3" />
++											</td>
++										</tr>
++										<tr>
++											<th>Residuo</th>
++											<td class="text-right">
++												<s:textfield id="imp2" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione0.stanziamentoResiduo" disabled="true" />
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right"></td>
++										</tr>
++
++										<tr>
++											<th>Cassa</th>
++											<td class="text-right">
++												<s:textfield id="imp3" cssClass="input-small text-right" name="importiCapitoloEntrataPrevisione0.stanziamentoCassa" disabled="true" />
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right"></td>
++										</tr>
++									</table>
++
++									<div class="spaceBottom">
++										<input type="submit" class="btn" value="visualizza totali di previsione" name="action:visualizzaTotaliPrevisioneCapEntrataPrevisione" />
++									</div>
++
++									<p>
++										<%-- Cosa chiamare? --%>
++										<s:if test="%{titolo.contains('Inserimento')}">
+ 											<s:a action="inserisciCapEntrataPrevisione" cssClass="btn" >indietro</s:a>
+ 										</s:if><s:elseif test="%{daAggiornamento}">
+ 											<s:include value="/jsp/include/indietro.jsp" />
+@@ -396,26 +328,26 @@
+ 										</s:else>
+ 										<s:submit cssClass="btn btn-primary pull-right" value="aggiorna"/>
+ 									</p>
+-								</form>
+-							</div>
+-							<!-- END Blocco Capitolo -->
+-	
+-							<!-- BEGIN Blocco Vincoli -->
+-							<div class="tab-pane active" id="vincoli">
+-									<h3>Vincoli</h3>
+-							</div>
+-							<!-- END Blocco Vincoli -->
+-	
+-	
+-	
+-							<!-- BEGIN Blocco Atti di Legge -->
+-							<div class="tab-pane active" id="attiDiLegge">
+-									<h3>Atti di Legge</h3>
+-									<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
+-	
+-							</div>
+-							<!-- END Blocco Atti di Legge -->
+-						</div>
++								</form>
++							</div>
++							<!-- END Blocco Capitolo -->
++
++							<!-- BEGIN Blocco Vincoli -->
++							<div class="tab-pane active" id="vincoli">
++									<h3>Vincoli</h3>
++							</div>
++							<!-- END Blocco Vincoli -->
++
++
++
++							<!-- BEGIN Blocco Atti di Legge -->
++							<div class="tab-pane active" id="attiDiLegge">
++									<h3>Atti di Legge</h3>
++									<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
++
++							</div>
++							<!-- END Blocco Atti di Legge -->
++						</div>
+ 					</div>
+ 				</div>
+ 			</div>
+Index: src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp	(revision 15281)
++++ src/main/webapp/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp	(working copy)
+@@ -17,23 +17,23 @@
+ 		<div class="row-fluid">
+ 			<div class="span12 ">
+ 
+-				<div class="step-content">
+-					<div class="step-pane active" id="step1">
+-						<s:include value="/jsp/include/messaggi.jsp" />
+-	
+-						<h3>Capitolo <s:property value="capitoloUscitaGestione.numeroCapitolo"/>/<s:property value="capitoloUscitaGestione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloUscitaGestione.numeroUEB"/></s:if></h3>
+-						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
+-							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
+-							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
+-							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
+-						</ul>
+-	
+-						<div id="my-tab-content" class="tab-content" >
+-							<!-- BEGIN Blocco Capitolo -->
+-	
+-							<div class="tab-pane active" id="capitolo">
+-								<form action="redirezioneAggiornamentoCapUscitaGestione.do" method="post" id="aggiornamentoCapUscitaGestione" name="formInserimento" data-disabled-form="true">
+-									<%-- Uid del capitolo inserito --%>
++				<div class="step-content">
++					<div class="step-pane active" id="step1">
++						<s:include value="/jsp/include/messaggi.jsp" />
++
++						<h3>Capitolo <s:property value="capitoloUscitaGestione.numeroCapitolo"/>/<s:property value="capitoloUscitaGestione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloUscitaGestione.numeroUEB"/></s:if></h3>
++						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
++							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
++							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
++							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
++						</ul>
++
++						<div id="my-tab-content" class="tab-content" >
++							<!-- BEGIN Blocco Capitolo -->
++
++							<div class="tab-pane active" id="capitolo">
++								<form action="redirezioneAggiornamentoCapUscitaGestione.do" method="post" id="aggiornamentoCapUscitaGestione" name="formInserimento" data-disabled-form="true">
++									<%-- Uid del capitolo inserito --%>
+ 									<s:hidden value="%{capitoloUscitaGestione.uid}" name="uidDaAggiornare" id="uidCapitoloDaAggiornare" />
+ 									<s:hidden name="daAggiornamento" />
+ 									<fieldset class="form-horizontal">
+@@ -44,133 +44,98 @@
+ 														value="${AnnoEsercizioInt}" maxlength="4" />
+ 												<s:hidden name="bilancio.anno" value="%{annoEsercizioInt}" />
+ 												<s:hidden name="bilancio.uid" />
+-												<span class="al">
+-													<label class="radio inline" for="annoa">Capitolo *</label>
+-												</span>
+-												<input type="text" id="annoa" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloUscitaGestione.numeroCapitolo}" />
+-												<s:hidden name="capitoloUscitaGestione.numeroCapitolo"
+-														value="%{capitoloUscitaGestione.numeroCapitolo}" />
+-												<span class="al">
+-													<label class="radio inline" for="art">Articolo *</label>
+-												</span>
+-												<input type="text" id="art" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloUscitaGestione.numeroArticolo}" />
+-												<s:hidden name="capitoloUscitaGestione.numeroArticolo"
+-														value="%{capitoloUscitaGestione.numeroArticolo}" />
+-												<s:if test="gestioneUEB">
+-													<span class="al">
+-														<label class="radio inline" for="ueb2">
+-															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
+-														</label>
+-													</span>
+-													<input type="text" id="ueb" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-															value="${capitoloUscitaGestione.numeroUEB }" />
+-												</s:if>
+-												<s:hidden name="capitoloUscitaGestione.numeroUEB"
+-														value="%{capitoloUscitaGestione.numeroUEB}" />
+-											</div>
+-										</div>
+-	
+-										<div class="control-group">
+-											<label for="titolo_adv" class="control-label">Descrizione *</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="titolo_adv" disabled="disabled"
+-														class="span10">${capitoloUscitaGestione.descrizione}</textarea>
+-												<s:hidden name="capitoloUscitaGestione.descrizione"
+-														value="%{capitoloUscitaGestione.descrizione}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="descrart" class="control-label">Descrizione Articolo</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="descart" disabled="disabled"
+-														class="span10">${capitoloUscitaGestione.descrizioneArticolo}</textarea>
+-												<s:hidden name="capitoloUscitaGestione.descrizioneArticolo"
+-														value="%{capitoloUscitaGestione.descrizioneArticolo}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="nomeautore" class="control-label">Missione *</label>
+-											<div class="controls">
+-												<select id="nomeautore" class="span10" disabled="disabled">
+-													<option value="${missione.uid}" selected="selected">
+-														${missione.codice}-${missione.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="missione.uid" value="%{missione.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++												<span class="al">
++													<label class="radio inline" for="annoa">Capitolo *</label>
++												</span>
++												<s:textfield id="annoa" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloUscitaGestione.numeroCapitolo" />
++												<span class="al">
++													<label class="radio inline" for="art">Articolo *</label>
++												</span>
++												<s:textfield id="art" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloUscitaGestione.numeroArticolo" />
++												<s:if test="gestioneUEB">
++													<span class="al">
++														<label class="radio inline" for="ueb2">
++															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
++														</label>
++													</span>
++													<s:textfield id="ueb" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloUscitaGestione.numeroUEB" />
++												</s:if>
++											</div>
++										</div>
++
++										<div class="control-group">
++											<label for="titolo_adv" class="control-label">Descrizione *</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" name="capitoloUscitaGestione.descrizione" cssClass="span10" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="descrart" class="control-label">Descrizione Articolo</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" name="capitoloUscitaGestione.descrizioneArticolo" cssClass="span10" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="nomeautore" class="control-label">Missione *</label>
++											<div class="controls">
++												<s:select list="listaMissione" id="nomeautore" name="missione.uid" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="soggetto5" class="control-label">Programma *
+ 												<a class="tooltip-test" title="selezionare prima la Missione" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima la Missione</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="soggetto5" class="span10" disabled="disabled">
+-													<option value="${programma.uid}" selected="selected">
+-														${programma.codice}-${programma.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="programma.uid" value="%{programma.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaProgramma" id="soggetto5" name="programma.uid" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="Categoria" class="control-label">Cofog
+ 												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Programma</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Categoria" class="span10" disabled="disabled">
+-													<option value="${classificazioneCofog.uid}" selected="selected">
+-														${classificazioneCofog.codice}-${classificazioneCofog.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="classificazioneCofog.uid" value="%{classificazioneCofog.uid}" />
+-											</div>
+-										</div>
+-										<%-- Secondo gruppo collegato --%>
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaClassificazioneCofog" name="classificazioneCofog.uid" id="Categoria" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<%-- Secondo gruppo collegato --%>
+ 										<div class="control-group">
+ 											<label for="titoloSpesa" class="control-label">Titolo *
+ 												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+-														<span class="nascosto">selezionare prima il Programma</span>
+-													</i>
+-												</a>
+-											</label>		
+-											<div class="controls">
+-												<select id="Titolo" class="span10" disabled="disabled">
+-													<option value="${titoloSpesa.uid}" selected="selected">
+-														${titoloSpesa.codice}-${titoloSpesa.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="titoloSpesa.uid" value="%{titoloSpesa.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++														<span class="nascosto">selezionare prima il Programma</span>
++													</i>
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaTitoloSpesa" name="titoloSpesa.uid" id="Titolo" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="Macroaggregato" class="control-label">Macroaggregato *
+ 												<a class="tooltip-test" title="selezionare prima il Titolo" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Titolo</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Macroaggregato" class="span10" disabled="disabled">
+-													<option value="${macroaggregato.uid}" selected="selected">
+-														${macroaggregato.codice}-${macroaggregato.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="macroaggregato.uid" value="%{macroaggregato.uid}" />
+-											</div>
+-										</div>
+-										<%-- zTree --%>
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaMacroaggregato" name="macroaggregato.uid" id="Macroaggregato" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="pdc" class="control-label">
+ 												<abbr title="Piano dei Conti">P.d.C.</abbr> finanziario *
+@@ -178,14 +143,12 @@
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Macroaggregato</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_ElementoPianoDeiContiUid" name="elementoPianoDeiConti.uid"
+-														value="%{elementoPianoDeiConti.uid}" />
+-												<s:property value="pdcFinanziario"/>
+-											</div>
+-										</div>
++												</a>
++											</label>
++											<div class="controls">
++												<s:property value="pdcFinanziario"/>
++											</div>
++										</div>
+ 										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="bottoneSIOPE" class="control-label">
+@@ -192,62 +155,56 @@
+ 												<abbr title="Sistema Informativo sulle OPerazioni degli Enti pubblici">SIOPE</abbr>
+ 												<%--a class="tooltip-test" title="selezionare prima il P.d.C." href="#">
+ 													<i class="icon-info-sign">&nbsp;<span class="nascosto">selezionare prima il P.d.C.</span></i>
+-												</a--%>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_SIOPEUid" name="siopeSpesa.uid" data-original-uid="%{siopeSpesa != null ? siopeSpesa.uid : ''}" />
+-												<s:property value="siopeInserito"/>
+-											</div>
+-										</div>
++												</a--%>
++											</label>
++											<div class="controls">
++												<s:property value="siopeInserito"/>
++											</div>
++										</div>
+ 										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="finanz2" class="control-label">
+-												Struttura Amministrativa Responsabile *
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid"
+-														name="strutturaAmministrativoContabile.uid"
+-														value="%{strutturaAmministrativoContabile.uid}" />
+-												<s:property value="strutturaAmministrativoResponsabile"/>
+-											</div>
+-										</div>
++												Struttura Amministrativa Responsabile *
++											</label>
++											<div class="controls">
++												<s:property value="strutturaAmministrativoResponsabile"/>
++											</div>
++										</div>
+ 										<div class="control-group">
+-											<label for="categoriaCapitolo" class="control-label">Tipo capitolo</label>
+-											<div class="controls">
+-												<s:select id="categoriaCapitolo" listKey="uid" list="listaCategoriaCapitolo" name="capitoloUscitaGestione.categoriaCapitolo.uid" cssClass="span10"
+-													listValue="%{codice + '-' + descrizione}" disabled="true" headerKey="" headerValue="" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++											<label for="categoriaCapitolo" class="control-label">Tipo capitolo</label>
++											<div class="controls">
++												<s:select id="categoriaCapitolo" listKey="uid" list="listaCategoriaCapitolo" name="capitoloUscitaGestione.categoriaCapitolo.uid" cssClass="span10"
++													listValue="%{codice + '-' + descrizione}" disabled="true" headerKey="0" headerValue="" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="flagImpegnabile" class="control-label">Impegnabile</label>
+ 											<div class="controls">
+ 												<s:checkbox id="flagImpegnabile" name="capitoloUscitaGestione.flagImpegnabile" disabled="true" />
+-											</div>
+-										</div>
+-									</fieldset>
+-	
+-									<div class="accordion" id="accordion2">
+-										<div class="accordion-group">
+-											<div class="accordion-heading">
+-												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati"
+-														data-parent="#accordion2" href="#collapseOne">
+-													Altri dati<span class="icon">&nbsp;</span>
+-												</a>
+-											</div>
+-											<div id="collapseOne" class="accordion-body collapse">
+-												<div class="accordion-inner">
+-													<fieldset class="form-horizontal">
+-	
+-														<div class="control-group">
+-															<label for="finanz" class="control-label">Tipo Finanziamento</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTipoFinanziamento" id="tipoFinanziamento" cssClass="span10"
+-																		name="tipoFinanziamento.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-																<s:hidden name="tipoFinanziamento.uid" value="%{tipoFinanziamento.uid}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
++											</div>
++										</div>
++									</fieldset>
++
++									<div class="accordion" id="accordion2">
++										<div class="accordion-group">
++											<div class="accordion-heading">
++												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati" data-parent="#accordion2" href="#collapseOne">
++													Altri dati<span class="icon">&nbsp;</span>
++												</a>
++											</div>
++											<div id="collapseOne" class="accordion-body collapse">
++												<div class="accordion-inner">
++													<fieldset class="form-horizontal">
++
++														<div class="control-group">
++															<label for="finanz" class="control-label">Tipo Finanziamento</label>
++															<div class="controls input-append">
++																<s:select list="listaTipoFinanziamento" id="finanz" cssClass="span10"
++																		name="tipoFinanziamento.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
+ 															<label for="Ricorrente" class="control-label">
+ 																Rilevante IVA
+ 															</label>
+@@ -268,15 +225,14 @@
+ 															</div>
+ 														</div>
+ 														<div class="control-group">
+-															<label for="fondo" class="control-label">Tipo fondo</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
+-																		name="tipoFondo.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-																<s:hidden name="tipoFondo.uid" value="%{tipoFondo.uid}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
++															<label for="fondo" class="control-label">Tipo fondo</label>
++															<div class="controls input-append">
++																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
++																		name="tipoFondo.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
+ 															<span class="control-label">Spesa</span>
+ 															<div class="controls">
+ 																<s:iterator value="listaRicorrenteSpesa" var="ricorrente" status="stat">
+@@ -287,29 +243,29 @@
+ 															</div>
+ 														</div>
+ 														<div class="control-group">
+-															<label for="perimetroSanitario" class="control-label">Codifica identificativo del perimetro sanitario</label>
+-															<div class="controls input-append">
+-																<s:select list="listaPerimetroSanitarioSpesa" id="perimetroSanitario" cssClass="span10"
+-																		name="perimetroSanitarioSpesa.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
++															<label for="perimetroSanitario" class="control-label">Codifica identificativo del perimetro sanitario</label>
++															<div class="controls input-append">
++																<s:select list="listaPerimetroSanitarioSpesa" id="perimetroSanitario" cssClass="span10"
++																		name="perimetroSanitarioSpesa.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
+ 														<div class="control-group">
+-															<label for="transazioneUnioneEuropea" class="control-label">Codifica transazione UE</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTransazioneUnioneEuropeaSpesa" id="transazioneUnioneEuropea" cssClass="span10"
+-																		name="transazioneUnioneEuropeaSpesa.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
++															<label for="transazioneUnioneEuropea" class="control-label">Codifica transazione UE</label>
++															<div class="controls input-append">
++																<s:select list="listaTransazioneUnioneEuropeaSpesa" id="transazioneUnioneEuropea" cssClass="span10"
++																		name="transazioneUnioneEuropeaSpesa.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
+ 														<div class="control-group">
+-															<label for="politicheRegionaliUnitarie" class="control-label">Codifica politiche regionali unitarie</label>
+-															<div class="controls input-append">
+-																<s:select list="listaPoliticheRegionaliUnitarie" id="politicheRegionaliUnitarie" cssClass="span10"
+-																		name="politicheRegionaliUnitarie.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
++															<label for="politicheRegionaliUnitarie" class="control-label">Codifica politiche regionali unitarie</label>
++															<div class="controls input-append">
++																<s:select list="listaPoliticheRegionaliUnitarie" id="politicheRegionaliUnitarie" cssClass="span10"
++																		name="politicheRegionaliUnitarie.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
+ 														<%-- Classificatori Generici --%>
+ 														<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+ 															<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
+@@ -316,102 +272,79 @@
+ 																<div class="control-group">
+ 																	<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
+ 																		<s:property value="%{#attr['labelClassificatoreGenerico' + #idx]}"/>
+-																	</label>
+-																	<div class="controls">
+-																		<s:select list="%{#attr['listaClassificatoreGenerico' + #idx]}" id="classificatoreGenerico%{#idx}"
+-																			cssClass="span10" name="%{'classificatoreGenerico' + #idx + '.uid'}" headerKey="" headerValue=""
+-																			listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="true" />
+-																	</div>
+-																</div>
++																	</label>
++																	<div class="controls">
++																		<s:select list="%{#attr['listaClassificatoreGenerico' + #idx]}" id="classificatoreGenerico%{#idx}"
++																			cssClass="span10" name="%{'classificatoreGenerico' + #idx + '.uid'}" headerKey="0" headerValue=""
++																			listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="true" />
++																	</div>
++																</div>
+ 															</s:if>
+ 														</s:iterator>
+-														<div class="control-group">
+-															<label for="Note" class="control-label">Note</label>
+-															<div class="controls">
+-																<textarea id="Note" disabled="disabled" rows="5"
+-																		cols="15">${capitoloUscitaGestione.note}</textarea>
+-																<s:hidden name="capitoloUscitaGestione.note"
+-																		value="%{capitoloUscitaGestione.note}" />
+-															</div>
+-														</div>
+-													</fieldset>
++														<div class="control-group">
++															<label for="Note" class="control-label">Note</label>
++															<div class="controls">
++																<s:textarea id="Note" disabled="disabled" rows="5" cols="15" name="capitoloUscitaGestione.note" />
++															</div>
++														</div>
++													</fieldset>
+ 												</div>
+-											</div>
+-										</div>
+-									</div>
+-	
+-									<h4>Stanziamenti</h4>
+-	
+-									<table summary="riepilogo incarichi" class="table table-hover table-bordered">
+-										<tr>
+-											<th width="20%">&nbsp;</th>
++											</div>
++										</div>
++									</div>
++
++									<h4>Stanziamenti</h4>
++
++									<table summary="riepilogo incarichi" class="table table-hover table-bordered">
++										<tr>
++											<th width="20%">&nbsp;</th>
+ 											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 0}"/></th>
+-											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
+-											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
+-										</tr>
+-	
+-										<tr>
+-											<th>Competenza</th>
+-											<td class="text-right">
+-												<label for="imp1" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloUscitaGestione0.stanziamento"/>
+-												<s:hidden name="importiCapitoloUscitaGestione0.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3a" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloUscitaGestione1.stanziamento"/>
+-												<s:hidden name="importiCapitoloUscitaGestione1.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3b" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloUscitaGestione2.stanziamento"/>
+-												<s:hidden name="importiCapitoloUscitaGestione2.stanziamento" />
+-											</td>
+-										</tr>
+-										<tr>
++											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
++											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
++										</tr>
++
++										<tr>
++											<th>Competenza</th>
++											<td class="text-right">
++												<label for="imp1" class="nascosto">inserisci importo</label>
++												<s:property value="importiCapitoloUscitaGestione0.stanziamento"/>
++											</td>
++											<td class="text-right">
++												<label for="imp3a" class="nascosto">inserisci importo</label>
++												<s:property value="importiCapitoloUscitaGestione1.stanziamento"/>
++											</td>
++											<td class="text-right">
++												<label for="imp3b" class="nascosto">inserisci importo</label>
++												<s:property value="importiCapitoloUscitaGestione2.stanziamento"/>
++											</td>
++										</tr>
++										<tr>
+ 											<th>Residuo</th>
+-											<td class="text-right">
+-												<label for="imp2" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloUscitaGestione0.stanziamentoResiduo"/>
+-												<s:hidden name="importiCapitoloUscitaGestione0.stanziamentoResiduo" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2a" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2a" name="importiCapitoloUscitaGestione1.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2b" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2b" name="importiCapitoloUscitaGestione2.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-	
+-										<tr>
+-											<th>Cassa</th>
+-											<td class="text-right">
+-												<label for="imp3" class="nascosto">inserisci importo</label>
+-												<s:property value="importiCapitoloUscitaGestione0.stanziamentoCassa"/>
+-												<s:hidden name="importiCapitoloUscitaGestione0.stanziamentoCassa" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3aa" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3aa" name="importiCapitoloUscitaGestione1.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3bb" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3bb" name="importiCapitoloUscitaGestione2.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-									</table>
+-									<p>
+-										<s:if test="%{titolo.contains('Inserimento')}">
+-											<s:a action="inserisciCapUscitaGestione" cssClass="btn" >indietro</s:a>
+-										</s:if><s:elseif test="%{daAggiornamento}">
+-											<s:include value="/jsp/include/indietro.jsp" />
+-										</s:elseif><s:else>
++											<td class="text-right">
++												<label for="imp2" class="nascosto">inserisci importo</label>
++												<s:property value="importiCapitoloUscitaGestione0.stanziamentoResiduo"/>
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right">&nbsp;
++											</td>
++										</tr>
++
++										<tr>
++											<th>Cassa</th>
++											<td class="text-right">
++												<label for="imp3" class="nascosto">inserisci importo</label>
++												<s:property value="importiCapitoloUscitaGestione0.stanziamentoCassa"/>
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right"></td>
++										</tr>
++									</table>
++									<p>
++										<s:if test="%{titolo.contains('Inserimento')}">
++											<s:a action="inserisciCapUscitaGestione" cssClass="btn">indietro</s:a>
++										</s:if><s:elseif test="%{daAggiornamento}">
++											<s:include value="/jsp/include/indietro.jsp" />
++										</s:elseif><s:else>
+ 											<s:url action="redirezioneAggiornamentoCapUscitaGestione" var="url">
+ 												<s:param name="uidDaAggiornare">${capitoloUscitaGestione.uid}</s:param>
+ 											</s:url>
+@@ -419,26 +352,26 @@
+ 										</s:else>
+ 										<s:submit cssClass="btn btn-primary pull-right" value="aggiorna"/>
+ 									</p>
+-								</form>
+-							</div>
+-							<!-- END Blocco Capitolo -->
+-	
+-							<!-- BEGIN Blocco Vincoli -->
+-							<div class="tab-pane active" id="vincoli">
+-									<h3>Vincoli</h3>
+-							</div>
+-							<!-- END Blocco Vincoli -->
+-	
+-	
+-	
+-							<!-- BEGIN Blocco Atti di Legge -->
+-							<div class="tab-pane active" id="attiDiLegge">
+-									<h3>Atti di Legge</h3>
+-									<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
+-	
+-							</div>
+-							<!-- END Blocco Atti di Legge -->
+-						</div>
++								</form>
++							</div>
++							<!-- END Blocco Capitolo -->
++
++							<!-- BEGIN Blocco Vincoli -->
++							<div class="tab-pane active" id="vincoli">
++									<h3>Vincoli</h3>
++							</div>
++							<!-- END Blocco Vincoli -->
++
++
++
++							<!-- BEGIN Blocco Atti di Legge -->
++							<div class="tab-pane active" id="attiDiLegge">
++									<h3>Atti di Legge</h3>
++									<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
++
++							</div>
++							<!-- END Blocco Atti di Legge -->
++						</div>
+ 					</div>
+ 				</div>
+ 			</div>
+Index: src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp
+===================================================================
+--- src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp	(revision 15281)
++++ src/main/webapp/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp	(working copy)
+@@ -16,125 +16,97 @@
+ 	<div class="container-fluid">
+ 		<div class="row-fluid">
+ 			<div class="span12 ">
+-				<div class="step-content">
+-					<div class="step-pane active" id="step1">
+-						<s:include value="/jsp/include/messaggi.jsp" />
+-	
+-						<h3>Capitolo <s:property value="capitoloUscitaPrevisione.numeroCapitolo"/>/<s:property value="capitoloUscitaPrevisione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloUscitaPrevisione.numeroUEB"/></s:if></h3>
+-						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
+-							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
+-							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
+-							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
+-						</ul>
+-	
+-						<div id="my-tab-content" class="tab-content" >
+-							<!-- BEGIN Blocco Capitolo -->
+-	
+-							<div class="tab-pane active" id="capitolo">
+-								<form action="redirezioneAggiornamentoCapUscitaPrevisione.do" method="post" id="aggiornamentoCapUscitaPrevisione" name="formInserimento" data-disabled-form="true">
+-									<%-- Uid del capitolo inserito --%>
++				<div class="step-content">
++					<div class="step-pane active" id="step1">
++						<s:include value="/jsp/include/messaggi.jsp" />
++
++						<h3>Capitolo <s:property value="capitoloUscitaPrevisione.numeroCapitolo"/>/<s:property value="capitoloUscitaPrevisione.numeroArticolo"/><s:if test="gestioneUEB">/<s:property value="capitoloUscitaPrevisione.numeroUEB"/></s:if></h3>
++						<ul id="tabs" class="nav nav-tabs" data-tabs="tabs" >
++							<li class="active"><a href="#capitolo" data-toggle="tab">Capitolo</a></li>
++							<li><a href="#vincoli" data-toggle="tab">Vincoli</a></li>
++							<li><a href="#attiDiLegge" data-toggle="tab">Atti di legge</a></li>
++						</ul>
++
++						<div id="my-tab-content" class="tab-content" >
++							<!-- BEGIN Blocco Capitolo -->
++
++							<div class="tab-pane active" id="capitolo">
++								<form action="redirezioneAggiornamentoCapUscitaPrevisione.do" method="post" id="aggiornamentoCapUscitaPrevisione" name="formInserimento" data-disabled-form="true">
++									<%-- Uid del capitolo inserito --%>
+ 									<s:hidden value="%{capitoloUscitaPrevisione.uid}" name="uidDaAggiornare" id="uidCapitoloDaAggiornare" />
+ 									<s:hidden name="daAggiornamento" />
+ 									<fieldset class="form-horizontal">
+-										<div class="control-group">
+-											<label class="control-label" for="annoda2">Anno</label>
+-											<div class="controls">
+-												<input type="text" id="annoda2" class="lbTextSmall span2" disabled="disabled"
+-														value="${AnnoEsercizioInt}" maxlength="4" />
+-												<s:hidden name="bilancio.anno" value="%{annoEsercizioInt}" />
+-												<s:hidden name="bilancio.uid" />
+-												<span class="al">
+-													<label class="radio inline" for="annoa">Capitolo *</label>
+-												</span>
+-												<input type="text" id="annoa" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloUscitaPrevisione.numeroCapitolo}" />
+-												<s:hidden name="capitoloUscitaPrevisione.numeroCapitolo"
+-														value="%{capitoloUscitaPrevisione.numeroCapitolo}" />
+-												<span class="al">
+-													<label class="radio inline" for="art">Articolo *</label>
+-												</span>
+-												<input type="text" id="art" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-														value="${capitoloUscitaPrevisione.numeroArticolo}" />
+-												<s:hidden name="capitoloUscitaPrevisione.numeroArticolo"
+-														value="%{capitoloUscitaPrevisione.numeroArticolo}" />
+-												<s:if test="gestioneUEB">
+-													<span class="al">
+-														<label class="radio inline" for="ueb2">
+-															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
+-														</label>
+-													</span>
+-													<input type="text" id="ueb" class="lbTextSmall span2" maxlength="200" disabled="disabled"
+-															value="${capitoloUscitaPrevisione.numeroUEB }" />
+-												</s:if>
+-												<s:hidden name="capitoloUscitaPrevisione.numeroUEB"
+-														value="%{capitoloUscitaPrevisione.numeroUEB}" />
+-											</div>
+-										</div>
+-	
+-										<div class="control-group">
+-											<label for="titolo_adv" class="control-label">Descrizione *</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="titolo_adv" disabled="disabled"
+-														class="span10">${capitoloUscitaPrevisione.descrizione}</textarea>
+-												<s:hidden name="capitoloUscitaPrevisione.descrizione"
+-														value="%{capitoloUscitaPrevisione.descrizione}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="descrart" class="control-label">Descrizione Articolo</label>
+-											<div class="controls">
+-												<textarea rows="5" cols="15" id="descart" disabled="disabled"
+-														class="span10">${capitoloUscitaPrevisione.descrizioneArticolo}</textarea>
+-												<s:hidden name="capitoloUscitaPrevisione.descrizioneArticolo"
+-														value="%{capitoloUscitaPrevisione.descrizioneArticolo}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
+-											<label for="nomeautore" class="control-label">Missione *</label>
+-											<div class="controls">
+-												<select id="nomeautore" class="span10" disabled="disabled">
+-													<option value="${missione.uid}" selected="selected">
+-														${missione.codice}-${missione.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="missione.uid" value="%{missione.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++										<div class="control-group">
++											<label class="control-label" for="annoda2">Anno</label>
++											<div class="controls">
++												<input type="text" id="annoda2" class="lbTextSmall span2" disabled="disabled" value="${AnnoEsercizioInt}" maxlength="4" />
++												<s:hidden name="bilancio.anno" value="%{annoEsercizioInt}" />
++												<s:hidden name="bilancio.uid" />
++												<span class="al">
++													<label class="radio inline" for="annoa">Capitolo *</label>
++												</span>
++												<s:textfield id="annoa" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloUscitaPrevisione.numeroCapitolo" />
++												<span class="al">
++													<label class="radio inline" for="art">Articolo *</label>
++												</span>
++												<s:textfield id="art" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloUscitaPrevisione.numeroArticolo" />
++												<s:if test="gestioneUEB">
++													<span class="al">
++														<label class="radio inline" for="ueb2">
++															<abbr title="Unit&agrave; Elementare Bilancio">UEB</abbr>
++														</label>
++													</span>
++													<s:textfield id="ueb" cssClass="lbTextSmall span2" maxlength="200" disabled="true" name="capitoloUscitaPrevisione.numeroUEB" />
++												</s:if>
++											</div>
++										</div>
++
++										<div class="control-group">
++											<label for="titolo_adv" class="control-label">Descrizione *</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" cssClass="span10" name="capitoloUscitaPrevisione.descrizione" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="descrart" class="control-label">Descrizione Articolo</label>
++											<div class="controls">
++												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" cssClass="span10" name="capitoloUscitaPrevisione.descrizioneArticolo" />
++											</div>
++										</div>
++										<div class="control-group">
++											<label for="nomeautore" class="control-label">Missione *</label>
++											<div class="controls">
++												<s:select list="listaMissione" id="nomeautore" name="missione.uid" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="soggetto5" class="control-label">Programma *
+ 												<a class="tooltip-test" title="selezionare prima la Missione" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima la Missione</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="soggetto5" class="span10" disabled="disabled">
+-													<option value="${programma.uid}" selected="selected">
+-														${programma.codice}-${programma.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="programma.uid" value="%{programma.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaProgramma" id="soggetto5" name="programma.uid" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="Categoria" class="control-label">Cofog
+ 												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Programma</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Categoria" class="span10" disabled="disabled">
+-													<option value="${classificazioneCofog.uid}" selected="selected">
+-														${classificazioneCofog.codice}-${classificazioneCofog.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="classificazioneCofog.uid" value="%{classificazioneCofog.uid}" />
+-											</div>
+-										</div>
+-										<%-- Secondo gruppo collegato --%>
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaClassificazioneCofog" name="classificazioneCofog.uid" id="Categoria" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<%-- Secondo gruppo collegato --%>
+ 										<div class="control-group">
+ 											<label for="titoloSpesa" class="control-label">Titolo *
+ 												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
+@@ -141,35 +113,27 @@
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Programma</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Titolo" class="span10" disabled="disabled">
+-													<option value="${titoloSpesa.uid}" selected="selected">
+-														${titoloSpesa.codice}-${titoloSpesa.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="titoloSpesa.uid" value="%{titoloSpesa.uid}" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaTitoloSpesa" name="titoloSpesa.uid" id="Titolo" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="Macroaggregato" class="control-label">Macroaggregato *
+ 												<a class="tooltip-test" title="selezionare prima il Titolo" href="#">
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Titolo</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<select id="Macroaggregato" class="span10" disabled="disabled">
+-													<option value="${macroaggregato.uid}" selected="selected">
+-														${macroaggregato.codice}-${macroaggregato.descrizione}
+-													</option>
+-												</select>
+-												<s:hidden name="macroaggregato.uid" value="%{macroaggregato.uid}" />
+-											</div>
+-										</div>
+-										<%-- zTree --%>
++												</a>
++											</label>
++											<div class="controls">
++												<s:select list="listaMacroaggregato" name="macroaggregato.uid" id="Macroaggregato" cssClass="span10" disabled="true"
++													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
++											</div>
++										</div>
++										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="pdc" class="control-label">
+ 												<abbr title="Piano dei Conti">P.d.C.</abbr> finanziario *
+@@ -177,14 +141,12 @@
+ 													<i class="icon-info-sign">&nbsp;
+ 														<span class="nascosto">selezionare prima il Macroaggregato</span>
+ 													</i>
+-												</a>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_ElementoPianoDeiContiUid" name="elementoPianoDeiConti.uid"
+-														value="%{elementoPianoDeiConti.uid}" />
+-												<s:property value="pdcFinanziario"/>
+-											</div>
+-										</div>
++												</a>
++											</label>
++											<div class="controls">
++												<s:property value="pdcFinanziario"/>
++											</div>
++										</div>
+ 										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="bottoneSIOPE" class="control-label">
+@@ -191,70 +153,64 @@
+ 												<abbr title="Sistema Informativo sulle OPerazioni degli Enti pubblici">SIOPE</abbr>
+ 												<%--a class="tooltip-test" title="selezionare prima il P.d.C." href="#">
+ 													<i class="icon-info-sign">&nbsp;<span class="nascosto">selezionare prima il P.d.C.</span></i>
+-												</a--%>
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_SIOPEUid" name="siopeSpesa.uid" data-original-uid="%{siopeSpesa != null ? siopeSpesa.uid : ''}" />
+-												<s:property value="siopeInserito"/>
+-											</div>
+-										</div>
++												</a--%>
++											</label>
++											<div class="controls">
++												<s:property value="siopeInserito"/>
++											</div>
++										</div>
+ 										<%-- zTree --%>
+ 										<div class="control-group">
+ 											<label for="finanz2" class="control-label">
+-												Struttura Amministrativa Responsabile *
+-											</label>
+-											<div class="controls">
+-												<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid"
+-														name="strutturaAmministrativoContabile.uid"
+-														value="%{strutturaAmministrativoContabile.uid}" />
+-												<s:property value="strutturaAmministrativoResponsabile"/>
+-											</div>
+-										</div>
++												Struttura Amministrativa Responsabile *
++											</label>
++											<div class="controls">
++												<s:property value="strutturaAmministrativoResponsabile"/>
++											</div>
++										</div>
+ 										<div class="control-group">
+-											<label for="categoriaCapitolo" class="control-label">Tipo capitolo</label>
+-											<div class="controls">
+-												<s:select id="categoriaCapitolo" listKey="uid" list="listaCategoriaCapitolo" name="capitoloUscitaPrevisione.categoriaCapitolo.uid" cssClass="span10"
+-													listValue="%{codice + '-' + descrizione}" disabled="true" headerKey="" headerValue="" />
+-											</div>
+-										</div>
+-										<div class="control-group">
++											<label for="categoriaCapitolo" class="control-label">Tipo capitolo</label>
++											<div class="controls">
++												<s:select id="categoriaCapitolo" listKey="uid" list="listaCategoriaCapitolo" name="capitoloUscitaPrevisione.categoriaCapitolo.uid" cssClass="span10"
++													listValue="%{codice + '-' + descrizione}" disabled="true" headerKey="0" headerValue="" />
++											</div>
++										</div>
++										<div class="control-group">
+ 											<label for="flagImpegnabile" class="control-label">Impegnabile</label>
+ 											<div class="controls">
+ 												<s:checkbox id="flagImpegnabile" name="capitoloUscitaPrevisione.flagImpegnabile" disabled="true" />
+-											</div>
+-										</div>
+-									</fieldset>
+-	
+-									<div class="accordion" id="accordion2">
+-										<div class="accordion-group">
+-											<div class="accordion-heading">
+-												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati"
+-														data-parent="#accordion2" href="#collapseOne">
+-													Altri dati<span class="icon">&nbsp;</span>
+-												</a>
+-											</div>
+-											<div id="collapseOne" class="accordion-body collapse">
+-												<div class="accordion-inner">
+-													<fieldset class="form-horizontal">
+-	
+-														<div class="control-group"> <%-- Non presente in inserimento ma in aggiornamento --%>
+-															<label for="memoria" class="control-label">Corsivo per memoria</label>
+-															<div class="controls">
++											</div>
++										</div>
++									</fieldset>
++
++									<div class="accordion" id="accordion2">
++										<div class="accordion-group">
++											<div class="accordion-heading">
++												<a class="accordion-toggle collapsed" data-toggle="collapse" id="ModalAltriDati" data-parent="#accordion2" href="#collapseOne">
++													Altri dati<span class="icon">&nbsp;</span>
++												</a>
++											</div>
++											<div id="collapseOne" class="accordion-body collapse">
++												<div class="accordion-inner">
++													<fieldset class="form-horizontal">
++
++														<div class="control-group"> <%-- Non presente in inserimento ma in aggiornamento --%>
++															<label for="memoria" class="control-label">Corsivo per memoria</label>
++															<div class="controls">
+ 																<s:checkbox id="memoria" disabled="true"
+-																	name="capitoloUscitaPrevisione.flagPerMemoria" />
+-															</div>
+-														</div>
+-	
+-														<div class="control-group">
+-															<label for="finanz" class="control-label">Tipo Finanziamento</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTipoFinanziamento" id="tipoFinanziamento" cssClass="span10"
+-																		name="tipoFinanziamento.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-																<s:hidden name="tipoFinanziamento.uid" value="%{tipoFinanziamento.uid}" />
+-															</div>
+-														</div>
+-														<div class="control-group">
++																	name="capitoloUscitaPrevisione.flagPerMemoria" />
++															</div>
++														</div>
++
++														<div class="control-group">
++															<label for="finanz" class="control-label">Tipo Finanziamento</label>
++															<div class="controls input-append">
++																<s:select list="listaTipoFinanziamento" id="tipoFinanziamento" cssClass="span10"
++																		name="tipoFinanziamento.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
++														<div class="control-group">
+ 															<label for="Ricorrente" class="control-label">
+ 																Rilevante IVA
+ 															</label>
+@@ -275,13 +231,13 @@
+ 															</div>
+ 														</div>
+ 														<div class="control-group">
+-															<label for="tipoFondo" class="control-label">Tipo fondo</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
+-																		name="tipoFondo.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
++															<label for="tipoFondo" class="control-label">Tipo fondo</label>
++															<div class="controls input-append">
++																<s:select list="listaTipoFondo" id="tipoFondo" cssClass="span10"
++																		name="tipoFondo.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
+ 														<div class="control-group">
+ 															<span class="control-label">Spesa</span>
+ 															<div class="controls">
+@@ -293,29 +249,29 @@
+ 															</div>
+ 														</div>
+ 														<div class="control-group">
+-															<label for="perimetroSanitario" class="control-label">Codifica identificativo del perimetro sanitario</label>
+-															<div class="controls input-append">
+-																<s:select list="listaPerimetroSanitarioSpesa" id="perimetroSanitario" cssClass="span10"
+-																		name="perimetroSanitarioSpesa.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
++															<label for="perimetroSanitario" class="control-label">Codifica identificativo del perimetro sanitario</label>
++															<div class="controls input-append">
++																<s:select list="listaPerimetroSanitarioSpesa" id="perimetroSanitario" cssClass="span10"
++																		name="perimetroSanitarioSpesa.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
+ 														<div class="control-group">
+-															<label for="transazioneUnioneEuropea" class="control-label">Codifica transazione UE</label>
+-															<div class="controls input-append">
+-																<s:select list="listaTransazioneUnioneEuropeaSpesa" id="transazioneUnioneEuropea" cssClass="span10"
+-																		name="transazioneUnioneEuropeaSpesa.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
++															<label for="transazioneUnioneEuropea" class="control-label">Codifica transazione UE</label>
++															<div class="controls input-append">
++																<s:select list="listaTransazioneUnioneEuropeaSpesa" id="transazioneUnioneEuropea" cssClass="span10"
++																		name="transazioneUnioneEuropeaSpesa.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
+ 														<div class="control-group">
+-															<label for="politicheRegionaliUnitarie" class="control-label">Codifica politiche regionali unitarie</label>
+-															<div class="controls input-append">
+-																<s:select list="listaPoliticheRegionaliUnitarie" id="politicheRegionaliUnitarie" cssClass="span10"
+-																		name="politicheRegionaliUnitarie.uid" headerKey="" headerValue="" disabled="true"
+-																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
+-															</div>
+-														</div>
++															<label for="politicheRegionaliUnitarie" class="control-label">Codifica politiche regionali unitarie</label>
++															<div class="controls input-append">
++																<s:select list="listaPoliticheRegionaliUnitarie" id="politicheRegionaliUnitarie" cssClass="span10"
++																		name="politicheRegionaliUnitarie.uid" headerKey="0" headerValue="" disabled="true"
++																		listKey="uid" listValue="%{codice + '-' + descrizione}" />
++															</div>
++														</div>
+ 														<%-- Classificatori Generici --%>
+ 														<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+ 															<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
+@@ -322,119 +278,90 @@
+ 																<div class="control-group">
+ 																	<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
+ 																		<s:property value="%{#attr['labelClassificatoreGenerico' + #idx]}"/>
+-																	</label>
+-																	<div class="controls">
+-																		<s:select list="%{#attr['listaClassificatoreGenerico' + #idx]}" id="classificatoreGenerico%{#idx}"
+-																			cssClass="span10" name="%{'classificatoreGenerico' + #idx + '.uid'}" headerKey="" headerValue=""
+-																			listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="true" />
+-																	</div>
+-																</div>
++																	</label>
++																	<div class="controls">
++																		<s:select list="%{#attr['listaClassificatoreGenerico' + #idx]}" id="classificatoreGenerico%{#idx}"
++																			cssClass="span10" name="%{'classificatoreGenerico' + #idx + '.uid'}" headerKey="0" headerValue=""
++																			listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="true" />
++																	</div>
++																</div>
+ 															</s:if>
+ 														</s:iterator>
+-														<div class="control-group">
+-															<label for="Note" class="control-label">Note</label>
+-															<div class="controls">
+-																<textarea id="Note" disabled="disabled" rows="5"
+-																		cols="15">${capitoloUscitaPrevisione.note}</textarea>
+-																<s:hidden name="capitoloUscitaPrevisione.note"
+-																		value="%{capitoloUscitaPrevisione.note}" />
+-															</div>
+-														</div>
+-													</fieldset>
++														<div class="control-group">
++															<label for="Note" class="control-label">Note</label>
++															<div class="controls">
++																<s:textarea id="Note" disabled="true" rows="5" cols="15" name="capitoloUscitaPrevisione.note" />
++															</div>
++														</div>
++													</fieldset>
+ 												</div>
+-											</div>
+-										</div>
+-									</div>
+-	
+-									<h4>Stanziamenti</h4>
+-	
+-									<table summary="riepilogo incarichi" class="table table-hover table-bordered">
+-										<tr>
+-											<th width="20%">&nbsp;</th>
++											</div>
++										</div>
++									</div>
++
++									<h4>Stanziamenti</h4>
++
++									<table summary="riepilogo incarichi" class="table table-hover table-bordered">
++										<tr>
++											<th width="20%">&nbsp;</th>
+ 											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 0}"/></th>
+-											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
+-											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
+-										</tr>
+-	
+-										<tr>
+-											<th>Competenza</th>
+-											<td class="text-right">
+-												<label for="imp1" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp1" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione0.stanziamento" />
+-												<s:hidden name="importiCapitoloUscitaPrevisione0.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3a" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp3a" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione1.stanziamento" />
+-												<s:hidden name="importiCapitoloUscitaPrevisione1.stanziamento" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3b" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp3b" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione2.stanziamento" />
+-												<s:hidden name="importiCapitoloUscitaPrevisione2.stanziamento" />
+-											</td>
+-										</tr>
+-										<tr>
+-											<th><em>di cui gi&agrave; impegnato</em></th>
+-											<td class="text-right">
+-												<s:property value="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno1" />
+-												<s:hidden id="giaImp0" name="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno1" />
+-											</td>
+-											<td class="text-right">
+-												<s:property value="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno2" />
+-												<s:hidden id="giaImp1" name="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno2" />
+-											</td>
+-											<td class="text-right">
+-												<s:property value="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno3" />
+-												<s:hidden id="giaImp2" name="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno3" />
+-											</td>
+-										</tr>
+-										<tr>
+-											<th>Residuo</th>
+-											<td class="text-right">
+-												<label for="imp2" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp2" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione0.stanziamentoResiduo" />
+-												<s:hidden name="importiCapitoloUscitaPrevisione0.stanziamentoResiduo" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2a" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2a" name="importiCapitoloUscitaPrevisione1.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp2b" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp2b" name="importiCapitoloUscitaPrevisione2.stanziamentoResiduo" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-	
+-										<tr>
+-											<th>Cassa</th>
+-											<td class="text-right">
+-												<label for="imp3" class="nascosto">inserisci importo</label>
+-												<s:textfield id="imp3" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione0.stanziamentoCassa" />
+-												<s:hidden name="importiCapitoloUscitaPrevisione0.stanziamentoCassa" />
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3aa" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3aa" name="importiCapitoloUscitaPrevisione1.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-											<td class="text-right">
+-												<label for="imp3bb" class="nascosto">inserisci importo</label>
+-												<s:hidden id="imp3bb" name="importiCapitoloUscitaPrevisione2.stanziamentoCassa" />
+-												&nbsp;
+-											</td>
+-										</tr>
+-									</table>
+-	
+-									<div class="spaceBottom">
+-										<input type="submit" class="btn" value="visualizza totali di previsione" name="action:visualizzaTotaliPrevisioneCapUscitaPrevisione" />
+-									</div>
+-	
+-									<p>
+-										<%-- Cosa chiamare? --%>
+-										<s:if test="%{titolo.contains('Inserimento')}">
++											<th width="27%" class="text-right"><s:property value="%{annoEsercizioInt + 1}"/></th>
++											<th width="26%" class="text-right"><s:property value="%{annoEsercizioInt + 2}"/></th>
++										</tr>
++
++										<tr>
++											<th>Competenza</th>
++											<td class="text-right">
++												<label for="imp1" class="nascosto">inserisci importo</label>
++												<s:textfield id="imp1" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione0.stanziamento" />
++											</td>
++											<td class="text-right">
++												<label for="imp3a" class="nascosto">inserisci importo</label>
++												<s:textfield id="imp3a" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione1.stanziamento" />
++											</td>
++											<td class="text-right">
++												<label for="imp3b" class="nascosto">inserisci importo</label>
++												<s:textfield id="imp3b" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione2.stanziamento" />
++											</td>
++										</tr>
++										<tr>
++											<th><em>di cui gi&agrave; impegnato</em></th>
++											<td class="text-right">
++												<s:property value="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno1" />
++											</td>
++											<td class="text-right">
++												<s:property value="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno2" />
++											</td>
++											<td class="text-right">
++												<s:property value="importiCapitoloUscitaPrevisione0.diCuiImpegnatoAnno3" />
++											</td>
++										</tr>
++										<tr>
++											<th>Residuo</th>
++											<td class="text-right">
++												<s:textfield id="imp2" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione0.stanziamentoResiduo" />
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right"></td>
++										</tr>
++
++										<tr>
++											<th>Cassa</th>
++											<td class="text-right">
++												<s:textfield id="imp3" cssClass="input-small text-right" disabled="true" name="importiCapitoloUscitaPrevisione0.stanziamentoCassa" />
++											</td>
++											<td class="text-right"></td>
++											<td class="text-right"></td>
++										</tr>
++									</table>
++
++									<div class="spaceBottom">
++										<input type="submit" class="btn" value="visualizza totali di previsione" name="action:visualizzaTotaliPrevisioneCapUscitaPrevisione" />
++									</div>
++
++									<p>
++										<%-- Cosa chiamare? --%>
++										<s:if test="%{titolo.contains('Inserimento')}">
+ 											<s:a action="inserisciCapUscitaPrevisione" cssClass="btn" >indietro</s:a>
+ 										</s:if><s:elseif test="%{daAggiornamento}">
+ 											<s:include value="/jsp/include/indietro.jsp" />
+@@ -446,26 +373,26 @@
+ 										</s:else>
+ 										<button type="submit" class="btn btn-primary pull-right submit">aggiorna</button>
+ 									</p>
+-								</form>
+-							</div>
+-							<!-- END Blocco Capitolo -->
+-	
+-							<!-- BEGIN Blocco Vincoli -->
+-							<div class="tab-pane active" id="vincoli">
+-									<h3>Vincoli</h3>
+-							</div>
+-							<!-- END Blocco Vincoli -->
+-	
+-	
+-	
+-							<!-- BEGIN Blocco Atti di Legge -->
+-							<div class="tab-pane active" id="attiDiLegge">
+-									<h3>Atti di Legge</h3>
+-									<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
+-	
+-							</div>
+-							<!-- END Blocco Atti di Legge -->
+-						</div>
++								</form>
++							</div>
++							<!-- END Blocco Capitolo -->
++
++							<!-- BEGIN Blocco Vincoli -->
++							<div class="tab-pane active" id="vincoli">
++									<h3>Vincoli</h3>
++							</div>
++							<!-- END Blocco Vincoli -->
++
++
++
++							<!-- BEGIN Blocco Atti di Legge -->
++							<div class="tab-pane active" id="attiDiLegge">
++									<h3>Atti di Legge</h3>
++									<s:include value="/jsp/attoDiLegge/stabilisciRelazioneAttoDiLeggeCapitolo.jsp" />
++
++							</div>
++							<!-- END Blocco Atti di Legge -->
++						</div>
+ 					</div>
+ 				</div>
+ 			</div>

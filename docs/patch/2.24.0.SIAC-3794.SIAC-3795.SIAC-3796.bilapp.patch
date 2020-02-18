@@ -1,0 +1,335 @@
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RisultatiRicercaPrimaNotaIntegrataBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RisultatiRicercaPrimaNotaIntegrataBaseAction.java	(revision 10932)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/RisultatiRicercaPrimaNotaIntegrataBaseAction.java	(working copy)
+@@ -223,6 +223,8 @@
+ 			return SUCCESS;
+ 		}
+ 		model.getListaPrimeNoteCollegate().add(pNotaDaCollegare);
++		model.setMotivazione(null);
++		model.setNoteCollegamento(null);
+ 		impostaInformazioneSuccesso();
+ 		return SUCCESS;
+ 	}
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/AggiornaPrimaNotaLiberaBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/AggiornaPrimaNotaLiberaBaseAction.java	(revision 10884)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/AggiornaPrimaNotaLiberaBaseAction.java	(working copy)
+@@ -91,6 +91,9 @@
+ 		// Ricarico la lista
+ 		creaListaElementoScritturaDaOriginale();
+ 		
++		List<PrimaNota> clone = ReflectionUtil.deepClone(model.getPrimaNotaLiberaOriginale().getListaPrimaNotaFiglia());
++		model.setListaPrimeNoteDaCollegare(clone);
++		
+ 		return SUCCESS;
+ 	}
+ 	
+@@ -148,7 +151,7 @@
+ 		if (causaleEP != null && causaleEP.getEventi().size() == 1) {
+ 			model.setEvento(causaleEP.getEventi().get(0));
+ 		}
+-		model.setListaPrimeNoteDaCollegare(primaNotaDaServizio.getListaPrimaNotaFiglia());
++		model.setListaPrimeNoteDaCollegare(primaNota.getListaPrimaNotaFiglia());
+ 	}
+ 
+ 	/**
+@@ -193,4 +196,16 @@
+ 		impostaInformazioneSuccessoAzioneInSessionePerRedirezione();
+ 		return SUCCESS;
+ 	}
++	
++	/**
++	 * Ritorno allo step 1.
++	 * 
++	 * @return una stringa corrispondente al risultato dell'invocazione
++	 */
++	@Override
++	public String backToStep1() {
++		List<PrimaNota> clone = ReflectionUtil.deepClone(model.getPrimaNotaLiberaOriginale().getListaPrimaNotaFiglia());
++		model.setListaPrimeNoteDaCollegare(clone);
++		return SUCCESS;
++	}
+ }
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/BaseInserisciAggiornaPrimaNotaLiberaBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/BaseInserisciAggiornaPrimaNotaLiberaBaseAction.java	(revision 10932)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/BaseInserisciAggiornaPrimaNotaLiberaBaseAction.java	(working copy)
+@@ -137,6 +137,8 @@
+ 		pNotaDaCollegare.setTipoRelazionePrimaNota(motivazione);
+ 		pNotaDaCollegare.setNoteCollegamento(model.getNoteCollegamento());
+ 		model.getListaPrimeNoteDaCollegare().add(pNotaDaCollegare);
++		model.setMotivazione(null);
++		model.setNoteCollegamento(null);
+ 		impostaInformazioneSuccesso();
+ 		return SUCCESS;
+ 	}
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/InserisciPrimaNotaLiberaBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/InserisciPrimaNotaLiberaBaseAction.java	(revision 10881)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/InserisciPrimaNotaLiberaBaseAction.java	(working copy)
+@@ -9,6 +9,7 @@
+ import it.csi.siac.siacgenser.model.CausaleEP;
+ import it.csi.siac.siacgenser.model.MovimentoDettaglio;
+ import it.csi.siac.siacgenser.model.MovimentoEP;
++import it.csi.siac.siacgenser.model.PrimaNota;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+@@ -79,6 +80,7 @@
+ 		
+ 		List<ElementoScritturaPrimaNotaLibera> clone = ReflectionUtil.deepClone(model.getListaElementoScrittura());
+ 		model.setListaElementoScritturaPerElaborazione(clone);
++		model.setListaPrimeNoteDaCollegare(new ArrayList<PrimaNota>());
+ 		
+ 		return SUCCESS;
+ 	}
+@@ -133,4 +135,15 @@
+ 		impostaInformazioneSuccessoAzioneInSessionePerRedirezione();
+ 		return SUCCESS;
+ 	}
++	
++	/**
++	 * Ritorno allo step 1.
++	 * 
++	 * @return una stringa corrispondente al risultato dell'invocazione
++	 */
++	@Override
++	public String backToStep1() {
++		model.setListaPrimeNoteDaCollegare(new ArrayList<PrimaNota>());
++		return SUCCESS;
++	}
+ }
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/RicercaPrimeNoteAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/RicercaPrimeNoteAction.java	(revision 10884)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotalibera/RicercaPrimeNoteAction.java	(working copy)
+@@ -66,6 +66,8 @@
+ 	 */
+ 	public void checkRicercaValida(){
+ 		checkElementoPianoDeiConti();
++		checkCondition( (StringUtils.isBlank(model.getNumeroMovimento()) && model.getAnnoMovimento() == null) || (StringUtils.isNotBlank(model.getNumeroMovimento()) && model.getAnnoMovimento() != null),
++				ErroreCore.FORMATO_NON_VALIDO.getErrore("movimento", ": anno e numero non possono essere valorizzati singolarmente"));
+ 	}
+ 
+ 	/**
+Index: src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/RicercaPrimeNoteModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/RicercaPrimeNoteModel.java	(revision 10884)
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/model/primanotalibera/RicercaPrimeNoteModel.java	(working copy)
+@@ -26,7 +26,7 @@
+ 	private TipoEvento tipoEvento;
+ 	private ElementoPianoDeiConti elementoPianoDeiConti;
+ 	private Integer annoMovimento;
+-	private String numeroMoviemento;
++	private String numeroMovimento;
+ 	private Integer numeroSubmovimento;
+ 	private Ambito ambito;
+ 	
+@@ -99,19 +99,17 @@
+ 	public void setAnnoMovimento(Integer annoMovimento) {
+ 		this.annoMovimento = annoMovimento;
+ 	}
+-
+ 	/**
+-	 * @return the numeroMoviemento
++	 * @return the numeroMovimento
+ 	 */
+-	public String getNumeroMoviemento() {
+-		return numeroMoviemento;
++	public String getNumeroMovimento() {
++		return numeroMovimento;
+ 	}
+-
+ 	/**
+-	 * @param numeroMoviemento the numeroMoviemento to set
++	 * @param numeroMovimento the numeroMovimento to set
+ 	 */
+-	public void setNumeroMoviemento(String numeroMoviemento) {
+-		this.numeroMoviemento = numeroMoviemento;
++	public void setNumeroMovimento(String numeroMovimento) {
++		this.numeroMovimento = numeroMovimento;
+ 	}
+ 
+ 	/**
+@@ -153,7 +151,7 @@
+ 		req.setTipoEvento(tipoEvento);
+ 		req.setElementoPianoDeiConti(elementoPianoDeiConti);
+ 		req.setAnnoMovimento(annoMovimento);
+-		req.setNumeroMoviemento(numeroMoviemento);
++		req.setNumeroMoviemento(numeroMovimento);
+ 		req.setNumeroSubmovimento(numeroSubmovimento);
+ 		req.setParametriPaginazione(creaParametriPaginazione());
+ 		return req;
+Index: src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.js
+===================================================================
+--- src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.js	(revision 10932)
++++ src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.js	(working copy)
+@@ -211,6 +211,8 @@
+     }
+     
+     function collegamentoPrimaNota(e){
++    	alertErroriModale.slideUp();
++        alertInformazioniModale.slideUp();
+     	$("#modaleCollegaPrimaNota").modal("show");
+     	caricaTabellaPrimeNote(e.data[0]);
+     	
+@@ -270,7 +272,7 @@
+                 	return source.numeroRegistrazioneLibroGiornale;
+                 }},
+                 {aTargets: [3], mData: function(source){
+-                	return source.tipoRelazionePrimaNota.descrizione;
++                	return (source.tipoRelazionePrimaNota != null && source.tipoRelazionePrimaNota.descrizione != null)? source.tipoRelazionePrimaNota.descrizione : "";
+                 }},
+                 //Azioni
+                 {aTargets: [4], mData: function(source) {
+Index: src/main/webapp/js/local/contabilitaGenerale/primaNotaLibera/inserisci.aggiorna.step2.js
+===================================================================
+--- src/main/webapp/js/local/contabilitaGenerale/primaNotaLibera/inserisci.aggiorna.step2.js	(revision 10932)
++++ src/main/webapp/js/local/contabilitaGenerale/primaNotaLibera/inserisci.aggiorna.step2.js	(working copy)
+@@ -329,7 +329,7 @@
+                 	return source.numeroRegistrazioneLibroGiornale;
+                 }},
+                 {aTargets: [3], mData: function(source){
+-                	return source.tipoRelazionePrimaNota.descrizione;
++                	return (source.tipoRelazionePrimaNota != null && source.tipoRelazionePrimaNota.descrizione != null) ? source.tipoRelazionePrimaNota.descrizione : "";
+                 }},
+                 //Azioni
+                 {aTargets: [4], mData: function(source) {
+Index: src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.js
+===================================================================
+--- src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.js	(revision 10932)
++++ src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/risultatiRicerca.js	(working copy)
+@@ -269,7 +269,7 @@
+                 	return source.numeroRegistrazioneLibroGiornale;
+                 }},
+                 {aTargets: [3], mData: function(source){
+-                	return source.tipoRelazionePrimaNota.descrizione;
++                	return (source.tipoRelazionePrimaNota != null && source.tipoRelazionePrimaNota.descrizione != null) ? source.tipoRelazionePrimaNota.descrizione : "";
+                 }},
+                 //Azioni
+                 {aTargets: [4], mData: function(source) {
+Index: src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaLibera/inserisci.aggiorna.step2.js
+===================================================================
+--- src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaLibera/inserisci.aggiorna.step2.js	(revision 10932)
++++ src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaLibera/inserisci.aggiorna.step2.js	(working copy)
+@@ -329,7 +329,7 @@
+                 	return source.numeroRegistrazioneLibroGiornale;
+                 }},
+                 {aTargets: [3], mData: function(source){
+-                	return source.tipoRelazionePrimaNota.descrizione;
++                	return (source.tipoRelazionePrimaNota != null && source.tipoRelazionePrimaNota.descrizione != null) ? source.tipoRelazionePrimaNota.descrizione : "";
+                 }},
+                 //Azioni
+                 {aTargets: [4], mData: function(source) {
+Index: src/main/webapp/jsp/contabilitaGenerale/include/modaleRicercaPrimaNota.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/include/modaleRicercaPrimaNota.jsp	(revision 10884)
++++ src/main/webapp/jsp/contabilitaGenerale/include/modaleRicercaPrimaNota.jsp	(working copy)
+@@ -87,7 +87,7 @@
+ 			</button>
+ 		</fieldset>
+ 		<div id="risultatiRicercaPrimaNota" class="hide">
+-			<h4>Elenco Conti</h4>
++			<h4>Elenco Prime Note</h4>
+ 			<table class="table table-hover tab_left" id="tabellaRisultatiRicercaPrimaNota">
+ 				<thead>
+ 					<tr>
+Index: src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/consulta.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/consulta.jsp	(revision 10932)
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/consulta.jsp	(working copy)
+@@ -73,7 +73,10 @@
+ 													 </td>
+ 													<td><s:property value="#pNotaCollegata.bilancio.anno" /></td>
+ 													<td><s:property value="#pNotaCollegata.numeroRegistrazioneLibroGiornale" />
+-													<td><s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++													<td>
++														<s:if test='%{#pNotaCollegata.tipoRelazionePrimaNota != null}'>
++															<s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++														</s:if>
+ 													</td>
+ 												</tr>
+ 											</s:iterator>
+Index: src/main/webapp/jsp/contabilitaGenerale/primaNotaLibera/consulta.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaLibera/consulta.jsp	(revision 10932)
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaLibera/consulta.jsp	(working copy)
+@@ -73,7 +73,10 @@
+ 													 </td>
+ 													<td><s:property value="#pNotaCollegata.bilancio.anno" /></td>
+ 													<td><s:property value="#pNotaCollegata.numeroRegistrazioneLibroGiornale" />
+-													<td><s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++													<td>
++														<s:if test='%{#pNotaCollegata.tipoRelazionePrimaNota != null}'>
++															<s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++														</s:if>
+ 													</td>
+ 												</tr>
+ 											</s:iterator>
+Index: src/main/webapp/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step3.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step3.jsp	(revision 10932)
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaLibera/inserimentoAggiornamento/step3.jsp	(working copy)
+@@ -57,7 +57,10 @@
+ 															 </td>
+ 															<td><s:property value="#pNotaCollegata.bilancio.anno" /></td>
+ 															<td><s:property value="#pNotaCollegata.numeroRegistrazioneLibroGiornale" />
+-															<td><s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++															<td>
++																<s:if test='%{#pNotaCollegata.tipoRelazionePrimaNota != null}'>
++																	<s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++																</s:if>
+ 															</td>
+ 														</tr>
+ 													</s:iterator>
+Index: src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/consulta.jsp
+===================================================================
+--- src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/consulta.jsp	(revision 10932)
++++ src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/consulta.jsp	(working copy)
+@@ -73,8 +73,12 @@
+ 													 </td>
+ 													<td><s:property value="#pNotaCollegata.bilancio.anno" /></td>
+ 													<td><s:property value="#pNotaCollegata.numeroRegistrazioneLibroGiornale" />
+-													<td><s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++													<td>
++														<s:if test='%{#pNotaCollegata.tipoRelazionePrimaNota != null}'>
++															<s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++														</s:if>
+ 													</td>
++													</td>
+ 												</tr>
+ 											</s:iterator>
+ 											</tbody>
+Index: src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaLibera/consulta.jsp
+===================================================================
+--- src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaLibera/consulta.jsp	(revision 10932)
++++ src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaLibera/consulta.jsp	(working copy)
+@@ -73,7 +73,10 @@
+ 													 </td>
+ 													<td><s:property value="#pNotaCollegata.bilancio.anno" /></td>
+ 													<td><s:property value="#pNotaCollegata.numeroRegistrazioneLibroGiornale" />
+-													<td><s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++													<td>
++														<s:if test='%{#pNotaCollegata.tipoRelazionePrimaNota != null}'>
++															<s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++														</s:if>
+ 													</td>
+ 												</tr>
+ 											</s:iterator>
+Index: src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step3.jsp
+===================================================================
+--- src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step3.jsp	(revision 10932)
++++ src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaLibera/inserimentoAggiornamento/step3.jsp	(working copy)
+@@ -57,7 +57,10 @@
+ 															 </td>
+ 															<td><s:property value="#pNotaCollegata.bilancio.anno" /></td>
+ 															<td><s:property value="#pNotaCollegata.numeroRegistrazioneLibroGiornale" />
+-															<td><s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++															<td>
++																<s:if test='%{#pNotaCollegata.tipoRelazionePrimaNota != null}'>
++																	<s:property value="#pNotaCollegata.tipoRelazionePrimaNota.descrizione" />
++																</s:if>
+ 															</td>
+ 														</tr>
+ 													</s:iterator>

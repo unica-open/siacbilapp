@@ -1,0 +1,26 @@
+### Eclipse Workspace Patch 1.0
+#P bilapplication
+diff --git src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/aggiorna/AggiornaContoPrimaNotaIntegrataBaseAction.java src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/aggiorna/AggiornaContoPrimaNotaIntegrataBaseAction.java
+index 0feb12e..298cb20 100644
+--- src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/aggiorna/AggiornaContoPrimaNotaIntegrataBaseAction.java
++++ src/main/java/it/csi/siac/siacbasegengsaapp/frontend/ui/action/primanotaintegrata/aggiorna/AggiornaContoPrimaNotaIntegrataBaseAction.java
+@@ -85,7 +85,8 @@
+ 	 */
+ 	public void validateAggiornaConto() {
+ 		checkNotNull(model.getImporto(), "Importo");
+-		checkCondition(model.getImporto() == null || model.getImporto().signum() > 0, ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", "deve essere positivo"));
++		//SIAC-4708: per ora demando il controllo al servizio in attesa di indicazioni per risolvere la discrepanza tra completa (che per modifiche di importo impone il segno positivo) e l'inserimento automatico della PNI da modifica
++		//checkCondition(model.getImporto() == null || model.getImporto().signum() > 0, ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", "deve essere positivo"));
+ 		checkCondition(model.getOperazioneSegnoConto() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Segno"));
+ 		checkNotNull(model.getIndiceConto(), "Indice");
+ 		
+@@ -194,7 +195,8 @@
+ 	 */
+ 	public void validateInserisciConto() {
+ 		checkNotNull(model.getImportoCollapse(), "Importo");
+-		checkCondition(model.getImporto() == null || model.getImporto().signum() > 0, ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", "deve essere positivo"));
++		//SIAC-4708: per ora demando il controllo al servizio in attesa di indicazioni per risolvere la discrepanza tra completa (che per modifiche di importo impone il segno positivo) e l'inserimento automatico della PNI da modifica
++		//checkCondition(model.getImporto() == null || model.getImporto().signum() > 0, ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", "deve essere positivo"));
+ 		checkNotNull(model.getOperazioneSegnoContoCollapse(), "Segno");
+ 		checkCondition(model.getConto() != null && StringUtils.isNotBlank(model.getConto().getCodice()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Conto"), true);
+ 		

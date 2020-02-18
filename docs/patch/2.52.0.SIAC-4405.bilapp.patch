@@ -1,0 +1,28 @@
+diff --git src/main/webapp/js/local/provvedimento/inserisci_modale.js src/main/webapp/js/local/provvedimento/inserisci_modale.js
+index 36fcc4817..ab5bb5c80 100644
+--- src/main/webapp/js/local/provvedimento/inserisci_modale.js
++++ src/main/webapp/js/local/provvedimento/inserisci_modale.js
+@@ -163,7 +163,6 @@
+ 
+         this.ztree.selezionaNodoSeApplicabileEDisabilitaAlberatura('treeStruttAmm' + this.suffix, uidSAC);
+         this.modale.modal('hide');
+-        this.pulsanteApertura.addClass('hide');
+     }
+ 
+     function inizializzazione(prefix, suffix, ztree) {
+diff --git src/main/webapp/jsp/documento/aggiornamento/quoteDocumentoSpesa_collapse.jsp src/main/webapp/jsp/documento/aggiornamento/quoteDocumentoSpesa_collapse.jsp
+index e3d8f2be8..22389faa4 100644
+--- src/main/webapp/jsp/documento/aggiornamento/quoteDocumentoSpesa_collapse.jsp
++++ src/main/webapp/jsp/documento/aggiornamento/quoteDocumentoSpesa_collapse.jsp
+@@ -213,9 +213,8 @@
+ 					<span class="radio guidata <s:if test="%{provvedimentoQuotaDisabilitato}"> hide</s:if>">
+ 						<a href="#" id="pulsanteApriModaleProvvedimento_QUOTE" class="btn btn-primary">compilazione guidata</a>
+ 					</span>
+-<%-- 					<span class="radio guidata <s:if test="%{provvedimentoQuotaDisabilitato}"> hide</s:if>"> --%>
+-					<span class="radio guidata">
+-						<a href="#" id="modaleInserimentoProvvedimento_pulsanteApertura" class="btn btn-primary">inserisci nuovo</a>
++					<span class="radio guidata <s:if test="%{provvedimentoQuotaDisabilitato}"> hide</s:if>">
++						<a href="#" id="modaleInserimentoProvvedimento_pulsanteApertura" class="btn btn-primary">inserisci provvedimento</a>
+ 					</span>
+ 				</div>
+ 			</div>

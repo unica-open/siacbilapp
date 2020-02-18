@@ -1,0 +1,39 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java	(revision 13867)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaEntrataAction.java	(working copy)
+@@ -327,6 +327,14 @@
+ 	 */
+ 	private boolean isRegistroIvaStampato() throws WebServiceInvocationFailureException {
+ 		final String methodName = "isRegistroIvaStampato";
++		SubdocumentoIvaEntrata subdocumentoIva = model.getSubdocumentoIva();
++		Date dataProtocollo = StatoSubdocumentoIva.PROVVISORIO.equals(subdocumentoIva.getStatoSubdocumentoIva())
++				? subdocumentoIva.getDataProtocolloProvvisorio()
++				: subdocumentoIva.getDataProtocolloDefinitivo();
++		if(dataProtocollo == null){
++			log.debug(methodName, "Il subdocumento iva non ha la data protocollo, non puo' essere stato stampato: returning false.");
++			return false;
++		}
+ 		RicercaStampaIva request = model.creaRequestRicercaStampaIva();
+ 		RicercaStampaIvaResponse response = stampaIvaService.ricercaStampaIva(request);
+ 		
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java	(revision 13867)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/documentoiva/AggiornaDocumentoIvaSpesaAction.java	(working copy)
+@@ -336,6 +336,15 @@
+ 	 */
+ 	private boolean isRegistroIvaStampato() throws WebServiceInvocationFailureException {
+ 		final String methodName = "isRegistroIvaStampato";
++		SubdocumentoIvaSpesa subdocumentoIva = model.getSubdocumentoIva();
++		Date dataProtocollo = StatoSubdocumentoIva.PROVVISORIO.equals(subdocumentoIva.getStatoSubdocumentoIva())
++				? subdocumentoIva.getDataProtocolloProvvisorio()
++				: subdocumentoIva.getDataProtocolloDefinitivo();
++		if(dataProtocollo == null){
++			log.debug(methodName, "Il subdocumento iva non ha la data protocollo, non puo' essere stato stampato: returning false.");
++			return false;
++		}
++		
+ 		RicercaStampaIva request = model.creaRequestRicercaStampaIva();
+ 		RicercaStampaIvaResponse response = stampaIvaService.ricercaStampaIva(request);
+ 

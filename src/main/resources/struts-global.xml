@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!--constant name="struts.ui.theme" value="csi" /-->
+	<constant name="struts.ui.theme" value="siac" />
+	<constant name="struts.action.extension" value="do" />
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="false"/>
+	<constant name="struts.mapper.action.prefix.enabled" value="true"/>
+	<constant name="struts.mapper.action.prefix.crossNamespaces" value="true"/>
+	
+	<!--  FIXME Ho copiato qui 3 tipologie di gestione degli errori che facevamo su DMAWA, che possiamo anche riusare in SIAC -->
+		 
+	<package name="default" extends="struts-default" namespace="/">
+		<interceptors>
+			<interceptor name="cacheCorrectorInterceptor" class="it.csi.siac.siacbilapp.frontend.ui.util.interceptor.HTTPRequestCachePrivateInterceptor" />
+			<interceptor name="anchorInterceptor" class="it.csi.siac.siaccommonapp.interceptor.AnchorInterceptor" />
+			<interceptor-stack name="azioneRichiestaStack">
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="anchorInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+	
+	
+		<global-results>
+			<result name="utenteNonLoggato" type="redirectAction">
+				<param name="actionName">login</param>
+				<param name="namespace">/login</param>
+				<param name="fromPortal">INTERNET_RUPAR</param>
+				<param name="cod_servizio">DMAWA</param>
+			</result>
+			<result name="utenteNonConfigurato">/jsp/utenteNonConfigurato.jsp</result>
+			<result name="failure" type="chain">
+				<param name="actionName">failureAction</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="frontEndMessage" type="chain">
+				<param name="actionName">frontEndMessageExceptionAction</param>
+				<param name="namespace">/</param>
+			</result>
+		</global-results>
+		
+		<global-exception-mappings>
+			<exception-mapping result="utenteNonLoggato" exception="it.csi.siac.siaccommonapp.util.exception.UtenteNonLoggatoException" />
+			<!-- exception-mapping result="utenteNonConfigurato" exception="it.csi.siac.siacbilapp.frontend.ui.exception.UtenteNonConfigurato" /-->
+			<exception-mapping result="failure" exception="it.csi.siac.siaccommonapp.util.exception.ApplicationException" />
+			<exception-mapping result="frontEndMessage" exception="it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException" />
+			<exception-mapping result="failure" exception="${remappedException}" />
+			<exception-mapping result="input" exception="it.csi.siac.siacbilapp.frontend.ui.exception.ParamValidationException" />
+		</global-exception-mappings>
+		
+		<!-- Aggiungere il mapping delle altre azioni possibili -->
+		
+		<action name="azioneRichiestaProcess" class="azioneRichiestaBilancioAction" method="executeProcess">
+			<result name="OP-GESC002-aggVar_IMPORTO" type="redirectAction">
+				 <param name="actionName">aggiornaVariazioneImporti_chooseGestioneUEB</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC002-aggVar_CODIFICA" type="redirectAction">
+				<param name="actionName">aggiornaVariazioneCodifiche</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<result name="OP-GESC003-defVar_IMPORTO" type="redirectAction">
+				<param name="actionName">definisciVariazioneImporti_chooseGestioneUEB</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC003-defVar_CODIFICA" type="redirectAction">
+				<param name="actionName">definisciVariazioneCodifiche</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		
+		<action name="azioneRichiesta" class="azioneRichiestaBilancioAction">
+			<interceptor-ref name="azioneRichiestaStack" />
+			
+			<!-- Capitolo Uscita Previsione -->
+			
+			<result name="OP-GESC022-insCapUscPrev" type="redirectAction">
+				<param name="actionName">inserisciCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC028-aggCapUscPrev" type="redirectAction">
+				<param name="actionName">aggiornaCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC010-ricOPCapUscPrev" type="redirectAction">
+				<param name="actionName">ricercaConOperazioniCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC014-consCapUscPrev" type="redirectAction">
+				<param name="actionName">consultaCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC024-annCapUscPrev" type="redirectAction">
+				<param name="actionName">annullaCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Capitolo Uscita Gestione -->
+			
+			<result name="OP-GESC026-insCapUscGest" type="redirectAction">
+				<param name="actionName">inserisciCapUscitaGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC035-aggCapUscGest" type="redirectAction">
+				<param name="actionName">aggiornaCapUscitaGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC006-ricOPCapUscGest" type="redirectAction">
+				<param name="actionName">ricercaConOperazioniCapUscitaGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC012-consCapUscGest" type="redirectAction">
+				<param name="actionName">consultaCapUscitaGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC036-annCapUscGest" type="redirectAction">
+				<param name="actionName">annullaCapUscitaGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Capitolo Entrata Previsione -->
+			
+			<result name="OP-GESC023-insCapEntPrev" type="redirectAction">
+				<param name="actionName">inserisciCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC027-aggCapEntPrev" type="redirectAction">
+				<param name="actionName">aggiornaCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC009-ricOPCapEntPrev" type="redirectAction">
+				<param name="actionName">ricercaConOperazioniCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC016-consCapEntPrev" type="redirectAction">
+				<param name="actionName">consultaCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC037-annCapEntPrev" type="redirectAction">
+				<param name="actionName">annullaCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Capitolo Entrata Gestione -->
+			
+			<result name="OP-GESC025-insCapEntGest" type="redirectAction">
+			<param name="actionName">inserisciCapEntrataGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC034-aggCapEntGest" type="redirectAction">
+				<param name="actionName">aggiornaCapEntrataGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC005-ricOPCapEntGest" type="redirectAction">
+				<param name="actionName">ricercaConOperazioniCapEntrataGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC011-consCapEntGest" type="redirectAction">
+				<param name="actionName">consultaCapEntrataGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC038-annCapEntGest" type="redirectAction">
+				<param name="actionName">annullaCapEntrataGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Operazioni massive -->
+			<result name="OP-GESC064-ricOPCapEntGest" type="redirectAction">
+				<param name="actionName">ricercaMassivaConOperazioniCapEntrataGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC067-ricOPCapEntPrev" type="redirectAction">
+				<param name="actionName">ricercaMassivaConOperazioniCapEntrataPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC070-ricOPCapUscGest" type="redirectAction">
+				<param name="actionName">ricercaMassivaConOperazioniCapUscitaGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC073-ricOPCapUscPrev" type="redirectAction">
+				<param name="actionName">ricercaMassivaConOperazioniCapUscitaPrevisione</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Provvedimento -->
+			<result name="OP-ATTGESC001-insProv" type="redirectAction">
+				<param name="actionName">inserisciProvvedimento</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ATTGESC002-ricProv" type="redirectAction">
+				<param name="actionName">ricercaProvvedimento</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ATTGESC002-ricProvDA" type="redirectAction">
+				<param name="actionName">ricercaProvvedimentoDA</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ATTGESC002-ricProvEst" type="redirectAction">
+				<param name="actionName">ricercaProvvedimentoEst</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ATTGESC003-aggProv" type="redirectAction">
+				<param name="actionName">aggiornaProvvedimento</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Storno -->
+			<result name="OP-GESC059-insStorno" type="redirectAction">
+				<param name="actionName">inserisciStornoUEB</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC061-ricOPStorno" type="redirectAction">
+				<param name="actionName">ricercaConOperazioniStornoUEB</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Variazioni -->
+			<result name="OP-GESC001-insVar" type="redirectAction">
+				<param name="actionName">sceltaVariazione</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- SIAC-6884 -->
+			<result name="OP-GESC001-insVarDecentrato" type="redirectAction">
+				<param name="actionName">sceltaVariazione</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC004-ricVar" type="redirectAction">
+				<param name="actionName">ricercaVariazione</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Vincoli -->
+			<result name="OP-GESC020-gesVincoli" type="redirectAction">
+				<param name="actionName">inserisciVincolo</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-GESC019-ricVincoli" type="redirectAction">
+				<param name="actionName">ricercaVincolo</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			 <!-- Progetto -->
+			<result name="OP-GESC076-InsAnagPro" type="redirectAction">
+				<param name="actionName">inserisciProgetto</param>
+				<param name="namespace">/</param>81
+				
+			</result>
+			<result name="OP-GESC078-RicPro" type="redirectAction">
+				<param name="actionName">ricercaProgetto</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Documento -->
+			<result name="OP-SPE-insDocSpe" type="redirectAction">
+				<param name="actionName">inserisciDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-insDocSpeQuietanza" type="redirectAction">
+				<param name="actionName">inserisciDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="quietanza">true</param>
+			</result>
+			<result name="OP-SPE-ricDocSpe" type="redirectAction">
+				<param name="actionName">ricercaDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-insDocEnt" type="redirectAction">
+				<param name="actionName">inserisciDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-insDocEntQuietanza" type="redirectAction">
+				<param name="actionName">inserisciDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="quietanza">true</param>
+			</result>
+			<result name="OP-ENT-ricDocEnt" type="redirectAction">
+				<param name="actionName">ricercaDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- PreDocumento -->
+			<result name="OP-ENT-insPreDoc" type="redirectAction">
+				<param name="actionName">inserisciPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-insPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">inserisciPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-ricPreDoc" type="redirectAction">
+				<param name="actionName">ricercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-ricPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">ricercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-CompDefPreDoc" type="redirectAction">
+				<param name="actionName">completaDefinisciPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<result name="OP-SPE-insPreDoc" type="redirectAction">
+				<param name="actionName">inserisciPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-insPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">inserisciPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-ricPreDoc" type="redirectAction">
+				<param name="actionName">ricercaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-CompDefPreDoc" type="redirectAction">
+				<param name="actionName">definisciPreDocumentoSpesaPerElenco</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-ricPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">ricercaPreDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Causale PreDocumento -->
+			<result name="OP-ENT-gestisciCausaliPreDoc" type="redirectAction">
+				<param name="actionName">inserisciCausaleEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-gestisciCausaliPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">inserisciCausaleEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-ricCausaliPreDoc" type="redirectAction">
+				<param name="actionName">ricercaCausaleEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-ENT-ricCausaliPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">ricercaCausaleEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-gestisciCausaliPreDoc" type="redirectAction">
+				<param name="actionName">inserisciCausaleSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-gestisciCausaliPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">inserisciCausaleSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-ricCausaliPreDoc" type="redirectAction">
+				<param name="actionName">ricercaCausaleSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-SPE-ricCausaliPreDocDec" type="redirectAction">
+				<!-- Decentrato -->
+				<param name="actionName">ricercaCausaleSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Documento Iva -->
+			<result name="OP-IVA-ricDocIvaEnt" type="redirectAction">
+				<param name="actionName">ricercaDocumentoIvaEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-ricDocIvaSpe" type="redirectAction">
+				<param name="actionName">ricercaDocumentoIvaSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Registro IVA -->
+			<result name="OP-IVA-insRegistroIva" type="redirectAction">
+				<param name="actionName">inserisciRegistroIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-ricRegistroIva" type="redirectAction">
+				<param name="actionName">ricercaRegistroIva</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Gruppo Attivita Iva -->
+			<result name="OP-IVA-insGruppoIva" type="redirectAction">
+				<param name="actionName">inserisciGruppoAttivitaIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-ricGruppoIva" type="redirectAction">
+				<param name="actionName">ricercaGruppoAttivitaIva</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Associa Attivita Iva Capitolo -->
+			<result name="OP-IVA-gesAttIva" type="redirectAction">
+				<param name="actionName">associaAttivitaIvaCapitolo</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Testata Documento IVA -->
+			<result name="OP-IVA-insDocIvaSpe" type="redirectAction">
+				<param name="actionName">inserisciTestataDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-insDocIvaEnt" type="redirectAction">
+				<param name="actionName">inserisciTestataDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-aggDocIvaSpe" type="redirectAction">
+				<param name="actionName">ricercaTestataDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-aggDocIvaEnt" type="redirectAction">
+				<param name="actionName">ricercaTestataDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Stampa Registro IVA -->
+			<result name="OP-IVA-StpRegistroIva" type="redirectAction">
+				<param name="actionName">stampaRegistroIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-StpLiquidazioneIva" type="redirectAction">
+				<param name="actionName">stampaLiquidazioneIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-StpRiepAnnualeIva" type="redirectAction">
+				<param name="actionName">stampaRiepilogoAnnualeIva</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-IVA-ricStampeIva" type="redirectAction">
+				<param name="actionName">ricercaStampaIva</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Allegato Atto -->
+			<result name="OP-COM-insAttoAllegatoDec" type="redirectAction">
+				<param name="actionName">inserisciAllegatoAtto</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-insAttoAllegatoCen" type="redirectAction">
+				<param name="actionName">inserisciAllegatoAtto</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-ricAttoAllegato" type="redirectAction">
+				<param name="actionName">ricercaAllegatoAtto</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-convDetQuietanza" type="redirectAction">
+				<param name="actionName">convalidaAllegatoAttoPerProvvisorioCassa</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-convDet" type="redirectAction">
+				<param name="actionName">convalidaAllegatoAtto</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-RiComplDet" type="redirectAction">
+				<param name="actionName">riCompletaAllegatoAtto</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-Stampe" type="redirectAction">				
+				<param name="actionName">ricercaStampaAllegatoAtto</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-ConvMultAttoAllegato" type="redirectAction">
+				<param name="actionName">convalidaAllegatoAttoMultiplo</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-ComplMultAttoAllegato" type="redirectAction">
+				<param name="actionName">completaAllegatoAttoMultiplo</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- TipoOnere -->
+			<result name="OP-COM-gestisciCausaliOnere" type="redirectAction">
+				<param name="actionName">inserisciTipoOnere</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-COM-ricCausaliOnere" type="redirectAction">
+				<param name="actionName">ricercaTipoOnere</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Emissione Ordinativi -->
+			<result name="OP-ENT-emissioneOrdManuale" type="redirectAction">emissioneOrdinativiIncasso</result>
+			<result name="OP-SPE-emissioneOrdManuale" type="redirectAction">emissioneOrdinativiPagamento</result>
+			
+			<!-- Cassa Economale -->
+			<result name="OP-CEC-gesCec" type="redirectAction">cassaEconomaleStart</result>
+			<result name="OP-CEC-stampe" type="redirectAction">cassaEconomaleStampe</result>
+			<result name="OP-CEC-stampeRicerca" type="redirectAction">ricercaStampeCassaEconomale</result>
+			
+			<!-- Piano Dei Conti -->
+			<result name="OP-GEN-ricPConti" type="redirectAction">
+				<param name="actionName">ricercaPianoDeiContiFIN</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Configurazione Causali -->
+			<result name="OP-GEN-gestisciCausaleEP" type="redirectAction">inserisciCausaleEPFIN</result>
+			<result name="OP-GEN-ricCausaleEP" type="redirectAction">ricercaCausaleEPFIN</result>
+			<result name="OP-GEN-gestisciCausaleEPGSA" type="redirectAction">inserisciCausaleEPGSA</result>
+			<result name="OP-GEN-ricCausaleEPGSA" type="redirectAction">ricercaCausaleEPGSA</result>
+			
+			<!-- Prima Nota Libera -->
+			<result name="OP-GEN-gestisciPRNotaLibera" type="redirectAction">inserisciPrimaNotaLiberaFIN</result>
+			<result name="OP-GEN-ricPRNotaLibera" type="redirectAction">ricercaPrimaNotaLiberaFIN</result>
+			
+			<!-- Richieste Registrazioni -->
+			<result name="OP-GEN-ricRegistro" type="redirectAction">ricercaRegistrazioneMovFinFIN</result>
+			<result name="OP-GEN-regMassRegistro" type="redirectAction">ricercaRegistrazioneMassivaMovFinFIN</result>
+			
+			<!-- Prima Nota Integrata -->
+			<result name="OP-GEN-ricPRNotaIntegrata" type="redirectAction">ricercaPrimaNotaIntegrataFIN</result>
+			<result name="OP-GEN-validaMassPRNotaIntegrata" type="redirectAction">ricercaValidazionePrimaNotaIntegrataFIN</result>
+			
+			<!-- SIAC-5336: Gestisci classificatori GSA -->
+			<result name="OP-GEN-gestisciClassificatoriGSA" type="redirectAction">gestisciClassificatoriGSA</result>
+			
+			<!-- SIAC-5255: Gestisci quadro economico -->
+			<result name="OP-GESC077-quadroEconomico" type="redirectAction">gestisciQuadroEconomico</result>
+			
+			<!-- Fattura elettronica -->
+			<result name="OP-SPE-ricFEL" type="redirectAction">ricercaFatturaElettronica</result>
+			
+			<!-- Gestione Sanitaria Accentrata (GSA) -->
+			<result name="OP-GEN-ricRegistroRegGSA" type="redirectAction">ricercaRegistrazioneMovFinGSA</result>
+			<result name="OP-GEN-regMassRegistroGSA" type="redirectAction">ricercaRegistrazioneMassivaMovFinGSA</result>
+			<result name="OP-GEN-ricPContiGSA" type="redirectAction">ricercaPianoDeiContiGSA</result>
+			
+			<result name="OP-GEN-ricPRNotaIntegrataGSA" type="redirectAction">ricercaPrimaNotaIntegrataGSA</result>
+			
+			<result name="OP-GEN-ricPRNotaLiberaGSA" type="redirectAction">ricercaPrimaNotaLiberaGSA</result>
+			<result name="OP-GEN-gestisciPRNotaLiberaGSA" type="redirectAction">inserisciPrimaNotaLiberaGSA</result>
+			<!-- SIAC-5293 -->
+			<result name="OP-GEN-validaMassPRNotaIntegrataGSA" type="redirectAction">ricercaValidazionePrimaNotaIntegrataGSA</result>
+			
+			<!-- Conciliazione -->
+			<result name="OP-GEN-gestisciClassiConciliazioneGSA" type="redirectAction">gestioneConciliazionePerTitolo</result>
+			<result name="OP-GEN-gestisciConcilAutoCapitoloGSA" type="redirectAction">gestioneConciliazionePerCapitolo</result>
+			<result name="OP-GEN-gestisciConcilAutoBeneficGSA" type="redirectAction">gestioneConciliazionePerBeneficiario</result>
+			
+			<!-- SIAC-5334: Prima nota automatica manuale -->
+			<result name="OP-GEN-gestisciPRNotaIntManGSA" type="redirectAction">inserisciPrimaNotaIntegrataManualeGSA</result>
+			<result name="OP-GEN-ricPRNotaIntManGSA" type="redirectAction">ricercaPrimaNotaIntegrataManualeGSA</result>
+			
+			<!-- Provvisorio di Cassa - CR-2842 -->
+			<result name="OP-OIL-GestProvvisorioCassa" type="redirectAction">ricercaSinteticaProvvisorioDiCassa</result>
+			
+			<!-- Cruscottino -->
+			<result name="OP-INO-Cruscottino" type="redirectAction">
+				<param name="actionName">consultaEntitaCollegate</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Dubbia utilita' -->
+			<result name="OP-ENT-ConfStpFdce" type="redirectAction">
+				<param name="actionName">inserisciConfigurazioneStampaDubbiaEsigibilita</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- SIAC-4422 -->
+			<result name="OP-ENT-ConfStpFdceRen" type="redirectAction">
+				<param name="actionName">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- SIAC-6881 -->
+			<result name="OP-GESC088-ricercaAnagraficaComponenti" type="redirectAction">
+				<param name="actionName">ricercaComponenteCapitolo</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<result name="OP-GESC089-inserisiciAnagraficaComponenti" type="redirectAction">
+				<param name="actionName">inserisciComponenteCapitolo</param>
+				<param name="namespace">/</param>
+			</result>
+	
+			<!-- CESPITI -->
+			
+			<!-- CATEGORIA CESPITI -->
+			<result name="OP-INV-insCategCespiti" type="redirectAction">
+				<param name="actionName">inserisciCategoriaCespiti</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-ricCategCespiti" type="redirectAction">
+				<param name="actionName">ricercaCategoriaCespiti</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- TIPO BENE -->
+			<result name="OP-INV-insTipoBene" type="redirectAction">
+				<param name="actionName">inserisciTipoBene</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-ricTipoBene" type="redirectAction">
+				<param name="actionName">ricercaTipoBene</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- CESPITE -->
+			<result name="OP-INV-insCespite" type="redirectAction">
+				<param name="actionName">inserisciCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-ricCespite" type="redirectAction">
+				<param name="actionName">ricercaCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-insDonazione" type="redirectAction">
+				<param name="actionName">inserisciDonazioneRinvenimentoCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- DISMISSIONE CESPITE -->
+			<result name="OP-INV-insDisCespite" type="redirectAction">
+				<param name="actionName">inserisciDismissioneCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-ricDisCespite" type="redirectAction">
+				<param name="actionName">ricercaDismissioneCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- VARIAZIONE CESPITE -->
+			<result name="OP-INV-insRivCespite" type="redirectAction">
+				<param name="actionName">inserisciRivalutazioneCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-ricRivCespite" type="redirectAction">
+				<param name="actionName">ricercaRivalutazioneCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-insSvalCespite" type="redirectAction">
+				<param name="actionName">inserisciSvalutazioneCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="OP-INV-ricSvalCespite" type="redirectAction">
+				<param name="actionName">ricercaSvalutazioneCespite</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- AMMORTAMENTO -->
+			<result name="OP-INV-gestisciAmmMassivo" type="redirectAction">
+				<param name="actionName">inserisciAmmortamentoMassivo</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<result name="OP-INV-gestisciAmmMassivo" type="redirectAction">
+				<param name="actionName">inserisciAmmortamentoMassivo</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- Prima Nota Libera  INV -->
+			<!-- <result name="OP-INV-gestisciRegistroB" type="redirectAction">inserisciPrimaNotaLiberaINV</result> -->
+			<result name="OP-INV-ricRegistroB" type="redirectAction">
+				<param name="actionName">ricercaPrimaNotaLiberaINV</param>
+			</result>
+				
+			<result name="OP-INV-gestisciAmmAnnuo" type="redirectAction">
+				<param name="actionName">inserisciAmmortamentoAnnuo</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- REGISTRO A -->
+			<result name="OP-INV-ricRegistroA" type="redirectAction">
+				<param name="actionName">ricercaRegistroACespite</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- BACKOFFICE -->
+			
+			<result name="OP-BKO-impModCig" type="redirectAction">
+				<param name="actionName">backofficeModificaCig</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- SIAC 6884 -->
+			<result name="OP-GESC002-aggVarDecentrato" type="redirectAction">
+				 <param name="actionName">aggiornaVariazioneImporti_chooseGestioneUEB</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+        <action name="logout" class="logoutAction">
+			<result name="success" type="redirect" >/../siacfinapp/logout.do</result>
+		</action>
+        
+
+		<action name="redirectToCruscotto" class="redirectToCruscottoAction">
+			<result name="success" type="redirect">/../siaccruapp/home.do</result>
+		</action>
+		
+		<action name="failureAction" class="failureAction">
+			<result>/jsp/failure.jsp</result>
+		</action>
+		
+		<action name="frontEndMessageExceptionAction" class="frontEndMessageExceptionAction">
+			<result>/jsp/frontEndMessage.jsp</result>
+		</action>
+		
+		
+	</package>
+</struts>

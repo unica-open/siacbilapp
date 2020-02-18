@@ -1,0 +1,27 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java	(revision 13817)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/allegatoatto/ElementoElencoDocumentiAllegato.java	(working copy)
+@@ -101,14 +101,14 @@
+ 		this.subdocumento = subdocumento;
+ 		this.documento = documento;
+ 		this.movimentoGestione = movimentoGestione;
+-		this.submovimentoGestione = submovimentoGestione;
+-		// soggetto
+-		this.causaleSospensioneSoggetto = datiSospensioneSoggetto == null ? null : datiSospensioneSoggetto.getCausaleSospensione();
+-		this.dataSospensioneSoggetto = datiSospensioneSoggetto == null ? null : new Date(datiSospensioneSoggetto.getDataSospensione().getTime());
+-		this.dataRiattivazioneSoggetto = datiSospensioneSoggetto == null ? null : new Date(datiSospensioneSoggetto.getDataRiattivazione().getTime());
+-		this.uidDatiSoggetto = datiSospensioneSoggetto == null || datiSospensioneSoggetto.getUid() == 0 ? null : datiSospensioneSoggetto.getUid();
+-		// capitolo
+-		this.attoAmministrativo = attoAmministrativo;
++		this.submovimentoGestione = submovimentoGestione;
++		// soggetto
++		this.causaleSospensioneSoggetto = datiSospensioneSoggetto == null ? null : datiSospensioneSoggetto.getCausaleSospensione();
++		this.dataSospensioneSoggetto = datiSospensioneSoggetto == null || datiSospensioneSoggetto.getDataSospensione() == null ? null : new Date(datiSospensioneSoggetto.getDataSospensione().getTime());
++		this.dataRiattivazioneSoggetto = datiSospensioneSoggetto == null || datiSospensioneSoggetto.getDataRiattivazione() == null ? null : new Date(datiSospensioneSoggetto.getDataRiattivazione().getTime());
++		this.uidDatiSoggetto = datiSospensioneSoggetto == null || datiSospensioneSoggetto.getUid() == 0 ? null : datiSospensioneSoggetto.getUid();
++		// capitolo
++		this.attoAmministrativo = attoAmministrativo;
+ 		// note
+ 		// dettagli note
+ 		this.ivaSplitReverse = ivaSplitReverse;

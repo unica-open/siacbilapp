@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="backofficeMovimentoGestione" extends="capitoloDefault" namespace="/">
+		<action name="backofficeModificaCig" class="backofficeModificaCigAction">
+			<result name="success">/jsp/movimentoGestione/backofficeModificaCig.jsp</result>
+		</action>
+		
+		<action name="modificaCigBackoffice" class="backofficeModificaCigAction" method="modificaCigBackoffice">
+			<result name="success">/jsp/movimentoGestione/backofficeModificaCig.jsp</result>
+			<result name="input">/jsp/movimentoGestione/backofficeModificaCig.jsp</result>
+		</action>
+    </package>
+</struts>

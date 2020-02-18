@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="DismissioneCespite" extends="capitoloDefault" namespace="/">
+		<!-- Inserimento -->
+		<action name="inserisciDismissioneCespite" class="inserisciDismissioneCespiteAction">
+			<result name="success" type="redirectAction">inserisciDismissioneCespite_enterStep1Anagrafica</result>
+		</action>
+
+		<action name="inserisciDismissioneCespite_enterStep1Anagrafica" class="inserisciDismissioneCespiteAction" method="enterStep1Anagrafica">
+			<result name="success">/jsp/cespiti/dismissionecespite/step1Dismissione.jsp</result>
+		</action>
+		
+		<action name="inserisciDismissioneCespite_proseguiStep1Anagrafica" class="inserisciDismissioneCespiteAction" method="proseguiStep1Anagrafica">
+			<result name="input">/jsp/cespiti/dismissionecespite/step1Dismissione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDismissioneCespite_enterCollegaCespite</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+		<action name="inserisciDismissioneCespite_enterCollegaCespite" class="inserisciDismissioneCespiteAction" method="enterCollegaCespite">
+			<result name="success">/jsp/cespiti/dismissionecespite/step2Dismissione.jsp</result>
+			<result name="input">/jsp/cespiti/dismissionecespite/step1Dismissione.jsp</result>
+		</action>
+		<action name="inserisciDismissioneCespite_collegaCespite" class="inserisciDismissioneCespiteAction" method="collegaCespite">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciDismissioneCespite_scollegaCespite" class="inserisciDismissioneCespiteAction" method="scollegaCespite">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciDismissioneCespite_effettuaScritture" class="inserisciDismissioneCespiteAction" method="effettuaScritture">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciDismissioneCespite_backToStep1" class="inserisciDismissioneCespiteAction" method="backToStep1">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDismissioneCespite</param>
+				<param name="namespace">/</param>
+				<param name="uidDismissioneCespite">${uidDismissioneCespite}</param>
+			</result>
+		</action>
+		<!-- Aggiorna -->
+		<action name="aggiornaDismissioneCespite" class="aggiornaDismissioneCespiteAction">
+			<result name="success" type="redirectAction">aggiornaDismissioneCespite_enterStep1Anagrafica</result>
+		</action>
+
+		<action name="aggiornaDismissioneCespite_enterStep1Anagrafica" class="aggiornaDismissioneCespiteAction" method="enterStep1Anagrafica">
+			<result name="success">/jsp/cespiti/dismissionecespite/step1Dismissione.jsp</result>
+		</action>
+		
+		<action name="aggiornaDismissioneCespite_proseguiStep1Anagrafica" class="aggiornaDismissioneCespiteAction" method="proseguiStep1Anagrafica">
+			<result name="input">/jsp/cespiti/dismissionecespite/step1Dismissione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDismissioneCespite_enterCollegaCespite</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+		<action name="aggiornaDismissioneCespite_enterCollegaCespite" class="aggiornaDismissioneCespiteAction" method="enterCollegaCespite">
+			<result name="success">/jsp/cespiti/dismissionecespite/step2Dismissione.jsp</result>
+			<result name="input">/jsp/cespiti/dismissionecespite/step1Dismissione.jsp</result>
+		</action>
+		<action name="aggiornaDismissioneCespite_collegaCespite" class="aggiornaDismissioneCespiteAction" method="collegaCespite">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaDismissioneCespite_scollegaCespite" class="aggiornaDismissioneCespiteAction" method="scollegaCespite">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaDismissioneCespite_effettuaScritture" class="aggiornaDismissioneCespiteAction" method="effettuaScritture">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaDismissioneCespite_backToStep1" class="aggiornaDismissioneCespiteAction" method="backToStep1">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaDismissioneCespite_enterStep1Anagrafica</param>
+			</result>
+		</action>
+		<!-- Ricerca -->
+		<action name="ricercaDismissioneCespite" class="ricercaDismissioneCespiteAction">
+			<result name="input">/jsp/cespiti/dismissionecespite/ricercaDismissione.jsp</result>
+			<result name="success">/jsp/cespiti/dismissionecespite/ricercaDismissione.jsp</result>
+		</action>
+		<action name="ricercaDismissioneCespite_effettuaRicerca" class="ricercaDismissioneCespiteAction" method="effettuaRicerca">
+			<result name="input">/jsp/cespiti/dismissionecespite/ricercaDismissione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaDismissioneCespite</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaDismissioneCespite" class="risultatiRicercaDismissioneCespiteAction">
+			<result name="success">/jsp/cespiti/dismissionecespite/risultatiRicercaDismissione.jsp</result>
+		</action>
+		<action name="risultatiRicercaDismissioneCespiteAjax" class="risultatiRicercaDismissioneCespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+
+		<action name="risultatiRicercaDismissioneCespite_aggiorna" class="risultatiRicercaDismissioneCespiteAction" method="aggiorna">
+			<result name="input">/jsp/cespiti/dismissionecespite/ricercaDismissione.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaDismissioneCespite</param>
+                <param name="namespace">/</param>
+                <param name="uidDismissioneCespite">${uidDismissioneCespite}</param>
+            </result>
+		</action>
+
+		<action name="risultatiRicercaDismissioneCespite_consulta" class="risultatiRicercaDismissioneCespiteAction" method="consulta">
+			<result name="input">/jsp/cespiti/dismissionecespite/ricercaDismissione.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">consultaDismissioneCespite</param>
+                <param name="namespace">/</param>
+                <param name="uidDismissioneCespite">${uidDismissioneCespite}</param>
+            </result>
+		</action>
+		<action name="risultatiRicercaDismissioneCespite_elimina" class="risultatiRicercaDismissioneCespiteAction" method="elimina">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaDismissioneCespite_effettuaScritture" class="risultatiRicercaDismissioneCespiteAction" method="effettuaScritture">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<action name="consultaDismissioneCespite" class="consultaDismissioneCespiteAction">
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaDismissioneCespite</param>
+			</result>
+			<result name="success">/jsp/cespiti/dismissionecespite/consultaDismissione.jsp</result>
+		</action>
+
+		<action name="consultaDismissioneCespite_ottieniCespitiCollegati" class="consultaDismissioneCespiteAction" method="ottieniCespitiCollegati">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+
+		<!-- Consultazione -->
+
+
+		<!-- Aggiornamento -->
+
+
+
+	</package>
+</struts>

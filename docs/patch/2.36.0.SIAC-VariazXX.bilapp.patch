@@ -1,0 +1,52 @@
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(revision 12346)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java	(working copy)
+@@ -653,9 +653,9 @@
+ 			}
+ 		}
+ 		
+-		checkCondition(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("cassa"));
+-		checkCondition(capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("competenza"));
+-		checkCondition(capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("residuo"));
++//		checkCondition(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("cassa"));
++//		checkCondition(capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("competenza"));
++//		checkCondition(capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("residuo"));
+ 		
+ 		return !hasErrori();
+ 	}
+Index: src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(revision 12346)
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/InserisciVariazioneImportiBaseAction.java	(working copy)
+@@ -362,9 +362,9 @@
+ 			}
+ 		}
+ 		
+-		checkCondition(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("cassa"));
+-		checkCondition(capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("competenza"));
+-		checkCondition(capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("residuo"));
++//		checkCondition(capitoloDaInserireInVariazione.getCassa().add(capitoloDaInserireInVariazione.getCassaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("cassa"));
++//		checkCondition(capitoloDaInserireInVariazione.getCompetenza().add(capitoloDaInserireInVariazione.getCompetenzaOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("competenza"));
++//		checkCondition(capitoloDaInserireInVariazione.getResiduo().add(capitoloDaInserireInVariazione.getResiduoOriginale()).signum() >= 0, ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("residuo"));
+ 		
+ 		return !hasErrori();
+ 	}
+Index: src/main/webapp/js/local/variazioni/variazioni.step3.importi.js
+===================================================================
+--- src/main/webapp/js/local/variazioni/variazioni.step3.importi.js	(revision 12346)
++++ src/main/webapp/js/local/variazioni/variazioni.step3.importi.js	(working copy)
+@@ -502,6 +502,13 @@
+ 		var ajaxParam;
+ 		var tabella;
+ 		var importi = capitolo.importiCapitolo || {};
++		var listaImporti = capitolo.listaImportiCapitolo;
++		//var imp = {};
++//		var annoCompetenza = capitolo.annoCompetenza;
++		importi = listaImporti.find(function(imp){
++			return annoVariazione && imp.annoCompetenza == annoVariazione;
++		
++		});
+ 
+ 		$("#divRicercaCapitolo").slideUp();
+ 		tabella = $('#tabellaGestioneVariazioni').overlay('show');

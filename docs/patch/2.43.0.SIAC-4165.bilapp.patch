@@ -1,0 +1,161 @@
+Index: src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java	(revision 12508)
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/RicercaValidazionePrimaNotaIntegrataFINAction.java	(working copy)
+@@ -2,6 +2,8 @@
+ 
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Calendar;
++import java.util.Date;
+ import java.util.List;
+ 
+ import org.apache.commons.lang3.StringUtils;
+@@ -18,6 +20,7 @@
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+ import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
++import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+ import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
+ import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
+ import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipoElementoBil;
+@@ -364,12 +367,48 @@
+ 		
+ 		checkCondition(ricercaValida, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
+ 		
++		validaDatePerRicercaDocumento();
++		
+ 		validateSoggetto();
+ 		
+ 	}
+ 	
+-	
+ 	/**
++	 * Validazione delle date
++	 * <br/>
++	 * Nel caso in cui il tipo evento sia relativo al documento (DE, DS) diviene necessario impostare le date di registrazione da/a e che queste non distino tra di esse pi&uacute; di un mese.
++	 */
++	private void validaDatePerRicercaDocumento() {
++		final String methodName = "validaDate";
++		
++		if(model.getTipoEvento() == null || model.getTipoEvento().getUid() == 0) {
++			log.debug(methodName, "Tipo evento non specificato, salto il controllo");
++			return;
++		}
++		TipoEvento te = ComparatorUtils.searchByUid(model.getListaTipoEvento(), model.getTipoEvento());
++		if(!BilConstants.CODICE_TIPO_EVENTO_DOCUMENTO_ENTRATA.getConstant().equals(te.getCodice()) && !BilConstants.CODICE_TIPO_EVENTO_DOCUMENTO_SPESA.getConstant().equals(te.getCodice())) {
++			log.debug(methodName, "Tipo evento con codice " + te.getCodice() + ", non di tipo " + BilConstants.CODICE_TIPO_EVENTO_DOCUMENTO_ENTRATA.getConstant() + " o "
++					+ BilConstants.CODICE_TIPO_EVENTO_DOCUMENTO_SPESA.getConstant() + ": controllo sulle date non necessario");
++			return;
++		}
++		// Le date sono obbligatorie
++		checkNotNull(model.getDataRegistrazioneDa(), "data registrazione da");
++		checkNotNull(model.getDataRegistrazioneA(), "data registrazione a");
++		if(model.getDataRegistrazioneDa() == null || model.getDataRegistrazioneA() == null) {
++			// Sono gia' in errore
++			log.debug(methodName, "Date non valorizzate");
++			return;
++		}
++		
++		Calendar limit = Calendar.getInstance();
++		limit.setTime(model.getDataRegistrazioneDa());
++		limit.add(Calendar.MONTH, 1);
++		Date limitDate = limit.getTime();
++		
++		checkCondition(!model.getDataRegistrazioneA().after(limitDate), ErroreCore.DATE_INCONGRUENTI.getErrore(": quando il tipo evento e' relativo ai documenti le date di registrazione non possono distare piu' di mese"));
++	}
++
++	/**
+ 	 * Carica il soggetto qualora impostatao
+ 	 * 
+ 	 */
+Index: src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js
+===================================================================
+--- src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js	(revision 12583)
++++ src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js	(working copy)
+@@ -200,29 +200,40 @@
+             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+                 return $.Deferred().reject().promise();
+             }
+-            caricaSelect(select, data.listaTipoEvento, true);
++            caricaSelect(select, data.listaTipoEvento, true, setDataAttributeDocumento);
+         }).then(innerCallback)
+         .always(select.overlay.bind(select, 'hide'));
+         selectEvento.removeAttr("disabled").change();
++    }
+ 
++    /**
++     * Aggiunge il data-attribute relativo al documento
++     * @param tipoEvento (object) il tipo di evento
++     * @return (string) la stringa da aggiungere nella option se necessario
++     */
++    function setDataAttributeDocumento(tipoEvento) {
++        return tipoEvento && (tipoEvento.codice === 'DE' || tipoEvento.codice === 'DS') ? ' data-documento="true"' : '';
+     }
+  
+     /**
+      * Caricamento della select tramite la lista fornita.
+      *
+-     * @param select           (jQuery)  la select da popolare
+-     * @param list             (Array)   la lista tramite cui popolare la select
+-     * @param addEmptyOption   (Boolean) se aggiungere una option vuota (optional - default - false)
+-     * @param emptyOptionValue (String)  il valore da impostare per l'opzione vuota (optional - default - '')
+-     * @param emptyOptionText  (String)  il testo da impostare per l'opzione vuota (optional - default - '')
++     * @param select           (jQuery)   la select da popolare
++     * @param list             (Array)    la lista tramite cui popolare la select
++     * @param addEmptyOption   (Boolean)  se aggiungere una option vuota (optional - default - false)
++     * @param operation        (Function) l'operazione da operare sull'elemento per comporre dati aggiuntivi sulla option (optional - default - $.noop)
+      * @return (jQuery) la select su cui si e' agito
+      */
+-    function caricaSelect(select, list, addEmptyOption, emptyOptionValue, emptyOptionText) {
++    function caricaSelect(select, list, addEmptyOption, operation) {
++        var defaultOperation = operation && typeof operation === 'function' ? operation : $.noop;
+         var initialValue = !!addEmptyOption
+-            ? '<option value="' + (emptyOptionValue || '') + '">' + (emptyOptionText || '') + '</option>'
++            ? '<option value=""></option>'
+             : '';
+         var str = list.reduce(function(acc, val) {
+-            return acc + '<option value="' + val.uid + '">' + val.codice + ' - ' + val.descrizione + '</option>';
++            var tmp = '<option value="' + val.uid + '"';
++            tmp += defaultOperation(val);
++            tmp += '>' + val.codice + ' - ' + val.descrizione + '</option>'
++            return acc + tmp;
+         }, initialValue);
+         return select.html(str);
+     }
+@@ -278,6 +289,12 @@
+         $this.find('input[name="tipoElenco"]:first').change();
+     }
+ 
++    function changeTipoEvento() {
++        var selectedOption = $('option:selected', '#tipoEvento');
++        $('#asteriskDataRegistrazione')[selectedOption.data('documento') ? 'show' : 'hide']();
++        caricaEvento(true);
++    }
++
+     $(function () {
+         var radioTipoElenco = $("input[type='radio'][name='tipoElenco']");
+         var checkedRadioTipoElenco = radioTipoElenco.filter(":checked");
+@@ -285,7 +302,8 @@
+         var selectEvento = $("#evento");
+         var selectCausale = $("#causale");
+         radioTipoElenco.change(filtraTipoEvento.bind(undefined, true));
+-        selectTipoEvento.change(caricaEvento.bind(undefined, true));
++        //selectTipoEvento.change(caricaEvento.bind(undefined, true));
++        selectTipoEvento.change(changeTipoEvento);
+         selectEvento.change(caricaCausaleEP.bind(undefined, false));
+ 
+         // Invoco i change se ho selezionato i valori
+Index: src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp	(revision 12583)
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp	(working copy)
+@@ -93,7 +93,7 @@
+ 									</div>
+ 								</div>
+ 								<div class="control-group">
+-									<label class="control-label">Data registrazione</label>
++									<label class="control-label">Data registrazione<span id="asteriskDataRegistrazione" class="hide"> *</span></label>
+ 									<div class="controls">
+ 										<span class="al">
+ 											<label class="radio inline">Da</label>

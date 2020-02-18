@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="tipoBeneCespite" extends="capitoloDefault" namespace="/">
+		<!-- Inserimento -->
+		<action name="inserisciTipoBene" class="inserisciTipoBeneAction">
+			<result name="success">jsp/cespiti/tipobenecespite/inserisciTipoBene.jsp</result>
+		</action>
+		<action name="inserisciTipoBene_salva" class="inserisciTipoBeneAction" method="salva">
+			<result name="input">jsp/cespiti/tipobenecespite/inserisciTipoBene.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaTipoBeneCespite</param>
+                <param name="namespace">/</param>
+                <param name="uidTipoBeneCespite">${uidTipoBeneCespiteInserito}</param>
+            </result>
+		</action>
+		<action name="aggiornaTipoBeneCespite" class="aggiornaTipoBeneAction">
+			<result name="input">/jsp/failure.jsp</result>
+			<result name="success">/jsp/cespiti/tipobenecespite/aggiornaTipoBene.jsp</result>			
+		</action>
+		<action name="aggiornaTipoBene_salva" class="aggiornaTipoBeneAction" method ="salva">
+			<result name="input">/jsp/cespiti/tipobenecespite/aggiornaTipoBene.jsp</result>
+			<result name="success">/jsp/cespiti/tipobenecespite/aggiornaTipoBene.jsp</result>			
+		</action>
+		<!-- Ricerca -->
+		<action name="ricercaTipoBene" class="ricercaTipoBeneAction">
+			<result name="input">/jsp/cespiti/tipobenecespite/ricercaTipoBene.jsp</result>
+			<result name="success">/jsp/cespiti/tipobenecespite/ricercaTipoBene.jsp</result>			
+		</action>
+		<action name="ricercaTipoBene_effettuaRicerca" class="ricercaTipoBeneAction" method="effettuaRicerca">
+			<result name="input">/jsp/cespiti/tipobenecespite/ricercaTipoBene.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaTipoBene</param>
+				<param name="namespace">/</param>
+			</result>		
+		</action>
+		<action name="risultatiRicercaTipoBene" class="risultatiRicercaTipoBeneAction">
+			<result name="success">/jsp/cespiti/tipobenecespite/risultatiRicercaTipoBene.jsp</result>
+		</action>		
+		<action name="risultatiRicercaTipoBeneAjax" class="risultatiRicercaTipoBeneAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="risultatiRicercaTipoBene_aggiorna" class="risultatiRicercaTipoBeneAction" method="aggiorna">
+			<result name="input">/jsp/cespiti/tipobenecespite/ricercaTipoBene.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaTipoBeneCespite</param>
+                <param name="namespace">/</param>
+                <param name="uidTipoBeneCespite">${uidTipoBeneCespite}</param>
+            </result>
+		</action>
+		
+		<action name="risultatiRicercaTipoBene_consulta" class="risultatiRicercaTipoBeneAction" method="consulta">
+			<result name="input">/jsp/cespiti/tipobenecespite/ricercaTipoBene.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">consultaTipoBene</param>
+                <param name="namespace">/</param>
+                <param name="uidTipoBeneCespite">${uidTipoBeneCespite}</param>
+            </result>
+		</action>
+		<action name="risultatiRicercaTipoBene_eliminaTipoBene" class="risultatiRicercaTipoBeneAction" method="eliminaTipoBene">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action> 
+		<action name="risultatiRicercaTipoBene_annullaTipoBene" class="risultatiRicercaTipoBeneAction" method="annullaTipoBene">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		
+		<action name="consultaTipoBene" class="consultaTipoBeneAction"> 
+			<result name="input" type="redirectAction">
+				<param name="actionName">risultatiRicercaTipoBene</param>
+			</result>			
+			<result name="success">/jsp/cespiti/tipobenecespite/consultaTipoBene.jsp</result>			
+		</action>
+		
+		
+		<!-- Consultazione -->
+		
+		
+		<!-- Aggiornamento -->
+		
+					
+		
+	</package>
+</struts>

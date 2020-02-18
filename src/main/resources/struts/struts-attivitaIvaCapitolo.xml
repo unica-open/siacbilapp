@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="attivitaIvaCapitolo" extends="capitoloDefault" namespace="/">
+		
+		<action name="associaAttivitaIvaCapitolo" class="associaAttivitaIvaCapitoloAction">
+			<result name="success">/jsp/attivitaIva/associaAttivitaIvaCapitolo/associaAttivitaIvaCapitolo.jsp</result>
+		</action>
+		
+		<action name="associaAttivitaIvaCapitolo_ottieniAttivitaIvaAssociateCapitolo" class="associaAttivitaIvaCapitoloAction" method="ottieniAttivitaIvaAssociateCapitolo">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					listaAttivitaIva.*
+				</param>
+			</result>
+		</action>
+		<action name="associaAttivitaIvaCapitolo_associaAttivitaIvaAlCapitolo" class="associaAttivitaIvaCapitoloAction" method="associaAttivitaIvaAlCapitolo">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					listaAttivitaIva.*
+				</param>
+			</result>
+		</action>
+		<action name="associaAttivitaIvaCapitolo_eliminaAssociazioneAttivitaIvaAlCapitolo" class="associaAttivitaIvaCapitoloAction" method="eliminaAssociazioneAttivitaIvaAlCapitolo">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*,
+					messaggi.*,
+					informazioni.*,
+					listaAttivitaIva.*
+				</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

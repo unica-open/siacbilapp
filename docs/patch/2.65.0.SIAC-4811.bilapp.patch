@@ -1,0 +1,86 @@
+### Eclipse Workspace Patch 1.0
+#P bilapplication
+diff --git src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+index 035e05b..d6e9681 100644
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+@@ -472,7 +472,7 @@
+ 			setErroriInSessionePerActionSuccessiva();			
+ 		}
+ 		
+-		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo());
++		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo(), "provvedimento variazione di PEG");
+ 		model.popolaStringaProvvedimentoAggiuntivo(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio());
+ 		model.setStatoOperativoVariazioneDiBilancio(res.getVariazioneImportoCapitolo().getStatoOperativoVariazioneDiBilancio());
+ 				
+diff --git src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
+index 85bc6c7..60b8a15 100644
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/AggiornaVariazioneModel.java
+@@ -1143,10 +1143,10 @@
+ 		statoOperativoVariazioneDiBilancio = variazioneDiBilancio.getStatoOperativoVariazioneDiBilancio();
+ 		note = variazioneDiBilancio.getNote();
+ 		attoAmministrativo = variazioneDiBilancio.getAttoAmministrativo();
+-		setStringaProvvedimento(getStringDescrizioneAtto(attoAmministrativo, "provvedimento variazione di PEG:"));
++		setStringaProvvedimento(getStringDescrizioneAtto(attoAmministrativo, "provvedimento variazione di PEG"));
+ 		//SIAC-4737
+ 		attoAmministrativoAggiuntivo = variazioneDiBilancio.getAttoAmministrativoVariazioneBilancio();
+-		setStringaProvvedimentoAggiuntivo(getStringDescrizioneAtto(attoAmministrativoAggiuntivo, "provvedimento variazione di bilancio:"));
++		setStringaProvvedimentoAggiuntivo(getStringDescrizioneAtto(attoAmministrativoAggiuntivo, "provvedimento variazione di bilancio"));
+ 		applicazione = variazioneDiBilancio.getApplicazioneVariazione();
+ 
+ 	}
+@@ -1223,7 +1223,7 @@
+ 	 * @param attoAmministrativo l'atto amministrativo da cui creare la stringa
+ 	 */
+ 	public void popolaStringaProvvedimentoAggiuntivo(AttoAmministrativo attoAmministrativo) {
+-		setStringaProvvedimentoAggiuntivo(getStringDescrizioneAtto(attoAmministrativo, "provvedimento variazione di bilancio:"));
++		setStringaProvvedimentoAggiuntivo(getStringDescrizioneAtto(attoAmministrativo, "provvedimento variazione di bilancio"));
+ 	}
+ 
+ 
+@@ -1235,9 +1235,10 @@
+ 	 */
+ 	protected String getStringDescrizioneAtto(AttoAmministrativo provvedimento, String prefissoDescrizione) {
+ 		StringBuilder sb = new StringBuilder();
+-		
++		String attoAmmTesto = prefissoDescrizione != null? prefissoDescrizione : "provvedimento";
+ 		if(provvedimento != null && provvedimento.getTipoAtto() != null){
+-			sb.append(prefissoDescrizione != null? prefissoDescrizione : "provvedimento: ")
++			sb.append(attoAmmTesto)
++				.append(" : ")
+ 				.append(provvedimento.getAnno())
+ 				.append(" / ")
+ 				.append(provvedimento.getNumero())
+@@ -1245,7 +1246,7 @@
+ 				.append(provvedimento.getTipoAtto().getCodice());
+ 			return sb.toString();
+ 		}
+-		return sb.append("Nessun provvedimento selezionato").toString();
++		return sb.append("Nessun " + attoAmmTesto + " selezionato").toString();
+ 	}
+ 
+ 	/**
+diff --git src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java
+index c799e72..cb2dbda 100644
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/model/variazione/InserisciVariazioneModel.java
+@@ -11,6 +11,7 @@
+ import it.csi.siac.siacattser.model.TipoAtto;
+ import it.csi.siac.siacattser.model.ric.RicercaAtti;
+ import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
++import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step1.Scelta;
+ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step1.SceltaVariazioneModel;
+ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step2.DefinisciVariazioneModel;
+ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step3.SpecificaVariazioneCodifiche;
+@@ -158,8 +159,8 @@
+ 	 * @return the stringa provvedimento
+ 	 */
+ 	public String getStringaProvvedimento() {
+-		
+-		String prefissoDesc = "provvedimento variazione di PEG";
++		 
++		String prefissoDesc = "provvedimento " + (Scelta.IMPORTI.equals(getScelta().getScelta())? "variazione di PEG " : "");
+ 		if(getDefinisci()!=null && getDefinisci().getAttoAmministrativo()!= null && getDefinisci().getAttoAmministrativo().getUid() != 0){
+ 			return prefissoDesc + ": " +  getDescrizioneDaProvvedimento(getDefinisci().getAttoAmministrativo());
+ 		}

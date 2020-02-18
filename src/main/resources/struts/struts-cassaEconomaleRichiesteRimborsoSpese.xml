@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cassaEconomaleRichiesteRimborsoSpese" extends="capitoloDefault" namespace="/">
+			<!-- Inserimento -->
+		<action name="inserisciRimborsoSpeseCassaEconomale" class="inserisciRimborsoSpeseCassaEconomaleAction">
+			<result name="success" type="redirectAction">inserisciRimborsoSpeseCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_step1" class="inserisciRimborsoSpeseCassaEconomaleAction" method="step1">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_copiaRichiesta" class="inserisciRimborsoSpeseCassaEconomaleAction" method="copiaRichiesta">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_ottieniListaGiustificativi" class="inserisciRimborsoSpeseCassaEconomaleGiustificativiAction" method="ottieniListaGiustificativi">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleImportiGiustificativi, listaGiustificativo.*</param>
+			</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_addGiustificativo" class="inserisciRimborsoSpeseCassaEconomaleGiustificativiAction" method="addGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_removeGiustificativo" class="inserisciRimborsoSpeseCassaEconomaleGiustificativiAction" method="removeGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_updateGiustificativo" class="inserisciRimborsoSpeseCassaEconomaleGiustificativiAction" method="updateGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_annullaStep1" class="inserisciRimborsoSpeseCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">inserisciRimborsoSpeseCassaEconomale</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_completeStep1" class="inserisciRimborsoSpeseCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">inserisciRimborsoSpeseCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_step2" class="inserisciRimborsoSpeseCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_backToStep1" class="inserisciRimborsoSpeseCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_annullaStep2" class="inserisciRimborsoSpeseCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">inserisciRimborsoSpeseCassaEconomale_step2</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_completeStep2" class="inserisciRimborsoSpeseCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">inserisciRimborsoSpeseCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_step3" class="inserisciRimborsoSpeseCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_completeStep3" class="inserisciRimborsoSpeseCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_visualizzaImporti" class="inserisciRimborsoSpeseCassaEconomaleAction" method="importiCassa">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_visualizzaImporti" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="importiCassa">
+			<result name="success">/jsp/cassaEconomale/operazioneCassa/modaleImportiCassa.jsp</result>
+		</action>
+			<!-- Ricerca -->
+		<action name="ricercaRimborsoSpeseCassaEconomale" class="ricercaRimborsoSpeseCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/include/ricerca.jsp</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="effettuaRicercaRimborsoSpeseCassaEconomale" class="ricercaRimborsoSpeseCassaEconomaleAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaRimborsoSpeseCassaEconomale</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaRimborsoSpeseCassaEconomale" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaRimborsoSpeseCassaEconomale_aggiorna" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRimborsoSpeseCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaRimborsoSpeseCassaEconomale_consulta" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRimborsoSpeseCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRimborsoSpeseCassaEconomale_rendiconta" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction" method="rendiconta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">rendicontaRimborsoSpeseCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRimborsoSpeseCassaEconomale_annulla" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction" method="annulla">
+			<result name="success">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+			<!-- Consulta -->
+		<action name="consultaRimborsoSpeseCassaEconomale" class="consultaRimborsoSpeseCassaEconomaleAction">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/consulta.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		
+		<!-- Aggiorna -->
+		<action name="aggiornaRimborsoSpeseCassaEconomale" class="aggiornaRimborsoSpeseCassaEconomaleAction">
+			<result name="success" type="redirectAction">aggiornaRimborsoSpeseCassaEconomale_step1</result>
+			<result name="input" type="redirectAction">cassaEconomaleStartFrontPage</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_step1" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="step1">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_copiaRichiesta" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="copiaRichiesta">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_ottieniListaGiustificativi" class="aggiornaRimborsoSpeseCassaEconomaleGiustificativiAction" method="ottieniListaGiustificativi">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">totaleImportiGiustificativi, listaGiustificativo.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_addGiustificativo" class="aggiornaRimborsoSpeseCassaEconomaleGiustificativiAction" method="addGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_removeGiustificativo" class="aggiornaRimborsoSpeseCassaEconomaleGiustificativiAction" method="removeGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_updateGiustificativo" class="aggiornaRimborsoSpeseCassaEconomaleGiustificativiAction" method="updateGiustificativo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_annullaStep1" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="annullaStep1">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRimborsoSpeseCassaEconomale</param>
+				<param name="richiestaEconomale.uid">${uidRichiesta}</param>
+			</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_completeStep1" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="completeStep1">
+			<result name="success" type="redirectAction">aggiornaRimborsoSpeseCassaEconomale_step2</result>
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_step2" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="step2">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_backToStep1" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="back">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step1.jsp</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="inserisciRimborsoSpeseCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_caricaDettaglioPagamento" class="inserisciRimborsoSpeseCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="inserisciRimborsoSpeseCassaEconomale_selezionaIban" class="inserisciRimborsoSpeseCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, richiestaEconomale\.movimento.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_caricaModalitaPagamentoDipendenteDaCassa" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="caricaModalitaPagamentoDipendenteDaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_caricaDettaglioPagamento" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="caricaDettaglioPagamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, messaggi.*, richiestaEconomale\.movimento.*, listaModalitaPagamentoSoggettoDifferenteIban.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_selezionaIban" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="selezionaIban">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, richiestaEconomale\.movimento.*</param>
+			</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_annullaStep2" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="annullaStep2">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaRimborsoSpeseCassaEconomale_step2</param>
+			</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_completeStep2" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="completeStep2">
+			<result name="success" type="redirectAction">aggiornaRimborsoSpeseCassaEconomale_step3</result>
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step2.jsp</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_step3" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="step3">
+			<result name="success">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		<action name="aggiornaRimborsoSpeseCassaEconomale_completeStep3" class="aggiornaRimborsoSpeseCassaEconomaleAction" method="completeStep3">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/rimborsoSpese/inserimentoAggiornamento/step3.jsp</result>
+		</action>
+		
+		
+		<action name="risultatiRicercaRimborsoSpeseCassaEconomale_stampaRicevuta" class="risultatiRicercaRimborsoSpeseCassaEconomaleAction" method="stampaRicevuta">
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/cassaEconomale/richieste/include/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaRimborsoSpeseCassaEconomaleAjax" class="risultatiRicercaRimborsoSpeseCassaEconomaleAjaxAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,sEcho,iTotalRecords,iTotalDisplayRecords,iDisplayStart,iDisplayLength,aaData.*, totale</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

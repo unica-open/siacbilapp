@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="administration" extends="capitoloDefault" namespace="/admin">
+		<result-types>
+			<result-type name="serviceCacheStatistics" class="it.csi.siac.siacbilapp.frontend.ui.action.servicecache.ServiceCacheUtilityAction$ServiceCacheStatisticsResult" />
+			<result-type name="serviceCacheKeys" class="it.csi.siac.siacbilapp.frontend.ui.action.servicecache.ServiceCacheUtilityAction$ServiceCacheKeysResult" />
+		</result-types>
+	
+		<action name="serviceCacheUtility" class="serviceCacheUtilityAction">
+			<result name="success">/jsp/cache.jsp</result>
+		</action>
+		<action name="serviceCacheUtility_info" class="serviceCacheUtilityAction" method="info">
+			<result name="success" type="serviceCacheStatistics" />
+		</action>
+		<action name="serviceCacheUtility_keys" class="serviceCacheUtilityAction" method="keys">
+			<result name="success" type="serviceCacheKeys" />
+		</action>
+		<action name="serviceCacheUtility_clear" class="serviceCacheUtilityAction" method="clear">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="serviceCacheUtility_clearKey" class="serviceCacheUtilityAction" method="clearKey">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+	</package>
+</struts>

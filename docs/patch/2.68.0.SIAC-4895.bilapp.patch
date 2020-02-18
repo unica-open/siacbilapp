@@ -1,0 +1,12 @@
+diff --git src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+index de068c3..6799008 100644
+--- src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
++++ src/main/java/it/csi/siac/siacbilapp/frontend/ui/action/variazione/AggiornaVariazioneImportiBaseAction.java
+@@ -479,7 +479,6 @@
+ 		
+ //		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo(), "provvedimento variazione di PEG");
+ //		model.popolaStringaProvvedimentoAggiuntivo(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio());
+-		log.logXmlTypeObject(res.getVariazioneImportoCapitolo().getAttoAmministrativoVariazioneBilancio().getTipoAtto(), "VARIAZIONE IMPORTO CAPITOLO");
+ 		model.setStatoOperativoVariazioneDiBilancio(res.getVariazioneImportoCapitolo().getStatoOperativoVariazioneDiBilancio());
+ 				
+ 		model.setAnnullaAbilitato(Boolean.FALSE);

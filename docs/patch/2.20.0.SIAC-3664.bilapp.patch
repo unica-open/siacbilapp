@@ -1,0 +1,126 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaAccertamentoAllegatoAttoAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaAccertamentoAllegatoAttoAction.java	(revision 11500)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaAccertamentoAllegatoAttoAction.java	(working copy)
+@@ -4,6 +4,8 @@
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+ import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
+ import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
++import it.csi.siac.siaccorser.model.Errore;
++import it.csi.siac.siaccorser.model.Messaggio;
+ import it.csi.siac.siaccorser.model.errore.ErroreCore;
+ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
+ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+@@ -46,14 +48,30 @@
+ 			log.debug(methodName, "Errori di validazione per l'accertamento: " + pve.getMessage());
+ 			return SUCCESS;
+ 		}
++		if(hasErrori()|| hasMessaggi()) {
++			log.debug(methodName, "Errori di validazione dell'accertamento");
++			return SUCCESS;
++		}
+ 		
+ 		model.getListaSubdocumentoEntrata().add(0, model.getSubdocumentoEntrata());
++		
+ 		// Pulisco il model
+ 		model.setSubdocumentoEntrata(null);
+ 		impostaInformazioneSuccesso();
+ 		return SUCCESS;
+ 	}
+ 	
++
++	/**
++	 * Preparazione per il metodo {@link #addAccertamento()}.
++	 */
++	public void prepareAddAccertamento() {
++		model.setSubdocumentoEntrata(null);
++		model.setProseguireConElaborazione(Boolean.FALSE);
++	}
++
++
++	
+ 	/**
+ 	 * Validazione per l'aggiunzione dell'accertamento.
+ 	 */
+@@ -282,6 +300,11 @@
+ 			populateSubdocumentoEntrata(se, seInLista);
+ 		}
+ 	}
++	@Override
++	protected void addMessaggioForTipoMovimento() {
++		addMessaggio(ErroreFin.PRESENZA_CLASSIFICAZIONE_SOGGETTO.getErrore("accertamento"));
++	}
++
+ 
+ 	/**
+ 	 * Popolazione del subdocumento di spesa.
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaImpegnoAllegatoAttoAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaImpegnoAllegatoAttoAction.java	(revision 11500)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaImpegnoAllegatoAttoAction.java	(working copy)
+@@ -66,7 +66,7 @@
+ 			return SUCCESS;
+ 		}
+ 		
+-		if(hasErrori()) {
++		if(hasErrori()|| hasMessaggi()) {
+ 			log.debug(methodName, "Errori di validazione dell'impegno");
+ 			return SUCCESS;
+ 		}
+@@ -157,6 +157,7 @@
+ 			checkCondition(hasErrori() || StatoOperativoMovimentoGestione.DEFINITIVO.getCodice().equals(impegno.getStatoOperativoMovimentoGestioneSpesa()),
+ 					ErroreFin.IMPEGNO_NON_IN_STATO_DEFINITIVO.getErrore());
+ 			checkCoerenzaSoggettoMovimento(model.getSoggetto(), impegno, "impegno", model.getProseguireConElaborazione());
++			
+ 		}
+ 		// L'importo in atto deve essere minore o uguale all'importo disponibile a liquidare per le spese e al disponibile ad incassare per le entrate
+ 		checkCondition(hasErrori() || model.getSubdocumentoSpesa().getImporto().compareTo(disponibilita) <= 0,
+@@ -398,6 +399,11 @@
+ 		}
+ 	}
+ 
++	@Override
++	protected void addMessaggioForTipoMovimento() {
++		addMessaggio(ErroreFin.PRESENZA_CLASSIFICAZIONE_SOGGETTO.getErrore("impegno"));
++	}
++	
+ 	/**
+ 	 * Popolazione del subdocumento di spesa.
+ 	 * 
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaMovimentoAllegatoAttoBaseAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaMovimentoAllegatoAttoBaseAction.java	(revision 11500)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/associa/movimento/AssociaMovimentoAllegatoAttoBaseAction.java	(working copy)
+@@ -79,11 +79,19 @@
+ 			log.debug(methodName, "Classi soggetto non presenti sul soggetto");
+ 			return;
+ 		}
++		if(Boolean.TRUE.equals(proseguire)){
++			log.debug(methodName, "Controllo classe impegno e soggetto da non effettuare: lo salto");
++			return;
++		}
+ 		for(ClassificazioneSoggetto cs : listaClasseSoggettoSoggetto) {
+ 			if(cs.getSoggettoClasseCode().equalsIgnoreCase(classeSoggettoMovimentoGestione.getCodice())) {
+ 				return;
+ 			}
+ 		}
++		addMessaggioForTipoMovimento();
++	}
++
++	protected void addMessaggioForTipoMovimento() {
+ 		addMessaggio(ErroreFin.PRESENZA_CLASSIFICAZIONE_SOGGETTO.getErrore());
+ 	}
+ 	
+Index: src/main/webapp/js/local/allegatoAtto/associaMovimento_step2.js
+===================================================================
+--- src/main/webapp/js/local/allegatoAtto/associaMovimento_step2.js	(revision 11500)
++++ src/main/webapp/js/local/allegatoAtto/associaMovimento_step2.js	(working copy)
+@@ -491,6 +491,8 @@
+                 $("#modaleConfermaProsecuzioneSuAzione").modal("hide");
+             });
+         });
++        
++        $('#collapseAggiungiMovimento').find('input').removeAttr('disabled');
+ 
+         $("#modaleConfermaProsecuzioneSuAzione").modal("show");
+     }

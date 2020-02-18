@@ -1,0 +1,184 @@
+Index: src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/aggiorna.js
+===================================================================
+--- src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/aggiorna.js	(revision 14273)
++++ src/main/webapp/js/local/contabilitaGenerale/primaNotaIntegrata/aggiorna.js	(working copy)
+@@ -113,6 +113,7 @@
+ 
+     function attivaDataTableScritture(list) {
+         var tableId = "tabellaScritture";
++        var editabile = $('#aggiornaPrimaNotaIntegrata').length >0 && $('#pulsanteInserimentoDati').length >0;
+         var optsScritture = {
+         	aaData: list,
+             fnPreDrawCallback: function() {
+@@ -132,7 +133,7 @@
+                 {aTargets: [3], mData: estraiImportoDareAvere('AVERE'),  fnCreatedCell: function(nTd, sData, oData, iRow) {
+                     $(nTd).addClass("tab_Right");
+                 }},
+-                {aTargets: [4], mData: function(source) {
++                {aTargets: [4], bVisible: editabile, mData: function(source) {
+                     var temp = "";
+                     var res = "";
+                     if(!source.utilizzoImportoNonModificabile) {
+@@ -184,7 +185,7 @@
+         
+         return $.post('consultaPrimaNotaIntegrataFIN_ottieniDatiFinanziari.do', obj)
+         .then(function(data) {
+-        	var tipoCollegamento = $('#tipoCollegamentoDatiFinanziari').val();
++        	//var tipoCollegamento = $('#tipoCollegamentoDatiFinanziari').val();
+             if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))) {
+                 return;
+             }
+@@ -191,13 +192,13 @@
+             div.html(data);
+             header.data('loaded', true);
+             div.collapse('show');            
+-            if(tipoCollegamento==='SUBDOCUMENTO_SPESA'){
+-            	div.overlay('show');
+-            	attivaDataTableSubdocSpesa();
+-            }else if(tipoCollegamento==='SUBDOCUMENTO_ENTRATA'){
+-            	div.overlay('show');
+-            	attivaDataTableSubdocEntrata();
+-            }
++//            if(tipoCollegamento==='SUBDOCUMENTO_SPESA'){
++//            	div.overlay('show');
++//            	attivaDataTableSubdocSpesa();
++//            }else if(tipoCollegamento==='SUBDOCUMENTO_ENTRATA'){
++//            	div.overlay('show');
++//            	attivaDataTableSubdocEntrata();
++//            }
+             
+         }).always(header.overlay.bind(header, 'hide'));
+     }
+Index: src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.js
+===================================================================
+--- src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.js	(revision 14273)
++++ src/main/webapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.js	(working copy)
+@@ -113,6 +113,7 @@
+ 
+     function attivaDataTableScritture(list) {
+         var tableId = "tabellaScritture";
++        var editabile = $('#aggiornaPrimaNotaIntegrata').length >0 && $('#pulsanteInserimentoDati').length >0;
+         var optsScritture = {
+         	aaData: list,
+             fnPreDrawCallback: function() {
+@@ -132,7 +133,7 @@
+                 {aTargets: [3], mData: estraiImportoDareAvere('AVERE'),  fnCreatedCell: function(nTd, sData, oData, iRow) {
+                     $(nTd).addClass("tab_Right");
+                 }},
+-                {aTargets: [4], mData: function(source) {
++                {aTargets: [4], bVisible: editabile, mData: function(source) {
+                     var temp = "";
+                     var res = "";
+                     if(!source.utilizzoImportoNonModificabile) {
+@@ -191,13 +192,13 @@
+             div.html(data);
+             header.data('loaded', true);
+             div.collapse('show');            
+-            if(tipoCollegamento==='SUBDOCUMENTO_SPESA'){
+-            	div.overlay('show');
+-            	attivaDataTableSubdocSpesa();
+-            }else if(tipoCollegamento==='SUBDOCUMENTO_ENTRATA'){
+-            	div.overlay('show');
+-            	attivaDataTableSubdocEntrata();
+-            }
++//            if(tipoCollegamento==='SUBDOCUMENTO_SPESA'){
++//            	div.overlay('show');
++//            	attivaDataTableSubdocSpesa();
++//            }else if(tipoCollegamento==='SUBDOCUMENTO_ENTRATA'){
++//            	div.overlay('show');
++//            	attivaDataTableSubdocEntrata();
++//            }
+             
+         }).always(header.overlay.bind(header, 'hide'));
+     }
+Index: src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/aggiorna.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/aggiorna.jsp	(revision 14273)
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/aggiorna.jsp	(working copy)
+@@ -136,9 +136,16 @@
+ 								</tfoot>
+ 							</table>
+ 							<p>
+-								<button type="button" id="pulsanteInserimentoDati" class="btn btn-secondary">
+-									inserisci dati in elenco&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteInserimentoDati"></i>
+-								</button>
++								<s:if test='%{showPulsanteAggiornamento}'>
++									<button type="button" id="pulsanteInserimentoDati" class="btn btn-secondary">
++										inserisci dati in elenco&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteInserimentoDati"></i>
++									</button>
++								</s:if>
++								<s:else>
++									<button type="button" id="pulsanteInserimentoDati" class="btn btn-secondary" disabled>
++										inserisci dati in elenco&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteInserimentoDati"></i>
++									</button>
++								</s:else>
+ 							</p>
+ 							<s:include value="/jsp/contabilitaGenerale/primaNotaIntegrata/include/collapseDatiStruttura.jsp" />
+ 						</fieldset>
+@@ -150,7 +157,7 @@
+ 							<button type="button" id="validazionePrimaNotaIntegrata" class="btn btn-primary pull-right">valida</button>
+ 						</s:if> --%>
+ 						<s:if test='%{showPulsanteAggiornamento}'>
+-							<s:submit value="aggiorna" cssClass="btn btn-primary pull-right" />
++							<s:submit id="aggiornaPrimaNotaIntegrata" value="aggiorna" cssClass="btn btn-primary pull-right" />
+ 						</s:if>
+ 					</p>
+ 				</s:form>
+Index: src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.jsp
+===================================================================
+--- src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.jsp	(revision 14273)
++++ src/main/webapp/jsp/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.jsp	(working copy)
+@@ -140,7 +140,7 @@
+ 											<td><s:property value="#elqu.contoFinanziarioInizialeString"/></td>
+ 											<td><s:property value="#elqu.contoFinanziarioString"/></td>
+ 											<td>
+-												<s:if test="%{#elqu.registrazioneMovFin.uid != 0}">
++												<s:if test="%{#elqu.registrazioneMovFin.uid != 0 && showPulsanteAggiornamento}">
+ 													<s:a href="" cssClass="btn btn-secondary btn-block" data-mov="%{#elqu.movimentoEP.uid}">Dettaglio</s:a>
+ 												</s:if>
+ 											</td>
+Index: src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.jsp
+===================================================================
+--- src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.jsp	(revision 14273)
++++ src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiorna.jsp	(working copy)
+@@ -136,9 +136,15 @@
+ 								</tfoot>
+ 							</table>
+ 							<p>
+-								<button type="button" id="pulsanteInserimentoDati" class="btn btn-secondary">
+-									inserisci dati in elenco&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteInserimentoDati"></i>
+-								</button>
++								<s:if test='%{showPulsanteAggiornamento}'>
++									<button type="button" id="pulsanteInserimentoDati" class="btn btn-secondary">
++										inserisci dati in elenco&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteInserimentoDati"></i>
++									</button>
++								</s:if><s:else>
++									<button type="button" id="pulsanteInserimentoDati" class="btn btn-secondary" disabled>
++										inserisci dati in elenco&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteInserimentoDati"></i>
++									</button>
++								</s:else>
+ 							</p>
+ 							<s:include value="/jsp/contabilitaGenerale/primaNotaIntegrata/include/collapseDatiStruttura.jsp" />
+ 						</fieldset>
+@@ -150,7 +156,7 @@
+ 							<button type="button" id="validazionePrimaNotaIntegrata" class="btn btn-primary pull-right">valida</button>
+ 						</s:if> --%>
+ 						<s:if test='%{showPulsanteAggiornamento}'>
+-							<s:submit value="aggiorna" cssClass="btn btn-primary pull-right" />
++							<s:submit id="aggiornaPrimaNotaIntegrata" value="aggiorna" cssClass="btn btn-primary pull-right" />
+ 						</s:if>
+ 					</p>
+ 				</s:form>
+Index: src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiornaDocumento.jsp
+===================================================================
+--- src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiornaDocumento.jsp	(revision 14273)
++++ src/main/webapp/jsp/gestioneSanitariaAccentrata/primaNotaIntegrata/aggiornaDocumento.jsp	(working copy)
+@@ -140,7 +140,7 @@
+ 											<td><s:property value="#elqu.contoFinanziarioInizialeString"/></td>
+ 											<td><s:property value="#elqu.contoFinanziarioString"/></td>
+ 											<td>
+-												<s:if test="%{#elqu.registrazioneMovFin.uid != 0}">
++												<s:if test="%{#elqu.registrazioneMovFin.uid != 0 && showPulsanteAggiornamento}">
+ 													<s:a href="" cssClass="btn btn-secondary btn-block" data-mov="%{#elqu.movimentoEP.uid}">Dettaglio</s:a>
+ 												</s:if>
+ 											</td>

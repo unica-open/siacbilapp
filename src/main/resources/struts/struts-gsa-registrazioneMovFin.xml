@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gsaRegistrazioneMovFin" extends="capitoloDefault" namespace="/">
+
+		<!-- ****************************************************************************************************** -->
+		<!-- ******************************************** Ricerca ************************************************* -->
+		<!-- ****************************************************************************************************** -->
+
+		<action name="ricercaRegistrazioneMovFinGSA" class="ricercaRegistrazioneMovFinGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/ricercaRegistrazione.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinGSA_caricaTipiEvento" class="ricercaRegistrazioneMovFinGSAAction" method="caricaTipiEvento">
+			<result type="customJSON">
+				<param name="includeProperties">listaTipiEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinGSA_caricaEventi" class="ricercaRegistrazioneMovFinGSAAction" method="ricercaEventi">
+			<result type="customJSON">
+				<param name="includeProperties">errori.*, listaEventi.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMovFinGSA_caricaListaTipiEvento" class="ricercaRegistrazioneMovFinGSAAction" method="caricaListaTipiEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="ricercaRegistrazioneMovFinGSA_effettuaRicercaRegistrazioneMovFin" class="ricercaRegistrazioneMovFinGSAAction" method="ricercaRegistrazioneMovFin">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/ricercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMovFinGSA</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinGSA" class="risultatiRicercaRegistrazioneMovFinGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSAAjax" class="risultatiRicercaRegistrazioneMovFinGSAAjaxAction">
+			<result type="dataTable" />
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_annulla" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="annulla">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaDS" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinDocumentoSpesaGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaDE" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinDocumentoEntrataGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaI" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinImpegnoGSA</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaA" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinAccertamentoGSA</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaL" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinLiquidazioneGSA</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaOI" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinOrdinativoIncassoGSA</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaOP" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinOrdinativoPagamentoGSA</param>
+				<param name="namespace">/</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaRE" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRichiestaEconomaleGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidRichiestaEconomale">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaRR" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRendicontoRichiestaEconomaleGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidRendicontoRichiestaEconomale">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaSI" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinSubImpegnoGSA</param>
+				<param name="namespace">/</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaSA" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinSubAccertamentoGSA</param>
+				<param name="namespace">/</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaMMGS" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinModificaMovimentoGestioneSpesaGSA</param>
+				<param name="namespace">/</param>
+				<param name="uid">${uidDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaMMGE" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinModificaMovimentoGestioneEntrataGSA</param>
+				<param name="namespace">/</param>
+				<param name="uid">${uidDaConsultare}</param>
+				<param name="anno">${annoMovimentoDaConsultare}</param>
+				<param name="numero">${numeroMovimentoDaConsultare}</param>
+				<param name="numeroSub">${numeroSubMovimentoDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaNCD" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinNotaCreditoSpesaGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaNCV" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinNotaCreditoEntrataGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidDocumento">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaRT" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRateoGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidPrimaNota">${uidPrimaNotaRegistrazioneDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_consultaRS" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="consulta">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaRegistrazioneMovFinRiscontoGSA</param>
+				<param name="namespace">/</param>
+				<param name="uidPrimaNota">${uidPrimaNotaRegistrazioneDaConsultare}</param>
+				<param name="uidRisconto">${uidDaConsultare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_completa" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="completa">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">${nomeAzione}</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistrazione">${uidDaCompletare}</param>
+				<param name="validazione">${validazione}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_completaEValida" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="completaEValida">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">${nomeAzione}</param>
+				<param name="namespace">/</param>
+				<param name="uidRegistrazione">${uidDaCompletare}</param>
+				<param name="validazione">${validazione}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMovFinGSA_valida" class="risultatiRicercaRegistrazioneMovFinGSAAction" method="valida">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- ****************************************************************************************************** -->
+		<!-- ******************************************** Consultazione ******************************************* -->
+		<!-- ****************************************************************************************************** -->
+		
+		<!-- DOCUMENTO SPESA -->
+		<action name="consultaRegistrazioneMovFinDocumentoSpesaGSA" class="consultaRegistrazioneMovFinDocumentoSpesaGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- DOCUMENTO ENTRATA -->
+		<action name="consultaRegistrazioneMovFinDocumentoEntrataGSA" class="consultaRegistrazioneMovFinDocumentoEntrataGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- IMPEGNO -->
+		<action name="consultaRegistrazioneMovFinImpegnoGSA" class="consultaRegistrazioneMovFinImpegnoGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- ACCERTAMENTO -->
+		<action name="consultaRegistrazioneMovFinAccertamentoGSA" class="consultaRegistrazioneMovFinAccertamentoGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- LIQUIDAZIONE -->
+		<action name="consultaRegistrazioneMovFinLiquidazioneGSA" class="consultaRegistrazioneMovFinLiquidazioneGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- ORDINATIVO INCASSO -->
+		<action name="consultaRegistrazioneMovFinOrdinativoIncassoGSA" class="consultaRegistrazioneMovFinOrdinativoIncassoGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		<!-- ORDINATIVO PAGAMENTO -->
+		<action name="consultaRegistrazioneMovFinOrdinativoPagamentoGSA" class="consultaRegistrazioneMovFinOrdinativoPagamentoGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- RICHIESTA ECONOMALE -->
+		<action name="consultaRegistrazioneMovFinRichiestaEconomaleGSA" class="consultaRegistrazioneMovFinRichiestaEconomaleGSAAction" >
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		<!-- RENDICONTO RICHIESTA ECONOMALE -->
+		<action name="consultaRegistrazioneMovFinRendicontoRichiestaEconomaleGSA" class="consultaRegistrazioneMovFinRendicontoRichiestaEconomaleGSAAction" >
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- SUBIMPEGNO -->
+		<action name="consultaRegistrazioneMovFinSubImpegnoGSA" class="consultaRegistrazioneMovFinSubImpegnoGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		<!-- SUBACCERTAMENTO -->
+		<action name="consultaRegistrazioneMovFinSubAccertamentoGSA" class="consultaRegistrazioneMovFinSubAccertamentoGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- MODIFICA MOVIMENTO GESTIONE SPESA -->
+		<action name="consultaRegistrazioneMovFinModificaMovimentoGestioneSpesaGSA" class="consultaRegistrazioneMovFinModificaMovimentoGestioneSpesaGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		<!-- MODIFICA MOVIMENTO GESTIONE ENTRATA -->
+		<action name="consultaRegistrazioneMovFinModificaMovimentoGestioneEntrataGSA" class="consultaRegistrazioneMovFinModificaMovimentoGestioneEntrataGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- NOTA CREDITO SPESA -->
+		<action name="consultaRegistrazioneMovFinNotaCreditoSpesaGSA" class="consultaRegistrazioneMovFinNotaCreditoSpesaGSAAction" >
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		<!-- NOTA CREDITO ENTRATA -->
+		<action name="consultaRegistrazioneMovFinNotaCreditoEntrataGSA" class="consultaRegistrazioneMovFinNotaCreditoEntrataGSAAction" >
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+			<action name="consultaRegistrazioneMovFinRateoGSA" class="consultaRegistrazioneMovFinRateoGSAAction" >
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		<action name="consultaRegistrazioneMovFinRiscontoGSA" class="consultaRegistrazioneMovFinRiscontoGSAAction" >
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazione.jsp</result>
+		</action>
+		
+		<!-- CR-4222 -->
+		<action name="ricercaRegistrazioneMassivaMovFinGSA" class="ricercaRegistrazioneMassivaMovFinGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/ricercaRegistrazioneMassiva.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinGSA_caricaTipiEvento" class="ricercaRegistrazioneMassivaMovFinGSAAction" method="caricaTipiEvento">
+			<result type="customJSON">
+				<param name="includeProperties">listaTipiEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinGSA_caricaEventi" class="ricercaRegistrazioneMassivaMovFinGSAAction" method="ricercaEventi">
+			<result type="customJSON">
+				<param name="includeProperties">errori.*, listaEventi.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinGSA_caricaListaTipiEvento" class="ricercaRegistrazioneMassivaMovFinGSAAction" method="caricaListaTipiEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customMessagesJSON" />
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinGSA_caricaListaTitoli" class="ricercaRegistrazioneMassivaMovFinGSAAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaRegistrazioneMassivaMovFinGSA_effettuaRicercaRegistrazioneMovFin" class="ricercaRegistrazioneMassivaMovFinGSAAction" method="ricercaRegistrazioneMovFin">
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/ricercaRegistrazioneMassiva.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaRegistrazioneMassivaMovFinGSA</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaRegistrazioneMassivaMovFinGSA" class="risultatiRicercaRegistrazioneMassivaMovFinGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazioneMassiva.jsp</result>
+			<result name="input">/jsp/failure.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMassivaMovFinGSA_registraTutto" class="risultatiRicercaRegistrazioneMassivaMovFinGSAAction" method="registraTutto">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazioneMassivaDisabled.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/registrazione/risultatiRicercaRegistrazioneMassiva.jsp</result>
+		</action>
+		<action name="risultatiRicercaRegistrazioneMassivaMovFinGSAAjax" class="risultatiRicercaRegistrazioneMassivaMovFinGSAAjaxAction">
+			<result type="dataTable" />
+		</action>
+	</package>
+</struts>

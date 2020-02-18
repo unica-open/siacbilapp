@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="pianoDeiContiGSA" extends="capitoloDefault" namespace="/">
+		
+		<!-- RICERCA -->
+		
+		<action name="ricercaPianoDeiContiGSA" class="ricercaPianoDeiContiGSAAction">
+			<result name="success" type="redirectAction">ricercaPianoDeiContiGSA_landOnPage</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiGSA_landOnPage" class="ricercaPianoDeiContiGSAAction" method="landOnPage">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/ricercaPianoDeiContiGSA.jsp</result>
+		</action>
+		
+		
+		<action name="ricercaPianoDeiContiGSA_effettuaRicerca" class="ricercaPianoDeiContiGSAAction" method = "effettuaRicerca">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*, 
+					conto.*, 
+					figliPresenti, 
+					isGestioneConsentita,
+					gerarchiaConti.*
+				</param>
+			</result>
+		</action>
+		
+		<!-- <action name="ricercaPianoDeiConti_ottieniPianoDeiConti" class="ricercaPianoDeiContiAction" method = "ottieniPianoDeiConti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*, 
+					conto.*, 
+					figliPresenti, 
+					isGestioneConsentita,
+					gerarchiaConti.*
+				</param>
+			</result>
+		</action> -->
+		
+		<!-- <action name="ricercaPianoDeiConti_effettuaRicercaFigli" class="ricercaPianoDeiContiAction" method = "effettuaRicercaFigli">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*</param>
+			</result>
+		</action> -->
+		
+		<action name="ricercaPianoDeiContiGSA_inserisciFiglio" class="ricercaPianoDeiContiGSAAction" method="inserisciFiglio">
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciFiglioPianoDeiContiGSA</param>
+				<param name="uidConto">${uidConto}</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiGSA_aggiorna" class="ricercaPianoDeiContiGSAAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPianoDeiContiGSA</param>
+				<param name="uidConto">${uidConto}</param>
+			</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiGSA_consulta" class="ricercaPianoDeiContiGSAAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPianoDeiContiGSA</param>
+				<param name="uidConto">${uidConto}</param>
+			</result>
+		</action>
+	
+		<action name="ricercaPianoDeiContiGSA_annulla" class="ricercaPianoDeiContiGSAAction" method="annulla">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/ricercaPianoDeiContiGSA.jsp</result>
+            <result name="input">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/ricercaPianoDeiContiGSA.jsp</result>
+		</action>
+		
+		<action name="ricercaPianoDeiContiGSA_elimina" class="ricercaPianoDeiContiGSAAction" method="elimina">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/ricercaPianoDeiContiGSA.jsp</result>
+            <result name="input">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/ricercaPianoDeiContiGSA.jsp</result>
+		</action>
+		
+		<!-- INSERISCI -->
+		
+		<action name="inserisciFiglioPianoDeiContiGSA" class="inserisciFiglioPianoDeiContiGSAAction">
+
+			 <result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/inserisciFiglioPianoDeiContiGSA.jsp</result>
+			<result name="input" type="redirectAction">ricercaPianoDeiContiGSA_landOnPage</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiGSA_ottieniListaCodiceBilancio" class="inserisciFiglioPianoDeiContiGSAAction" method="ottieniListaCodiceBilancio">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaCodiceBilancio.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiGSA_ottieniListaClassiCompleta" class="inserisciFiglioPianoDeiContiGSAAction" method="ottieniListaClassiCompleta">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiGSA_ottieniListaClassiAmmortamento" class="inserisciFiglioPianoDeiContiGSAAction" method="ottieniListaClassiAmmortamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="inserisciFiglioPianoDeiContiGSA_inserimento" class="inserisciFiglioPianoDeiContiGSAAction" method="inserimento">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/riepilogoDatiGSA.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/inserisciFiglioPianoDeiContiGSA.jsp</result>
+		</action>
+		
+		<!-- AGGIORNA -->
+		
+		<action name="aggiornaPianoDeiContiGSA" class="aggiornaPianoDeiContiGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/aggiornaPianoDeiContiGSA.jsp</result>
+			<result name="input" type="redirectAction">ricercaPianoDeiContiGSA_landOnPage</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiGSA_ottieniListaCodiceBilancio" class="aggiornaPianoDeiContiGSAAction" method="ottieniListaCodiceBilancio">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaCodiceBilancio.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiGSA_ottieniListaClassiCompleta" class="aggiornaPianoDeiContiGSAAction" method="ottieniListaClassiCompleta">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiGSA_ottieniListaClassiAmmortamento" class="aggiornaPianoDeiContiGSAAction" method="ottieniListaClassiAmmortamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					listaClassi.*,
+					messaggi.*,
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="aggiornaPianoDeiContiGSA_aggiornamento" class="aggiornaPianoDeiContiGSAAction" method="aggiornamento">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/riepilogoDatiGSA.jsp</result>
+			<result name="input">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/aggiornaPianoDeiContiGSA.jsp</result>
+		</action>
+		
+		<!-- CONSULTA -->
+		
+		<action name="consultaPianoDeiContiGSA" class="consultaPianoDeiContiGSAAction">
+			<result name="success">/jsp/gestioneSanitariaAccentrata/pianoDeiConti/consultaPianoDeiContiGSA.jsp</result>
+			<result name="input" type="redirectAction">ricercaPianoDeiContiGSA_landOnPage</result>
+		</action>
+		
+		<!-- AJAX -->
+		<!--
+		<action name="risultatiRicercaPianoDeiContiAjax" class="risultatiRicercaPianoDeiContiAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		-->
+		<!-- compilazione guidata  ricerca conto -->
+		<!-- 
+		<action name="ricercaConto_effettuaRicercaModale" class="ricercaContoAction" method = "effettuaRicercaConto">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*, 
+					conto.*
+				</param>
+			</result>
+		</action>
+				
+		<action name="risultatiRicercaContoAjax" class="risultatiRicercaContoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		 -->
+	</package>
+</struts>

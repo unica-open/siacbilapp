@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="causaleSpesa" extends="capitoloDefault" namespace="/">
+        
+        <action name="inserisciCausaleSpesa" class="inserisciCausaleSpesaAction">
+        	<result name="success">/jsp/causale/inserisciCausaleSpesa.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="inserimentoCausaleSpesaSalva" class="inserisciCausaleSpesaAction" method="salvaCausaleSpesa">
+            <result name="input">/jsp/causale/inserisciCausaleSpesa.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaCausaleSpesa</param>
+                <param name="namespace">/</param>
+                <param name="uidCausaleDaAggiornare">${idCausale}</param>
+            </result>
+        </action>
+        <action name="inserisciCausaleSpesa_ottieniListaSedeSecondariaEModalitaPagamento" class="inserisciCausaleSpesaAction" method="ottieniListaSedeSecondariaEModalitaPagamento">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*
+				</param>
+			</result>
+		</action>
+        
+   		
+ 		<action name="aggiornaCausaleSpesa" class="aggiornaCausaleSpesaAction">
+        	<result name="success">/jsp/causale/aggiornaCausaleSpesa.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="aggiornamentoCausaleSpesa" class="aggiornaCausaleSpesaAction" method="aggiornaCausaleSpesa">
+        	<result name="success">/jsp/causale/aggiornaCausaleSpesa.jsp</result>
+            <result name="input">/jsp/causale/aggiornaCausaleSpesa.jsp</result>
+        </action>
+        <action name="aggiornaCausaleSpesa_ottieniListaSedeSecondariaEModalitaPagamento" class="aggiornaCausaleSpesaAction" method="ottieniListaSedeSecondariaEModalitaPagamento">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*
+				</param>
+			</result>
+		</action>
+        
+   
+        <action name="consultaCausaleSpesa" class="consultaCausaleSpesaAction">
+             <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		listaStoricoCausale.*
+            	</param>
+            </result>
+        </action>
+       
+       
+        <action name="ricercaCausaleSpesa" class="ricercaCausaleSpesaAction">
+        	<result name="success">/jsp/causale/ricercaCausaleSpesa.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+        <action name="effettuaRicercaCausaleSpesa" class="ricercaCausaleSpesaAction" method="ricercaCausaleSpesa">
+            <result name="input">/jsp/causale/ricercaCausaleSpesa.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">risultatiRicercaCausaleSpesa</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+        <action name="ricercaCausaleSpesa_ottieniListaSedeSecondariaEModalitaPagamento" class="ricercaCausaleSpesaAction" method="ottieniListaSedeSecondariaEModalitaPagamento">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*
+				</param>
+			</result>
+		</action>
+		<action name="ricercaCausaleSpesa_ricercaDettaglioCausaleSpesa" class="ricercaCausaleSpesaAction" method="ricercaDettaglioCausaleSpesa">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					causale.*
+				</param>
+			</result>
+		</action>
+		
+      
+        <action name="risultatiRicercaCausaleSpesa" class="risultatiRicercaCausaleSpesaAction">
+            <result name="success">/jsp/causale/risultatiRicercaCausaleSpesa.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+        </action>
+       <action name="risultatiRicercaCausaleSpesaAjax" class="risultatiRicercaCausaleSpesaAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*,
+            		sEcho,
+            		iTotalRecords,
+            		iTotalDisplayRecords,
+            		iDisplayStart,
+            		iDisplayLength,
+            		aaData.*
+            	</param>
+            </result>
+        </action>
+        <action name="risultatiRicercaCausaleSpesaAggiorna" class="risultatiRicercaCausaleSpesaAction" method="aggiorna">
+            <result name="input">/jsp/causale/risultatiRicercaCausaleSpesa.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaCausaleSpesa</param>
+            	<param name="namespace">/</param>
+                <param name="uidCausaleDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        <action name="risultatiRicercaCausaleSpesaAnnulla" class="risultatiRicercaCausaleSpesaAction" method="annulla">
+            <result name="success">/jsp/causale/risultatiRicercaCausaleSpesa.jsp</result>
+            <result name="input">/jsp/causale/risultatiRicercaCausaleSpesa.jsp</result>
+        </action>
+        <action name="risultatiRicercaCausaleSpesaConsulta" class="risultatiRicercaCausaleSpesaAction" method="consulta">
+            <result name="success">/jsp/causale/risultatiRicercaCausaleSpesa.jsp</result>
+            <result name="input">/jsp/causale/risultatiRicercaCausaleSpesa.jsp</result>
+        </action>
+
+        <action name="ricercaDettaglioCausaleSpesa" class="causalePreDocumentoSpesaAjaxAction" method="ricercaDettaglio">
+            <result name="success" type="json">
+                <param name="ignoreHierarchy">false</param>
+                <param name="enumAsBean">true</param>
+                <param name="includeProperties">errori.*, causaleSpesa.*</param>
+            </result>
+        </action>
+    </package>
+</struts>

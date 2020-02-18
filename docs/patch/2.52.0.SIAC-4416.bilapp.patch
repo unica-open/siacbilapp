@@ -1,0 +1,46 @@
+diff --git src/main/webapp/css/common.css src/main/webapp/css/common.css
+index 6cee2495f..15dbf398c 100644
+--- src/main/webapp/css/common.css
++++ src/main/webapp/css/common.css
+@@ -172,4 +172,8 @@
+ 
+ .margin10-0 {
+     margin:10px 0;
++}
++
++.tooltip-left > .tooltip > .tooltip-inner {
++    text-align: left;
+ }
+\ No newline at end of file
+diff --git src/main/webapp/jsp/documento/ricercaDocumentoSpesa.jsp src/main/webapp/jsp/documento/ricercaDocumentoSpesa.jsp
+index 0bca9f354..d9fba9950 100644
+--- src/main/webapp/jsp/documento/ricercaDocumentoSpesa.jsp
++++ src/main/webapp/jsp/documento/ricercaDocumentoSpesa.jsp
+@@ -37,13 +37,20 @@
+ 														required="false" headerKey="" headerValue="" listValue="%{codice + ' - ' + descrizione}" />
+ 											</span>
+ 											<span class="al">
+-											<label class="radio inline" for="flagAttivaScrittureContabili">Attivate Scritture Contabili</label>
+-													<select id="flagAttivaScrittureContabili" name="flagAttivaScrittureContabili">
+-														<option value=""  <s:if test='flagAttivaScrittureContabili== ""' >selected</s:if>>Non si applica</option>
+-														<option value="S" <s:if test='flagAttivaScrittureContabili == "S"'>selected</s:if>>S&iacute;</option>
+-														<option value="N" <s:if test='flagAttivaScrittureContabili == "N"'>selected</s:if>>No</option>
+-													</select>
+-											</span>
++											<label class="radio inline tooltip-left" for="flagAttivaScrittureContabili">
++												Attivate Scritture Contabili
++												<a class="tooltip-test" data-html="true" title="La selezione del S&iacute; indica i documenti con scritture attivate o con tipo documento per cui le scritture non sono attivabili" href="#">
++													<i class="icon-info-sign">&nbsp;
++														<span class="nascosto">La selezione del S&iacute; indica i documenti con scritture attivate o con tipo documento per cui le scritture non sono attivabili</span>
++													</i>
++												</a>
++											</label>
++												<select id="flagAttivaScrittureContabili" name="flagAttivaScrittureContabili">
++													<option value=""  <s:if test='flagAttivaScrittureContabili== ""' >selected</s:if>>Non si applica</option>
++													<option value="S" <s:if test='flagAttivaScrittureContabili == "S"'>selected</s:if>>S&iacute;</option>
++													<option value="N" <s:if test='flagAttivaScrittureContabili == "N"'>selected</s:if>>No</option>
++												</select>
++										</span>
+ 										</div>
+ 									</div>
+ 									<div class="control-group">

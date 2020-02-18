@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="movimentoGestione" extends="capitoloDefault" namespace="/">
+	    <!-- ******************Ricerca per chiave ******************* -->
+		<action name="ricercaImpegnoPerChiave" class="ricercaMovimentoGestioneAction" method="cercaImpegno">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, impegno.*</param>
+			</result>
+		</action>
+		<action name="ricercaImpegnoPerChiaveOttimizzato" class="ricercaMovimentoGestioneAction" method="cercaImpegnoOttimizzato">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, impegno.*</param>
+			</result>
+		</action>
+		<action name="ricercaMovimentoGestione_cercaImpegnoSubImpegno" class="ricercaMovimentoGestioneAction" method="cercaImpegnoSubImpegno">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, impegno.*</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaSubImpegniAjax" class="risultatiRicercaSubImpegniAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaSubImpegniMovimentoGestioneAjax" class="risultatiRicercaSubImpegniMovimentoGestioneAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaSubAccertamentiMovimentoGestioneAjax" class="risultatiRicercaSubAccertamentiMovimentoGestioneAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="ricercaAccertamentoPerChiave" class="ricercaMovimentoGestioneAction" method="cercaAccertamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, accertamento.*</param>
+			</result>
+		</action>
+		<action name="ricercaAccertamentoPerChiaveOttimizzato" class="ricercaMovimentoGestioneAction" method="cercaAccertamentoOttimizzato">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, accertamento.*</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaSubAccertamentiAjax" class="risultatiRicercaSubAccertamentiAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="ricercaMovimentoGestione_cercaAccertamentoSubAccertamento" class="ricercaMovimentoGestioneAction" method="cercaAccertamentoSubAccertamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, accertamento.*</param>
+			</result>
+		</action>		
+        
+        <!-- ******************Ricerca sintetica ******************* -->
+        <action name="ricercaSinteticaImpegniSubImpegni" class="ricercaMovimentoGestioneAction" method="ricercaSinteticaImpegniSubimpegni">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, listaImpegni.*, messaggi.*, informazioni.*</param>
+			</result>
+		</action>
+		<action name="ricercaSinteticaAccertamentiSubAccertamenti" class="ricercaMovimentoGestioneAction" method="ricercaSinteticaAccertamentiSubAccertamenti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, listaAccertamenti.*</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaImpegniAjax" class="risultatiRicercaImpegniAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+    </package>
+</struts>

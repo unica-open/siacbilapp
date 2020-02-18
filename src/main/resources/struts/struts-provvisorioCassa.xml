@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="provvisorioCassa" extends="capitoloDefault" namespace="/">
+		<action name="ricercaProvvisorioCassa" class="ricercaProvvisorioDiCassaAction" method="ricercaSintetica">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaProvvisorioCassaAjax" class="risultatiRicercaProvvisorioDiCassaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="ricercaProvvisorioCassaPerChiave" class="ricercaProvvisorioDiCassaAction" method="ricercaPerChiave">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,provvisorioDiCassa.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+	<!-- Ricerca Sintetica -->
+		<action name="ricercaSinteticaProvvisorioDiCassa" class="ricercaSinteticaProvvisorioDiCassaAction">
+			<result name="success">/jsp/provvisorioCassa/ricercaSinteticaProvvisorioCassa.jsp</result>
+		</action>
+		<action name="effettuaRicercaSinteticaProvvisorioDiCassa" class="ricercaSinteticaProvvisorioDiCassaAction" method="ricerca">
+			<result name="success" type="redirectAction">risultatiRicercaSinteticaProvvisorioDiCassa</result>
+			<result name="input">/jsp/provvisorioCassa/ricercaSinteticaProvvisorioCassa.jsp</result>
+		</action>
+		
+	<!-- Risultati Ricerca Sintetica -->
+		<action name="risultatiRicercaSinteticaProvvisorioDiCassa" class="risultatiRicercaSinteticaProvvisorioDiCassaAction">
+			<result name="success">/jsp/provvisorioCassa/risultatiRicercaSinteticaProvvisorioCassa.jsp</result>
+		</action>
+		<action name="risultatiRicercaSinteticaProvvisorioDiCassa_associaDocumentoS" class="risultatiRicercaSinteticaProvvisorioDiCassaAction" method="associaDocumentoSpesa">
+			<result name="input">/jsp/provvisorioCassa/risultatiRicercaSinteticaProvvisorioCassa.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">associaQuoteSpesaAProvvisorioDiCassa</param>
+				<param name="namespace">/</param>
+				<param name="uidProvvisorioDaAssociare">${uidDaAssociare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaSinteticaProvvisorioDiCassa_associaDocumentoE" class="risultatiRicercaSinteticaProvvisorioDiCassaAction" method="associaDocumentoEntrata">
+			<result name="input">/jsp/provvisorioCassa/risultatiRicercaSinteticaProvvisorioCassa.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">associaQuoteEntrataAProvvisorioDiCassa</param>
+				<param name="namespace">/</param>
+				<param name="uidProvvisorioDaAssociare">${uidDaAssociare}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaSinteticaProvvisorioDiCassa_inserisciDocumentoSpesaPerProvvisori" class="risultatiRicercaSinteticaProvvisorioDiCassaAction" method="inserisciDocumentoSpesaPerProvvisori">
+			<result name="input">/jsp/provvisorioCassa/risultatiRicercaSinteticaProvvisorioCassa.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoSpesa</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaSinteticaProvvisorioDiCassa_inserisciDocumentoEntrataPerProvvisori" class="risultatiRicercaSinteticaProvvisorioDiCassaAction" method="inserisciDocumentoEntrataPerProvvisori">
+			<result name="input">/jsp/provvisorioCassa/risultatiRicercaSinteticaProvvisorioCassa.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">inserisciDocumentoEntrata</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+		
+	<!-- Associa Spesa -->
+		<action name="associaQuoteSpesaAProvvisorioDiCassa" class="associaQuoteSpesaAProvvisorioDiCassaAction">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteSpesa_step1.jsp</result>
+			<result name="input">/jsp/provvisorioCassa/risultatiRicercaSinteticaProvvisorioCassa.jsp</result>
+		</action>
+		<action name="associaQuoteSpesaAProvvisorioDiCassa_completeSpep1" class="associaQuoteSpesaAProvvisorioDiCassaAction" method="completeStep1">
+			<result name="success" type="redirectAction">associaQuoteSpesaAProvvisorioDiCassa_step2</result>
+			<result name="input">/jsp/provvisorioCassa/associaQuoteSpesa_step1.jsp</result>
+		</action>
+		<action name="associaQuoteSpesaAProvvisorioDiCassa_backToStep1" class="associaQuoteSpesaAProvvisorioDiCassaAction" method="backToStep1">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteSpesa_step1.jsp</result>
+		</action>
+		<action name="associaQuoteSpesaAProvvisorioDiCassa_step2" class="associaQuoteSpesaAProvvisorioDiCassaAction" method="step2">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteSpesa_step2.jsp</result>
+			<result name="input">/jsp/provvisorioCassa/associaQuoteSpesa_step1.jsp</result>
+		</action>
+		<action name="associaQuoteSpesaAProvvisorioDiCassa_completeStep2" class="associaQuoteSpesaAProvvisorioDiCassaAction" method="completeStep2">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteSpesa_step2.jsp</result>
+			<result name="input">/jsp/provvisorioCassa/associaQuoteSpesa_step2.jsp</result>
+		</action>
+		
+	<!-- Associa Entrata -->
+		<action name="associaQuoteEntrataAProvvisorioDiCassa" class="associaQuoteEntrataAProvvisorioDiCassaAction">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteEntrata_step1.jsp</result>
+			<result name="input">/jsp/provvisorioCassa/risultatiRicercaSinteticaProvvisorioCassa.jsp</result>
+		</action>
+		<action name="associaQuoteEntrataAProvvisorioDiCassa_completeSpep1" class="associaQuoteEntrataAProvvisorioDiCassaAction" method="completeStep1">
+			<result name="success" type="redirectAction">associaQuoteEntrataAProvvisorioDiCassa_step2</result>
+			<result name="input">/jsp/provvisorioCassa/associaQuoteEntrata_step1.jsp</result>
+		</action>
+		<action name="associaQuoteEntrataAProvvisorioDiCassa_backToStep1" class="associaQuoteEntrataAProvvisorioDiCassaAction" method="backToStep1">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteEntrata_step1.jsp</result>
+		</action>
+		<action name="associaQuoteEntrataAProvvisorioDiCassa_step2" class="associaQuoteEntrataAProvvisorioDiCassaAction" method="step2">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteEntrata_step2.jsp</result>
+			<result name="input">/jsp/provvisorioCassa/associaQuoteEntrata_step1.jsp</result>
+		</action>
+		<action name="associaQuoteEntrataAProvvisorioDiCassa_completeStep2" class="associaQuoteEntrataAProvvisorioDiCassaAction" method="completeStep2">
+			<result name="success">/jsp/provvisorioCassa/associaQuoteEntrata_step2.jsp</result>
+			<result name="input">/jsp/provvisorioCassa/associaQuoteEntrata_step2.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaSinteticaProvvisorioDiCassaAjax" class="risultatiRicercaSinteticaProvvisorioDiCassaAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaQuoteSpesaDaAssociareAProvvisorioAjax" class="risultatiRicercaQuoteSpesaDaAssociareAProvvisorioAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaQuoteEntrataDaAssociareAProvvisorioAjax" class="risultatiRicercaQuoteEntrataDaAssociareAProvvisorioAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+	</package>
+</struts>

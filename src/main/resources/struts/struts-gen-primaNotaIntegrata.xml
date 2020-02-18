@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="genPrimaNotaIntegrata" extends="gengsaCommon" namespace="/">
+		
+		<!--  PRIMA NOTA INTEGRATA  -->
+		<action name="gestionePrimaNotaIntegrataFIN" class="gestionePrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">
+				<param name="actionName">${nomeAzioneRedirezione}</param>
+			</result>
+		</action>
+		<!-- SIAC-5333  -->
+		<action name="gestionePrimaNotaIntegrataFIN_impostaGestioneDaCDUDocumento" class="gestionePrimaNotaIntegrataFINAction" method="impostaGestioneDaCDUDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">${nomeAzioneRedirezione}</param>
+			</result>
+		</action>
+		
+			<!-- Ricerca -->
+		<action name="ricercaPrimaNotaIntegrataFIN" class="ricercaPrimaNotaIntegrataFINAction">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp</result>
+		</action>
+		<action name="ricercaPrimaNotaIntegrataFIN_caricaListaClassi" class="ricercaPrimaNotaIntegrataFINAction" method="caricaListaClassi">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClassi.*</param>
+			</result>
+		</action>
+		<action name="ricercaPrimaNotaIntegrataFIN_caricaListaTitoli" class="ricercaPrimaNotaIntegrataFINAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaPrimaNotaIntegrataFIN_effettuaRicerca" class="ricercaPrimaNotaIntegrataFINAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaIntegrataFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/ricerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN" class="risultatiRicercaPrimaNotaIntegrataFINAction">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFINAjax" class="risultatiRicercaPrimaNotaIntegrataFINAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_aggiornaPrimaNota" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPrimaNotaIntegrataFIN</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_aggiornaPrimaNotaDocumento" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="aggiornaPrimaNotaDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaPrimaNotaIntegrataDocumentoFIN</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_annulla" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="annulla">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaIntegrataFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_consulta" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="consulta">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataFIN</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_valida" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="valida">
+			<result name="success" type="redirectAction">risultatiRicercaPrimaNotaIntegrataFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_ottieniListaPrimeNoteCollegate" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="ottieniListaPrimeNoteCollegate">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteCollegate.*
+				</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_collegaPrimaNota" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="collegaPrimaNota">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteCollegate.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_eliminaCollegamento" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="eliminaCollegamento">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*, 
+					informazioni.*,
+					listaPrimeNoteCollegate.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<!-- SIAC-5176 -->
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_gestioneRiscontiDocumento" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="gestioneRiscontiDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">gestioneRiscontiPrimaNotaIntegrataDocumentoFIN</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaPrimaNotaIntegrataFIN_gestioneRateiDocumento" class="risultatiRicercaPrimaNotaIntegrataFINAction" method="gestioneRateiDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">gestioneRateiPrimaNotaIntegrataDocumentoFIN</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicerca.jsp</result>
+		</action>
+		
+		<!-- Aggiornamento -->
+		<action name="aggiornaPrimaNotaIntegrataFIN" class="aggiornaPrimaNotaIntegrataFINAction">
+			<result name="success" type="redirectAction">aggiornaPrimaNotaIntegrataFIN_enterPage</result>
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataFIN_enterPage" class="aggiornaPrimaNotaIntegrataFINAction" method="enterPage">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/aggiorna.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/aggiorna.jsp</result>
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataFIN_aggiorna" class="aggiornaPrimaNotaIntegrataFINAction" method="aggiorna">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+			<result name="ask" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataFIN_ottieniListaConti" class="aggiornaContoPrimaNotaIntegrataFINAction" method="ottieniListaConti">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataFIN_aggiornaConto" class="aggiornaContoPrimaNotaIntegrataFINAction" method="aggiornaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataFIN_eliminaConto" class="aggiornaContoPrimaNotaIntegrataFINAction" method="eliminaConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaContoPrimaNotaIntegrataFIN_inserisciConto" class="aggiornaContoPrimaNotaIntegrataFINAction" method="inserisciConto">
+			<result name="success" type="contoPrimaNotaIntegrata" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaPrimaNotaIntegrataFIN_aggiornaSuccess" class="aggiornaPrimaNotaIntegrataFINAction" method="aggiornaSuccess">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/aggiorna.jsp</result>
+		</action>
+		
+		<!-- Consultazione -->
+		<action name="consultaPrimaNotaIntegrataFIN" class="consultaPrimaNotaIntegrataFINAction">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/consulta.jsp</result>
+		</action>
+		<action name="consultaPrimaNotaIntegrataFIN_postInserimento" class="consultaPrimaNotaIntegrataFINAction" method="postInserimento">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/consulta.jsp</result>
+		</action>
+		<action name="consultaPrimaNotaIntegrataFIN_valida" class="consultaPrimaNotaIntegrataFINAction" method="valida">
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaPrimaNotaIntegrataFIN</param>
+				<param name="namespace">/</param>
+				<param name="primaNota.uid">${primaNota.uid}</param>
+			</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/consulta.jsp</result>
+		</action>
+		<action name="consultaPrimaNotaIntegrataFIN_ottieniDatiFinanziari" class="consultaPrimaNotaIntegrataFINAction" method="ottieniDatiFinanziari">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/include/consulta_datiFinanziari_${tipoMovimento}.jsp</result>
+			<result name="input" type="customMessagesJSON"/>
+		</action>
+		
+		<action name="risultatiRicercaDatiFinanziariPrimaNotaIntegrataFINAjax" class="risultatiRicercaDatiFinanziariPrimaNotaIntegrataFINAjaxAction" >
+			<result name="success" type="dataTable" />
+		</action>
+		
+			<!-- Ricerca validazione -->
+		<action name="ricercaValidazionePrimaNotaIntegrataFIN" class="ricercaValidazionePrimaNotaIntegrataFINAction">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataFIN_caricaListaTipoEvento" class="ricercaValidazionePrimaNotaIntegrataFINAction" method="caricaListaTipoEvento">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoEvento.*</param>
+			</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataFIN_caricaListaClassi" class="ricercaValidazionePrimaNotaIntegrataFINAction" method="caricaListaClassi">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaClassi.*</param>
+			</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataFIN_caricaListaTitoli" class="ricercaValidazionePrimaNotaIntegrataFINAction" method="caricaListaTitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTitoloEntrata.*, listaTitoloSpesa.*</param>
+			</result>
+		</action>
+		<action name="ricercaValidazionePrimaNotaIntegrataFIN_effettuaRicerca" class="ricercaValidazionePrimaNotaIntegrataFINAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaValidazionePrimaNotaIntegrataFIN</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/ricercaValidazione.jsp</result>
+		</action>
+		<action name="risultatiRicercaValidazionePrimaNotaIntegrataFIN" class="risultatiRicercaValidazionePrimaNotaIntegrataFINAction">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicercaValidazione.jsp</result>
+		</action>
+		<action name="risultatiRicercaValidazionePrimaNotaIntegrataFINAjax" class="risultatiRicercaValidazionePrimaNotaIntegrataFINAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		<action name="risultatiRicercaValidazionePrimaNotaIntegrataFIN_validaTutto" class="risultatiRicercaValidazionePrimaNotaIntegrataFINAction" method="validaTutto">
+			<result name="success">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicercaValidazioneDisabled.jsp</result>
+			<result name="input">/jsp/contabilitaGenerale/primaNotaIntegrata/risultatiRicercaValidazione.jsp</result>
+		</action>
+		
+	</package>
+</struts>

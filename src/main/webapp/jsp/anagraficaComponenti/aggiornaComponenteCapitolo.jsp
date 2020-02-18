@@ -1,0 +1,159 @@
+<%--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+--%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="/struts-tags" prefix="s"%>
+<%@ taglib uri="http://www.csi.it/taglibs/remincl-1.0" prefix="r"%>
+
+<%-- Inclusione head e CSS --%>
+<s:include value="/jsp/include/head.jsp" />
+</head>
+<body>
+	<%-- Inclusione header --%>
+	<s:include value="/jsp/include/header.jsp" />
+
+ 
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12 ">
+
+				<div class="step-content">
+				<s:include value="/jsp/include/messaggi.jsp" />
+					<h3>Aggiorna Componente Capitolo</h3>
+					<div class="step-content">
+						<div class="step-pane active">
+							<%-- Dati Componente  --%>
+							<h4> Dati </h4>
+							<s:if test="componenteCapitolo.collegatoACapitoli">
+								<div id="warning_componente" class="alert alert-warning ">
+									<button type="button" class="close" data-hide="alert">&times;</button>
+									<strong>Attenzione!!</strong><br>
+									<ul><li>Componente già impiegata per fornire stanziamento ad almeno un capitolo a bilancio. E' possibile aggiornare unicamente la data di fine validità.</li>
+									</ul>
+								</div>
+							</s:if>
+							<s:form action="aggiornaComponenteCapitoloAction_aggiornamentoCP" id="editComponenteCapitolo" novalidate="novalidate"> 
+								<s:hidden name="componenteCapitolo.macrotipoComponenteImportiCapitolo" />
+								<s:hidden name="componenteCapitolo.codice"/>
+								<s:hidden name="componenteCapitolo.uid"/>
+								<s:hidden name="componenteCapitolo.statoTipoComponenteImportiCapitolo"/>
+								<s:hidden name="componenteCapitolo.collegatoACapitoli" />
+
+								<s:hidden name="componenteCapitolo.sottotipoComponenteImportiCapitolo"   />
+								<s:hidden name="componenteCapitolo.ambitoComponenteImportiCapitolo" />
+								<s:hidden name="componenteCapitolo.momentoComponenteImportiCapitolo" />
+								<s:hidden name="componenteCapitolo.descrizione" />
+								<s:hidden name="componenteCapitolo.fonteFinanziariaComponenteImportiCapitolo" />
+								<s:hidden name="componenteCapitolo.anno" />
+								<s:hidden name="componenteCapitolo.propostaDefaultComponenteImportiCapitolo" />
+								<s:hidden name="componenteCapitolo.tipoGestioneComponenteImportiCapitolo" />
+								<s:hidden name="componenteCapitolo.dataInizioValidita" />
+
+								<div class="fieldset-body">
+									<fieldset class="form-horizontal">
+										<div class="control-group">
+											<label for="macroTipo" class="control-label">Macrotipo *</label>
+											<div class="controls">
+												<s:select list="listaMacroTipo"  listValue="descrizione" name="componenteCapitolo.macrotipoComponenteImportiCapitolo" id="macroTipo" cssClass="lbTextSmall span10" required="required" disabled="true"
+												headerKey="" headerValue="" />
+											</div>
+										</div>
+	
+										<div class="control-group">
+											<label for="sottoTipo" class="control-label">Sottotipo</label>
+											<div class="controls">
+												<s:select list="listaSottoTipo"  listValue="descrizione" name="componenteCapitolo.sottotipoComponenteImportiCapitolo" id="sottoTipo" cssClass="lbTextSmall span10"  
+												headerKey="" headerValue="" />
+											</div>
+										</div>
+	
+										<div class="control-group">
+											<label for="descrizioneCapitolo" class="control-label">Descrizione *</label>
+											<div class="controls">
+												<s:textarea rows="1" cols="15" id="descrizioneCapitolo" name="componenteCapitolo.descrizione" class="span10" maxlength="500" required="required"></s:textarea>
+											</div>
+										</div>
+									
+										<div class="control-group">
+											<label for="ambito" class="control-label">Ambito</label>
+											<div class="controls">
+												<s:select list="listaAmbito"  listValue="descrizione" name="componenteCapitolo.ambitoComponenteImportiCapitolo" id="ambito" cssClass="lbTextSmall span10" 
+												headerKey="" headerValue="" />
+											</div>
+										</div>
+									
+										<div class="control-group">
+											<label for="fonteFinanziamento" class="control-label">Fonte di finanziamento</label>
+											<div class="controls">
+												<s:select list="listaFonteFinanziamento"  listValue="descrizione" name="componenteCapitolo.fonteFinanziariaComponenteImportiCapitolo" id="fonteFinanziamento" cssClass="lbTextSmall span10"  
+												headerKey="" headerValue="" />
+											</div>
+										</div>
+					
+										<div class="control-group">
+											<label for="momento" class="control-label">Momento</label>
+											<div class="controls">
+												<s:select list="listaMomento"  listValue="descrizione" name="componenteCapitolo.momentoComponenteImportiCapitolo" id="momento" cssClass="lbTextSmall span10" 
+												headerKey="" headerValue="" />
+											</div>
+										</div>
+	
+	 
+									
+										<div class="control-group">
+											<label for="annoCapitolo" class="control-label">Anno *</label>
+											<div class="controls">
+												<s:textfield id="annoCapitolo" name="componenteCapitolo.anno" cssClass="lbTextSmall span4 soloNumeri" maxlength="4" />
+												<span class="al alRight">
+													<label class="radio inline" for="previsione">Default Previsione *</label>
+												</span>
+												<s:select list="listaPrevisione" listValue="descrizione" name="componenteCapitolo.propostaDefaultComponenteImportiCapitolo"
+													id="previsione" cssClass="lbTextSmall span4" required="true" headerKey="" headerValue="" />
+											</div>
+										</div>
+	
+										<div class="control-group">
+											<label for="gestione" class="control-label">Tipo Gestione *</label>
+											<div class="controls">
+												<s:select list="listaGestione" listValue="descrizione" name="componenteCapitolo.tipoGestioneComponenteImportiCapitolo"
+													id="gestione" cssClass="lbTextSmall span10" required="true" headerKey="" headerValue="" />
+											</div>
+										</div>
+	
+	
+										<div class="control-group">
+											<label for="dataInizioValiditaCapitolo" class="control-label">Data Inizio Validit&agrave; *</label>
+											<div class="controls">
+												<s:textfield id="dataInizioValiditaCapitolo" name="componenteCapitolo.dataInizioValidita" cssClass="span4 datepicker" maxlength="10" data-maintain="" />
+												<span class="al alRight">
+													<label class="radio inline" for="dataFineValiditaCapitolo">Data Fine Validit&agrave; </label>
+												</span>
+												<s:textfield id="dataFineValiditaCapitolo" name="componenteCapitolo.dataFineValidita" cssClass="span4 datepicker" maxlength="10" data-maintain="" />
+											</div>
+										</div>
+									</fieldset>
+								</div>
+								<p class="margin-medium">
+									<s:include value="/jsp/include/indietro.jsp" />
+									<s:a action="aggiornaComponenteCapitolo.do" class="btn btn-secondary">
+											<s:param name="uidComponenteCapitolo" value="%{componenteCapitolo.uid}"/>
+									annulla</s:a>
+									<s:submit cssClass="btn btn-primary pull-right" value="salva"/>
+								</p>
+							</s:form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<%-- Caricamento del footer --%>
+
+	<s:include value="/jsp/include/footer.jsp" />
+	<s:include value="/jsp/include/javascript.jsp" />
+	<script type="text/javascript" src="${jspath}anagraficaComponenti/aggiorna.js"></script>
+ 
+</body>
+</html>

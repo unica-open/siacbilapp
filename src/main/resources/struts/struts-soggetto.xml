@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="soggetto" extends="capitoloDefault" namespace="/">
+		<action name="ricercaSinteticaSoggetto" class="selezionaSoggettoAction"
+			method="ricercaSoggetti">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					listaSoggetti.*
+				</param>
+			</result>
+		</action>
+		<action name="caricaSedeSecondariaModalitaPagamentoDaSoggetto"
+			class="caricaDatiSoggettoAction">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*
+				</param>
+			</result>
+		</action>
+		<action name="ricercaSoggettoPerChiave" class="caricaDatiSoggettoAction">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					soggetto.*,
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*,
+					listaSedeSecondariaSoggettoValide.*,
+					listaModalitaPagamentoSoggettoValide.*
+				</param>
+			</result>
+		</action>
+		<action name="ricercaSoggettoPerMatricola" class="ricercaSoggettoPerMatricolaAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					soggetto.*,
+					listaSedeSecondariaSoggetto.*,
+					listaModalitaPagamentoSoggetto.*,
+					listaSedeSecondariaSoggettoValide.*,
+					listaModalitaPagamentoSoggettoValide.*
+				</param>
+			</result>
+		</action>
+		<action name="filtraModalitaPagamentoRispettoSedeSecondaria" class="caricaDatiSoggettoAction" method="filterModalitaPagamento">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					listaModalitaPagamentoSoggetto.*,
+					listaModalitaPagamentoSoggettoValide.*
+				</param>
+			</result>
+		</action>
+	</package>
+</struts>

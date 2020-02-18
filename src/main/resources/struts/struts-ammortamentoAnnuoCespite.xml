@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="ammortamentoAnnuo" extends="capitoloDefault" namespace="/">
+
+		<!-- AMMORTAMENTO MASSIVO -->
+		<action name="inserisciAmmortamentoMassivo" class="inserisciAmmortamentoMassivoAction">
+			<result name="success">jsp/cespiti/ammortamento/inserisciAmmortamentoMassivo.jsp</result>
+		</action>
+		
+		<action name="inserisciAmmortamentoMassivo_ricercaCespitiDaAmmortare" class="inserisciAmmortamentoMassivoAction" method="ricercaCespitiDaAmmortare">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciAmmortamentoMassivo_effettuaAmmortamentoSelezionati" class="inserisciAmmortamentoMassivoAction" method="effettuaAmmortamentoSelezionati">
+			<result name="input">jsp/cespiti/ammortamento/inserisciAmmortamentoMassivo.jsp</result>
+			<result name="success">jsp/cespiti/ammortamento/inserisciAmmortamentoMassivo.jsp</result>
+		</action>
+		
+		<action name="inserisciAmmortamentoMassivo_effettuaAmmortamentoTutti" class="inserisciAmmortamentoMassivoAction" method="effettuaAmmortamentoTutti">
+			<result name="input">jsp/cespiti/ammortamento/inserisciAmmortamentoMassivo.jsp</result>
+			<result name="success">jsp/cespiti/ammortamento/inserisciAmmortamentoMassivo.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjax" class="risultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<!-- AMMORTAMENTO ANNUO -->
+		<action name="inserisciAmmortamentoAnnuo" class="inserisciAmmortamentoAnnuoAction">
+			<result name="success">jsp/cespiti/ammortamento/inserisciAmmortamentoAnnuo.jsp</result>
+		</action>
+		
+		<action name="inserisciAmmortamentoAnnuo_caricaAnteprimaPrecedente" class="inserisciAmmortamentoAnnuoAction" method="caricaAnteprimaPrecedente">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">anteprimaAmmortamentoAnnuoCespite.*</param>
+			</result>
+		</action>
+		
+		<action name="inserisciAmmortamentoAnnuo_inserisciAnteprimaAmmortamentoAnnuo" class="inserisciAmmortamentoAnnuoAction" method="inserisciAnteprimaAmmortamentoAnnuo">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciAmmortamentoAnnuo_ricercaDettagliAnteprimaAmmortamentoCespite" class="inserisciAmmortamentoAnnuoAction" method="ricercaDettagliAnteprimaAmmortamentoCespite">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+			
+		<action name="risultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoAjax" class="risultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+		
+		<action name="inserisciAmmortamentoAnnuo_effettuaScrittureAmmortamento" class="inserisciAmmortamentoAnnuoAction" method="effettuaScrittureAmmortamento">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="inserisciAmmortamentoAnnuo_dettaglioCespiti" class="inserisciAmmortamentoAnnuoAction" method="dettaglioCespiti">
+			<result name="success" type="redirectAction">
+                 <param name="actionName">ricercaCespiteAnteprimaAmmortamento</param>
+                 <param name="namespace">/</param>
+                 <param name="uidDettaglioAnteprima">${uidDettaglioAnteprima}</param>
+                 <param name="annoAmmortamentoAnnuo">${annoAmmortamentoAnnuo}</param>
+                 <param name="codiceConto">${codiceContoDettaglio}</param>
+                 <param name="segno">${segnoDettaglio}</param>
+            </result>
+			<result name="input">jsp/cespiti/ammortamento/inserisciAmmortamentoAnnuo.jsp</result>
+		</action>
+		
+		<action name="ricercaCespiteAnteprimaAmmortamento" class="ricercaCespiteAnteprimaAmmortamentoAction">
+			<result name="success">jsp/cespiti/ammortamento/ricercaCespiteAnteprimaAmmortamento.jsp</result>
+			<result name="input">jsp/cespiti/ammortamento/ricercaCespiteAnteprimaAmmortamento.jsp</result>
+		</action>
+		
+		<action name="ricercaCespiteAnteprimaAmmortamento_caricaListaTipoBeneFiltrato" class="ricercaCespiteAnteprimaAmmortamentoAction" method="caricaListaTipoBeneFiltrato">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="customJSON">
+				<param name="includeProperties">listaTipoBeneFiltrata.*</param>
+			</result>
+		</action>
+		
+		<action name="ricercaCespiteAnteprimaAmmortamento_effettuaRicerca" class="ricercaCespiteAnteprimaAmmortamentoAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaCespiteAnteprimaAmmortamento</param>
+                 <param name="namespace">/</param>
+			</result>
+			<result name="input">jsp/cespiti/ammortamento/ricercaCespiteAnteprimaAmmortamento.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaCespiteAnteprimaAmmortamento" class="risultatiRicercaCespiteAnteprimaAmmortamentoAction">
+			<result name="success">jsp/cespiti/ammortamento/risultatiRicercaCespiteAnteprimaAmmortamento.jsp</result>
+		</action>
+		
+		<action name="ricercaCespiteAnteprimaAmmortamento_backToAmmortamentoAnnuo" class="ricercaCespiteAnteprimaAmmortamentoAction" method="backToAmmortamentoAnnuo">
+			<result name="success" type="redirectAction">
+                 <param name="actionName">inserisciAmmortamentoAnnuo</param>
+                 <param name="namespace">/</param>
+                 <param name="annoAmmortamentoAnnuo">${annoAmmortamentoAnnuo}</param>
+            </result>
+			<result name="input">jsp/cespiti/ammortamento/ricercaCespiteAnteprimaAmmortamento.jsp</result>
+		</action>
+				
+	</package>
+</struts>

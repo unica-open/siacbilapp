@@ -1,0 +1,231 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/ajax/documento/RisultatiRicercaNonModulareDocumentoSpesaAjaxAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/ajax/documento/RisultatiRicercaNonModulareDocumentoSpesaAjaxAction.java	(revision 0)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/ajax/documento/RisultatiRicercaNonModulareDocumentoSpesaAjaxAction.java	(revision 0)
+@@ -0,0 +1,165 @@
++package it.csi.siac.siacfin2app.frontend.ui.action.ajax.documento;
++
++import java.util.List;
++
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
++import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
++import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
++import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
++import it.csi.siac.siacbilapp.frontend.ui.util.AzioniConsentite;
++import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
++import it.csi.siac.siaccorser.model.AzioneConsentita;
++import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
++import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
++import it.csi.siac.siacfin2app.frontend.ui.model.ajax.documento.RisultatiRicercaDocumentoAjaxModel;
++import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocumento;
++import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocumentoFactory;
++import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocumentoSpesa;
++import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
++import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoSpesa;
++import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoSpesaResponse;
++import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
++
++/**
++ * Action per i risultati di ricerca del documento.
++ * 
++ * @author Valentina
++ * @version 1.0.0 - 04/05/2014
++ */
++@Component
++@Scope(WebApplicationContext.SCOPE_REQUEST)
++public class RisultatiRicercaNonModulareDocumentoSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDocumento, 
++	RisultatiRicercaDocumentoAjaxModel, DocumentoSpesa, RicercaSinteticaDocumentoSpesa, RicercaSinteticaDocumentoSpesaResponse> {
++	
++	/** Per la serializzazione */
++	private static final long serialVersionUID = 4918152133385653858L;
++	
++	/** Stringhe HTML per azioni consentite */
++	private static final String AZIONI_CONSENTITE_BEGIN = "<div class='btn-group'> " +
++			"<button class='btn dropdown-toggle' data-placement='left' data-toggle='dropdown' href='#'>Azioni <span class='caret'></span></button>" +
++			"<ul class='dropdown-menu pull-right' >";
++
++	private static final String AZIONI_CONSENTITE_AGGIORNA =
++			"<li><a href='risultatiRicercaDocumentoSpesaAggiorna.do?uidDaAggiornare=%UID%'>aggiorna</a></li>";
++	
++	private static final String AZIONI_CONSENTITE_ANNULLA =
++			"<li><a href='#msgAnnulla' data-toggle='modal'>annulla</a></li>";
++	
++	private static final String AZIONI_CONSENTITE_CONSULTA =
++			"<li><a href='risultatiRicercaDocumentoSpesaConsulta.do?uidDaConsultare=%UID%'>consulta</a></li>";
++
++	private static final String AZIONI_CONSENTITE_CONSULTA_QUOTE =
++			"<li><a href='#' class='dettaglioQuoteDocumento'>dettaglio quote</a></li>";
++	private static final String AZIONI_CONSENTITE_ATTIVA_REGISTRAZIONI_CONTABILI=
++			"<li><a href='#' class='attivaRegistrazioniContabili'>attiva registrazioni contabili</a></li>";
++	private static final String AZIONI_CONSENTITE_GESTIONE_ORDINI= 
++			"<li><a href='#' class='gestioneOrdini'>gestione ordini</a></li>";
++
++	private static final String AZIONI_CONSENTITE_END = "</ul></div>";
++	
++	@Autowired private transient DocumentoSpesaService documentoSpesaService;
++	
++	/** Costruttore vuoto di default */
++	public RisultatiRicercaNonModulareDocumentoSpesaAjaxAction() {
++		super();
++		setParametroSessioneLista(BilSessionParameter.RISULTATI_RICERCA_DOCUMENTI_SPESA);
++		setParametroSessioneRequest(BilSessionParameter.REQUEST_RICERCA_DOCUMENTI_SPESA);
++	}
++	
++	@Override
++	protected boolean controllaDaRientro() {
++		boolean result = false;
++		if(Boolean.TRUE.equals(sessionHandler.getParametro(BilSessionParameter.RIENTRO, Boolean.class))) {
++			result = true;
++			sessionHandler.setParametro(BilSessionParameter.RIENTRO, null);
++		}
++		return result;
++	}
++	
++	@Override
++	protected ParametriPaginazione ottieniParametriDiPaginazione(RicercaSinteticaDocumentoSpesa request) {
++		return request.getParametriPaginazione();
++	}
++	
++	@Override
++	protected void impostaParametriPaginazione(RicercaSinteticaDocumentoSpesa request, ParametriPaginazione parametriPaginazione) {
++		request.setParametriPaginazione(parametriPaginazione);
++		
++	}
++	
++	@Override
++	protected ElementoDocumentoSpesa ottieniIstanza(DocumentoSpesa e) throws FrontEndBusinessException {
++		return ElementoDocumentoFactory.getInstanceSpesa(e);
++	}
++	
++	@Override
++	protected RicercaSinteticaDocumentoSpesaResponse ottieniResponse(RicercaSinteticaDocumentoSpesa request) {	
++		return documentoSpesaService.ricercaSinteticaDocumentoSpesa(request);
++	}
++	
++	@Override
++	protected ListaPaginata<DocumentoSpesa> ottieniListaRisultati(RicercaSinteticaDocumentoSpesaResponse response) {
++		return response.getDocumenti();
++	}
++	
++	@Override
++	protected void gestisciAzioniConsentite(ElementoDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
++			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
++		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
++		
++		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isAggiornaConsentitoDocumentoSpesa(listaAzioniConsentite)
++				|| AzioniConsentiteFactory.isAggiornaConsentitoDocumentoSpesaQuietanza(listaAzioniConsentite);
++		Boolean isAnnullaConsentita = AzioniConsentiteFactory.isAnnullaConsentitoDocumentoSpesa(listaAzioniConsentite);
++		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsultaConsentitoDocumentoSpesa(listaAzioniConsentite);
++		
++		// lo facciamo vedere sempre
++		Boolean isConsultaQuoteConsentita = Boolean.TRUE;
++		
++		//LOTTO M - Documenti Bozze
++		Boolean isAttivaRegistrazioniContabili = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
++				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
++		Boolean isAttivaGestioneOrdini = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
++				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
++		
++		boolean statoOperativoValido = instance.checkStatoOperativoValido();
++		boolean statoOperativoIncompleto = instance.checkStatoOperativoIncompleto();
++		boolean statoOperativoEmesso = instance.checkStatoOperativoEmesso();
++		boolean statoOperativoAnnullato = instance.checkStatoOperativoAnnullato();
++		boolean isNotaCredito = instance.checkNotaCredito();
++		boolean tipoALG = instance.checkAllegatoAtto();
++		boolean isContabilizzaGENPCC = instance.isContabilizzaGenPCC();
++		boolean isFlagAttivaGEN = instance.isFlagAttivaGen();
++		boolean isFlagComunicaPCC = instance.isFlagComunicaPCC();
++		
++		// Gestione delle azioni consentite
++		StringBuilder azioniBuilder = new StringBuilder();
++		azioniBuilder.append(AZIONI_CONSENTITE_BEGIN);
++		if(Boolean.TRUE.equals(isAggiornaConsentita) && !statoOperativoEmesso && !statoOperativoAnnullato && !tipoALG) {
++			azioniBuilder.append(AZIONI_CONSENTITE_AGGIORNA);
++		}
++		if(Boolean.TRUE.equals(isAnnullaConsentita) &&  ((statoOperativoValido && !isNotaCredito) || statoOperativoIncompleto) ) {
++			azioniBuilder.append(AZIONI_CONSENTITE_ANNULLA);
++		}
++		if(Boolean.TRUE.equals(isConsultaConsentita)) {
++			azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA);
++		}
++		if(Boolean.TRUE.equals(isConsultaQuoteConsentita)) {
++			azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_QUOTE);
++		}
++		if(Boolean.TRUE.equals(isAttivaRegistrazioniContabili) && !statoOperativoIncompleto && !statoOperativoAnnullato && !statoOperativoEmesso && !isContabilizzaGENPCC && (isFlagAttivaGEN || isFlagComunicaPCC)) {
++			azioniBuilder.append(AZIONI_CONSENTITE_ATTIVA_REGISTRAZIONI_CONTABILI);
++		}
++		if(Boolean.TRUE.equals(isAttivaGestioneOrdini) && !statoOperativoAnnullato && !statoOperativoEmesso) {
++			azioniBuilder.append(AZIONI_CONSENTITE_GESTIONE_ORDINI);
++		}
++			
++		azioniBuilder.append(AZIONI_CONSENTITE_END);
++		String azioni = azioniBuilder.toString().replaceAll("%UID%", instance.getUid() + "");
++		instance.setAzioni(azioni);
++	}
++
++}
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoDocumentoFactory.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoDocumentoFactory.java	(revision 12715)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/util/wrappers/documento/ElementoDocumentoFactory.java	(working copy)
+@@ -45,9 +45,14 @@
+ 	
+ 	private static <D extends Documento<SD, ?>, SD extends Subdocumento<D, ?>> void populateBaseInstance(ElementoDocumento wrapper, D documento, Soggetto soggetto, StatoOperativoDocumento statoOperativoDocPadre) {
+ 		Integer uid = documento.getUid();
+-		String doc = Integer.toString(documento.getAnno()).concat("/")
+-				.concat((documento.getTipoDocumento().getCodice()).toUpperCase()).concat("/")
+-				.concat(documento.getNumero());
++		
++		String doc = new StringBuilder()
++				.append(documento.getAnno())
++				.append("/")
++				.append(documento.getTipoDocumento().getCodice().toUpperCase())
++				.append("/")
++				.append(documento.getNumero())
++				.toString();
+ 
+ 		String data = documento.getDataEmissione() != null?FormatUtils.formatDate(documento.getDataEmissione()):"";
+ 		
+Index: src/main/resources/struts/struts-documentoSpesa.xml
+===================================================================
+--- src/main/resources/struts/struts-documentoSpesa.xml	(revision 12861)
++++ src/main/resources/struts/struts-documentoSpesa.xml	(working copy)
+@@ -655,6 +655,9 @@
+ 				</param>
+ 			</result>
+ 		</action>
++		<action name="risultatiRicercaNonModulareDocumentoSpesaAjax" class="risultatiRicercaNonModulareDocumentoSpesaAjaxAction">
++			<result type="dataTable" />
++		</action>
+ 
+ 		<action name="risultatiRicercaDocumentoSpesaAggiorna" class="risultatiRicercaDocumentoSpesaAction" method="aggiorna">
+ 			<result name="input">/jsp/documento/risultatiRicercaDocumentoSpesa.jsp</result>
+Index: src/main/webapp/js/local/cassaEconomale/richieste/ricercaFattura.js
+===================================================================
+--- src/main/webapp/js/local/cassaEconomale/richieste/ricercaFattura.js	(revision 12583)
++++ src/main/webapp/js/local/cassaEconomale/richieste/ricercaFattura.js	(working copy)
+@@ -68,7 +68,7 @@
+         var opts = {
+             bServerSide: true,
+             sServerMethod: "POST",
+-            sAjaxSource : "risultatiRicercaDocumentoSpesaAjax.do",
++            sAjaxSource : "risultatiRicercaNonModulareDocumentoSpesaAjax.do",
+             fnPreDrawCallback: function () {
+                 // Mostro il div del processing
+                 $(tableId + "_processing").parent("div")
+@@ -97,8 +97,9 @@
+                     return source.data || "";
+                 }},
+                 {aTargets: [3], mData: function(source) {
+-                    var statoOperativoDocumento = source.documentoSpesa && source.documentoSpesa.statoOperativoDocumento || "";
+-                    return statoOperativoDocumento;
++                    // FIXME: quando sara' reimpostata la ricerca corretta
++                    //var statoOperativoDocumento = source.documentoSpesa && source.documentoSpesa.statoOperativoDocumento || "";
++                    return source.statoOperativoDocumentoDesc || "";
+                 }},
+                 {aTargets: [4], mData: function(source) {
+                     return source.soggetto  || "";

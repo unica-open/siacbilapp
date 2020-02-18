@@ -1,0 +1,156 @@
+Index: src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/ordinativo/pagamento/CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataFINAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/ordinativo/pagamento/CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataFINAction.java	(revision 13034)
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/ordinativo/pagamento/CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataFINAction.java	(revision 13036)
+@@ -1,5 +1,10 @@
+ package it.csi.siac.siacgenapp.frontend.ui.action.primanotaintegrata.ordinativo.pagamento;
+ 
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.ordinativo.pagamento.GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPFINSelector;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPSelector;
+@@ -6,13 +11,8 @@
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+-import it.csi.siac.siacgenapp.frontend.ui.model.primanotaintegrata.ordinativo.pagamento.CompletaOrdinativoPagamentoInsPrimaNotaIntegrataFINModel;
++import it.csi.siac.siacgenapp.frontend.ui.model.primanotaintegrata.ordinativo.pagamento.CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataFINModel;
+ 
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+ /**
+  * Classe di action per l'inserimento della prima integrata, sezione dei movimenti dettaglio, ordinativo di pagamento. Modulo GEN
+  * 
+@@ -25,7 +25,7 @@
+ @Component
+ @Scope(WebApplicationContext.SCOPE_REQUEST)
+ @PutModelInSession(GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction.MODEL_SESSION_NAME_COMPLETA_VALIDA_INS_ORDINATIVO_PAGAMENTO_FIN)
+-public class CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataFINAction extends GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction<CompletaOrdinativoPagamentoInsPrimaNotaIntegrataFINModel>  {
++public class CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataFINAction extends GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction<CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataFINModel>  {
+ 
+ 	/** Per la serializzazione */
+ 	private static final long serialVersionUID = -8173178003358151631L;
+Index: src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/ordinativo/incasso/CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataFINAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/ordinativo/incasso/CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataFINAction.java	(revision 13034)
++++ src/main/java/it/csi/siac/siacgenapp/frontend/ui/action/primanotaintegrata/ordinativo/incasso/CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataFINAction.java	(revision 13036)
+@@ -1,5 +1,10 @@
+ package it.csi.siac.siacgenapp.frontend.ui.action.primanotaintegrata.ordinativo.incasso;
+ 
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.ordinativo.incasso.GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPFINSelector;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPSelector;
+@@ -6,13 +11,8 @@
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+-import it.csi.siac.siacgenapp.frontend.ui.model.primanotaintegrata.ordinativo.incasso.CompletaOrdinativoIncassoInsPrimaNotaIntegrataFINModel;
++import it.csi.siac.siacgenapp.frontend.ui.model.primanotaintegrata.ordinativo.incasso.CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataFINModel;
+ 
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+ /**
+  * Classe di action per l'inserimento della prima integrata, sezione dei movimenti dettaglio, ordinativo di incasso. Modulo GEN
+  * 
+@@ -24,7 +24,7 @@
+ @Component
+ @Scope(WebApplicationContext.SCOPE_REQUEST)
+ @PutModelInSession(GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction.MODEL_SESSION_NAME_COMPLETA_VALIDA_INS_ORDINATIVO_INCASSO_FIN)
+-public class CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataFINAction extends GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction<CompletaOrdinativoIncassoInsPrimaNotaIntegrataFINModel>  {
++public class CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataFINAction extends GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction<CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataFINModel>  {
+ 
+ 	/** Per la serializzazione **/
+ 	private static final long serialVersionUID = 8261334543638298237L;
+Index: src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/ordinativo/incasso/CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSAAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/ordinativo/incasso/CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSAAction.java	(revision 13034)
++++ src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/ordinativo/incasso/CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSAAction.java	(revision 13036)
+@@ -1,5 +1,10 @@
+ package it.csi.siac.siacgsaapp.frontend.ui.action.primanotaintegrata.ordinativo.incasso;
+ 
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.ordinativo.incasso.GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPGSASelector;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPSelector;
+@@ -6,13 +11,8 @@
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+-import it.csi.siac.siacgsaapp.frontend.ui.model.primanotaintegrata.ordinativo.incasso.CompletaOrdinativoIncassoInsPrimaNotaIntegrataGSAModel;
++import it.csi.siac.siacgsaapp.frontend.ui.model.primanotaintegrata.ordinativo.incasso.CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSAModel;
+ 
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+ /**
+  * Classe di action per l'inserimento della prima integrata, sezione dei movimenti dettaglio, ordinativo di incasso. Modulo GSA
+  * 
+@@ -22,7 +22,7 @@
+ @Component
+ @Scope(WebApplicationContext.SCOPE_REQUEST)
+ @PutModelInSession(GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction.MODEL_SESSION_NAME_COMPLETA_VALIDA_INS_ORDINATIVO_INCASSO_GSA)
+-public class CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSAAction extends GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction<CompletaOrdinativoIncassoInsPrimaNotaIntegrataGSAModel>  {
++public class CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSAAction extends GestioneOrdinativoIncassoInsPrimaNotaIntegrataBaseAction<CompletaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSAModel>  {
+ 
+ 	/** Per la serializzazione **/
+ 	private static final long serialVersionUID = 8261334543638298237L;
+Index: src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/ordinativo/pagamento/CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSAAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/ordinativo/pagamento/CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSAAction.java	(revision 13034)
++++ src/main/java/it/csi/siac/siacgsaapp/frontend/ui/action/primanotaintegrata/ordinativo/pagamento/CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSAAction.java	(revision 13036)
+@@ -1,5 +1,10 @@
+ package it.csi.siac.siacgsaapp.frontend.ui.action.primanotaintegrata.ordinativo.pagamento;
+ 
++import org.softwareforge.struts2.breadcrumb.BreadCrumb;
++import org.springframework.context.annotation.Scope;
++import org.springframework.stereotype.Component;
++import org.springframework.web.context.WebApplicationContext;
++
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.ordinativo.pagamento.GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPGSASelector;
+ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.selector.CausaleEPSelector;
+@@ -6,13 +11,8 @@
+ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+-import it.csi.siac.siacgsaapp.frontend.ui.model.primanotaintegrata.ordinativo.pagamento.CompletaOrdinativoPagamentoInsPrimaNotaIntegrataGSAModel;
++import it.csi.siac.siacgsaapp.frontend.ui.model.primanotaintegrata.ordinativo.pagamento.CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSAModel;
+ 
+-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+-import org.springframework.context.annotation.Scope;
+-import org.springframework.stereotype.Component;
+-import org.springframework.web.context.WebApplicationContext;
+-
+ /**
+  * Classe di action per l'inserimento della prima integrata, sezione dei movimenti dettaglio, ordinativo di pagamento. Modulo GSA
+  * 
+@@ -23,7 +23,7 @@
+ @Component
+ @Scope(WebApplicationContext.SCOPE_REQUEST)
+ @PutModelInSession(GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction.MODEL_SESSION_NAME_COMPLETA_VALIDA_INS_ORDINATIVO_PAGAMENTO_GSA)
+-public class CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSAAction extends GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction<CompletaOrdinativoPagamentoInsPrimaNotaIntegrataGSAModel>  {
++public class CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSAAction extends GestioneOrdinativoPagamentoInsPrimaNotaIntegrataBaseAction<CompletaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSAModel>  {
+ 
+ 	/** Per la serializzazione */
+ 	private static final long serialVersionUID = -7791183086421033827L;

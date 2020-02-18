@@ -1,0 +1,40 @@
+/*
+*SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+*SPDX-License-Identifier: EUPL-1.2
+*/
+@CHARSET "UTF-8";
+
+/*
+ * Classi per il cruscottino
+ */
+ 
+ div.consultazione-entita {
+	border-right-width: 1px;
+	border-style: solid;
+	border-color: #ddd #ddd transparent;
+	overflow-y:auto;
+	/*overflow-x:auto;*/
+	padding-left:0;
+	padding-right:0;
+}
+
+
+div.consultazione-entita table.table.table-bordered.dataTable td,
+div.consultazione-entita table.table.table-bordered.dataTable th{
+	white-space:nowrap;	
+}
+
+select.loading-data, div.loading-data, table.loading-data, .loading-data, .loading-data:hover {
+	background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 7px;
+    cursor: progress;    
+}
+
+div.loading-data, div.loading-data:hover {
+    opacity: 0.65;   
+}
+
+div.consultazione-entita form{
+	/*padding-left:20px;*/
+	padding-right:20px;	
+}

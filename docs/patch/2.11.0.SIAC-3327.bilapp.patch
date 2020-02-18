@@ -1,0 +1,24 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/riCompleta/RiCompletaAllegatoAttoElenchiAction.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/riCompleta/RiCompletaAllegatoAttoElenchiAction.java	(revision 10921)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/action/allegatoatto/riCompleta/RiCompletaAllegatoAttoElenchiAction.java	(working copy)
+@@ -149,8 +149,8 @@
+ 	 *         {@link StatoOperativoElencoDocumenti#COMPLETATO COMPLETATO}
+ 	 *     </li>
+ 	 *     <li>
+-	 *         {@link ElencoDocumentiAllegato#getTotaleDaConvalidareSpesa() importoDaConvalidareSpesa} = 0
+-	 *         e {@link ElencoDocumentiAllegato#getTotaleDaConvalidareEntrata() importoDaConvalidareEntrata} = 0
++	 *         {@link ElencoDocumentiAllegato#getTotaleDaPagare() importoDaPagare} = 0
++	 *         e {@link ElencoDocumentiAllegato#getTotaleDaIncassare() importoDaIncassare} = 0
+ 	 *     </li>
+ 	 * </ul>
+ 	 * 
+@@ -160,7 +160,7 @@
+ 	 */
+ 	private boolean isNonRiCompletabileElenco(ElencoDocumentiAllegato eda) {
+ 		return  !StatoOperativoElencoDocumenti.COMPLETATO.equals(eda.getStatoOperativoElencoDocumenti())
+-					|| (eda.getTotaleDaConvalidareSpesaNotNull().signum() == 0 && eda.getTotaleDaConvalidareEntrataNotNull().signum() == 0);
++					|| (eda.getTotaleDaIncassareNotNull().signum() == 0 && eda.getTotaleDaPagareNotNull().signum() == 0);
+ 	}
+ 	
+ }

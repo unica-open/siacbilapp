@@ -1,0 +1,27 @@
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoEntrataModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoEntrataModel.java	(revision 11005)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoEntrataModel.java	(working copy)
+@@ -559,6 +559,8 @@
+ 		
+ 		request.setCapitolo(impostaEntitaFacoltativa(getCapitolo()));
+ 		
++		//per il ripeti
++		getSubdocumento().setUid(0);
+ 		
+ 		subdocumento.setDocumento(creaDocumentoPerInserimentoQuota());
+ 		subdocumento.setEnte(getEnte());
+Index: src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java
+===================================================================
+--- src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(revision 11005)
++++ src/main/java/it/csi/siac/siacfin2app/frontend/ui/model/documento/AggiornaDocumentoSpesaModel.java	(working copy)
+@@ -1158,6 +1158,9 @@
+ 		request.setSubdocumentoSpesa(subdocumento);
+ 		request.setBilancio(getBilancio());
+ 		
++		//per il ripeti
++		getSubdocumento().setUid(0);
++		
+ 		getSubdocumento().setDocumento(creaDocumentoPerInserimentoQuota());
+ 		getSubdocumento().setEnte(getEnte());
+ 		AttoAmministrativo atto = getAttoAmministrativo();
