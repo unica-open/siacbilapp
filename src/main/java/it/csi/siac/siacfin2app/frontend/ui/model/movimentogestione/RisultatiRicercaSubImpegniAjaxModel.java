@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.movimentogestione;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfinser.model.SubImpegno;
 
 /**
@@ -13,7 +13,7 @@ import it.csi.siac.siacfinser.model.SubImpegno;
  * @version 1.0.0 - 29/08/2016
  *
  */
-public class RisultatiRicercaSubImpegniAjaxModel extends GenericRisultatiRicercaAjaxModel<SubImpegno> {
+public class RisultatiRicercaSubImpegniAjaxModel extends PagedDataTableAjaxModel<SubImpegno> {
 	
 	/**
 	 * Per la serializzazione

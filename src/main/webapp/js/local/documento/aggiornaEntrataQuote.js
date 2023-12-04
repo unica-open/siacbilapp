@@ -671,6 +671,14 @@ var Documento = (function($, doc) {
                 });
 
                 $(".soloNumeri", collapse).allowedChars({numeric: true});
+                
+                 $(".trim").on('paste', function(event) { 
+                    var text = (event.originalEvent.clipboardData || window.clipboardData).getData("text");
+                    $(this).val(text.trim());
+                	event.preventDefault();
+                });
+                
+
                 $(".decimale", collapse).gestioneDeiDecimali();
 
                 Provvedimento.inizializzazione("_QUOTE");
@@ -893,7 +901,8 @@ var Documento = (function($, doc) {
         fields = fieldAnno.add(fieldNumero);
         fields.overlay("show");
         // Devo ricercare l'impegno e vederne i dati
-        return $.postJSON("ricercaAccertamentoPerChiaveOttimizzato.do", {"accertamento.annoMovimento": fieldAnno.val(), "accertamento.numero": fieldNumero.val(), "caricaSub":false})
+        //task-232
+        return $.postJSON("ricercaAccertamentoPerChiaveOttimizzato.do", {"accertamento.annoMovimento": fieldAnno.val(), "accertamento.numero": fieldNumero.val().trim(), "caricaSub":false})
 	        .then(function(data) {
 	        	var str;
 	        	var accertamento;

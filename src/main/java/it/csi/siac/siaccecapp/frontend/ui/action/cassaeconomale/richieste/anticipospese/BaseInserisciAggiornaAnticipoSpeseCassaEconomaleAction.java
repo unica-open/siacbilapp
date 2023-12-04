@@ -81,7 +81,7 @@ public abstract class BaseInserisciAggiornaAnticipoSpeseCassaEconomaleAction<M e
 			log.debug(methodName, "Errore di validazione per il soggetto: " + wsife.getMessage() + ". Ma continuo con la validazione per ottenere gli altri dati");
 		}
 		
-		checkNotNullNorEmpty(re.getDescrizioneDellaRichiesta(), "Descrizione della spesa");
+//		checkNotNullNorEmpty(re.getDescrizioneDellaRichiesta(), "Descrizione della spesa");
 
 	}
 	

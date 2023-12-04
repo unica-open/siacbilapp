@@ -272,11 +272,11 @@ public class GenericDocumentoIvaEntrataAction<M extends GenericDocumentoIvaEntra
 		
 		if(response.isFallimento()) {
 			throw new WebServiceInvocationFailureException("Fallimento dell'invocazione del servizio RicercaAccertamentoPerChiaveOttimizzato per impegno "
-				+ accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString());
+				+ accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString());
 		}
 		if(response.getAccertamento() == null) {
 			throw new WebServiceInvocationFailureException("Nessun impegno trovato dal servizio RicercaAccertamentoPerChiaveOttimizzato per impegno "
-				+ accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString());
+				+ accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString());
 		}
 		return response.getAccertamento();
 	}

@@ -8,7 +8,12 @@ SPDX-License-Identifier: EUPL-1.2
 <div id="associaCapitoliAllaVariazione">
 	<s:if test ="%{richiediConfermaQuadratura}">
 		<span id = "richiediConferma" class ="hide" ></span>
-	</s:if>	
+	</s:if>
+	<%-- SIAC-7629--%>
+	<s:if test ="%{richiediConfermaQuadraturaCP}">
+		<span id = "richiediConferma" class ="hide" ></span>
+	</s:if>
+	<%-- SIAC-7629--%>		
 	<dl class="dl-horizontal">
 		<dt>Num. variazione</dt>
 		<dd>&nbsp;<s:property value="numeroVariazione" /></dd>

@@ -82,14 +82,14 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}consultazioneEntita/gestisciGraficaConsultazioneEntita.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/baseConsultazioneEntita.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/ztreeSAC.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/capitoloSpesa.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/capitoloEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/provvedimento.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/soggetto.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/alberoRiepilogoConsultazioneEntita.js"></script>
-	<script type="text/javascript" src="${jspath}consultazioneEntita/consultazioneEntitaCollegate.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/gestisciGraficaConsultazioneEntita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/baseConsultazioneEntita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/ztreeSAC.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/capitoloSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/capitoloEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/provvedimento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/soggetto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/alberoRiepilogoConsultazioneEntita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/consultazioneEntita/consultazioneEntitaCollegate.js"></script>
 </body>

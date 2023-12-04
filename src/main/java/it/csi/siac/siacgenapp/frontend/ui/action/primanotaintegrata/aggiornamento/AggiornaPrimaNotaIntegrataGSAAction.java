@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgenapp.frontend.ui.action.primanotaintegrata.aggiornamento;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -12,6 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.aggiorna.AggiornaPrimaNotaIntegrataBaseAction;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgenapp.frontend.ui.model.primanotaintegrata.aggiorna.AggiornaPrimaNotaIntegrataGSAModel;
 
 /**
@@ -34,5 +35,12 @@ public class AggiornaPrimaNotaIntegrataGSAAction extends AggiornaPrimaNotaIntegr
 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
 	public String execute() {
 		return super.execute();
+	}
+	
+	@Override
+	protected boolean isFaseBilancioNonCompatibile(FaseBilancio faseBilancio) {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return FaseBilancio.PLURIENNALE.equals(faseBilancio) ||
+		FaseBilancio.PREVISIONE.equals(faseBilancio);
 	}
 }

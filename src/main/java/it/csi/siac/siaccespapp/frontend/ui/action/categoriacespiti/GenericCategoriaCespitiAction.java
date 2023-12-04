@@ -26,7 +26,7 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaDettaglioCategoria
 import it.csi.siac.siaccespser.model.CategoriaCalcoloTipoCespite;
 import it.csi.siac.siaccespser.model.CategoriaCespiti;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * The Class GenericTipoBeneAction.
@@ -82,7 +82,7 @@ public class GenericCategoriaCespitiAction<M extends GenericCategoriaCespitiMode
 			//1 - aggiungo gli errori nel model
 			addErrori(response);			
 			//2 - loggo e lancio l'eccezione
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 			log.warn(methodName, errorMsg);
 			
 			throw new WebServiceInvocationFailureException(errorMsg);

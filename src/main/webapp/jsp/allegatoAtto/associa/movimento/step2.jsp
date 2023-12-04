@@ -64,12 +64,7 @@ SPDX-License-Identifier: EUPL-1.2
 															<label class="radio inline" for="numeroSubmovimentoGestione">Sub</label>
 														</span>
 														<input type="text" value="" class="span2 soloNumeri" id="numeroSubmovimentoGestione">
-														<span id="spanMutuo" class="hide">
-															<span class="al">
-																<label class="radio inline" for="numeroMutuoVoceMutuo">Mutuo</label>
-															</span>
-															<input type="text" value="" class="span2" name="numeroMutuo" id="numeroMutuoVoceMutuo">
-														</span>
+
 														<span class="radio guidata">
 															<button type="button" class="btn btn-primary disabled" id="pulsanteCompilazioneGuidataMovimentoGestione">compilazione guidata</button>
 														</span>
@@ -79,7 +74,7 @@ SPDX-License-Identifier: EUPL-1.2
 													<div class="control-group datiVisibili hide" data-cig-cup>
 														<label class="control-label" for="cigMovimentoGestione">CIG</label>
 														<div class="controls">
-															<input type="text" class="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" id="cigMovimentoGestione" maxlength="10">
+															<input type="text" class="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" id="cigMovimentoGestione" maxlength="10">
 															<span class="al" data-assenza-cig>
 																<label for="siopeAssenzaMotivazione" class="radio inline">Motivo di assenza CIG</label>
 															</span>
@@ -90,7 +85,7 @@ SPDX-License-Identifier: EUPL-1.2
 													<div class="control-group datiVisibili hide" data-cig-cup>
 														<label class="control-label" for="cupMovimentoGestione">CUP</label>
 														<div class="controls">
-															<input type="text" class="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" id="cupMovimentoGestione" maxlength="15">
+															<input type="text" class="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" id="cupMovimentoGestione" maxlength="15">
 														</div>
 													</div>
 													<div class="control-group">
@@ -150,7 +145,6 @@ SPDX-License-Identifier: EUPL-1.2
 											<th class="span1">CIG</th>
 											<th class="span2">CUP</th>
 											<th class="span1"><abbr title="Motivo di assenza CIG">Assenza</abbr></th>
-											<th class="span1">Mutuo</th>
 											<th class="span1">Capitolo</th>
 											<th class="span1">Provvedimento</th>
 											<th class="span1">Provvisorio Di Cassa</th>
@@ -201,10 +195,10 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}provvisorioDiCassa/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/associaMovimento_step2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/associaMovimento_step2.js"></script>
 	
 </body>
 </html>

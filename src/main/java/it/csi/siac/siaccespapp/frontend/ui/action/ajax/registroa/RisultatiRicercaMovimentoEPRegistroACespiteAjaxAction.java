@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
@@ -34,7 +34,7 @@ import it.csi.siac.siacgenser.model.MovimentoEP;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaMovimentoEPRegistroACespiteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoMovimentoEPRegistroA, RisultatiRicercaMovimentoEPRegistroACespiteAjaxModel,
+public class RisultatiRicercaMovimentoEPRegistroACespiteAjaxAction extends PagedDataTableAjaxAction<ElementoMovimentoEPRegistroA, RisultatiRicercaMovimentoEPRegistroACespiteAjaxModel,
 		MovimentoEP, RicercaSinteticaMovimentoEPRegistroACespite, RicercaSinteticaMovimentoEPRegistroACespiteResponse> {
 
 	/** Per la serializzazione */
@@ -70,12 +70,12 @@ public class RisultatiRicercaMovimentoEPRegistroACespiteAjaxAction extends Gener
 	}
 
 	@Override
-	protected ElementoMovimentoEPRegistroA ottieniIstanza(MovimentoEP e) throws FrontEndBusinessException {
+	protected ElementoMovimentoEPRegistroA getInstance(MovimentoEP e) throws FrontEndBusinessException {
 		return ElementoMovimentoEPRegistroAFactory.getInstance(e);
 	}
 
 	@Override
-	protected RicercaSinteticaMovimentoEPRegistroACespiteResponse ottieniResponse(RicercaSinteticaMovimentoEPRegistroACespite req) {
+	protected RicercaSinteticaMovimentoEPRegistroACespiteResponse getResponse(RicercaSinteticaMovimentoEPRegistroACespite req) {
 		return primaNotaCespiteService.ricercaSinteticaMovimentoEPRegistroACespite(req);
 	}
 
@@ -91,7 +91,7 @@ public class RisultatiRicercaMovimentoEPRegistroACespiteAjaxAction extends Gener
 		return result;
 	}
 	@Override
-	protected void gestisciAzioniConsentite(ElementoMovimentoEPRegistroA instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoMovimentoEPRegistroA instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		if(Boolean.TRUE.equals(instance.getHasContoCespite())) {
 			
 			Map<String, String> map = new HashMap<String, String>();

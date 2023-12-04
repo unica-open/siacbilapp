@@ -75,6 +75,6 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/documento/dettaglioQuoteDocumentoEntrata_Modale.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}documento/risultatiRicercaTestataEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/risultatiRicercaTestataEntrata.js"></script>
 </body>
 </html>

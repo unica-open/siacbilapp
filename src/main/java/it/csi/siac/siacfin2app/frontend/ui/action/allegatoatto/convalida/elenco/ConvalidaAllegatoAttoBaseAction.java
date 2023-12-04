@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.convalida.elenco;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -131,7 +131,7 @@ public class ConvalidaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<C
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, response));
 			addErrori(response);
 			return;
 		}
@@ -199,7 +199,7 @@ public class ConvalidaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<C
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioAllegatoAtto.class, response));
 		}
 		return response;
 	}

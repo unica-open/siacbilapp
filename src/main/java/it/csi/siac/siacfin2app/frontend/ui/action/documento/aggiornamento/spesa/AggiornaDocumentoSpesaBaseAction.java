@@ -21,7 +21,7 @@ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
@@ -329,10 +329,10 @@ public class AggiornaDocumentoSpesaBaseAction extends GenericAggiornaDocumentoAc
 		List<AzioneConsentita> azioniConsentite = sessionHandler.getAzioniConsentite();
 		return
 			// Condizione precedente: devo avere la gestione acquisti
-			AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_GESTIONE_ACQUISTI, azioniConsentite)
+			AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_GESTIONE_ACQUISTI, azioniConsentite)
 			&& (
 				// Controllo sull'azione decentrata
-				!AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_NO_DATI_SOSPENSIONE_DECENTRATO, azioniConsentite)
+				!AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_NO_DATI_SOSPENSIONE_DECENTRATO, azioniConsentite)
 				// Controllo sulle liquidazioni
 				|| nessunaQuotaConLiquidazioneDefinitiva()
 			);

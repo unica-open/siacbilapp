@@ -40,7 +40,6 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 
 /**
  * Test per i servizi del Documento.
@@ -248,14 +247,12 @@ public class DocumentoSpesaServiceTest extends BaseProxyServiceTest<DocumentoSpe
 		subdocumentoSpesa.setEnte(getEnteTest());
 		Impegno impegno = new Impegno();
 		impegno.setAnnoMovimento(2015);
-		impegno.setNumero(new BigDecimal("2227"));
+		impegno.setNumeroBigDecimal(new BigDecimal("2227"));
 		subdocumentoSpesa.setImpegno(impegno);
 		//subdocumentoSpesa.setSubImpegno(si);
 		subdocumentoSpesa.setDocumento(documentoSpesa);
 		subdocumentoSpesa.setNumero(Integer.valueOf(2));
-		VoceMutuo voceMutuo = new VoceMutuo();
-		voceMutuo.setNumeroMutuo("4");
-		subdocumentoSpesa.setVoceMutuo(voceMutuo);
+
 		AggiornaQuotaDocumentoSpesa req = new AggiornaQuotaDocumentoSpesa();
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteTest());

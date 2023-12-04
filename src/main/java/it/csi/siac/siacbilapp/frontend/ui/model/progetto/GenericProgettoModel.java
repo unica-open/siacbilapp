@@ -20,11 +20,13 @@ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorDettaglioUsc
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto.ElementoVersioneCronoprogramma;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto.ElementoVersioneCronoprogrammaFactory;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDeiCronoprogrammiCollegatiAlProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDeiCronoprogrammiCollegatiAlProgettoPerBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioProgettoResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipiAmbito;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.BaseCalcoloProspettoRiassuntivoCronoprogramma;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaAggiorna;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsulta;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioEntrataCronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioUscitaCronoprogramma;
@@ -32,7 +34,11 @@ import it.csi.siac.siacbilser.model.ModalitaAffidamentoProgetto;
 import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siacbilser.model.StatoOperativoCronoprogramma;
 import it.csi.siac.siacbilser.model.TipoAmbito;
+import it.csi.siac.siacbilser.model.TipoProgetto;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
+import it.csi.siac.siaccommonapp.action.GenericAction;;
 
 /**
  * Classe astratta di model per il Progetto.
@@ -63,6 +69,9 @@ public abstract class GenericProgettoModel extends GenericBilancioModel {
 		
 	//Ambito
 	private List<TipoAmbito> listaTipiAmbito = new ArrayList<TipoAmbito>();
+	
+	//SIAC-8900 TipoProgetto
+	private List<TipoProgetto> listaTipoProgetto = new ArrayList<TipoProgetto>();
 
 	private List<ElementoVersioneCronoprogramma> listaElementiVersioneCronoprogramma = new ArrayList<ElementoVersioneCronoprogramma>();
 	
@@ -270,6 +279,15 @@ public abstract class GenericProgettoModel extends GenericBilancioModel {
 	public void setListaModalitaAffidamento(List<ModalitaAffidamentoProgetto> listaModalitaAffidamento) {
 		this.listaModalitaAffidamento = listaModalitaAffidamento;
 	}
+	
+
+	public List<TipoProgetto> getListaTipoProgetto() {
+		return listaTipoProgetto;
+	}
+
+	public void setListaTipoProgetto(List<TipoProgetto> listaTipoProgetto) {
+		this.listaTipoProgetto = listaTipoProgetto;
+	}
 
 	/**
 	 * @return the codiceProgettoAutomatico
@@ -278,6 +296,8 @@ public abstract class GenericProgettoModel extends GenericBilancioModel {
 		return isGestioneLivello(TipologiaGestioneLivelli.CODICE_PROGETTO_AUTOMATICO, BilConstants.CODICE_PROGETTO_AUTOMATICO);
 	}
 	
+	
+		
 	/**
 	 * Gets the stringa provvedimento.
 	 *
@@ -450,12 +470,23 @@ public abstract class GenericProgettoModel extends GenericBilancioModel {
 	 * 
 	 * @return la request creata
 	 */
-	public CalcoloProspettoRiassuntivoCronoprogramma creaRequestCalcoloProspettoRiassuntivoCronoprogramma(Integer uid) {
-		CalcoloProspettoRiassuntivoCronoprogramma request = creaRequest(CalcoloProspettoRiassuntivoCronoprogramma.class);
+
+	public CalcoloProspettoRiassuntivoCronoprogrammaConsulta creaRequestCalcoloProspettoRiassuntivoCronoprogrammaConsulta(Integer uid) {
+		return creaRequestCalcoloProspettoRiassuntivoCronoprogramma(uid, new Progetto(), CalcoloProspettoRiassuntivoCronoprogrammaConsulta.class);
+	}	
 	
-		// progetto 
-		Progetto p = new Progetto();
-		p.setUid(uid);
+	public CalcoloProspettoRiassuntivoCronoprogrammaAggiorna creaRequestCalcoloProspettoRiassuntivoCronoprogrammaAggiorna(Integer uid) {
+		return creaRequestCalcoloProspettoRiassuntivoCronoprogramma(uid, new Progetto(), CalcoloProspettoRiassuntivoCronoprogrammaAggiorna.class);
+	}	
+	
+	protected <T extends BaseCalcoloProspettoRiassuntivoCronoprogramma> T creaRequestCalcoloProspettoRiassuntivoCronoprogramma(Integer uid, 
+			Progetto p, Class<T> cls) {
+		T request = creaRequest(cls);
+	
+		
+		if (uid != null) {
+			p.setUid(uid);
+		}
 		request.setProgetto(p);
 		
 		//SIAC-5859: anno del getBilancio()
@@ -479,4 +510,6 @@ public abstract class GenericProgettoModel extends GenericBilancioModel {
 		
 		return req;
 	}
+	
+	
 }

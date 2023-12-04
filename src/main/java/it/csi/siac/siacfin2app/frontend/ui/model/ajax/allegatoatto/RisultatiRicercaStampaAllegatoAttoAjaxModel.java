@@ -4,13 +4,13 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.allegatoatto;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.allegatoatto.ElementoStampaAllegatoAtto;
 
 /**
  * Classe di model ajax per i risultati di ricerca della stampa dell'allegato atto.
  */
-public class RisultatiRicercaStampaAllegatoAttoAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoStampaAllegatoAtto> {
+public class RisultatiRicercaStampaAllegatoAttoAjaxModel extends PagedDataTableAjaxModel<ElementoStampaAllegatoAtto> {
 
 	/**
 	 * Per la serializzazione

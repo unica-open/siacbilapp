@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacattser.model.TipoAtto;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
@@ -37,7 +37,7 @@ import it.csi.siac.siacfin2ser.model.CausaleSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaCausaleSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoCausale, 
+public class RisultatiRicercaCausaleSpesaAjaxAction extends PagedDataTableAjaxAction<ElementoCausale, 
 	RisultatiRicercaCausaleAjaxModel, CausaleSpesa, RicercaSinteticaCausaleSpesa, RicercaSinteticaCausaleSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -90,7 +90,7 @@ public class RisultatiRicercaCausaleSpesaAjaxAction extends GenericRisultatiRice
 	}
 	
 	@Override
-	protected ElementoCausale ottieniIstanza(CausaleSpesa e) throws FrontEndBusinessException {
+	protected ElementoCausale getInstance(CausaleSpesa e) throws FrontEndBusinessException {
 		List<TipoAtto> listaTipoAtto = sessionHandler.getParametro(BilSessionParameter.LISTA_TIPO_ATTO_AMMINISTRATIVO);
 		List<StrutturaAmministrativoContabile> listaStrutturaAmministrativoContabile = sessionHandler.getParametro(BilSessionParameter.LISTA_STRUTTURA_AMMINISTRATIVO_CONTABILE);
 		
@@ -98,7 +98,7 @@ public class RisultatiRicercaCausaleSpesaAjaxAction extends GenericRisultatiRice
 	}
 	
 	@Override
-	protected RicercaSinteticaCausaleSpesaResponse ottieniResponse(RicercaSinteticaCausaleSpesa request) {	
+	protected RicercaSinteticaCausaleSpesaResponse getResponse(RicercaSinteticaCausaleSpesa request) {	
 		return predocumentoSpesaService.ricercaSinteticaCausaleSpesa(request);
 	}
 	
@@ -108,7 +108,7 @@ public class RisultatiRicercaCausaleSpesaAjaxAction extends GenericRisultatiRice
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoCausale instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoCausale instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isAggiornaConsentitoCausaleSpesa(listaAzioniConsentite);

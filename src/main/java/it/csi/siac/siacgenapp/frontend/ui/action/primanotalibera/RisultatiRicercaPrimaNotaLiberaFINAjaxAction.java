@@ -11,7 +11,8 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.RisultatiRicercaPrimaNotaLiberaBaseAjaxAction;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoPrimaNotaLibera;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
 
 /**
@@ -40,18 +41,18 @@ public class RisultatiRicercaPrimaNotaLiberaFINAjaxAction extends RisultatiRicer
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestionePrimaNotaLibera() {
-		return AzioniConsentite.PRIMANOTALIBERA_GEN_GESTIONE;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestionePrimaNotaLibera() {
+		return AzioneConsentitaEnum.PRIMANOTALIBERA_GEN_GESTIONE;
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaValidazionePrimaNotaLibera() {
-		return AzioniConsentite.PRIMANOTALIBERA_GEN_VALIDA;
+	protected AzioneConsentitaEnum getAzioneConsentitaValidazionePrimaNotaLibera() {
+		return AzioneConsentitaEnum.PRIMANOTALIBERA_GEN_VALIDA;
 		}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaPrimaNotaLibera() {
-		return AzioniConsentite.PRIMANOTALIBERA_GEN_RICERCA;	 	
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaPrimaNotaLibera() {
+		return AzioneConsentitaEnum.PRIMANOTALIBERA_GEN_RICERCA;	 	
 	}
 	
 	@Override
@@ -62,6 +63,19 @@ public class RisultatiRicercaPrimaNotaLiberaFINAjaxAction extends RisultatiRicer
 	@Override
 	protected boolean isStatoOperativoCoerenteConAggiornamento(ElementoPrimaNotaLibera instance) {
 		return StatoOperativoPrimaNota.PROVVISORIO.equals(instance.getStatoOperativoPrimaNota());
+	}
+	
+	//SIAC-8323
+	protected boolean isFaseBilancioCoerenteConAggiornamento() {
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO);
+	}
+	//SIAC-8323
+	protected boolean isFaseBilancioCoerenteConValidazione() {
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO);
+	}
+	//SIAC-8323
+	protected boolean isFaseBilancioCoerenteConAnnullamento() {
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO);
 	}
 	
 	

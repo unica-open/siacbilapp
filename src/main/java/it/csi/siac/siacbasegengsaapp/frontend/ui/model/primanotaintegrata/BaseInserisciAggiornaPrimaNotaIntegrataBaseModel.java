@@ -114,6 +114,10 @@ public abstract class BaseInserisciAggiornaPrimaNotaIntegrataBaseModel<E extends
 	// SIAC-5336: presente sulla superclasse per evitare di duplicare il campo nei model. Utilizzato solo nei [...]Valida[...]GSA[...]
 	private ClassificatoreGSA classificatoreGSA;
 	
+	//SIAC-7388
+	public String classeDiConciliazioneContoDigitato;
+	
+	
 	/**
 	 * @return the uidPrimaNota
 	 */
@@ -597,6 +601,14 @@ public abstract class BaseInserisciAggiornaPrimaNotaIntegrataBaseModel<E extends
 	 */
 	public void setClassificatoreGSA(ClassificatoreGSA classificatoreGSA) {
 		this.classificatoreGSA = classificatoreGSA;
+	}
+	
+	public String getClasseDiConciliazioneContoDigitato() {
+		return classeDiConciliazioneContoDigitato;
+	}
+
+	public void setClasseDiConciliazioneContoDigitato(String classeDiConciliazioneContoDigitato) {
+		this.classeDiConciliazioneContoDigitato = classeDiConciliazioneContoDigitato;
 	}
 
 	/**

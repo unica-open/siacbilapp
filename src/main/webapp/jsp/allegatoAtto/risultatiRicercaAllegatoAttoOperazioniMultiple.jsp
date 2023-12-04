@@ -106,7 +106,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}allegatoAtto/risultatiRicercaOperazioniMultiple.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/risultatiRicercaOperazioniMultiple.js"></script>
 
 </body>
 </html>

@@ -263,10 +263,10 @@ public final class ElementoSubdocumentoDaAssociareFactory extends BaseFactory {
 				}
 					sb.append(subdoc.getImpegno().getAnnoMovimento())
 					.append("/")
-					.append(subdoc.getImpegno().getNumero().toPlainString());
+					.append(subdoc.getImpegno().getNumeroBigDecimal().toPlainString());
 				if(subdoc.getSubImpegno() != null) {
 					sb.append("/")
-						.append(subdoc.getSubImpegno().getNumero().toPlainString());
+						.append(subdoc.getSubImpegno().getNumeroBigDecimal().toPlainString());
 				}
 				result = sb.toString();
 			}
@@ -280,10 +280,10 @@ public final class ElementoSubdocumentoDaAssociareFactory extends BaseFactory {
 				}
 					sb.append(subdoc.getAccertamento().getAnnoMovimento())
 					.append("/")
-					.append(subdoc.getAccertamento().getNumero().toPlainString());
+					.append(subdoc.getAccertamento().getNumeroBigDecimal().toPlainString());
 				if(subdoc.getSubAccertamento() != null) {
 					sb.append("/")
-						.append(subdoc.getSubAccertamento().getNumero().toPlainString());
+						.append(subdoc.getSubAccertamento().getNumeroBigDecimal().toPlainString());
 				}
 				result = sb.toString();
 			}

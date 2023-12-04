@@ -56,6 +56,24 @@ public class AggiornaCapitoloEntrataGestioneModel extends CapitoloEntrataModel {
 	// SIAC-5582
 	private boolean flagAccertatoPerCassaEditabile;
 	
+	//SIAC-7858 CM 19/05/2021 Inizio
+	private boolean flagEntrataDubbiaEsigFCDE;
+	
+	/**
+	 * @return the flagEntrataDubbiaEsigFCDE
+	 */
+	public boolean isFlagEntrataDubbiaEsigFCDE() {
+		return flagEntrataDubbiaEsigFCDE;
+	}
+
+	/**
+	 * @param flagEntrataDubbiaEsigFCDE the flagEntrataDubbiaEsigFCDE to set
+	 */
+	public void setFlagEntrataDubbiaEsigFCDE(boolean flagEntrataDubbiaEsigFCDE) {
+		this.flagEntrataDubbiaEsigFCDE = flagEntrataDubbiaEsigFCDE;
+	}
+	//SIAC-7858 CM 19/05/2021 Fine
+	
 	/** Costruttore vuoto di default */
 	public AggiornaCapitoloEntrataGestioneModel() {
 		super();
@@ -226,6 +244,10 @@ public class AggiornaCapitoloEntrataGestioneModel extends CapitoloEntrataModel {
 		
 		/* Gestione della lista dei classificatori generici */
 		capitoloEntrataGestione.setClassificatoriGenerici(getListaClassificatoriGenericiAggiornamento(classificatoreAggiornamento));
+		
+		//SIAC-7858 CM 19/05/2021 Inizio
+		capitoloEntrataGestione.setFlagEntrataDubbiaEsigFCDE(isFlagEntrataDubbiaEsigFCDE());
+		//SIAC-7858 CM 19/05/2021 Fine
 		
 		request.setCapitoloEntrataGestione(capitoloEntrataGestione);
 

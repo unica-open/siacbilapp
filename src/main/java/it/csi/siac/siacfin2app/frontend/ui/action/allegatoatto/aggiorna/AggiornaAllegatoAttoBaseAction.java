@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,11 +18,11 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacbilser.frontend.webservice.ElaborazioniService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.EsisteElaborazioneAttiva;
@@ -42,18 +42,13 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDatiSospensioneAll
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioAllegatoAtto;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioAllegatoAttoResponse;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
-import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DatiSoggettoAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.frontend.webservice.GenericService;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
-import it.csi.siac.siacfinser.frontend.webservice.msg.Liste;
 import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggetto;
 import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggettoResponse;
-import it.csi.siac.siacfinser.frontend.webservice.msg.ListeResponse;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
-import it.csi.siac.siacfinser.model.codifiche.TipiLista;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
 
 /**
@@ -80,8 +75,6 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 	@Autowired private transient CodificheService codificheService;
 	@Autowired private transient ElaborazioniService elaborazioniService;
 	
-	@Autowired private transient GenericService genericService;
-
 	@Override
 	public void prepare() throws Exception {
 		cleanErroriMessaggiInformazioni();
@@ -108,7 +101,7 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 		EsisteElaborazioneAttivaResponse resEEA = elaborazioniService.esisteElaborazioneAttiva(reqEEA);
 		if(resEEA.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(reqEEA, resEEA));
+			log.info(methodName, createErrorInServiceInvocationString(EsisteElaborazioneAttiva.class, resEEA));
 			throwExceptionFromErrori(resEEA.getErrori());
 		}
 
@@ -127,7 +120,7 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioAllegatoAtto.class, res));
 			throwExceptionFromErrori(res.getErrori());
 		}
 		
@@ -149,49 +142,69 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 		// SIAC-5021
 		impostaAbilitazioneStampa();
 		impostaAbilitazioneInvioFlux();
+		
 		// SIAC-5410
 		caricaListeSiope();
 		
+		//SIAC-5589
+		checkAndObtainListaClassiSoggetto();
+				
+		//SIAC-7470
+		//controlloBloccoROR(allegatoAtto);
+				
 		// Leggo i dati dell'azione precedente
 		leggiEventualiErroriAzionePrecedente();
 		leggiEventualiMessaggiAzionePrecedente();
 		leggiEventualiInformazioniAzionePrecedente();
 		
-		//SIAC-5589
-		checkAndObtainListaClassiSoggetto();
-		
 		caricamentoListaContoTesoreria();
+		
 		
 		// Imposto i dati in sessione
 		impostaDatiInSessione();
-		
 		return SUCCESS;
 	}
 	
-	/**
-	 * Carica la lista del conto tesoreria
-	 * @throws WebServiceInvocationFailureException in caso di errori nella chiamata al servizio
-	 */
-	protected void caricamentoListaContoTesoreria() throws WebServiceInvocationFailureException {
-		List<ContoTesoreria> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_CONTO_TESORERIA);
-		if(listaInSessione == null) {
-		
-			Liste req = model.creaRequestListe(TipiLista.CONTO_TESORERIA);
-			logServiceRequest(req);
-			ListeResponse res = genericService.liste(req);
-			logServiceResponse(res);
-			// Controllo gli errori
-			if(res.hasErrori()) {
-				//si sono verificati degli errori: esco.
-				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+	/*/SIAC-7470: cerco di recuperare prima i subdoc dall'allegato, e da questi l'impegno
+	private void controlloBloccoROR(AllegatoAtto allegatoAtto){
+		if(allegatoAtto.getElenchiDocumentiAllegato() != null && !allegatoAtto.getElenchiDocumentiAllegato().isEmpty()){
+			ElencoDocumentiAllegato elenco = allegatoAtto.getElenchiDocumentiAllegato().get(0);
+			if(elenco != null){
+				RicercaSinteticaQuoteElenco request = model.creaRequestRicercaSinteticaQuoteElenco();
+				request.setElencoDocumentiAllegato(elenco);
+				if(allegatoAtto.getElencoSoggettiDurc() != null && !allegatoAtto.getElencoSoggettiDurc().isEmpty())
+					request.setSoggetto(allegatoAtto.getElencoSoggettiDurc().get(0));
+				request.setParametriPaginazione(new ParametriPaginazione(0,10));
+				RicercaSinteticaQuoteElencoResponse response = allegatoAttoService.ricercaSinteticaQuoteElenco(request);
+				if(response.getSubdocumenti() != null && !response.getSubdocumenti().isEmpty()){
+					for(Subdocumento subdoc:response.getSubdocumenti()){
+						if(subdoc != null){
+							if(subdoc.getMovimentoGestione() != null && subdoc.getMovimentoGestione() instanceof Impegno){
+								Impegno impegno = (Impegno)subdoc.getMovimentoGestione();
+								if(impegno.getListaModificheMovimentoGestioneSpesa() == null){
+									//considerare l'ipotesi di inserire un caricamento dell'impegno (provare con modifiche presenti tipo 2019/4)
+								}
+								//controllo bloccoROR
+								boolean test = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno,  model.getAnnoEsercizioInt());
+								if(test){
+									throwExceptionFromErrori(Arrays.asList(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile")));
+								}else if(impegno.getElencoSubImpegni() != null && !impegno.getElencoSubImpegni().isEmpty()){
+									for(int k = 0; k < impegno.getElencoSubImpegni().size(); k++){
+										test = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno.getElencoSubImpegni().get(k), model.getAnnoEsercizioInt());
+										if(test)
+											break;
+									}
+									if(test){
+										throwExceptionFromErrori(Arrays.asList(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile")));
+									}
+								}
+							}
+						}
+					}
+				}
 			}
-			
-			listaInSessione = getListaContoTesoreriaByCodificaFin(res.getContoTesoreria());
-			sessionHandler.setParametro(BilSessionParameter.LISTA_CONTO_TESORERIA, listaInSessione);
 		}
-		model.setListaContoTesoreria(listaInSessione);
-	}
+	}*/
 	
 //	protected void checkAndObtainListaContoTesoreria() {
 //		List<ContoTesoreria> listaContoTesoreria = model.getListaContoTesoreria();
@@ -230,7 +243,7 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 	 */
 	private void impostaAbilitazioneStampa() {
 		// La stampa e' abilitata se l'utente puo' effettuare la ricerca
-		boolean isStampaAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_RICERCA, sessionHandler.getAzioniConsentite())
+		boolean isStampaAbilitato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_RICERCA, sessionHandler.getAzioniConsentite())
 				// e l'allegato e' collegato ad almeno una quota di spesa
 				&& Boolean.TRUE.equals(model.getAllegatoAtto().getIsAssociatoAdAlmenoUnaQuotaSpesa());
 		model.setStampaAbilitato(isStampaAbilitato);
@@ -242,13 +255,15 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 	private void impostaAbilitazioneInvioFlux() {
 		AllegatoAtto aa = model.getAllegatoAtto();
 		// L'invio a flux e' abilitato se l'utente ha la profilazione corretta
-		boolean invioFluxAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_INVIA, sessionHandler.getAzioniConsentite())
+		boolean invioFluxAbilitato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_INVIA, sessionHandler.getAzioniConsentite())
 				// Se l'allegato e' in stato COMPLETATO o DA_COMPLETARE    o PARZIALMENTE_CONVALIDATO (SIAC-6295)
 				&& (StatoOperativoAllegatoAtto.COMPLETATO.equals(aa.getStatoOperativoAllegatoAtto()) || StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(aa.getStatoOperativoAllegatoAtto()) || StatoOperativoAllegatoAtto.PARZIALMENTE_CONVALIDATO.equals(aa.getStatoOperativoAllegatoAtto()))
 				// Se l'ente gestisce l'integrazione ad atti
 				&& model.isIntegrazioneAttiLiquidazione()
 				// Se associato ad almeno una quota di spesa
-				&& Boolean.TRUE.equals(aa.getIsAssociatoAdAlmenoUnaQuotaSpesa());
+				&& Boolean.TRUE.equals(aa.getIsAssociatoAdAlmenoUnaQuotaSpesa())
+				//task-14
+				&& !abilitaChecklist(); 
 		model.setInvioFluxAbilitato(invioFluxAbilitato);
 	}
 
@@ -287,7 +302,7 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 	 */
 	private boolean checkDecentratoValido(AllegatoAtto allegatoAtto, List<AzioneConsentita> listaAzioneConsentita) {
 		// Per l’azione OP-COM-aggAttoAllegatoDec si deve verificare anche che lo stato dell’atto selezionato sia 'DA COMPLETARE'.
-		return !AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_AGGIORNA_DECENTRATO, listaAzioneConsentita)
+		return !AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_AGGIORNA_DECENTRATO, listaAzioneConsentita)
 			|| StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(allegatoAtto.getStatoOperativoAllegatoAtto());
 	}
 
@@ -303,7 +318,7 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 	 */
 	private boolean checkCentraleValido(AllegatoAtto allegatoAtto, List<AzioneConsentita> listaAzioneConsentita) {
 		// Per l’azione OP-COM-aggAttoAllegatoCen anche che lo stato dell’atto selezionato sia diverso da 'ANNULLATO', 'RIFIUTATO', 'DA COMPLETARE' e 'CONVALIDATO'.
-		return !AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_AGGIORNA_CENTRALE, listaAzioneConsentita)
+		return !AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_AGGIORNA_CENTRALE, listaAzioneConsentita)
 			|| (!StatoOperativoAllegatoAtto.ANNULLATO.equals(allegatoAtto.getStatoOperativoAllegatoAtto())
 				&& !StatoOperativoAllegatoAtto.RIFIUTATO.equals(allegatoAtto.getStatoOperativoAllegatoAtto())
 				&& !StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(allegatoAtto.getStatoOperativoAllegatoAtto())
@@ -367,7 +382,7 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDatiSoggettoAllegato.class, res));
 		}
 		// Ho i dati. Li imposto in sessione
 		sessionHandler.setParametro(BilSessionParameter.LISTA_DATI_SOGGETTO_ALLEGATO_ALLEGATO_ATTO, res.getDatiSoggettiAllegati());
@@ -397,9 +412,9 @@ public class AggiornaAllegatoAttoBaseAction extends GenericAllegatoAttoAction<Ag
 	 */
 	protected void impostaDatiSoggettoAllegatoDaRicerca(RicercaDatiSospensioneAllegatoAttoResponse res) {
 		final String methodName = "impostaDatiSoggettoAllegatoDaRicerca";
-		if(!CollectionUtil.hasAtMostSingoloElemento(res.getCausaleSospensioneAllegato())
-				|| !CollectionUtil.hasAtMostSingoloElemento(res.getDataSospensione())
-				|| !CollectionUtil.hasAtMostSingoloElemento(res.getDataRiattivazione())) {
+		if(!CollectionUtil.hasAtMostOneSingleElement(res.getCausaleSospensioneAllegato())
+				|| !CollectionUtil.hasAtMostOneSingleElement(res.getDataSospensione())
+				|| !CollectionUtil.hasAtMostOneSingleElement(res.getDataRiattivazione())) {
 			log.debug(methodName, "Ho piu' di un elemento. Non poss determinare univocamente i dati.");
 			model.setDatiSoggettoAllegatoDeterminatiUnivocamente(false);
 			return;

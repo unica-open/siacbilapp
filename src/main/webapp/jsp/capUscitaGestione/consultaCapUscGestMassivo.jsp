@@ -290,8 +290,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/risultatiRicerca.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/consultaMassiva.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloUscitaGestione/consultaMassiva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/consultaMassiva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloUscitaGestione/consultaMassiva.js"></script>
 </body>
 </html>

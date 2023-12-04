@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="elaborazioniflussopagopa" extends="capitoloDefault" namespace="/">
+        <action name="ricercaElaborazioniFlusso" class="ricercaElaborazioniFlussoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/elaborazioniFlusso/ricercaElaborazioniFlusso.jsp</result>
+        </action>
+            
+        <action name="effettuaRicercaElaborazioniFlusso" class="ricercaElaborazioniFlussoAction" method="ricercaElaborazioni">
+            <result name="input">/jsp/elaborazioniFlusso/ricercaElaborazioniFlusso.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaElaborazioniFlusso</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+
+        <action name="risultatiRicercaElaborazioniFlusso" class="risultatiRicercaElaborazioniFlussoAction" method="execute">
+            <result name="input">/jsp/elaborazioniFlusso/ricercaElaborazioniFlusso.jsp</result>
+            <result name="success">/jsp/elaborazioniFlusso/risultatiRicercaElaborazioniFlusso.jsp</result>
+        </action>
+          
+        <action name="risultatiRicercaElaborazioniFlussoAjax" class="risultatiRicercaElaborazioniFlussoAjaxAction">
+			<result type="dataTable" />
+		</action>  
+         
+         <action name="risultatiElaborazioniFlussoConsulta" class="risultatiRicercaElaborazioniFlussoAction" method="consulta">
+			<result name="input">/jsp/elaborazioniFlusso/ricercaElaborazioniFlusso.jsp</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">consultaElaborazioneFlusso</param>
+				<param name="namespace">/</param>
+				<param name="uidDaConsultare">${uidDaConsultare}</param>
+			</result>
+		</action>
+         
+        <action name="consultaElaborazioneFlusso" class="consultaElaborazioneFlussoAction">
+			<result name="success">/jsp/elaborazioniFlusso/consultaElaborazioneFlusso.jsp</result>
+			<result name="input">/jsp/elaborazioniFlusso/risultatiRicercaElaborazioniFlusso.jsp</result>
+		</action>
+		
+		 <action name="risultatiRicercaRiconciliazioniAjax" class="risultatiRicercaRiconciliazioniAjaxAction">
+			<result type="dataTable" />
+		</action> 
+		
+		<!-- Tabella Errori -->
+		<action name="risultatiRicercaErroriRiconciliazioni" class="consultaElaborazioneFlussoAction" method="ottieniListaErrori">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,tipoFattura</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		 <action name="risultatiRiconciliazioneDocAjax" class="risultatiRiconciliazioneDocAjaxAction">
+			<result type="dataTable" />
+		</action>
+        
+        <!-- SIAC-8046 Task 2.2-2.3 CM 29/03-16/04/2021 -->
+        <!-- Modale inserisci nuovo anno e numero accertamento -->
+		<action name="aggiornaAccertamentoModale" class="consultaElaborazioneFlussoAction" method="verificaEaggiornaAccertamentoModale">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, resRicercaAccertamento, resAggiornaAccertamento, descrizioneResAggiornaAccertamento</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		 
+    </package>
+</struts>

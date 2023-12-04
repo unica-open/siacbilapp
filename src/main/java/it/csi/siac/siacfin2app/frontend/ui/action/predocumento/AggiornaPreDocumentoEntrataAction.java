@@ -4,10 +4,11 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.predocumento;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -16,18 +17,25 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
+import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommon.util.DataValidator;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.predocumento.AggiornaPreDocumentoEntrataModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioPreDocumentoEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumentoResponse;
 import it.csi.siac.siacfin2ser.model.DatiAnagraficiPreDocumento;
 import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 
 /**
  * Classe di action per l'aggiornamento del PreDocumento di Entrata
@@ -42,7 +50,7 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -3410995502977493215L;
-
+	
 	@Override
 	public void prepare() throws Exception {
 		super.prepare();
@@ -57,6 +65,8 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 			caricaListaClasseSoggetto();
 			caricaListaTipoFinanziamento();
 			caricaListaCausaleEntrata();
+			caricaListaTipoDocumento();
+			checkisFromCompletaDefinisci();
 			
 			checkDecentrato();
 		} catch(WebServiceInvocationFailureException e) {
@@ -67,23 +77,36 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 	}
 
 	/**
+	 * Controlla se viene da una ricerca di completa definisci
+	 */
+	private void checkisFromCompletaDefinisci() {
+		String methodName = "checkisFromCompletaDefinisci";
+		if(sessionHandler.containsKey(BilSessionParameter.FROM_COMPLETA_DEFINISCI)) {
+			log.debug(methodName, ": vengo da Completa Definisci PreDoc " );
+			model.setFromCompletaDefinisci((Boolean) sessionHandler.getParametro(BilSessionParameter.FROM_COMPLETA_DEFINISCI));
+		}
+	}
+	
+	/**
 	 * Controlla se l'utente sia decentrato
 	 */
 	private void checkDecentrato() {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
+		Boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
 		model.setUtenteDecentrato(Boolean.TRUE.equals(isDecentrato));
 	}
 
 	@Override
 	@BreadCrumb("%{model.titolo}")
-	public String execute() throws Exception {
+	public String execute(){
 		final String methodName = "execute";
 		// Caricamento valori default
 		checkCasoDUsoApplicabile("Aggiornamento preDocumento di entrata");
 		
 		leggiEventualiInformazioniAzionePrecedente();
 		leggiEventualiMessaggiAzionePrecedente();
+		
+		checkIsReturn();
 		
 		// Ricerca di dettaglio del PreDocumento
 		RicercaDettaglioPreDocumentoEntrata req = model.creaRequestRicercaDettaglioPreDocumentoEntrata();
@@ -100,21 +123,147 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 			throwExceptionFromErrori(response.getErrori());
 		}
 		
+		//SIAC-6780
+		try {
+			impostaDatiNelModel(response.getPreDocumentoEntrata(), null);
+		} catch (Exception e) {
+			log.error("execute", "Errore nell'invocazione del caricamento di una lista: " + e.getMessage());
+		}
+		//
+		
+		return SUCCESS;
+	}
+	
+	private void checkIsReturn() {
+		if((model.getUidPreDocumentoDaAggiornare() == null || model.getUidPreDocumentoDaAggiornare() == 0) && sessionHandler.containsKey(BilSessionParameter.PREDOC_SELEZIONATO)) {
+			model.setUidPreDocumentoDaAggiornare(((PreDocumentoEntrata) sessionHandler.getParametro(BilSessionParameter.PREDOC_SELEZIONATO)).getUid());
+		}
+	}
+
+	//SIAC-6780
+	//raggruppo in un unico metodo dei passagi condivisi dal rientro dopo l'associa e l'execute
+	private void impostaDatiNelModel(PreDocumentoEntrata preDoc, SubdocumentoEntrata subDoc) throws WebServiceInvocationFailureException {
+		String methodName = "impostaDatiNelModel";
+		
 		log.debug(methodName, "PreDocumento caricato. Imposto i dati nel model");
-		model.impostaPreDocumento(response.getPreDocumentoEntrata());
+		model.impostaPreDocumento(preDoc);
 		
 		AttoAmministrativo attoAmministrativo = caricaAttoAmministrativoSePresente();
 		if(attoAmministrativo != null) {
 			model.impostaAttoAmministrativo(attoAmministrativo);
 		}
 		
-		if(response.getPreDocumentoEntrata().getProvvisorioDiCassa() != null && response.getPreDocumentoEntrata().getProvvisorioDiCassa().getUid() !=0){
-			model.setProvvisorioCassa(response.getPreDocumentoEntrata().getProvvisorioDiCassa());
+		if(preDoc.getProvvisorioDiCassa() != null && preDoc.getProvvisorioDiCassa().getUid() !=0){
+			model.setProvvisorioCassa(preDoc.getProvvisorioDiCassa());
 		}
 		
 		model.setForzaDisponibilitaAccertamento(false);
 		
+		//controllo che sia presente il subdoc
+		if(subDoc != null 
+				&& subDoc.getNumero() != null 
+				&& subDoc.getDocumento().getNumero() != null
+				&& subDoc.getDocumento().getAnno() != null
+				&& subDoc.getNumero() != null
+				&& subDoc.getDataCreazione() != null
+				&& subDoc.getAccertamento() != null) {
+			model.setSubdocumento(subDoc);
+		} else {
+			log.error(methodName, "Subocumento non caricato correttamente nel model");
+		}
 		caricaListaCausaleEntrata();
+
+	}
+	
+	//SIAC-6780
+	public String ritornoPerAssociaQuotaPreDocumento() {
+		final String methodName = "aggiornaPreDocumentoEntrata - ritornoPerAssociaQuotaPreDocumento";
+
+		if(!(sessionHandler.containsKey(BilSessionParameter.PREDOC_SELEZIONATO)
+				&& sessionHandler.getParametro(BilSessionParameter.PREDOC_SELEZIONATO) != null)) {
+			log.debug(methodName, "Validazione fallita");
+			return INPUT;
+		}
+		
+		if(!(model.getUidSubDocumentoDaAssociare() != null && model.getUidSubDocumentoDaAssociare() != 0)) {
+			log.debug(methodName, "Validazione fallita");
+			addErrore(ErroreBil.OPERAZIONE_NON_POSSIBILE.getErrore());
+			return INPUT;
+		}
+
+		//passo direttamente il predoc anzichè l'uid risparmio una chiamata
+		model.setPreDocumento((PreDocumentoEntrata) sessionHandler.getParametro(BilSessionParameter.PREDOC_SELEZIONATO));
+		//COLLEGO SUBDOC A PREDOC
+		AggiornaPreDocumentoEntrataCollegaDocumento request = model.creaRequestCollegaDocumento();
+		AggiornaPreDocumentoEntrataCollegaDocumentoResponse response = preDocumentoEntrataService.aggiornaPreDocumentoEntrataCollegaDocumento(request);
+		
+		// Controllo gli errori
+		if(response.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			log.error(methodName, "Errore nell'invocazione del servizio di ricerca dettaglio subdocumento Entrata");
+			addErrori(response);
+			
+			throwExceptionFromErrori(response.getErrori());
+			return INPUT;
+		}
+		
+		try {
+			impostaDatiNelModel(response.getPreDocumentoEntrataAggiornato(), response.getSubDocumentoEntrata());
+		} catch (WebServiceInvocationFailureException e) {
+			log.error(methodName, "Errore nell'invocazione del caricamento di una lista: " + e.getMessage());
+		}
+		//TODO migliorare il codice dell'informazione
+		addInformazione(new Informazione("CRU_CON_2001", "L'operazione e' stata completata con successo"));
+		return SUCCESS;
+	}
+	
+	//SIAC-6780
+	public String cercaQuotePerAssociaDocumento() {
+		final String methodName = "aggiornaPreDocumentoEntrata - cercaDocumento";
+		
+		if (!(model.getDocumento().getAnno() != null || model.getDocumento().getNumero() != null || model.getDocumento().getTipoDocumento().getUid() != 0 || model.getDocumento().getSoggetto() != null)) {
+			log.debug(methodName, "Validazione fallita");
+			return INPUT;
+		}
+		
+		log.debug(methodName, "Effettua la ricerca");
+		
+		RicercaQuoteDaAssociarePredocumento request = model.creaRequestRicercaQuoteDaAssociarePerCollegaDocumento();
+		logServiceRequest(request);
+		RicercaQuoteDaAssociarePredocumentoResponse response = documentoService.ricercaQuoteDaAssociarePredocumento(request);
+		logServiceResponse(response);
+		
+		if(response.hasErrori()) {
+			log.info(methodName, "Fallimento nella chiamata al servizio");
+			addErrori(response);
+			return INPUT;
+		}
+		
+		if(response.getListaSubdocumenti().getTotaleElementi() == 0) {
+			log.debug(methodName, "Nessun risultato trovato");
+			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore());
+			return INPUT;
+		}
+		
+		log.debug(methodName, "Totale: "+response.getListaSubdocumenti().getTotaleElementi());
+		
+		log.debug(methodName, "Ricerca effettuata con successo");
+		
+		// Imposto in sessione i dati
+		log.debug(methodName, "Imposto in sessione la request");
+		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_QUOTE_DA_ASSOCIARE, request);
+		
+		log.debug(methodName, "Imposto in sessione la lista");
+		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_QUOTE_DA_ASSOCIARE, response.getListaSubdocumenti());
+		
+		log.debug(methodName, "Totale quote di spesa: " + response.getTotaleElementi());
+		sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA, response.getTotaleImporti());
+		sessionHandler.setParametro(BilSessionParameter.RIENTRO_POSIZIONE_START, null);
+		
+		//TODO put the importoPreDocumento in session for the comparision to the collegaDocumento's action.
+		sessionHandler.setParametro(BilSessionParameter.IMPORTO_PREDOC_TO_COMPARE, model.getPreDocumento().getImporto() != null ? model.getPreDocumento().getImporto() : BigDecimal.ZERO);
+//		sessionHandler.setParametro(BilSessionParameter.UID_PREDOC_SELEZIONATO, model.getPreDocumento().getUid());
+		sessionHandler.setParametro(BilSessionParameter.PREDOC_SELEZIONATO, model.getPreDocumento());
 		
 		return SUCCESS;
 	}
@@ -136,6 +285,7 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 			
 			return INPUT;
 		}
+		
 		model.setRichiediConfermaUtente(false);
 		
 		AggiornaPreDocumentoDiEntrata req = model.creaRequestAggiornaPreDocumentoDiEntrata();
@@ -167,6 +317,10 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 			sessionHandler.setParametro(BilSessionParameter.INSERIMENTO_DA_RICERCA, Boolean.FALSE);
 			result = RICERCA;
 		}
+
+		if(Boolean.TRUE.equals(model.isFromCompletaDefinisci())) {
+			result = "ricercaCompletaDefinisci";
+		}
 		
 		return result;
 	}
@@ -181,7 +335,7 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 		checkNotNullNorEmpty(preDocumentoEntrata.getPeriodoCompetenza(), "Periodo competenza");
 		checkNotNull(preDocumentoEntrata.getImporto(), "Importo");
 		checkCondition(preDocumentoEntrata.getImporto() == null || preDocumentoEntrata.getImporto().signum()>0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("importo",": l'importo deve essere positivo"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo",": l'importo deve essere positivo"));
 		
 		checkNotNullNorInvalidUid(model.getTipoCausale(), "Causale tipo");
 		checkNotNullNorInvalidUid(model.getCausaleEntrata(), "Causale");
@@ -193,7 +347,8 @@ public class AggiornaPreDocumentoEntrataAction extends GenericPreDocumentoEntrat
 		// Validazioni specifiche
 		validazioneSoggetto();
 		validazioneCapitolo();
-		validazioneAccertamentoSubAccertamento();
+		//SIAC-7470 - anche in aggiornamento controllo il bloccoROR
+		validazioneAccertamentoSubAccertamento(Integer.valueOf(1));
 		validazioneAttoAmministrativo();
 		
 		//metodi aggiunti in data 05/06/2015

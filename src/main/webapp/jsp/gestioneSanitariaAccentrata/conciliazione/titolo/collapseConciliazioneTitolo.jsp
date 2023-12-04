@@ -6,9 +6,9 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ taglib uri="/struts-tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<s:set name="prefix"><c:out value="${param.prefix}" default="" /></s:set>
-<s:set name="title"><c:out value="${param.title}" default="" /></s:set>
-<s:set name="aggiornamento"><c:out value="${param.aggiornamento}" default="false" /></s:set>
+<s:set var="prefix"><c:out value="${param.prefix}" default="" /></s:set>
+<s:set var="title"><c:out value="${param.title}" default="" /></s:set>
+<s:set var="aggiornamento"><c:out value="${param.aggiornamento}" default="false" /></s:set>
 
 <div class="accordion_info">
 	<fieldset class="form-horizontal" id="<s:property value="#prefix"/>_fieldsetConciliazioni">

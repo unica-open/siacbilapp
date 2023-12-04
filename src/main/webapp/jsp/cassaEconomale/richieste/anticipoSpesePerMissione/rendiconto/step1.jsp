@@ -127,7 +127,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto.step1.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto.step1.js"></script>
 	
 </body>
 </html>

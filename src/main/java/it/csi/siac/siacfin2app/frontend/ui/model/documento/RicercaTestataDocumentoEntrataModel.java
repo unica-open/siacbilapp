@@ -128,8 +128,8 @@ public class RicercaTestataDocumentoEntrataModel extends RicercaDocumentoModel {
 		if(getAccertamento().getAnnoMovimento() != 0) {
 			subComponents.add(getAccertamento().getAnnoMovimento() + "");
 		}
-		if(getAccertamento().getNumero() != null) {
-			subComponents.add(getAccertamento().getNumero().toPlainString());
+		if(getAccertamento().getNumeroBigDecimal() != null) {
+			subComponents.add(getAccertamento().getNumeroBigDecimal().toPlainString());
 		}
 		
 		components.add("Movimento: " + StringUtils.join(subComponents, "/"));

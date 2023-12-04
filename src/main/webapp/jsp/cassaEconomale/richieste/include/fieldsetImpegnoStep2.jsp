@@ -15,11 +15,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<span class="alRight">
 				<label class="radio inline" for="numeroMovimentoGestione">Numero *</label>
 			</span>
-			<si:plainstringtextfield id="numeroMovimentoGestione" name="movimentoGestione.numero" cssClass="lbTextSmall span2 soloNumeri" required="true" data-overlay="" disabled="disabledImpegnoFields" />
+			<s:textfield id="numeroMovimentoGestione" name="movimentoGestione.numero" cssClass="lbTextSmall span2 soloNumeri" required="true" data-overlay="" disabled="disabledImpegnoFields" />
 			<span class="alRight">
 				<label class="radio inline" for="numeroSubMovimentoGestione">Sub</label>
 			</span>
-			<si:plainstringtextfield id="numeroSubMovimentoGestione" name="subMovimentoGestione.numero" cssClass="lbTextSmall span2 soloNumeri" required="true" data-overlay="" disabled="disabledImpegnoFields" />
+			<s:textfield id="numeroSubMovimentoGestione" name="subMovimentoGestione.numero" cssClass="lbTextSmall span2 soloNumeri" required="true" data-overlay="" disabled="disabledImpegnoFields" />
 			<span class="marginLeft2 radio inline collapse_alertGiudata<s:if test="%{disponibileMovimentoGestione == null}"> hide</s:if>" id="containerDisponibileMovimentoGestione">
 				<span class="icon-chevron-right icon-red alRight"></span>
 				Disponibile <span id="SPAN_disponibileMovimentoGestione"><s:property value="disponibileMovimentoGestione"/></span>
@@ -31,8 +31,8 @@ SPDX-License-Identifier: EUPL-1.2
 			</s:if>
 			<s:if test="disabledImpegnoFields">
 				<s:hidden name="movimentoGestione.annoMovimento" />
-				<si:plainstringhidden name="movimentoGestione.numero" />
-				<si:plainstringhidden name="subMovimentoGestione.numero" />
+				<s:hidden name="movimentoGestione.numero" />
+				<s:hidden name="subMovimentoGestione.numero" />
 			</s:if>
 		</div>
 	</div>

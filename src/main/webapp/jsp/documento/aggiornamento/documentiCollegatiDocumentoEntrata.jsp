@@ -24,9 +24,12 @@ SPDX-License-Identifier: EUPL-1.2
 		</tr>
 	</tfoot>
 </table>
+	<%--SIAC-6988 aggiungo il controllo stato SDI --%>
+	<s:if test="!flagStatoSDIInviatoFEL">
 <p>
 	<a class="btn btn-secondary" href="aggiornamentoDocumentoEntrata_redirezioneInserimentoDocumentoSpesa.do">inserisci nuovo documento spesa</a>
 </p>
+</s:if>
 <div class="Border_line"></div>
 <p>
 	<s:include value="/jsp/include/indietro.jsp" />

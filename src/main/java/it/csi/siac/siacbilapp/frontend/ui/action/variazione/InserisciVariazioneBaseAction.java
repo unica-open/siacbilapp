@@ -7,12 +7,13 @@ package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
@@ -27,7 +28,6 @@ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.InserisciVariazioneMo
 import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step2.DefinisciVariazioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoVariazione;
@@ -36,14 +36,13 @@ import it.csi.siac.siacbilser.model.ApplicazioneVariazione;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccommonapp.util.exception.UtenteNonLoggatoException;
-import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Bilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
-import it.csi.siac.siaccorser.model.TipoClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 
 /**
@@ -80,8 +79,7 @@ public abstract class InserisciVariazioneBaseAction extends VariazioneBaseAction
 			cleanInformazioni();
 			
 			//SIAC-6884
-			Account account = sessionHandler.getAccount();
-			boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
+			boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
 			setDecentrato(decentrato);
 			model.setIsDecentrato(decentrato);
 			//END SIAC-6884
@@ -189,11 +187,44 @@ public abstract class InserisciVariazioneBaseAction extends VariazioneBaseAction
 		
 		//SIAC-6884 - è stato appurato che in elenco sono presenti sia settori che direzioni, ma per ogni settore è sicuramente
 		//presente anche la sua direzione di riferimento, pertanto è sufficiente filtrare l'elenco per tipo CDC/CDR (settore/direzione)
+		/*
+		 * SIAC-7633: Se l’utente è profilato a n Settori, ai quali fa capo un’unica Direzione, il sistema valorizzerà in automatico 
+		 * 			il campo con la Direzione; in caso contrario l’utente dovrà selezionare una delle Direzioni proposte tra quelle associate all’utenza. 
+		 * 			Alla variazione decentrata potranno accedere tutti gli utenti decentrati associati alla Direzione indicata sulla variazione che, 
+		 * 			alla conferma del passo 2, non potrà più essere modificata
+		 * */
 		if(model.getIsDecentrato()){
 			List<StrutturaAmministrativoContabile> lista = sessionHandler.getAccount().getStruttureAmministrativeContabili();
+			List<StrutturaAmministrativoContabile> risultato = new ArrayList<StrutturaAmministrativoContabile>();
 			if(lista != null && !lista.isEmpty()){
-				List<StrutturaAmministrativoContabile> elenco = new ArrayList<StrutturaAmministrativoContabile>();
-				if(lista.size() == 1){
+				Map<Integer, StrutturaAmministrativoContabile> uidPadriMap = new HashMap<Integer, StrutturaAmministrativoContabile>();
+                for(StrutturaAmministrativoContabile sac : lista){
+                	if(sac.getTipoClassificatore().getCodice().equals(TipologiaClassificatore.CDC.name())){
+                		if(sac.getUidPadre()!= null && !uidPadriMap.containsKey(sac.getUidPadre())){
+                            StrutturaAmministrativoContabile padre = new StrutturaAmministrativoContabile();
+                            padre.setUid(sac.getUidPadre());
+                            padre.setCodice(sac.getCodicePadre());
+                            padre.setDescrizione(sac.getDescrizionePadre());
+                            risultato.add(padre);
+                            uidPadriMap.put(sac.getUidPadre(), padre);
+                         }
+                	}else if(sac.getTipoClassificatore().getCodice().equals(TipologiaClassificatore.CDR.name())){
+                		if(!uidPadriMap.containsKey(sac.getUid())){
+                			uidPadriMap.put(sac.getUid(), sac);
+                			risultato.add(sac);
+                		}
+                	}
+                    
+                }
+                if(!risultato.isEmpty()){
+	                if(risultato.size() == 1){
+						model.getDefinisci().setDirezioneProponente(risultato.get(0));
+					}else{
+						model.getDefinisci().setListaDirezioni(risultato);
+					}
+				}
+				//il codice commentato appartiene alla SIAC-6884 ed è stato sostituito da quello presente qui sopra per la SIAC-7633
+				/*if(lista.size() == 1){
 					//ho un solo elemento, certamente è una direzione
 					model.getDefinisci().setDirezioneProponente(lista.get(0));
 				}else if(lista.size() > 1){
@@ -207,11 +238,12 @@ public abstract class InserisciVariazioneBaseAction extends VariazioneBaseAction
 						}
 					}
 					model.getDefinisci().setListaDirezioni(elenco);
-				}
+				}*/
 			}
 		}
 		log.debugEnd(methodName, "");
 	}
+	
 	
 	/**
 	 * Carica etichette giunta consiglio.
@@ -458,6 +490,12 @@ public abstract class InserisciVariazioneBaseAction extends VariazioneBaseAction
 		} else {
 			listaTipoVariazione.retainAll(Arrays.asList(TipoVariazione.VARIAZIONE_CODIFICA));
 		}
+		
+		//SIAC-7629 FL 
+		if(!model.getIsDecentrato()){
+			listaTipoVariazione.remove(TipoVariazione.VARIAZIONE_DECENTRATA_LEGGE);
+		}
+		
 		return listaTipoVariazione;
 	}
 	

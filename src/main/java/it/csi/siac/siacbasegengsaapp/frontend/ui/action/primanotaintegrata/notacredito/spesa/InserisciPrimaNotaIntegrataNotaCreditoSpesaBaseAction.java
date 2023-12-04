@@ -90,7 +90,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoSpesaBaseAction<M ex
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoSpesa.class, res));
 		}
 		DocumentoSpesa notaCredito = res.getDocumento();
 		if(notaCredito == null) {
@@ -122,7 +122,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoSpesaBaseAction<M ex
 		
 		if(resDP.hasErrori()) {
 			addErrori(resDP);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(reqDP, resDP));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoSpesa.class, resDP));
 		}
 		if(resDP.getDocumento() == null) {
 			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Documento padre della nota di credito", "uid " + model.getDocumento().getUid()));
@@ -149,7 +149,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoSpesaBaseAction<M ex
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuoteByDocumentoSpesa.class, res));
 		}
 		return res.getSubdocumentiSpesa();
 	}
@@ -169,7 +169,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoSpesaBaseAction<M ex
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaNoteCreditoIvaDocumentoSpesa.class, res));
 		}
 		return res.getSubdocumentoIvaSpesa();
 	}

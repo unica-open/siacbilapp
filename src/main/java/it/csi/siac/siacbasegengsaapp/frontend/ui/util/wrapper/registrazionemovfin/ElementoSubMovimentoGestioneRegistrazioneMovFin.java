@@ -42,7 +42,7 @@ public abstract class ElementoSubMovimentoGestioneRegistrazioneMovFin<S extends 
 	 * @return the domStringSubMovimento
 	 */
 	public String getDomStringSubMovimento() {
-		if(subMovimentoGestione == null || subMovimentoGestione.getNumero() == null) {
+		if(subMovimentoGestione == null || subMovimentoGestione.getNumeroBigDecimal() == null) {
 			// Se il submovimento non e' presente esco
 			return "";
 		}
@@ -51,7 +51,7 @@ public abstract class ElementoSubMovimentoGestioneRegistrazioneMovFin<S extends 
 			.append("<a href=\"#\" rel=\"popover\" data-original-title=\"Descrizione\" data-trigger=\"hover\" data-content=\"")
 			.append(FormatUtils.formatHtmlAttributeString(subMovimentoGestione.getDescrizione()))
 			.append("\">")
-			.append(subMovimentoGestione.getNumero().toPlainString())
+			.append(subMovimentoGestione.getNumeroBigDecimal().toPlainString())
 			.append("</a>")
 			.toString();
 	}

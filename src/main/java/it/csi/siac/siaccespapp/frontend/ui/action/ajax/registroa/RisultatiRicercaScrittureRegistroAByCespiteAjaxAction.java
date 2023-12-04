@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.registroa.RisultatiRicercaRegistroACespiteAjaxModel;
@@ -28,7 +28,7 @@ import it.csi.siac.siacgenser.model.PrimaNota;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaScrittureRegistroAByCespiteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoPrimaNotaRegistroA, RisultatiRicercaRegistroACespiteAjaxModel,
+public class RisultatiRicercaScrittureRegistroAByCespiteAjaxAction extends PagedDataTableAjaxAction<ElementoPrimaNotaRegistroA, RisultatiRicercaRegistroACespiteAjaxModel,
 		PrimaNota, RicercaSinteticaScrittureRegistroAByCespite, RicercaSinteticaScrittureRegistroAByCespiteResponse> {
 
 	/** Per la serializzazione */
@@ -55,12 +55,12 @@ public class RisultatiRicercaScrittureRegistroAByCespiteAjaxAction extends Gener
 	}
 
 	@Override
-	protected ElementoPrimaNotaRegistroA ottieniIstanza(PrimaNota e) throws FrontEndBusinessException {
+	protected ElementoPrimaNotaRegistroA getInstance(PrimaNota e) throws FrontEndBusinessException {
 		return new ElementoPrimaNotaRegistroA(e);
 	}
 
 	@Override
-	protected RicercaSinteticaScrittureRegistroAByCespiteResponse ottieniResponse(RicercaSinteticaScrittureRegistroAByCespite req) {
+	protected RicercaSinteticaScrittureRegistroAByCespiteResponse getResponse(RicercaSinteticaScrittureRegistroAByCespite req) {
 		return cespiteService.ricercaSinteticaScrittureRegistroAByCespite(req);
 	}
 

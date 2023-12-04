@@ -49,7 +49,7 @@ SPDX-License-Identifier: EUPL-1.2
 												</a>
 											</td> -->
 											<td><s:property value="#elqu.numeroQuotaString"/></td>
-											<td><s:property value="#elqu.causaleString" escape="false"/></td>
+											<td><s:property value="#elqu.causaleString" escapeHtml="false"/></td>
 											<td><s:property value="#elqu.dataRegistrazioneString"/></td>
 											<td><s:property value="#elqu.contoFinanziarioInizialeString"/></td>
 											<td><s:property value="#elqu.contoFinanziarioString"/></td>
@@ -118,8 +118,8 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/primaNotaIntegrata/aggiornaDocumento.js"></script>
 
 </body>
 </html>

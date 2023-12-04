@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologia
 
 import java.util.List;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologiarichiesta.TipologiaRichiestaCassaEconomale;
 import it.csi.siac.siaccecser.model.TipoRichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
@@ -35,9 +35,9 @@ public class TipologiaRichiestaCassaEconomaleRimborsoSpese extends TipologiaRich
 		setTipoRichiestaEconomale(tipoRichiestaEconomale);
 		
 		addAbilitazioneRichiestaCassaEconomale("inserisci", "inserisciRimborsoSpeseCassaEconomale.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_RIMBORSO_SPESE_INSERISCI, AzioniConsentite.CASSA_ECONOMALE_RIMBORSO_SPESE_ABILITA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_RIMBORSO_SPESE_INSERISCI, AzioneConsentitaEnum.CASSA_ECONOMALE_RIMBORSO_SPESE_ABILITA);
 		addAbilitazioneRichiestaCassaEconomale("ricerca", "ricercaRimborsoSpeseCassaEconomale.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_RIMBORSO_SPESE_RICERCA, AzioniConsentite.CASSA_ECONOMALE_RIMBORSO_SPESE_ABILITA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_RIMBORSO_SPESE_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_RIMBORSO_SPESE_ABILITA);
 	}
 	
 }

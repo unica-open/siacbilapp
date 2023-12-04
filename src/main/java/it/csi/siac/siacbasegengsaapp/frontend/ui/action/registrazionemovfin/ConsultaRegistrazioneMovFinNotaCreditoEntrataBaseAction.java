@@ -89,7 +89,7 @@ public abstract class ConsultaRegistrazioneMovFinNotaCreditoEntrataBaseAction<M 
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoEntrata.class, res));
 		}
 
 		log.debug(methodName, "Documento ottenuto per uid " + uidDocumento);
@@ -110,7 +110,7 @@ public abstract class ConsultaRegistrazioneMovFinNotaCreditoEntrataBaseAction<M 
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuoteByDocumentoEntrata.class, res));
 		}
 		return res.getSubdocumentiEntrata();
 	}
@@ -130,7 +130,7 @@ public abstract class ConsultaRegistrazioneMovFinNotaCreditoEntrataBaseAction<M 
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaNoteCreditoIvaDocumentoEntrata.class, res));
 		}
 		return res.getSubdocumentoIvaEntrata();
 	}

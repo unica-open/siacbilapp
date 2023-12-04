@@ -41,7 +41,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
     
 <!--     <bean id="cachedServiceExecutor" class="it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor" scope="singleton" lazy-init="true"> -->
-<!-- 		<property name="defaultCacheRollingPolicyEnum" value="${defaultCacheRollingPolicy:DAILY}" />  -->
+<!-- 		<property name="defaultCacheRollingPolicyEnum" value="DAILY" />  -->
 <!--     </bean> -->
 
 </beans>

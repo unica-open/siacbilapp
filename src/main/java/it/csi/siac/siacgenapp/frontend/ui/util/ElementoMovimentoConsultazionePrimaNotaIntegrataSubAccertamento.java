@@ -37,7 +37,7 @@ public class ElementoMovimentoConsultazionePrimaNotaIntegrataSubAccertamento ext
 	@Override
 	public String getNumero() {
 		BigDecimal numeroPadre = movimento.getNumeroAccertamentoPadre();
-		BigDecimal numero = movimento.getNumero();
+		BigDecimal numero = movimento.getNumeroBigDecimal();
 		List<String> components = new ArrayList<String>();
 		
 		if(numeroPadre != null) {

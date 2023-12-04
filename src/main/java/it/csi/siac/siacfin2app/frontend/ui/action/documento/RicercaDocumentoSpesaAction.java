@@ -6,7 +6,8 @@ package it.csi.siac.siacfin2app.frontend.ui.action.documento;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import org.apache.commons.lang3.StringUtils;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -152,10 +153,10 @@ public class RicercaDocumentoSpesaAction extends GenericDocumentoAction<RicercaD
 		model.setCampoFormPrincipalePresente(formValido);
 		
 		//verifica dati movimento
-		boolean movimentoPresente = model.getImpegno().getAnnoMovimento() != 0 || model.getImpegno().getNumero() != null;
+		boolean movimentoPresente = model.getImpegno().getAnnoMovimento() != 0 || model.getImpegno().getNumeroBigDecimal() != null;
 		model.setMovimentoPresente(movimentoPresente);
 		
-		log.debug(methodName, "movimento presente " + movimentoPresente + " - " + model.getImpegno().getAnnoMovimento() + " - " + model.getImpegno().getNumero());
+		log.debug(methodName, "movimento presente " + movimentoPresente + " - " + model.getImpegno().getAnnoMovimento() + " - " + model.getImpegno().getNumeroBigDecimal());
 		
 		// verifica soggetto
 		boolean soggettoPresente = model.getSoggetto().getCodiceSoggetto()!= null && !(model.getSoggetto().getCodiceSoggetto().length()==0);
@@ -174,8 +175,10 @@ public class RicercaDocumentoSpesaAction extends GenericDocumentoAction<RicercaD
 		}
 		model.setElencoPresente(elencoPresente);
 		
+		boolean numeroPredisposizioneValido = model.getPredocumento() != null && StringUtils.isNotBlank(model.getPredocumento().getNumero());
 		
-		checkCondition(formValido || soggettoPresente || provvedimentoPresente || movimentoPresente || elencoPresente, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
+		
+		checkCondition(formValido || soggettoPresente || provvedimentoPresente || movimentoPresente || elencoPresente || numeroPredisposizioneValido, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
 		
 		// Check sul soggetto
 		if(soggettoPresente) {
@@ -200,8 +203,8 @@ public class RicercaDocumentoSpesaAction extends GenericDocumentoAction<RicercaD
 		
 		// Anno Impegno e numero devono essere entrambi presenti o entrambi assenti
 		if(movimentoPresente) {
-			if(((model.getImpegno().getAnnoMovimento() != 0 && Integer.toString(model.getImpegno().getAnnoMovimento()) != null) && model.getImpegno().getNumero() == null) ||
-					((model.getImpegno().getAnnoMovimento() == 0 || Integer.toString(model.getImpegno().getAnnoMovimento()) == null) && model.getImpegno().getNumero() != null)) {
+			if(((model.getImpegno().getAnnoMovimento() != 0 && Integer.toString(model.getImpegno().getAnnoMovimento()) != null) && model.getImpegno().getNumeroBigDecimal() == null) ||
+					((model.getImpegno().getAnnoMovimento() == 0 || Integer.toString(model.getImpegno().getAnnoMovimento()) == null) && model.getImpegno().getNumeroBigDecimal() != null)) {
 				checkCondition(false, ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno e Numero Movimento", ": devono essere entrambi valorizzati o non valorizzati"));
 			} else {
 				// sono entrambi valorizzati, verifico che esista l'impegno

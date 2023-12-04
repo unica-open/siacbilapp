@@ -39,7 +39,7 @@ public class ElementoMovimentoConsultazionePrimaNotaIntegrataModificaMovimentoGe
 	@Override
 	public String getNumero() {
 		MovimentoGestione mg = extractMovimentoGestione();
-		return mg != null && mg.getNumero() != null ? mg.getNumero().toPlainString() : "";
+		return mg != null && mg.getNumeroBigDecimal() != null ? mg.getNumeroBigDecimal().toPlainString() : "";
 	}
 	
 	@Override

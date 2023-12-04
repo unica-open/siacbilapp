@@ -308,7 +308,7 @@ public class GenericCausaleEntrataModel extends GenericCausaleModel {
 		request.setEnte(getEnte());
 		request.setpRicercaAccertamentoK(creaPRicercaAccertamentoK());
 		//carico i sub solo se ho il numero del sub valorizzato
-		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null);
+		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -370,10 +370,10 @@ public class GenericCausaleEntrataModel extends GenericCausaleModel {
 		if(getMovimentoGestione() != null) {
 			utility.setAnnoEsercizio(getAnnoEsercizioInt());
 			utility.setAnnoAccertamento(getMovimentoGestione().getAnnoMovimento());
-			utility.setNumeroAccertamento(getMovimentoGestione().getNumero());
+			utility.setNumeroAccertamento(getMovimentoGestione().getNumeroBigDecimal());
 		}
 		if(getSubMovimentoGestione() != null) {
-			utility.setNumeroSubDaCercare(getSubMovimentoGestione().getNumero());
+			utility.setNumeroSubDaCercare(getSubMovimentoGestione().getNumeroBigDecimal());
 		}
 		
 		return utility;

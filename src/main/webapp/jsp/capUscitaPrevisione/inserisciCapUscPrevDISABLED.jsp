@@ -84,6 +84,27 @@ SPDX-License-Identifier: EUPL-1.2
 													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
 											</div>
 										</div>
+										<!-- task-55 -->
+										<div id="containerFlagCapitoloDaNonInserireA1" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+											<div class="control-group" id="capitoloDaNonInserire">
+												<label for="flagCapitoloDaNonInserireA1" class="control-label">Capitolo da non inserire nell'allegato A1 *
+													<!-- task-55 -->
+													<a class="tooltip-test" title="Risorse Accantonate per Risultato di Amministrazione - Allegato a1" href="#">
+														<i class="icon-info-sign">&nbsp;
+															<span class="nascosto">Risorse Accantonate per Risultato di Amministrazione - Allegato a1</span>
+														</i>
+													</a>
+												</label>
+												<div class="controls">
+													<label class="radio inline">
+														<s:radio theme="simple" name="capitoloUscitaPrevisione.flagNonInserireAllegatoA1" list="#{true:'Sì'}" disabled="true"/>
+													</label>
+													<label class="radio inline"> 
+														<s:radio theme="simple" name="capitoloUscitaPrevisione.flagNonInserireAllegatoA1" list="#{false:'No'}" disabled="true"/>
+													</label>
+												</div>
+											</div>
+										</div>
 										<div class="control-group">
 											<label for="soggetto5" class="control-label">Programma *
 												<a class="tooltip-test" title="selezionare prima la Missione" href="#">
@@ -179,6 +200,23 @@ SPDX-License-Identifier: EUPL-1.2
 													listValue="%{codice + '-' + descrizione}" disabled="true" headerKey="0" headerValue="" />
 											</div>
 										</div>
+										
+										<div id="containerRisorsaAccantonata" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+											<div class="control-group">
+												<label for="risorsaAccantonata" class="control-label">Risorsa accantonata * </label>
+												<div class="controls">
+													<select id="risorsaAccantonata" name="risorsaAccantonata.uid"  disabled class="span10">
+														<option value="0" <s:if test="%{risorsaAccantonata == null || risorsaAccantonata.uid == 0}">selected</s:if> ></option>
+														<s:iterator value="listaRisorsaAccantonata" var="dd">
+															<option data-codice="<s:property value="#dd.codice" />" value="<s:property value="#dd.uid"/>" <s:if test="%{risorsaAccantonata != null && risorsaAccantonata.uid == #dd.uid}">selected</s:if>>
+																<s:property value="%{#dd.codice + ' - ' + #dd.descrizione}"/>
+															</option>
+														</s:iterator>
+													</select>
+												</div>
+											</div>
+										</div>
+										
 										<div class="control-group">
 											<label for="flagImpegnabile" class="control-label">Impegnabile</label>
 											<div class="controls">
@@ -415,7 +453,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 										<!--Prima di aggiungere stanziamenti, vai su aggiorna-->
 										<%--
-										<s:a action="aggiornaComponenteImportoCapitolo" cssClass="btn btn-primary pull-right">
+										<s:a action="gestioneComponenteImportoCapitoloNelCapitolo" cssClass="btn btn-primary pull-right">
 											<s:param name="uidCapitolo" value="%{capitoloUscitaPrevisione.uid}"/>
 											<s:param name="fromPage">INSERT</s:param>
 											<!--SIAC 6884 passo il valore del fondino-->
@@ -453,10 +491,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloUscita.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloUscitaPrevisione/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloUscita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloUscitaPrevisione/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attoDiLegge/attoDiLegge.js"></script>
 </body>
 </html>

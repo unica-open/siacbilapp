@@ -27,7 +27,8 @@ public class VariazioneDataAdapter extends EntitaConsultabileDataAdapter {
 						new PlainNumberDataInfo("Variazione", "variazione_num"),
 						new SimpleDataInfo("Applicazione", "variazione_applicazione"),
 						new BaseDataInfo("Tipo","{0}-{1}" ,"variazione_tipo_code", "variazione_tipo_desc"),
-						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno", "attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc"),
+						//SIAC-8188 "attoamm_oggetto", "attoal_causale"
+						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno", "attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc", "attoamm_oggetto", "attoal_causale"),
 						new SimpleDataInfo("Stato", "variazione_stato_tipo_desc")
 						),
 				asList(

@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.registrocomunicazionipcc;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -112,7 +112,7 @@ public class ConsultaRegistroComunicazioniPCCSubdocumentoSpesaAction extends Gen
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 		}
 		
 		log.debug(methodName, "Caricamento codifiche per TipoOperazionePCC, StatoDebito, CausalePCC completata");
@@ -159,7 +159,7 @@ public class ConsultaRegistroComunicazioniPCCSubdocumentoSpesaAction extends Gen
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaRegistriComunicazioniPCCSubdocumento.class, response));
 		}
 		
 		log.debug(methodName, "Registri collegati al subdocumento " + model.getSubdocumentoSpesa().getUid() + " caricati: presenti #" + response.getCardinalitaComplessiva());
@@ -183,7 +183,7 @@ public class ConsultaRegistroComunicazioniPCCSubdocumentoSpesaAction extends Gen
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioQuotaSpesa.class, response));
 		}
 		
 		log.debug(methodName, "Ottenuto dettaglio subdocumento " + model.getSubdocumentoSpesa().getUid());
@@ -233,7 +233,7 @@ public class ConsultaRegistroComunicazioniPCCSubdocumentoSpesaAction extends Gen
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				log.debug(methodName, createErrorInServiceInvocationString(request, response));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 				addErrori(response);
 				return INPUT;
 			}
@@ -278,7 +278,7 @@ public class ConsultaRegistroComunicazioniPCCSubdocumentoSpesaAction extends Gen
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisciRegistroComunicazioniPCC.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -343,7 +343,7 @@ public class ConsultaRegistroComunicazioniPCCSubdocumentoSpesaAction extends Gen
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaRegistroComunicazioniPCC.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -394,7 +394,7 @@ public class ConsultaRegistroComunicazioniPCCSubdocumentoSpesaAction extends Gen
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaRegistroComunicazioniPCC.class, response));
 			addErrori(response);
 			return INPUT;
 		}

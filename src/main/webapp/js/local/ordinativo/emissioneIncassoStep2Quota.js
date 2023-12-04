@@ -4,16 +4,26 @@
 */
 !function($) {
     "use strict";
-    var $table = $("#tabellaQuote").overlay({rebind: true, loader: true});
+    //SIAC-8200 rebind: false
+    var $table = $("#tabellaQuote").overlay({rebind: false, loader: true})
     var disabled = !!$("#DISABLED").length;
     var selectedDatas = {};
     var isOverlayIn = false;
+	var enteGestioneContiVincolati = $('#enteGestioneContiVincolati') && $('#enteGestioneContiVincolati').length > 0;
     
+
+	//SIAC-5933
+	function impostaDefaultConto(){
+		$('#contoTesoreria option').filter(function() {
+            return /^0000100/.test($(this).html());
+        }).attr('selected', 'selected');
+	}
     /**
      * gestisce l'eventuale disabilitazione della select
      * */
     function gestisciIdsElaborati(){
-    	var $table = $('#tabellaQuote');
+    	//SIAC-8200 $table e' gia' definita
+//    	var $table = $('#tabellaQuote');
     	$table.overlay('show');
     	return $.postJSON('emissioneOrdinativiIncassoQuota_ottieniIdsElementiElaborati.do', {}).then(function(data){
     		var uidsElaborati = data.uidsElaborati;
@@ -150,6 +160,39 @@
         ricalcolaTotali();
     }
 
+	//SIAC-8784
+	function gestisciContiVincolati(checkedNum, idsSubdocumenti){
+		var selectContoTesoreria = $('#contoTesoreria');
+		if(!enteGestioneContiVincolati){
+			$("#pulsanteEmissione")[checkedNum ? "show" : "hide"]();
+			return;	
+		}
+		
+		 if(idsSubdocumenti.length === 0){
+			// SIAC-5933
+	        impostaDefaultConto();
+        	$("#pulsanteEmissione")[checkedNum ? "show" : "hide"]();
+			return;
+        }
+		selectContoTesoreria.overlay('show');
+		return $.postJSON('emissioneOrdinativiIncassoQuota_ottieniUidContoDaSelezionare.do', qualify({'uidsSubdocumentiSelezionati' : idsSubdocumenti})).then(function(data){
+			var uidConto;
+			if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
+				selectContoTesoreria.overlay('hide');
+				return;
+			}
+			uidConto = data.uidContoDaSelezionare;
+			if(uidConto){
+				selectContoTesoreria.val(uidConto).change();	
+			}
+			
+			$("#pulsanteEmissione")[checkedNum ? "show" : "hide"]();
+			selectContoTesoreria.overlay('hide');
+		});
+		//andrebbe fatto per un solo subdoc, vediamo
+		//$('#pulsanteControlloDisponibilitaConto')[checkedNum /*&& checkedNume===1 */ && $('#contoTesoreria').find('option:selected').data('vincolato') ? "show" : "hide"]();
+	}
+
     /**
      * Ricalcolo dei totali.
      */
@@ -158,17 +201,24 @@
         var checkedNum = 0;
         var i;
         var data;
+		var idsSubdocumenti = [];
         for(i in selectedDatas) {
             if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
                 checkedNum++;
                 data = selectedDatas[i].data;
+				idsSubdocumenti.push(i);
                 if(data) {
                     totale += data.domStringImporto;
                 }
             }
         }
         $("#totaleQuoteSelezionate").html(totale.formatMoney());
-        $("#pulsanteEmissione")[checkedNum ? "show" : "hide"]();
+		//SIAC-8776
+		gestisciContiVincolati(checkedNum, idsSubdocumenti);
+        //$("#pulsanteEmissione")[checkedNum ? "show" : "hide"]();
+		//andrebbe fatto numero per un solo numero, vediamo
+		//$('#pulsanteControlloDisponibilitaConto')[checkedNum /*&& checkedNume===1 */ && contoTesoreriaVincolato? "show" : "hide"]();
+		
         $("#confermaEmissioneNumeroSpan").html(checkedNum + (checkedNum === 1 ? " ordinativo" : " ordinativi"));
         $("#confermaEmissioneImportoSpan").html(totale.formatMoney());
     }
@@ -202,6 +252,46 @@
         }
     }
 
+/**	
+     * Conferma dell'emissione.
+     */
+    function controlloDisponibilitaSottoConto() {
+        var idsSubdocumenti = [];
+        var idx = 0;
+        var i;
+        var pulsante = $('#pulsanteControlloDisponibilitaConto').overlay({usePosition: true});
+        for(i in selectedDatas) {
+            if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
+            	idsSubdocumenti.push(i);
+                idx++;
+            }
+        }
+        pulsante.overlay('show');
+        if(idsSubdocumenti.length === 0){
+        	return;
+        }
+        return $.postJSON('emissioneOrdinativiIncassoQuota_controllaDisponibilitaSottoContoVincolato.do', 
+		qualify({'idsSubdocumentiEntrata' : idsSubdocumenti, 'contoTesoreria.uid' : $('#contoTesoreria').val()})).then(function(data){
+        	if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))){
+        		return;
+        	}
+			//ALTERNATIVA
+			//impostaDatiNegliAlert(data.messaggi, $('#INFORMAZIONI'));
+			if(data.messaggi){
+				var messaggio = "";
+				jQuery.each(data.messaggi, function(key, value) {
+		            // Se ho un oggetto con codice e descrizione, lo spezzo; in caso contrario utilizzo direttamente il valore in entrata
+		            if (this.codice !== undefined) {
+		               messaggio = messaggio + this.codice + " - " + this.descrizione + "</br>"
+		            } 
+		        });
+				bootboxAlert(messaggio, "Disponibilita sottoconto", "dialogWarn");	
+			}
+        	
+        		
+        }).always(pulsante.overlay.bind(pulsante, 'hide'));
+    }
+
     $(function() {
         var annoDatepicker = parseInt($("#HIDDEN_anno_datepicker").val(), 10);
         var now = new Date();
@@ -219,12 +309,27 @@
         //SIAC-6029
         if(!disabled){
 	        // SIAC-5933
-	        $('#contoTesoreria option').filter(function() {
-	            return /^0000100/.test($(this).html());
-	        }).attr('selected', 'selected');
+	        impostaDefaultConto();
 	        $("#flagDaTrasmettere").substituteHandler("click", handleFlagDaTrasmettere);
         }
         
+		//SIAC-8017-CMTO
+		$('#pulsanteControlloDisponibilitaConto').substituteHandler('click', controlloDisponibilitaSottoConto);
+		$('#contoTesoreria').substituteHandler('change', function(){
+			var contoTesoreriaVincolato = $('#contoTesoreria').find('option:selected').data('vincolato');
+			var i;
+			if(!contoTesoreriaVincolato){
+				$('#pulsanteControlloDisponibilitaConto').hide();
+				return;
+			}
+			for(i in selectedDatas) {
+           		if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
+                	$('#pulsanteControlloDisponibilitaConto').show();
+					return;
+            	}
+        	}
+			$('#pulsanteControlloDisponibilitaConto').hide();
+		});
     });
     
     

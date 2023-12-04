@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegratamanuale;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegratamanuale.ConsultaPrimaNotaIntegrataManualeBaseModel;
@@ -15,7 +15,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioRe
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
@@ -101,7 +101,7 @@ public class ConsultaPrimaNotaIntegrataManualeBaseAction<M extends ConsultaPrima
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(req, res);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioPrimaNota.class, res);
 			log.info(methodName, errorMsg);
 			addErrori(res);
 			throw new WebServiceInvocationFailureException(errorMsg);
@@ -164,7 +164,7 @@ public class ConsultaPrimaNotaIntegrataManualeBaseAction<M extends ConsultaPrima
 		if(res.hasErrori()) {
 			log.info(methodName, "Errori nella ricerca dell'accertamento");
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, res));
 		}
 		if(res.getAccertamento() == null) {
 			log.info(methodName, "Accertamento non presente");
@@ -202,7 +202,7 @@ public class ConsultaPrimaNotaIntegrataManualeBaseAction<M extends ConsultaPrima
 		if(res.hasErrori()) {
 			log.info(methodName, "Errori nella ricerca dell'impegno");
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, res));
 		}
 		if(res.getImpegno() == null) {
 			log.info(methodName, "Impegno non presente");

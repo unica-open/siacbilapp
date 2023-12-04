@@ -55,7 +55,7 @@ public class CassaEconomaleBaseAction<M extends CassaEconomaleBaseModel> extends
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSinteticaCassaEconomale.class, response));
 		}
 		log.debug(methodName, "Ottenute casse economali dal servizio: " + response.getCardinalitaComplessiva());
 		
@@ -91,7 +91,7 @@ public class CassaEconomaleBaseAction<M extends CassaEconomaleBaseModel> extends
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String msg = createErrorInServiceInvocationString(request, response);
+			String msg = createErrorInServiceInvocationString(CalcolaDisponibilitaCassaEconomale.class, response);
 			log.info(methodName, msg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(msg);

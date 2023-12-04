@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siaccespser.frontend.webservice.msg.InserisciAnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.InserisciPrimeNoteAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.AnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.DettaglioAnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacgenser.model.OperazioneSegnoConto;
 
@@ -150,7 +150,7 @@ public class InserisciAmmortamentoAnnuoModel extends GenericBilancioModel {
 	 * @return the ricerca sintetica dettaglio anteprima ammortamento annuo cespite
 	 */
 	public RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite creaRequestRicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite() {
-		ModelDetail[] modelDetailsDettagliAnteprima = new ModelDetail[] {DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.Segno, DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.Conto};
+		ModelDetailEnum[] modelDetailsDettagliAnteprima = new ModelDetailEnum[] {DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.Segno, DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.Conto};
 		return creaRequestRicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite(creaParametriPaginazione(), modelDetailsDettagliAnteprima);
 	}
 	
@@ -160,7 +160,7 @@ public class InserisciAmmortamentoAnnuoModel extends GenericBilancioModel {
 	 * @return the ricerca sintetica dettaglio anteprima ammortamento annuo cespite
 	 */
 	public RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite creaRequestRicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespitePerAnteprima() {
-		ModelDetail[] modelDetailsDettagliAnteprima = new ModelDetail[] {DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.AnteprimaAmmortamento};
+		ModelDetailEnum[] modelDetailsDettagliAnteprima = new ModelDetailEnum[] {DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.AnteprimaAmmortamento};
 		return creaRequestRicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite(new ParametriPaginazione(0, 1), modelDetailsDettagliAnteprima);
 	}
 
@@ -169,7 +169,7 @@ public class InserisciAmmortamentoAnnuoModel extends GenericBilancioModel {
 	 * @param modelDetailsDettagliAnteprima
 	 * @return
 	 */
-	private RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite creaRequestRicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite(ParametriPaginazione parametriPaginazione, ModelDetail[] modelDetailsDettagliAnteprima) {
+	private RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite creaRequestRicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite(ParametriPaginazione parametriPaginazione, ModelDetailEnum[] modelDetailsDettagliAnteprima) {
 		RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite req = creaRequest(RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite.class);
 		req.setParametriPaginazione(parametriPaginazione);
 		AnteprimaAmmortamentoAnnuoCespite anteprima = new AnteprimaAmmortamentoAnnuoCespite();

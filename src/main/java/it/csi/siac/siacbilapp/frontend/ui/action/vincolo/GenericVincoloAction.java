@@ -37,9 +37,10 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.GenereVincolo;
+import it.csi.siac.siacbilser.model.RisorsaVincolata;
 import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * Action astratta per il Vincolo.
@@ -81,7 +82,7 @@ public class GenericVincoloAction<M extends GenericVincoloModel> extends Generic
 			// Controllo gli errori
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String msg = createErrorInServiceInvocationString(req, res);
+				String msg = createErrorInServiceInvocationString(RicercaCodifiche.class, res);
 				log.info(methodName, msg);
 				throw new WebServiceInvocationFailureException(msg);
 			}
@@ -90,6 +91,32 @@ public class GenericVincoloAction<M extends GenericVincoloModel> extends Generic
 		}
 		model.setListaGenereVincolo(listaGenereVincolo);
 	}
+	
+	//SIAC-7129
+	/**
+	 * Caricamento della risorsa vincolata
+	 * @throws WebServiceInvocationFailureException in caso di fallimento nell'invocazione del servizio
+	 */
+	protected void caricaRisorsaVincolata() throws WebServiceInvocationFailureException {
+		final String methodName = "caricaRisorsaVincolata";
+		List<RisorsaVincolata> listaRisorsaVincolata = sessionHandler.getParametro(BilSessionParameter.RISORSA_VINCOLATA);
+		if(listaRisorsaVincolata == null) {
+			RicercaCodifiche req = model.creaRequestRicercaCodifiche(RisorsaVincolata.class);
+			RicercaCodificheResponse res = codificheService.ricercaCodifiche(req);
+			
+			// Controllo gli errori
+			if(res.hasErrori()) {
+				//si sono verificati degli errori: esco.
+				String msg = createErrorInServiceInvocationString(RicercaCodifiche.class, res);
+				log.info(methodName, msg);
+				throw new WebServiceInvocationFailureException(msg);
+			}
+			listaRisorsaVincolata = res.getCodifiche(RisorsaVincolata.class);
+			sessionHandler.setParametro(BilSessionParameter.RISORSA_VINCOLATA, listaRisorsaVincolata);
+		}
+		model.setListaRisorsaVincolata(listaRisorsaVincolata);
+	}
+	//
 	
 	/**
 	 * Effettua una ricerca per i capitoli di Entrata e pone i risultati all'interno della lista dei capitoli di entrata.

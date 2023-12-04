@@ -4,19 +4,19 @@
 */
 package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.anticipospesepermissione;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospesepermissione.InserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRendicontoRichiesta;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRendicontoRichiestaResponse;
 import it.csi.siac.siaccecser.model.RendicontoRichiesta;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 
@@ -78,7 +78,7 @@ public class InserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction ext
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceRendicontoRichiesta.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -147,7 +147,7 @@ public class InserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction ext
 	}
 	
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA};
 	}
 }

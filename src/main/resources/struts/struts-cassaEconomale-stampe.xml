@@ -6,7 +6,7 @@ SPDX-License-Identifier: EUPL-1.2
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="cassaEconomaleStampe" extends="capitoloDefault" namespace="/">
-		<action name="cassaEconomaleStampe" class="genericStampaCECAction">
+		<action name="cassaEconomaleStampe" class="stampaCECHomeAction">
 			<result name="input">/jsp/cassaEconomale/stampe/elencoStampe.jsp</result>
 			<result name="success">/jsp/cassaEconomale/stampe/elencoStampe.jsp</result>
 		</action>

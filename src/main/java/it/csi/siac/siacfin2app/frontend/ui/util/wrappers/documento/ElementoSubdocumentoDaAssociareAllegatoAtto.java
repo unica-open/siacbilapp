@@ -175,13 +175,13 @@ public abstract class ElementoSubdocumentoDaAssociareAllegatoAtto<MG extends Mov
 				.append("/");
 		}
 		sb.append(movimentoGestione.getAnnoMovimento());
-		if(movimentoGestione.getNumero() != null) {
+		if(movimentoGestione.getNumeroBigDecimal() != null) {
 			sb.append("/")
-				.append(movimentoGestione.getNumero().toPlainString());
+				.append(movimentoGestione.getNumeroBigDecimal().toPlainString());
 		}
-		if(submovimentoGestione != null && submovimentoGestione.getNumero() != null) {
+		if(submovimentoGestione != null && submovimentoGestione.getNumeroBigDecimal() != null) {
 			sb.append("-")
-				.append(submovimentoGestione.getNumero().toPlainString());
+				.append(submovimentoGestione.getNumeroBigDecimal().toPlainString());
 		}
 		
 		return sb.toString();

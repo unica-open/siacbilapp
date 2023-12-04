@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.model.conti;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacgenser.model.Conto;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacgenser.model.Conto;
  * @version 1.0.0 - 10/12/2014
  *
  */
-public class RisultatiRicercaPianoDeiContiAjaxModel extends GenericRisultatiRicercaAjaxModel<Conto> {
+public class RisultatiRicercaPianoDeiContiAjaxModel extends PagedDataTableAjaxModel<Conto> {
 	
 	private static final long serialVersionUID = -3121692694523561518L;
 	

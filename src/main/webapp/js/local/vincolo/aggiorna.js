@@ -230,6 +230,8 @@ var Vincolo = (function() {
 
                 impostaDataTableCapitoli("capitoli" + tipoCapitolo, data.listaCapitoli, tipoCapitolo);
                 $("#fieldsetCapitolo" + tipoCapitolo).slideDown();
+                // var idTabella = "capitoli" + tipoCapitolo;
+                // $('#'+idTabella+' > tbody').attr('id',tipoCapitolo);
             }
         ).always(
             function() {
@@ -299,13 +301,28 @@ var Vincolo = (function() {
      * @param tipoCapitolo {String} il tipo di capitolo da impostare
      */
     exports.eliminaCapitolo = function(event, tipoCapitolo) {
-        var uidCapitolo = $("input[name='capitolo.uid']:checked").val();
+        var $ojbCapitolo = $("input[name='capitolo.uid']:checked");
+        var uidCapitolo = $ojbCapitolo.val();
         if(uidCapitolo === undefined) {
             impostaDatiNegliAlert(["Necessario selezionare il capitolo da disassociare"], $("#ERRORI"));
             event.preventDefault();
             event.stopPropagation();
             return;
         }
+
+        //SIAC-7524
+        var idTabella = "#".concat('','capitoli').concat('',tipoCapitolo).concat('','NelVincolo');
+        var tabella = $(idTabella);
+        var $capitoloSelezionato = $("input[name='capitolo.uid']:checked").closest('table', idTabella);
+        var tipoCapitoloSelezionato = $capitoloSelezionato['0'].id === tabella['0'].id;
+
+        if(!tipoCapitoloSelezionato){
+            impostaDatiNegliAlert(["Nessun capitolo selezionato per la tipologia selezionata"], $("#ERRORI"));
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+        //
 
         $("#HIDDEN_tipoCapitolo").val(tipoCapitolo);
         $("#HIDDEN_uidCapitolo").val(uidCapitolo);

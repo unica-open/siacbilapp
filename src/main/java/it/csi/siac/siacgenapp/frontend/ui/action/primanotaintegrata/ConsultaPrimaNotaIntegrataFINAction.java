@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgenapp.frontend.ui.action.primanotaintegrata;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -12,7 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.ConsultaPrimaNotaIntegrataBaseAction;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgenapp.frontend.ui.model.primanotaintegrata.ConsultaPrimaNotaIntegrataFINModel;
 
 /**
@@ -37,8 +37,8 @@ public class ConsultaPrimaNotaIntegrataFINAction extends ConsultaPrimaNotaIntegr
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaValidaPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_VALIDA_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaValidaPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_VALIDA_GEN;
 	}
 
 	@Override

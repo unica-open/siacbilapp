@@ -45,7 +45,7 @@ SPDX-License-Identifier: EUPL-1.2
 										<tr>
 											
 											<td><s:property value="#elqu.numeroQuotaString"/></td>
-											<td><s:property value="#elqu.causaleString" escape="false"/></td>
+											<td><s:property value="#elqu.causaleString" escapeHtml="false"/></td>
 											<td><s:property value="#elqu.dataRegistrazioneString"/></td>
 											<td><s:property value="#elqu.contoFinanziarioInizialeString"/></td>
 											<td><s:property value="#elqu.contoFinanziarioString"/></td>
@@ -104,8 +104,8 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/primaNotaIntegrata/rateiRisconti.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/primaNotaIntegrata/gestioneRateiRiscontiDocumento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/rateiRisconti.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestioneRateiRiscontiDocumento.js"></script>
 
 </body>
 </html>

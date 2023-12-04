@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.tipoonere;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.tipoonere.ElementoTipoOnere;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.tipoonere.ElementoTipoO
  * @version 1.0.0 - 04/11/2014
  *
  */
-public class RisultatiRicercaTipoOnereAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoTipoOnere> {
+public class RisultatiRicercaTipoOnereAjaxModel extends PagedDataTableAjaxModel<ElementoTipoOnere> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -5266875856516021682L;

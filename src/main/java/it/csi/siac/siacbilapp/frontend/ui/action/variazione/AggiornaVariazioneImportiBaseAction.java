@@ -16,18 +16,16 @@ import javax.xml.bind.JAXB;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException.Level;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazioneFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione.ElementoStatoOperativoVariazioneFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.TipoComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaVariazioneBilancioResponse;
@@ -46,12 +44,15 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaTipoCompon
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancioResponse;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReportResponse;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
 import it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService;
@@ -68,6 +69,7 @@ import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 
 /**
@@ -128,7 +130,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		
 		//SIAC-6884
 		boolean regionePiemonte =  isRegionePiemonte(gestioneLivelli);
-		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
+		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
 		
 		model.setDecentrato(decentrato);
 		
@@ -174,7 +176,8 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 			AzioneRichiesta azioneRichiesta = sessionHandler.getAzioneRichiesta();
 			log.debug(methodName, "Injetto le variabili del processo");
 			//injetta uidVariazione, idAttivita, invioOrganoAmministrativo, invioConsiglio
-			model.injettaVariabiliProcesso(azioneRichiesta);
+			model.impostaDatiNelModel(azioneRichiesta);
+//			model.injettaVariabiliProcesso(azioneRichiesta);
 		}
 		
 
@@ -190,10 +193,14 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioAnagraficaVariazioneBilancio.class, response));
 			addErrori(response);
 			throwExceptionFromErrori(model.getErrori());
 		}
+		
+		//SIAC-7530
+		controllaStatoOperativoVariazione(response.getVariazioneImportoCapitolo());
+		//
 
 		model.popolaModel(response.getVariazioneImportoCapitolo());
 
@@ -231,7 +238,8 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		model.getSpecificaUEB().setRientroDaInserimentoNuovaUEB(nuovaUEB);
 		sessionHandler.setParametro(BilSessionParameter.INSERIMENTO_NUOVA_UEB, null);
 
-		if(!model.getFromInserimento() && model.isDecentrato() && model.isVariazioneDecentrataAperta() && model.getDataChiusuraProposta() != null) {
+		//SIAC-8332: controllare
+		if(!model.getFromInserimento() && model.isDecentrato() && model.getIsDecentrata() && model.getDataChiusuraProposta() != null) {
 			model.setAnnullaAbilitato(Boolean.FALSE);
 			model.setConcludiAbilitato(Boolean.FALSE);
 			model.setSalvaAbilitato(Boolean.FALSE);
@@ -261,7 +269,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 			addErrori(res);
 			return INPUT;
 		}
-		
+		addInformazione(new Informazione("CRU_CON_2001", "L'operazione di salvataggio e' stata correttamente avviata. &Egrave; possibile rimanere sulla pagina oppure tornare alla home:  il risultato sar&agrave; disponibile dal cruscotto delle operazioni asincrone."));
 		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
 		return SUCCESS;
 		
@@ -310,7 +318,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 			return INPUT;
 		}
 		
-		log.debug(methodName, "Il servizio asincrono ha ancora risposto.");
+		log.debug(methodName, "Il servizio asincrono ha risposto.");
 		model.setIsAsyncResponsePresent(Boolean.TRUE);
 		
 		
@@ -318,6 +326,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		if (res.hasErrori()) {
 			log.debug(methodName, "Invocazione terminata con fallimento");
 			addErrori(res);
+			setErroriInSessionePerActionSuccessiva();
 			return INPUT;
 		}
 		
@@ -335,7 +344,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		}
 		
 		log.debug(methodName, "Invocazione terminata con successo");
-	    addInformazione(new Informazione("COR_INF_0006", "Operazione effettuata correttamente"));
+	    addInformazione(new Informazione("COR_INF_0006", "Operazione di salvataggio effettuata correttamente."));
 	    
 		if(hasMessaggi()) {
 			setMessaggiInSessionePerActionSuccessiva();
@@ -356,12 +365,15 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		final String methodName = "annulla";
 		
 		AggiornaAnagraficaVariazioneBilancio req = null;
+		
+		//SIAC-8332
+		req = model.creaRequestAggiornaAnagraficaVariazioneBilancioPerAnnullamento();
 				
-		if(model.isDecentrato()){
-			req = model.creaRequestAggiornaAnagraficaVariazioneBilancioPerAnnullamentoDecentrato();
-		}else{
-			req = model.creaRequestAggiornaAnagraficaVariazioneBilancioPerAnnullamento();
-		}
+//		if(model.isDecentrato()){
+//			req = model.creaRequestAggiornaAnagraficaVariazioneBilancioPerAnnullamentoDecentrato();
+//		}else{
+//			req = model.creaRequestAggiornaAnagraficaVariazioneBilancioPerAnnullamento();
+//		}
 		
 		
 		
@@ -373,7 +385,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 			addErrori(res);
 			return SUCCESS;
 		}
-		
+		addInformazione(new Informazione("CRU_CON_2001", "L'operazione di annullamento e' stata correttamente avviata."));
 		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
 		
 		model.setAnnullaAbilitato(Boolean.FALSE);
@@ -435,6 +447,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		if (res.hasErrori()) {
 			log.debug(methodName, "Invocazione terminata con fallimento");
 			addErrori(res);
+			setErroriInSessionePerActionSuccessiva();
 			return SUCCESS;
 		}
 		
@@ -473,8 +486,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		//3403
 		
 		AggiornaAnagraficaVariazioneBilancio req = model.creaRequestAggiornaAnagraficaVariazioneBilancioPerConclusione();
-		
-		
+			
 		
 		AsyncServiceResponse res = variazioneDiBilancioService.aggiornaAnagraficaVariazioneBilancioAsync(wrapRequestToAsync(req));
 		log.debug(methodName, "Operazione asincrona avviata. IdOperazioneAsincrona: "+ res.getIdOperazioneAsincrona());
@@ -484,6 +496,10 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 			addErrori(res);
 			return SUCCESS;
 		}
+		
+//		model.addMessaggio(null);
+		//SIAC-8261
+		addInformazione(new Informazione("CRU_CON_2001", "L'operazione di aggiornamento e' stata correttamente avviata. &Egrave; possibile rimanere sulla pagina oppure tornare alla home:  il risultato sar&agrave; disponibile dal cruscotto delle operazioni asincrone o ricercando la variazione."));
 		
 		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
 
@@ -541,13 +557,13 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		Boolean richiediConfermaQuadraturaCassa = res.verificatoErrore(ErroreBil.QUADRATURA_NON_CORRETTA.getCodice()) && Boolean.TRUE.equals(res.getIsQuadraturaCorrettaStanziamento()) && Boolean.FALSE.equals(res.getIsQuadraturaCorrettaStanziamentoCassa()) && StringUtils.isBlank(model.getSaltaCheckStanziamentoCassa()); //model.getSaltaCheckStanziamentoCassa()); 
 		model.setRichiediConfermaQuadratura(richiediConfermaQuadraturaCassa);
 		
-		//SIAC-4737
+		//SIAC-4737 e SIAC-3597
 		boolean richiediConfermaMancanzaProvvedimentoVariazioneBilancio = res.isFallimento() && Boolean.FALSE.equals(res.getIsAttoAmministrativoVariazioneDiBilancioPresenteSeNecessario()) && !model.isSaltaCheckProvvedimentoVariazioneBilancio();
 		model.setRichiediConfermaMancanzaProvvedimentoVariazioneBilancio(richiediConfermaMancanzaProvvedimentoVariazioneBilancio);
 		
 		if (res.isFallimento() || res.hasErrori()) {
 			log.debug(methodName, "Invocazione terminata con fallimento");
-						
+			//SIAC-3597			
 			for(Errore e : res.getErrori()){
 				if(Boolean.TRUE.equals(richiediConfermaQuadraturaCassa) && ErroreBil.QUADRATURA_NON_CORRETTA.getCodice().equals(e.getCodice())){
 					continue;
@@ -561,18 +577,20 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		
 		
 		log.debug(methodName, "Invocazione terminata con successo");
-	    addInformazione(new Informazione("COR_INF_0006", "Operazione effettuata correttamente"));
 		 //*/
-	    
+
+		if(hasErrori()) {
+			setErroriInSessionePerActionSuccessiva();			
+		}else {
+			addInformazione(new Informazione("COR_INF_0006", "Operazione di aggiornamento &egrave; stata completata correttamente"));
+		}
+		
 	    if(hasMessaggi()) {
 			setMessaggiInSessionePerActionSuccessiva();
 		}
+		
 		if(hasInformazioni()){
 			setInformazioniInSessionePerActionSuccessiva();			
-		}
-		
-		if(hasErrori()) {
-			setErroriInSessionePerActionSuccessiva();			
 		}
 		
 //		model.popolaStringaProvvedimento(res.getVariazioneImportoCapitolo().getAttoAmministrativo(), "provvedimento variazione di PEG");
@@ -812,7 +830,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse response = variazioneDiBilancioService.ricercaDettagliVariazioneImportoCapitoloNellaVariazione(request);
 		
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettagliVariazioneImportoCapitoloNellaVariazione.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -965,8 +983,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		final String methodName = "annullaCapitolo";
 		
 		//SIAC-6884
-		Account account = sessionHandler.getAccount();
-		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
+		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
 		
 		if(decentrato){			
 			log.debug(methodName, "Operatore decentrato: operazione non consentita");
@@ -1054,8 +1071,8 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 	public String download() {
 		final String methodName = "download";
 		
-		StampaExcelVariazioneDiBilancio req = model.creaRequestStampaExcelVariazioneDiBilancio();
-		StampaExcelVariazioneDiBilancioResponse res = variazioneDiBilancioService.stampaExcelVariazioneDiBilancio(req);
+		VariazioneBilancioExcelReport req = model.creaRequestStampaExcelVariazioneDiBilancio();
+		VariazioneBilancioExcelReportResponse res = variazioneDiBilancioService.variazioneBilancioExcelReport(req);
 		
 		if(res.hasErrori()) {
 			addErrori(res);
@@ -1064,7 +1081,7 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		}
 		
 		byte[] bytes = res.getReport();
-		model.setContentType(res.getContentType());
+		model.setContentType(res.getContentType() == null ? null : res.getContentType().getMimeType());
 		model.setContentLength(Long.valueOf(bytes.length));
 		model.setFileName("esportazioneVariazione" + model.getAnnoEsercizio() + "_" + model.getNumeroVariazione() + "." + res.getExtension());
 		model.setInputStream(new ByteArrayInputStream(bytes));
@@ -1169,14 +1186,18 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 	 * SIAC-6884 per variazioni decentrate
 	 * CHIUSURA PROPOSTA 
 	 */
-	public String chiudiProposta() throws ApplicationException {
+	public String chiudiProposta() {
 		final String methodName = "concludi";
 		
 		if (!innerValidate(methodName)) {
 			return SUCCESS;
 		}
 		//3403
-		AggiornaAnagraficaVariazioneBilancio req = model.creaRequestAggiornaAnagraficaVariazioneBilancioDecentrato();
+		AggiornaAnagraficaVariazioneBilancio req = model.creaRequestAggiornaAnagraficaVariazioneBilancioDecentrato(); 
+		//SIAC-7629
+//		if(req.getVariazioneImportoCapitolo().getTipoVariazione().equals(TipoVariazione.VARIAZIONE_DECENTRATA_LEGGE) && false) {
+//			req.setAggiornamentoDaVariazioneConfermaQuadraturaFromAction(true);
+//		}
 		AsyncServiceResponse res = variazioneDiBilancioService.aggiornaAnagraficaVariazioneBilancioAsync(wrapRequestToAsync(req));
 		
 		log.debug(methodName, "Operazione asincrona avviata. IdOperazioneAsincrona: "+ res.getIdOperazioneAsincrona());
@@ -1230,23 +1251,46 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		//Il servizio asincrono ha dato risposta.
 		// Ottengo l'id dell'attività
 		extractIdAttivitaIfNotNull(res.getIdTask());
+		//SIAC-7629 inizio FL
+		Boolean richiediConfermaQuadraturaCassa =  res.verificatoErrore(ErroreBil.QUADRATURA_NON_CORRETTA.getCodice());// && Boolean.TRUE.equals(res.getIsQuadraturaCorrettaStanziamento()) && Boolean.FALSE.equals(res.getIsQuadraturaCorrettaStanziamentoCassa()) && StringUtils.isBlank(model.getSaltaCheckStanziamentoCassa()); //model.getSaltaCheckStanziamentoCassa()); 
+		model.setRichiediConfermaQuadraturaCP(richiediConfermaQuadraturaCassa);
 		
-		Boolean richiediConfermaQuadraturaCassa = res.verificatoErrore(ErroreBil.QUADRATURA_NON_CORRETTA.getCodice()) && Boolean.TRUE.equals(res.getIsQuadraturaCorrettaStanziamento()) && Boolean.FALSE.equals(res.getIsQuadraturaCorrettaStanziamentoCassa()) && StringUtils.isBlank(model.getSaltaCheckStanziamentoCassa()); //model.getSaltaCheckStanziamentoCassa()); 
-		model.setRichiediConfermaQuadratura(richiediConfermaQuadraturaCassa);
 		
-		//
 		if (res.isFallimento() || res.hasErrori()) {
 			log.debug(methodName, "Invocazione terminata con fallimento");
-			addErrori(res);
+						
+			for(Errore e : res.getErrori()){
+				if(Boolean.TRUE.equals(richiediConfermaQuadraturaCassa) && ErroreBil.QUADRATURA_NON_CORRETTA.getCodice().equals(e.getCodice()) && res.getVariazioneImportoCapitolo().getTipoVariazione().equals(TipoVariazione.VARIAZIONE_DECENTRATA_LEGGE) ){
+					continue;
+				}
+				addErrore(e);
+			}		
 			setErroriInSessionePerActionSuccessiva();
+			
 			return INPUT;
 		}
 		
+		//
+//		if (res.isFallimento() || res.hasErrori()) {
+//			log.debug(methodName, "Invocazione terminata con fallimento");
+//			addErrori(res);
+//			setErroriInSessionePerActionSuccessiva();
+//			return INPUT;
+//		}
+		//SIAC-7629 fine FL
+		
+		
+		
+		
 		
 		log.debug(methodName, "Invocazione terminata con successo");
-	    addInformazione(new Informazione("COR_INF_0006", "Operazione effettuata correttamente"));
-		 //*/
 	    
+		 //*/
+	    //SIAC-7629 inizio  FL
+		if (!Boolean.TRUE.equals(res.getIsQuadraturaCorretta())) {
+			addMessaggio(ErroreBil.PROSECUZIONE_NONOSTANTE_QUADRATURA_NON_CORRETTA.getErrore());
+		}
+		//SIAC-7629 fine FL
 	    if(hasMessaggi()) {
 			setMessaggiInSessionePerActionSuccessiva();
 		}
@@ -1256,6 +1300,8 @@ public abstract class AggiornaVariazioneImportiBaseAction extends AggiornaVariaz
 		
 		if(hasErrori()) {
 			setErroriInSessionePerActionSuccessiva();			
+		}else {
+			addInformazione(new Informazione("COR_INF_0006", "Operazione effettuata correttamente"));
 		}
 		
 		if(res.getVariazioneImportoCapitolo()!= null && res.getVariazioneImportoCapitolo().getAttoAmministrativo()!= null){

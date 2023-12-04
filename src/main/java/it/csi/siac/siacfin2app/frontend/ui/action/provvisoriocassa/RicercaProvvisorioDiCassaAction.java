@@ -13,10 +13,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.provvisoriocassa.RicercaProvvisorioDiCassaModel;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.model.ContoTesoreria;
@@ -41,7 +42,7 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 	private static final long serialVersionUID = -7245366022572914127L;
 	
 	@Autowired private transient ProvvisorioService provvisorioService;
-	@Autowired private transient PreDocumentoSpesaService preDocumentoSpesaService;
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
 
 	
 	@Override
@@ -72,6 +73,8 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		checkCondition(ricercaValida, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
 		
 		checkDatiValorizzatiRicerca();
+		//task-12
+		validateContoTesoreria();
 
 //		if(model.getErrori().size() > 0) {
 		if(hasErrori()) {
@@ -87,7 +90,7 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvisoriDiCassa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -104,6 +107,8 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		sessionHandler.setParametro(BilSessionParameter.NUMERO_PAGINA_SERVIZI_FIN, response.getNumPagina());
 		sessionHandler.setParametro(BilSessionParameter.NUMERO_RISULTATI_SERVIZI_FIN, response.getNumRisultati());
 		sessionHandler.setParametro(BilSessionParameter.RIENTRO_POSIZIONE_START, null);
+		//task-12
+		sessionHandler.setParametro(BilSessionParameter.LISTA_CONTO_TESORERIA, model.getListaContoTesoreria());
 		return SUCCESS;
 	}
 	
@@ -114,19 +119,19 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		// Controllo formale sui da-a
 		checkCondition(
 				model.getAnnoDa() == null || model.getAnnoA() == null || model.getAnnoDa().compareTo(model.getAnnoA()) <= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Anno Da/A", "l'anno Da non deve essere successivo l'anno A")
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Anno Da/A", "l'anno Da non deve essere successivo l'anno A")
 				);
 		checkCondition(
 				model.getNumeroDa() == null || model.getNumeroA() == null || model.getNumeroDa().compareTo(model.getNumeroA()) <= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Numero Da/A", "il numero Da non deve essere successivo il numero A")
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Numero Da/A", "il numero Da non deve essere successivo il numero A")
 				);
 		checkCondition(
 				model.getDataEmissioneDa() == null || model.getDataEmissioneA() == null || model.getDataEmissioneDa().compareTo(model.getDataEmissioneA()) <= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Data Da/A", "la data Da non deve essere successiva la data A")
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Data Da/A", "la data Da non deve essere successiva la data A")
 				);
 		checkCondition(
 				model.getImportoDa() == null || model.getImportoA() == null || model.getImportoDa().compareTo(model.getImportoA()) <= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("importo Da/A", "l'importo Da non deve essere successivo l'importo A")
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo Da/A", "l'importo Da non deve essere successivo l'importo A")
 				);
 		
 	}
@@ -151,7 +156,9 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 //				|| model.getDescCausale() != null
 //				|| model.getDenominazioneSoggetto() != null
 //				|| StringUtils.isNotBlank(model.getContoTesoreria().getCodice())
-				);
+				//task-12
+				|| checkPresenzaIdEntita(model.getContoTesoreria())
+				);				
 		
 		return ricercaValida;
 	}
@@ -178,7 +185,7 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvisorioDiCassaPerChiave.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -193,6 +200,15 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		checkCondition(model.getProvvisorioDiCassa() == null || model.getProvvisorioDiCassa().getNumero() != null,ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("numero provvisorio"));
 	}
 
+	private void validateContoTesoreria() {
+		if(!checkPresenzaIdEntita(model.getContoTesoreria())) {
+			return;
+		}
+		ContoTesoreria contoTesoreria = ComparatorUtils.searchByUid(model.getListaContoTesoreria(), model.getContoTesoreria());
+		checkNotNullNorInvalidUid(contoTesoreria, "Conto tesoreria");
+		model.setContoTesoreria(contoTesoreria);
+	}
+	
 	/**
 	 * Carica la lista del Conto Tesoreria.
 	 * 
@@ -203,7 +219,7 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		if(listaInSessione == null) {
 			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
 			logServiceRequest(request);
-			LeggiContiTesoreriaResponse response = preDocumentoSpesaService.leggiContiTesoreria(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
 			logServiceResponse(response);
 			
 			// Controllo gli errori
@@ -219,5 +235,5 @@ public class RicercaProvvisorioDiCassaAction extends GenericBilancioAction<Ricer
 		
 		model.setListaContoTesoreria(listaInSessione);
 	}
-	
+
 }

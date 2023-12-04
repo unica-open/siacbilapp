@@ -347,7 +347,7 @@ public class AggiornaTestataDocumentoSpesaModel extends AggiornaDocumentoModel {
 		
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoImpegno(impegno.getAnnoMovimento());
-		utility.setNumeroImpegno(impegno.getNumero());
+		utility.setNumeroImpegno(impegno.getNumeroBigDecimal());
 		
 		return utility;
 	}

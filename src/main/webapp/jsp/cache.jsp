@@ -88,17 +88,17 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 
 	<s:include value="/jsp/include/footer.jsp" />
-	<script type="text/javascript" src="${jspathexternal}${jquery.version}.js"></script>
-	<script type="text/javascript" src="${jspathexternal}bootstrap-alert.js"></script>
-	<script type="text/javascript" src="${jspathexternal}bootstrap-tooltip.js"></script>
-	<script type="text/javascript" src="${jspathexternal}dataTable/jquery.dataTables${datatables.version}.js"></script> 
-	<script type="text/javascript" src="${jspathexternal}dataTable/bootstrap.dataTables.min.js"></script>
-	<script type="text/javascript" src="${jspathexternal}dataTable/bootstrap.dataTables.firstlast.js"></script>
-	<script type="text/javascript" src="${jspath}jquery.bs.overlay.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/external/jquery.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/external/bootstrap-alert.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/external/bootstrap-tooltip.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/external/dataTable/jquery.dataTables.min.js"></script> 
+	<script type="text/javascript" src="/siacbilapp/js/external/dataTable/bootstrap.dataTables.min.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/external/dataTable/bootstrap.dataTables.firstlast.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/jquery.bs.overlay.js"></script>
 	
-	<script type="text/javascript" src="${jspath}polyfill.js"></script>
-	<script type="text/javascript" src="${jspath}cache/btoa.min.js"></script>
-	<script type="text/javascript" src="${jspath}cache/utils.js"></script>
-	<script type="text/javascript" src="${jspath}cache/cache.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/polyfill.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cache/btoa.min.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cache/utils.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cache/cache.js"></script>
 </body>
 </html>

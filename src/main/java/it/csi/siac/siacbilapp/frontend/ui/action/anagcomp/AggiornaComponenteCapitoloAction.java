@@ -7,7 +7,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.anagcomp;
 import java.util.Arrays;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,6 @@ import it.csi.siac.siacbilapp.frontend.ui.action.commons.ComponenteCapitoloActio
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.anagcomp.AggiornaComponenteCapitoloModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.TipoComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaTipoComponenteImportiCapitoloResponse;
@@ -25,16 +24,18 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioTipoCompon
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioTipoComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.model.AmbitoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.FonteFinanziariaComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ImpegnabileComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MomentoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.SottotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
-import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
+//import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.Entita.StatoEntita;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 
 
@@ -81,7 +82,7 @@ public class AggiornaComponenteCapitoloAction extends ComponenteCapitoloAction<A
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioTipoComponenteImportiCapitolo.class, res));
 			throwExceptionFromErrori(res.getErrori());
 		}
 		
@@ -135,7 +136,10 @@ public class AggiornaComponenteCapitoloAction extends ComponenteCapitoloAction<A
 //			checkCondition(componenteCapitolo.getFonteFinanziariaComponenteImportiCapitolo() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Fonte Finanziamento"), true);
 //		}
 		
-		checkNotNull(componenteCapitolo.getTipoGestioneComponenteImportiCapitolo(), "Tipo Gestione");
+		//SIAC-7349
+		//checkNotNull(componenteCapitolo.getTipoGestioneComponenteImportiCapitolo(), "Tipo Gestione");
+		checkNotNull(componenteCapitolo.getImpegnabileComponenteImportiCapitolo(), "Impegnabile");
+		
 		checkNotNull(componenteCapitolo.getPropostaDefaultComponenteImportiCapitolo(), "Default Previsione");
 		checkNotNull(componenteCapitolo.getDataInizioValidita(), "Data Inizio Validità");
 		//checkNotNull(componenteCapitolo.getDataFineValidita(), "Data Fine Validità");
@@ -154,8 +158,10 @@ public class AggiornaComponenteCapitoloAction extends ComponenteCapitoloAction<A
 		
 
 		 model.setListaPrevisione(Arrays.asList(PropostaDefaultComponenteImportiCapitolo.values()));
-		 model.setListaGestione(Arrays.asList(TipoGestioneComponenteImportiCapitolo.values()));
- 
+		 
+		 //SIAC-7349
+		 //model.setListaGestione(Arrays.asList(TipoGestioneComponenteImportiCapitolo.values()));
+		 model.setListaImpegnabile(Arrays.asList(ImpegnabileComponenteImportiCapitolo.values()));
 
 	}
 	
@@ -186,7 +192,7 @@ public class AggiornaComponenteCapitoloAction extends ComponenteCapitoloAction<A
 	 */
 	private boolean checkValido(TipoComponenteImportiCapitolo tipoComponenteImportiCapitolo, List<AzioneConsentita> listaAzioneConsentita) {
 		// Per l’azione OP-COM-aggAttoAllegatoDec si deve verificare anche che lo stato dell’atto selezionato sia 'DA COMPLETARE'.
-		return !AzioniConsentiteFactory.isConsentito(AzioniConsentite.COMPONENTE_CAPITOLO_AGGIORNA, listaAzioneConsentita)
+		return !AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.COMPONENTE_CAPITOLO_AGGIORNA, listaAzioneConsentita)
 			|| StatoEntita.IN_LAVORAZIONE.equals(tipoComponenteImportiCapitolo.getStato());
 	}
 	
@@ -204,7 +210,7 @@ public class AggiornaComponenteCapitoloAction extends ComponenteCapitoloAction<A
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaTipoComponenteImportiCapitolo.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -235,7 +241,6 @@ public class AggiornaComponenteCapitoloAction extends ComponenteCapitoloAction<A
 		
 		return SUCCESS;
 	}
-	
 	
 	
 	/**

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.ajax.consultazione;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.consultazione.ElementoDettaglioVariazioneCodificaCapitolo;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.consultazione.E
  * @version 1.0.0 02/01/2014
  *
  */
-public class RisultatiRicercaVariazioniCodificheCapitoloAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoDettaglioVariazioneCodificaCapitolo> {
+public class RisultatiRicercaVariazioniCodificheCapitoloAjaxModel extends PagedDataTableAjaxModel<ElementoDettaglioVariazioneCodificaCapitolo> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1949840562109980124L;

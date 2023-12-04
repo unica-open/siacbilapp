@@ -17,7 +17,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.El
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLiberaFactory;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
@@ -217,7 +217,7 @@ public abstract class InserisciPrimaNotaIntegrataManualeBaseAction<M extends Ins
 		if(model.getNumeroSubmovimentoGestione() != null) {
 			// Cerca sub
 			SubAccertamento sa = new SubAccertamento();
-			sa.setNumero(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
+			sa.setNumeroBigDecimal(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
 			sa = ComparatorUtils.findByNumeroMovimentoGestione(res.getAccertamento().getElencoSubAccertamenti(), sa);
 			
 			checkCondition(sa != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubAccertamento", model.getAnnoMovimentoGestione() + "/" + model.getNumeroMovimentoGestione() + "-" + model.getNumeroSubmovimentoGestione()));
@@ -250,7 +250,7 @@ public abstract class InserisciPrimaNotaIntegrataManualeBaseAction<M extends Ins
 		if(model.getNumeroSubmovimentoGestione() != null) {
 			// Cerca sub
 			SubImpegno si = new SubImpegno();
-			si.setNumero(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
+			si.setNumeroBigDecimal(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
 			si = ComparatorUtils.findByNumeroMovimentoGestione(res.getImpegno().getElencoSubImpegni(), si);
 			
 			checkCondition(si != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", model.getAnnoMovimentoGestione() + "/" + model.getNumeroMovimentoGestione() + "-" + model.getNumeroSubmovimentoGestione()));

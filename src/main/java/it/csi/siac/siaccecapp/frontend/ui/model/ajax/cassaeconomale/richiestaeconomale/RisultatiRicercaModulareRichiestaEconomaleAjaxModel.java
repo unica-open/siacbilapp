@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.richiestaec
 
 import java.math.BigDecimal;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.richiestaeconomale.ElementoRichiestaEconomale;
 
 /**
@@ -16,7 +16,7 @@ import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.richiestae
  * @version 1.0.0 - 16/03/2017
  *
  */
-public class RisultatiRicercaModulareRichiestaEconomaleAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoRichiestaEconomale> {
+public class RisultatiRicercaModulareRichiestaEconomaleAjaxModel extends PagedDataTableAjaxModel<ElementoRichiestaEconomale> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 8155066811501708329L;

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.attivitaiva.registroiva;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 
 import it.csi.siac.siacfin2app.frontend.ui.model.attivitaiva.registroiva.AggiornaRegistroIvaBaseModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioRegistroIva;

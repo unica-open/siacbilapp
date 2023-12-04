@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccespapp.frontend.ui.model.ajax.registroa;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.registroa.ElementoMovimentoDettaglioRegistroA;
 
 /**
@@ -12,7 +12,7 @@ import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.registroa.ElementoMovim
  * @author Marchino Alessandro
  * @version 1.0.0 - 23/10/2018
  */
-public class RisultatiRicercaMovimentoDettaglioRegistroACespiteAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoMovimentoDettaglioRegistroA> {
+public class RisultatiRicercaMovimentoDettaglioRegistroACespiteAjaxModel extends PagedDataTableAjaxModel<ElementoMovimentoDettaglioRegistroA> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -2046513623283477993L;

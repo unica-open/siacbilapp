@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.predocumento;
 
 import java.math.BigDecimal;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -108,11 +108,11 @@ public class DefinisciPreDocumentoSpesaPerElencoAction extends GenericPreDocumen
 		checkNotNullNorInvalidUid(model.getElencoDocumentiAllegato(), "elenco");
 		checkCondition(movimentoGestione != null
 				&& movimentoGestione.getAnnoMovimento() != 0 
-				&& movimentoGestione.getNumero() != null 
-				&& movimentoGestione.getNumero().compareTo(BigDecimal.ZERO)>0
+				&& movimentoGestione.getNumeroBigDecimal() != null 
+				&& movimentoGestione.getNumeroBigDecimal().compareTo(BigDecimal.ZERO)>0
 				, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("impegno"));
 		if(!hasErrori()){
-			validazioneImpegnoSubImpegno();
+			validazioneImpegnoSubImpegno(null);
 		}
 	}
 

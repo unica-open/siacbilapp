@@ -36,7 +36,7 @@ SPDX-License-Identifier: EUPL-1.2
 							<fieldset class="form-horizontal">
 								<p>
 									<span class="pull-right">
-										<s:submit cssClass="btn btn-primary" value="salva in allegato (selezionati)" />
+										<s:submit id="submitAssociaDocumento_1" cssClass="btn btn-primary" value="salva in allegato (selezionati)" />
 									</span>
 								</p>
 								<h4>
@@ -122,7 +122,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<p class="margin-medium">
 						<s:a cssClass="btn" action="associaDocumentoAllegatoAtto_backToStep1" id="pulsanteRedirezioneIndietro">indietro</s:a>
 						<span class="pull-right">
-							<s:submit cssClass="btn btn-primary" value="salva in allegato (selezionati)" />
+							<s:submit id="submitAssociaDocumento_2" cssClass="btn btn-primary" value="salva in allegato (selezionati)" />
 						</span>
 					</p>
 				</s:form>
@@ -132,7 +132,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}allegatoAtto/associaDocumento_step2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/associaDocumento_step2.js"></script>
 	
 </body>
 </html>

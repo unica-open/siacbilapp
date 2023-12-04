@@ -16,6 +16,8 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoDocumentoFEL;
+import it.csi.siac.siacbilser.model.TipoDocFEL;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaRelazioneDocumenti;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
@@ -49,6 +51,7 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaSoggettoK;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+import it.csi.siac.sirfelser.model.FatturaFEL;
 
 /**
  * Classe generica per il documento.
@@ -96,6 +99,17 @@ public class GenericDocumentoModel extends GenericBilancioModel {
 	// SIAC-6565
 	// Stato SDI Documento
 	private List<StatoSDIDocumento> listaStatoSDIDocumento = new ArrayList<StatoSDIDocumento>();
+	
+	//SIAC-7567
+	private Boolean proseguireConElaborazioneCheckPA = Boolean.FALSE;
+	private Boolean checkCanale = Boolean.FALSE;
+	
+	//SIAC-7571
+	private String sceltaUtente;
+	
+	// Legame con Fattura FEL
+	private FatturaFEL fatturaFEL;
+	private Soggetto soggettoFEL;
 	
 	/**
 	 * @return the soggetto
@@ -210,6 +224,48 @@ public class GenericDocumentoModel extends GenericBilancioModel {
 		this.elencoDocumenti = elencoDocumenti;
 	}
 
+	/**
+	 * @return the fatturaFEL
+	 */
+	public FatturaFEL getFatturaFEL() {
+		return fatturaFEL;
+	}
+
+	/**
+	 * @param fatturaFEL the fatturaFEL to set
+	 */
+	public void setFatturaFEL(FatturaFEL fatturaFEL) {
+		this.fatturaFEL = fatturaFEL;
+	}
+
+	/**
+	 * @return the soggettoFEL
+	 */
+	public Soggetto getSoggettoFEL() {
+		return soggettoFEL;
+	}
+
+	/**
+	 * @param soggettoFEL the soggettoFEL to set
+	 */
+	public void setSoggettoFEL(Soggetto soggettoFEL) {
+		this.soggettoFEL = soggettoFEL;
+	}
+	
+	/**
+	 * @return the sceltaUtente
+	 */
+	public String getSceltaUtente() {
+		return sceltaUtente;
+	}
+	
+	/**
+	 * @param sceltaUtente the sceltaUtente to set
+	 */
+	public void setSceltaUtente(String sceltaUtente) {
+		this.sceltaUtente = sceltaUtente;
+	}
+	
 //	/**
 //	 * @return the statoOperativoAtti
 //	 */
@@ -223,6 +279,7 @@ public class GenericDocumentoModel extends GenericBilancioModel {
 //	public void setStatoOperativoAtti(StatoOperativoAtti statoOperativoAtti) {
 //		this.statoOperativoAtti = statoOperativoAtti;
 //	}
+
 
 	/**
 	 * @return the listaTipoDocumento
@@ -377,7 +434,38 @@ public class GenericDocumentoModel extends GenericBilancioModel {
 		this.listaStatoSDIDocumento = listaStatoSDIDocumento != null ? listaStatoSDIDocumento : new ArrayList<StatoSDIDocumento>();
 	}
 	
+	/**
+	 * @return the proseguireConElaborazioneCheckPA
+	 */
+	public Boolean isProseguireConElaborazioneCheckPA() {
+		return proseguireConElaborazioneCheckPA;
+	}
+	
+	/**
+	 * @param proseguireConElaborazioneCheckPA the proseguireConElaborazioneCheckPA to set
+	 */
+	public void setProseguireConElaborazioneCheckPA(Boolean proseguireConElaborazioneCheckPA) {
+		this.proseguireConElaborazioneCheckPA = proseguireConElaborazioneCheckPA;
+	}
+
+	/**
+	 * @return the checkCanale
+	 */
+	public Boolean getCheckCanale() {
+		return checkCanale;
+	}
+	
+	/**
+	 * @param checkCanale the checkCanale to set
+	 */
+	public void setCheckCanale(Boolean checkCanale) {
+		this.checkCanale = checkCanale;
+	}
+
+
+	
 	/* Requests */
+
 
 	/**
 	 * Crea una request per il servizio di {@link RicercaTipoDocumento}.
@@ -769,5 +857,37 @@ public class GenericDocumentoModel extends GenericBilancioModel {
 		
 		return utility;
 	}
+	
+	
+	
+	
+	public RicercaTipoDocumentoFEL creaRequestRicercaTipoDocumentoFEL(String codiceTipoDocumento) {
+		RicercaTipoDocumentoFEL request = new RicercaTipoDocumentoFEL();
+		
+		request.setDataOra(new Date());
+		request.setRichiedente(getRichiedente());
+		request.setAnnoBilancio(getAnnoEsercizioInt());
+		TipoDocFEL tipoDocFel = new TipoDocFEL();
+		tipoDocFel.setCodice(codiceTipoDocumento);
+		
+		
+		request.setTipoDocFEL(tipoDocFel);
+		
+		return request;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

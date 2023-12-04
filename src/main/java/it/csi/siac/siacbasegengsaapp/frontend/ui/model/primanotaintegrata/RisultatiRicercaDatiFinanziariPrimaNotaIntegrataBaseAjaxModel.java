@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacgenapp.frontend.ui.util.ElementoMovimentoConsultazionePrimaNotaIntegrata;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacgenapp.frontend.ui.util.ElementoMovimentoConsultazionePri
  * 
  * @version 1.0.0 - 20/10/2016
  */
-public class RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoMovimentoConsultazionePrimaNotaIntegrata<?>> {
+public class RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxModel extends PagedDataTableAjaxModel<ElementoMovimentoConsultazionePrimaNotaIntegrata<?>> {
 
 	/**
 	 * Per la serializzazione

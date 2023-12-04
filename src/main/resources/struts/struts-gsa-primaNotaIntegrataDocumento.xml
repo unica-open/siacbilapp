@@ -65,7 +65,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -137,7 +137,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -222,7 +222,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaValidaSubdocumentoSpesaInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -286,7 +286,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaValidaSubdocumentoEntrataInsPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>

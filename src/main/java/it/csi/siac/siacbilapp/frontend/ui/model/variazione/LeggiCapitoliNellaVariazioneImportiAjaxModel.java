@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.variazione;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 
 /**
@@ -12,7 +12,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.impo
  * @author Elisa Chiari
  *
  */
-public class LeggiCapitoliNellaVariazioneImportiAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoCapitoloVariazione> {
+public class LeggiCapitoliNellaVariazioneImportiAjaxModel extends PagedDataTableAjaxModel<ElementoCapitoloVariazione> {
 
 	/**
 	 * Per la serializzazione

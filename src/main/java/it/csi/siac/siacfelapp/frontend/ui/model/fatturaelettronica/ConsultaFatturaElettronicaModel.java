@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.sirfelser.frontend.webservice.msg.RicercaDettaglioFatturaElettronica;
 import it.csi.siac.sirfelser.model.CausaleFEL;
@@ -19,6 +19,7 @@ import it.csi.siac.sirfelser.model.DettaglioPagamentoFEL;
 import it.csi.siac.sirfelser.model.FatturaFEL;
 import it.csi.siac.sirfelser.model.PagamentoFEL;
 import it.csi.siac.sirfelser.model.RiepilogoBeniFEL;
+import it.csi.siac.sirfelser.model.RitenutaFEL;
 
 /**
  * Classe di model per la consultazione della fattura elettronica.
@@ -356,6 +357,24 @@ public class ConsultaFatturaElettronicaModel extends GenericBilancioModel {
 		
 		return result;
 	}
+	
+	
+	//SIAC-7557 totaleImportoRitenuta
+	public BigDecimal getTotaleImportoRitenuta() {
+		// Caso limite
+		if(getFatturaFEL() == null) {
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal result = BigDecimal.ZERO;
+		
+		for(RitenutaFEL ritenutaFel : getFatturaFEL().getRitenute()) {
+			result = result.add(ritenutaFel.getImporto());
+		}
+		
+		return result;
+	}
+	
 	
 	/* **** Requests **** */
 	

@@ -45,10 +45,10 @@ public class ElementoMovimentoConsultazionePrimaNotaIntegrataSubdocumentoSpesa e
 		StringBuilder sb = new StringBuilder()
 				.append(movimento.getImpegno().getAnnoMovimento())
 				.append("/")
-				.append(movimento.getImpegno().getNumero().toPlainString());
+				.append(movimento.getImpegno().getNumeroBigDecimal().toPlainString());
 		if(movimento.getSubImpegno() != null) {
 			sb.append("-")
-				.append(movimento.getSubImpegno().getNumero().toPlainString());
+				.append(movimento.getSubImpegno().getNumeroBigDecimal().toPlainString());
 		}
 		
 		return sb.toString();

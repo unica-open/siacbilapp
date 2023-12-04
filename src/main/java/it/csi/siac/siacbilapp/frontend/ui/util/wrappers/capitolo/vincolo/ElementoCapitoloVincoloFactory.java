@@ -5,12 +5,13 @@
 package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.vincolo;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionBilUtil;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
@@ -21,6 +22,7 @@ import it.csi.siac.siacbilser.model.ImportiCapitoloEG;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEP;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUP;
+import it.csi.siac.siaccommon.util.CoreUtil;
 import it.csi.siac.siaccommon.util.log.LogUtil;
 import it.csi.siac.siaccorser.model.Codifica;
 
@@ -57,8 +59,8 @@ public final class ElementoCapitoloVincoloFactory {
 		popolaCampiComuni(result, capitolo, gestioneUEB);
 		
 		popolaClassificazione(result, capitolo.getProgramma(), capitolo.getMacroaggregato());
-		
-		List<ImportiCapitoloUP> listaImporti = capitolo.getListaImportiCapitolo();
+		//SIAC-8042
+		List<ImportiCapitoloUP> listaImporti = CoreUtil.checkList(capitolo.getListaImportiCapitolo());
 		popolaImporti(result, listaImporti, capitolo.getAnnoCapitolo());
 		
 		return result;
@@ -82,8 +84,8 @@ public final class ElementoCapitoloVincoloFactory {
 		popolaCampiComuni(result, capitolo, gestioneUEB);
 		
 		popolaClassificazione(result, capitolo.getProgramma(), capitolo.getMacroaggregato());
-		
-		List<ImportiCapitoloUG> listaImporti = capitolo.getListaImportiCapitolo();
+		//SIAC-8042
+		List<ImportiCapitoloUG> listaImporti = CoreUtil.checkList(capitolo.getListaImportiCapitolo());
 		popolaImporti(result, listaImporti, capitolo.getAnnoCapitolo());
 		
 		return result;
@@ -107,8 +109,8 @@ public final class ElementoCapitoloVincoloFactory {
 		popolaCampiComuni(result, capitolo, gestioneUEB);
 		
 		popolaClassificazione(result, capitolo.getCategoriaTipologiaTitolo());
-		
-		List<ImportiCapitoloEP> listaImporti = capitolo.getListaImportiCapitolo();
+		//SIAC-8042
+		List<ImportiCapitoloEP> listaImporti = CoreUtil.checkList(capitolo.getListaImportiCapitolo());
 		popolaImporti(result, listaImporti, capitolo.getAnnoCapitolo());
 		
 		return result;
@@ -132,8 +134,8 @@ public final class ElementoCapitoloVincoloFactory {
 		popolaCampiComuni(result, capitolo, gestioneUEB);
 		
 		popolaClassificazione(result, capitolo.getCategoriaTipologiaTitolo());
-		
-		List<ImportiCapitoloEG> listaImporti = capitolo.getListaImportiCapitolo();
+		//SIAC-8042
+		List<ImportiCapitoloEG> listaImporti = CoreUtil.checkList(capitolo.getListaImportiCapitolo());
 		popolaImporti(result, listaImporti, capitolo.getAnnoCapitolo());
 		
 		return result;
@@ -159,7 +161,7 @@ public final class ElementoCapitoloVincoloFactory {
 			// Controllo se la classe del capitolo fornito in input sia effettivamente quella della superclasse, o sia quella di una sottoclasse
 			if(Capitolo.class.equals(capitolo.getClass())) {
 				// Sono nella superclasse. Innanzitutto, devo creare una nuova istanza del capitolo sì da non avere problemi di invocazione circolare
-				nuovaIstanza =  ReflectionUtil.getInstanceFromCapitoloBaseClass(capitolo);
+				nuovaIstanza =  ReflectionBilUtil.getInstanceFromCapitoloBaseClass(capitolo);
 			}
 			// Ho un'istanza di una sottoclasse del capitolo
 			Method method = ElementoCapitoloVincoloFactory.class.getMethod("getInstance", nuovaIstanza.getClass(), Boolean.class);
@@ -251,9 +253,11 @@ public final class ElementoCapitoloVincoloFactory {
 		I importoAnno1 = cercaImportoPerAnno(listaImporti, annoCapitoloInt + 1);
 		I importoAnno2 = cercaImportoPerAnno(listaImporti, annoCapitoloInt + 2);
 		
-		wrapper.setCompetenzaAnno0(importoAnno0.getStanziamento());
-		wrapper.setCompetenzaAnno1(importoAnno1.getStanziamento());
-		wrapper.setCompetenzaAnno2(importoAnno2.getStanziamento());
+		//SIAC-8042
+		wrapper.setCompetenzaAnno0(importoAnno0 != null && importoAnno0.getStanziamento() != null ? importoAnno0.getStanziamento() : BigDecimal.ZERO);
+		wrapper.setCompetenzaAnno1(importoAnno1 != null && importoAnno1.getStanziamento() != null ? importoAnno1.getStanziamento() : BigDecimal.ZERO);
+		wrapper.setCompetenzaAnno2(importoAnno2 != null && importoAnno2.getStanziamento() != null ? importoAnno2.getStanziamento() : BigDecimal.ZERO);
+		//
 	}
 	
 	/**

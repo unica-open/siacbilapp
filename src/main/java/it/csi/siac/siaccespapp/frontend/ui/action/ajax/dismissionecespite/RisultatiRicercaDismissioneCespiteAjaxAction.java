@@ -11,11 +11,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.dismissionecespite.RisultatiRicercaDismissioneCespiteAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.dismissionecespite.ElementoDismissioneCespite;
 import it.csi.siac.siaccespser.frontend.webservice.CespiteService;
@@ -26,6 +25,7 @@ import it.csi.siac.siaccespser.model.StatoDismissioneCespite;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * The Class RisultatiRicercaDismissioneAjaxAction.
@@ -34,7 +34,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDismissioneCespiteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDismissioneCespite, RisultatiRicercaDismissioneCespiteAjaxModel, DismissioneCespite, RicercaSinteticaDismissioneCespite, RicercaSinteticaDismissioneCespiteResponse> {
+public class RisultatiRicercaDismissioneCespiteAjaxAction extends PagedDataTableAjaxAction<ElementoDismissioneCespite, RisultatiRicercaDismissioneCespiteAjaxModel, DismissioneCespite, RicercaSinteticaDismissioneCespite, RicercaSinteticaDismissioneCespiteResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -86,12 +86,12 @@ public class RisultatiRicercaDismissioneCespiteAjaxAction extends GenericRisulta
 	}
 
 	@Override
-	protected ElementoDismissioneCespite ottieniIstanza(DismissioneCespite e) throws FrontEndBusinessException {
+	protected ElementoDismissioneCespite getInstance(DismissioneCespite e) throws FrontEndBusinessException {
 		return new ElementoDismissioneCespite(e);
 	}
 
 	@Override
-	protected RicercaSinteticaDismissioneCespiteResponse ottieniResponse(RicercaSinteticaDismissioneCespite req) {
+	protected RicercaSinteticaDismissioneCespiteResponse getResponse(RicercaSinteticaDismissioneCespite req) {
 		return cespiteService.ricercaSinteticaDismissioneCespite(req);
 	}
 
@@ -101,9 +101,9 @@ public class RisultatiRicercaDismissioneCespiteAjaxAction extends GenericRisulta
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoDismissioneCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoDismissioneCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DISMISSIONE_CESPITE_AGGIORNA, listaAzioniConsentite);
+		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DISMISSIONE_CESPITE_AGGIORNA, listaAzioniConsentite);
 		boolean dismissioneDefinitiva = instance.getStatoDismissioneCespite() != null && instance.getStatoDismissioneCespite().equals(StatoDismissioneCespite.DEFINITIVO);
 		StringBuilder azioniBuilder = new StringBuilder()
 				.append(AZIONI_CONSENTITE_BEGIN)

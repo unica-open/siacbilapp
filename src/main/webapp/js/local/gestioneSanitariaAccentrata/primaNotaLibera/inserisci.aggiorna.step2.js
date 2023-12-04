@@ -523,5 +523,8 @@
         
         caricaElencoScritture();
         caricaTabellaPrimeNote();
+        //SIAC-8134
+        StrutturaAmministrativaContabile.inizializzaZtreeStrutturaAmministrativaContabile("_PRIMA_NOTA_LIBERA_GSA", $('#HIDDEN_StrutturaAmministrativoContabileUid_PRIMA_NOTA_LIBERA_GSA'));
+
     });
 }(jQuery);

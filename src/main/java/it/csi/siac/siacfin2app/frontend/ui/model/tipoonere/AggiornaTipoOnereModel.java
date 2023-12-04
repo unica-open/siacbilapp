@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionBilUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloUscitaGestione;
@@ -23,6 +23,7 @@ import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloEGest;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloUGest;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaTipoOnere;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioTipoOnere;
@@ -670,13 +671,13 @@ public class AggiornaTipoOnereModel extends GenericTipoOnereModel {
 	 * Imposta il soggetto e il capitolo nella lista delle causali di entrata.
 	 */
 	private void impostaSoggettoECapitoloEntrata() {
-		CapitoloEntrataGestione ceg = ReflectionUtil.createWithOnlyUid(getCapitoloEntrataGestione());
+		CapitoloEntrataGestione ceg = ReflectionBilUtil.createWithOnlyUid(getCapitoloEntrataGestione());
 		// SIAC-5147: Devo reimpostare almeno anno capitolo
 		if(ceg != null && getCapitoloEntrataGestione() != null) {
 			ceg.setAnnoCapitolo(getCapitoloEntrataGestione().getAnnoCapitolo());
 		}
 		
-		Soggetto s = ReflectionUtil.createWithOnlyUid(getSoggetto());
+		Soggetto s = ReflectionBilUtil.createWithOnlyUid(getSoggetto());
 		for(CausaleEntrata c : getListaCausaleEntrata()) {
 			c.setCapitoloEntrataGestione(ceg);
 			c.setSoggetto(s);
@@ -699,12 +700,12 @@ public class AggiornaTipoOnereModel extends GenericTipoOnereModel {
 	 * Imposta il soggetto e il capitolo nella lista delle causali di spesa.
 	 */
 	private void impostaSoggettoECapitoloSpesa() {
-		CapitoloUscitaGestione cug = ReflectionUtil.createWithOnlyUid(getCapitoloUscitaGestione());
+		CapitoloUscitaGestione cug = ReflectionBilUtil.createWithOnlyUid(getCapitoloUscitaGestione());
 		// SIAC-5147: Devo reimpostare almeno anno capitolo
 		if(cug != null && getCapitoloUscitaGestione() != null) {
 			cug.setAnnoCapitolo(getCapitoloUscitaGestione().getAnnoCapitolo());
 		}
-		Soggetto s = ReflectionUtil.createWithOnlyUid(getSoggetto());
+		Soggetto s = ReflectionBilUtil.createWithOnlyUid(getSoggetto());
 		SedeSecondariaSoggetto sss = impostaEntitaFacoltativa(getSedeSecondariaSoggetto());
 		
 		// Modalita di pagamento: provo prima con il cessione, se non ho dati prendo l'originale
@@ -801,7 +802,7 @@ public class AggiornaTipoOnereModel extends GenericTipoOnereModel {
 		RicercaAccertamentoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaAccertamentoPerChiaveOttimizzato.class, 1);
 		
 		request.setEnte(getEnte());
-		request.setCaricaSub(getSubAccertamento() != null && getSubAccertamento().getNumero() != null);
+		request.setCaricaSub(getSubAccertamento() != null && getSubAccertamento().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -817,8 +818,8 @@ public class AggiornaTipoOnereModel extends GenericTipoOnereModel {
 		RicercaAccertamentoK pRicercaAccertamentoK = new RicercaAccertamentoK();
 		pRicercaAccertamentoK.setAnnoAccertamento(getAccertamento().getAnnoMovimento());
 		pRicercaAccertamentoK.setAnnoEsercizio(getAnnoEsercizioInt());
-		pRicercaAccertamentoK.setNumeroAccertamento(getAccertamento().getNumero());
-		pRicercaAccertamentoK.setNumeroSubDaCercare(getSubAccertamento() != null ? getSubAccertamento().getNumero() : null);
+		pRicercaAccertamentoK.setNumeroAccertamento(getAccertamento().getNumeroBigDecimal());
+		pRicercaAccertamentoK.setNumeroSubDaCercare(getSubAccertamento() != null ? getSubAccertamento().getNumeroBigDecimal() : null);
 		request.setpRicercaAccertamentoK(pRicercaAccertamentoK);
 		
 		return request;
@@ -833,7 +834,7 @@ public class AggiornaTipoOnereModel extends GenericTipoOnereModel {
 		RicercaImpegnoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaImpegnoPerChiaveOttimizzato.class, 1);
 		
 		request.setEnte(getEnte());
-		request.setCaricaSub(getSubImpegno() != null && getSubImpegno().getNumero() != null);
+		request.setCaricaSub(getSubImpegno() != null && getSubImpegno().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -850,8 +851,8 @@ public class AggiornaTipoOnereModel extends GenericTipoOnereModel {
 		RicercaImpegnoK pRicercaImpegnoK = new RicercaImpegnoK();
 		pRicercaImpegnoK.setAnnoImpegno(getImpegno().getAnnoMovimento());
 		pRicercaImpegnoK.setAnnoEsercizio(getAnnoEsercizioInt());
-		pRicercaImpegnoK.setNumeroImpegno(getImpegno().getNumero());
-		pRicercaImpegnoK.setNumeroSubDaCercare(getSubImpegno() != null ? getSubImpegno().getNumero() : null);
+		pRicercaImpegnoK.setNumeroImpegno(getImpegno().getNumeroBigDecimal());
+		pRicercaImpegnoK.setNumeroSubDaCercare(getSubImpegno() != null ? getSubImpegno().getNumeroBigDecimal() : null);
 		request.setpRicercaImpegnoK(pRicercaImpegnoK);
 		
 		return request;
@@ -1049,7 +1050,7 @@ public class AggiornaTipoOnereModel extends GenericTipoOnereModel {
 		copy.setUid(original.getUid());
 		copy.setAnnoCapitoloOrigine(original.getAnnoCapitoloOrigine());
 		copy.setAnnoMovimento(original.getAnnoMovimento());
-		copy.setNumero(original.getNumero());
+		copy.setNumeroBigDecimal(original.getNumeroBigDecimal());
 		copy.setDescrizione(original.getDescrizione());
 		copy.setImportoAttuale(original.getImportoAttuale());
 	}

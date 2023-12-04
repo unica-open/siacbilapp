@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.attivitaiva.gruppoattivita;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -94,7 +94,7 @@ public class AggiornaGruppoAttivitaIvaAction extends GenericGruppoAttivitaIvaAct
 			//si sono verificati degli errori: esco.
 			log.info(methodName, "Errore nell'invocazione del servizio RicercaGruppoAttivitaIva per l'anno di bilancio precedente");
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioGruppoAttivitaIva.class, response));
 		}
 		
 		if(response.getGruppoAttivitaIva() == null || response.getGruppoAttivitaIva().getListaProRataEChiusuraGruppoIva() == null || response.getGruppoAttivitaIva().getListaProRataEChiusuraGruppoIva().isEmpty()) {

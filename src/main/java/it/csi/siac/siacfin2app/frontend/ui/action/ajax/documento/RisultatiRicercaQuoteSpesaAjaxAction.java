@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -28,7 +28,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaQuoteSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<SubdocumentoSpesa, 
+public class RisultatiRicercaQuoteSpesaAjaxAction extends PagedDataTableAjaxAction<SubdocumentoSpesa, 
 		RisultatiRicercaQuoteSpesaAjaxModel, SubdocumentoSpesa, RicercaQuotaSpesa, RicercaQuotaSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -55,12 +55,12 @@ public class RisultatiRicercaQuoteSpesaAjaxAction extends GenericRisultatiRicerc
 	}
 	
 	@Override
-	protected SubdocumentoSpesa ottieniIstanza(SubdocumentoSpesa e) {
+	protected SubdocumentoSpesa getInstance(SubdocumentoSpesa e) {
 		return e;
 	}
 	
 	@Override
-	protected RicercaQuotaSpesaResponse ottieniResponse(RicercaQuotaSpesa request) {	
+	protected RicercaQuotaSpesaResponse getResponse(RicercaQuotaSpesa request) {	
 		return documentoSpesaService.ricercaQuotaSpesa(request);
 	}
 	

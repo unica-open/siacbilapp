@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.variazione.LeggiCapitoliNellaVariazioneImportiAjaxModel;
@@ -32,7 +32,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 public class LeggiCapitoliNellaVariazioneImportiAjaxAction extends
-		GenericRisultatiRicercaAjaxAction<ElementoCapitoloVariazione, LeggiCapitoliNellaVariazioneImportiAjaxModel, DettaglioVariazioneImportoCapitolo, RicercaDettagliVariazioneImportoCapitoloNellaVariazione, RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse> {
+		PagedDataTableAjaxAction<ElementoCapitoloVariazione, LeggiCapitoliNellaVariazioneImportiAjaxModel, DettaglioVariazioneImportoCapitolo, RicercaDettagliVariazioneImportoCapitoloNellaVariazione, RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -62,7 +62,7 @@ public class LeggiCapitoliNellaVariazioneImportiAjaxAction extends
 	}
 
 	@Override
-	protected ElementoCapitoloVariazione ottieniIstanza(DettaglioVariazioneImportoCapitolo e)
+	protected ElementoCapitoloVariazione getInstance(DettaglioVariazioneImportoCapitolo e)
 			throws FrontEndBusinessException {
 		Boolean gestioneUEB = Boolean.valueOf(model.isGestioneUEB());
 		ElementoCapitoloVariazione istanza = ElementoCapitoloVariazioneFactory.getInstanceFromSingoloDettaglio(e, gestioneUEB);
@@ -70,7 +70,7 @@ public class LeggiCapitoliNellaVariazioneImportiAjaxAction extends
 	}
 
 	@Override
-	protected RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse ottieniResponse(
+	protected RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse getResponse(
 			RicercaDettagliVariazioneImportoCapitoloNellaVariazione request) {
 		return variazioneDiBilancioService.ricercaDettagliVariazioneImportoCapitoloNellaVariazione(request);
 	}

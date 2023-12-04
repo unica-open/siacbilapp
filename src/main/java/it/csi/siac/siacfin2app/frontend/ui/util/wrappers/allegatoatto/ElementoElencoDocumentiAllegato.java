@@ -295,10 +295,10 @@ public abstract class ElementoElencoDocumentiAllegato<MG extends MovimentoGestio
 				.append("-")
 				.append(movimentoGestione.getAnnoMovimento())
 				.append("/")
-				.append(movimentoGestione.getNumero().toPlainString());
+				.append(movimentoGestione.getNumeroBigDecimal().toPlainString());
 			if(submovimentoGestione != null) {
 				sb.append("-")
-					.append(submovimentoGestione.getNumero().toPlainString());
+					.append(submovimentoGestione.getNumeroBigDecimal().toPlainString());
 			}
 		}
 		return sb.toString();
@@ -527,12 +527,6 @@ public abstract class ElementoElencoDocumentiAllegato<MG extends MovimentoGestio
 		return "";
 	}
 	
-	/**
-	 * @return the subdocumentoNumeroMutuo
-	 */
-	public String getSubdocumentoNumeroMutuo() {
-		return "";
-	}
 	
 	/**
 	 * @return the uidDocumento
@@ -837,7 +831,7 @@ public abstract class ElementoElencoDocumentiAllegato<MG extends MovimentoGestio
 		}
 		if(movimentoGestione != null) {
 			hcb.append(movimentoGestione.getAnnoMovimento())
-				.append(movimentoGestione.getNumero());
+				.append(movimentoGestione.getNumeroBigDecimal());
 		}
 		return hcb.toHashCode();
 	}
@@ -876,7 +870,7 @@ public abstract class ElementoElencoDocumentiAllegato<MG extends MovimentoGestio
 		
 		if(this.movimentoGestione != null && other.movimentoGestione != null) {
 			eb.append(this.movimentoGestione.getAnnoMovimento(), other.movimentoGestione.getAnnoMovimento())
-				.append(this.movimentoGestione.getNumero(), other.movimentoGestione.getNumero());
+				.append(this.movimentoGestione.getNumeroBigDecimal(), other.movimentoGestione.getNumeroBigDecimal());
 		}
 		eb.append(this.getUid(), other.getUid());
 		

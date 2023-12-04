@@ -7,7 +7,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<div class="modal-body">
 		<div class="alert alert-error alert-persistent" id="labelModaleInvioRisultatiRicerca">
 			<p><strong>Attenzione!</strong></p>
-			<p>Si sta per inviare l'ATTO <span id="spanModaleInvioRisultatiRicerca"></span> per la firma vuoi proseguire?<p>
+			<p>Si sta per inviare l'ATTO <span id="spanModaleInvioRisultatiRicerca"></span> per la firma, vuoi proseguire?<p>
 		</div>
 	</div>
 	<div class="modal-footer">

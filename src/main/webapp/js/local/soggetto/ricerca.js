@@ -495,6 +495,16 @@ $(
     function() {
         // Imposto le funzionalita' dei pulsanti
         Soggetto.inizializza();
+
+        //SIAC-6780
+        var ricercaPerCollegaDocumento = $('HIDDEN_collegaDocumento').val();
+        if( ricercaPerCollegaDocumento && ricercaPerCollegaDocumento === 'ricercaPerCollegaDocumento'){
+            Soggetto.inizializza('#codiceSoggettoDocumentoEntrata','#HIDDEN_soggettoCodiceFiscaleDocumentoEntrata',
+                '#HIDDEN_documentoDenominazioneDocumentoEntrata','#descrizioneCompletaSoggettoDocumentoEntrata',
+                '#HIDDEN_uidSoggettoDocumentoEntrata','#pulsanteApriModaleSoggettoDocumentoEntrata');
+        }
+        //
+        
         $("form").on("reset", function() {
             $("#modaleGuidaSoggetto").find(":input")
                     .val("")

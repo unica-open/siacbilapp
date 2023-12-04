@@ -19,12 +19,13 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoComplessivo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoEntrata;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoSpesa;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CambiaFlagUsatoPerFpvCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.OttieniFondoPluriennaleVincolatoCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaProgetto;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaAggiorna;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsulta;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioBaseCronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioEntrataCronoprogramma;
@@ -75,6 +76,8 @@ public class AggiornaProgettoModel extends GenericProgettoModel {
 	private List<ProspettoRiassuntivoCronoprogramma> listaProspettoRiassuntivoCronoprogramma;
 	
 	private Integer uidCronoprogrammaDaSettareComeUsatoPerCalcoloFPV;
+	//SIAC-8870
+	private Integer uidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV;
 	private boolean modificabileInvestimentoInCorsoDiDefinizione;
 	
 	// SIAC-4427
@@ -540,6 +543,16 @@ public class AggiornaProgettoModel extends GenericProgettoModel {
 	 * 
 	 * @return la request creata
 	 */
+	
+	public CalcoloProspettoRiassuntivoCronoprogrammaConsulta creaRequestCalcoloProspettoRiassuntivoCronoprogrammaConsulta() {
+		return creaRequestCalcoloProspettoRiassuntivoCronoprogramma(null, getProgetto(), CalcoloProspettoRiassuntivoCronoprogrammaConsulta.class);
+	}	
+	
+	public CalcoloProspettoRiassuntivoCronoprogrammaAggiorna creaRequestCalcoloProspettoRiassuntivoCronoprogrammaAggiorna() {
+		return creaRequestCalcoloProspettoRiassuntivoCronoprogramma(null, getProgetto(), CalcoloProspettoRiassuntivoCronoprogrammaAggiorna.class);
+	}	
+	
+/*	
 	public CalcoloProspettoRiassuntivoCronoprogramma creaRequestCalcoloProspettoRiassuntivoCronoprogramma() {
 		   CalcoloProspettoRiassuntivoCronoprogramma request = creaRequest(CalcoloProspettoRiassuntivoCronoprogramma.class);
 		
@@ -549,6 +562,7 @@ public class AggiornaProgettoModel extends GenericProgettoModel {
 		request.setAnno(getBilancio().getAnno());
 		return request;
 	}
+	*/
 	
 	/**
 	 * Viene richiamata per associare il cronoprogramma come usato per fpv ed aggiornarlo sul db
@@ -594,6 +608,15 @@ public class AggiornaProgettoModel extends GenericProgettoModel {
 		req.setRicercaAtti(ricercaAtti);
 		
 		return req;
+	}
+
+	public Integer getUidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV() {
+		return uidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV;
+	}
+
+	public void setUidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV(
+			Integer uidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV) {
+		this.uidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV = uidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV;
 	}
 
 }

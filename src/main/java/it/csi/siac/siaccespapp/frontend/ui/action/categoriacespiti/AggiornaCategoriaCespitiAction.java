@@ -6,7 +6,7 @@ package it.csi.siac.siaccespapp.frontend.ui.action.categoriacespiti;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -15,7 +15,6 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccespapp.frontend.ui.model.categoriacespiti.AggiornaCategoriaCespitiModel;
 import it.csi.siac.siaccespser.frontend.webservice.msg.AggiornaCategoriaCespiti;
 import it.csi.siac.siaccespser.frontend.webservice.msg.AggiornaCategoriaCespitiResponse;
@@ -23,6 +22,7 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaDettaglioCategoria
 import it.csi.siac.siaccespser.model.CategoriaCespiti;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * The Class GenericTipoBeneAction.
@@ -124,7 +124,7 @@ public class AggiornaCategoriaCespitiAction extends GenericCategoriaCespitiActio
 		super.checkCasoDUsoApplicabile();
 		List<AzioneConsentita> azioniConsentite = sessionHandler.getAzioniConsentite();
 		
-		boolean consentito = AzioniConsentiteFactory.isConsentito(AzioniConsentite.CATEGORIA_CESPITI_AGGIORNA, azioniConsentite);
+		boolean consentito = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.CATEGORIA_CESPITI_AGGIORNA, azioniConsentite);
 		if(!consentito) {
 			throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("non si dispone dei permessi necessari per l'esecuzione").getTesto(),
 					GenericFrontEndMessagesException.Level.ERROR);

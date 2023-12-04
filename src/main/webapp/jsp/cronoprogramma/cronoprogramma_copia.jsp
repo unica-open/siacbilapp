@@ -22,7 +22,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<span class="al">
 			<label class="radio inline" for="annoRicercaCrono">Anno </label>
 		</span>
-		<s:textfield id="annoRicercaCrono" cssClass="lbTextSmall span2 soloNumeri" value="%{annoEsercizioInt}"/>
+		<s:textfield id="annoRicercaCrono" cssClass="lbTextSmall span2 soloNumeri" value="%{annoEsercizioInt}" disabled="true"/>
 		<span class="al">
 			<label class="radio inline" for="codiceProgettoRicercaCrono">Codice * </label>
 		</span>
@@ -30,7 +30,9 @@ SPDX-License-Identifier: EUPL-1.2
 		<span class="al">
 			<label class="radio inline" for="tipoProgettoRicercaCrono">Tipo * </label>
 		</span>
-		<s:select list="listaTipiProgetto" id="tipoProgettoRicercaCrono" value="%{progetto.tipoProgetto}" cssClass="span4" headerKey="" headerValue="" listValue="%{descrizione}" />
+		<!-- task-170 -->
+		<s:select list="listaTipiProgetto" id="tipoProgettoRicercaCrono" name="tipoProgettoStr" cssClass="span4" headerKey="" headerValue="" 
+			listValue="%{descrizione}"  listKey="%{codice}" disabled="true"/>	
 		<button type="button" class="pull-right btn-secondary" id="caricaCronoprogrammiDaCopiare"> carica cronoprogrammi</button>
 	</div>
 </div>

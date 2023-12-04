@@ -106,11 +106,11 @@ public abstract class GestioneModificaMovimentoGestioneEntrataPrimaNotaIntegrata
 		ricercaAccertamentoK.setAnnoEsercizio(getAnnoEsercizioInt());
 		if(mmge.getAccertamento() != null){
 			ricercaAccertamentoK.setAnnoAccertamento(mmge.getAccertamento().getAnnoMovimento());
-			ricercaAccertamentoK.setNumeroAccertamento(mmge.getAccertamento().getNumero());
+			ricercaAccertamentoK.setNumeroAccertamento(mmge.getAccertamento().getNumeroBigDecimal());
 		}else if(mmge.getSubAccertamento() != null){
 			ricercaAccertamentoK.setAnnoAccertamento(mmge.getSubAccertamento().getAnnoAccertamentoPadre());
 			ricercaAccertamentoK.setNumeroAccertamento(mmge.getSubAccertamento().getNumeroAccertamentoPadre());
-			ricercaAccertamentoK.setNumeroSubDaCercare(mmge.getSubAccertamento().getNumero());
+			ricercaAccertamentoK.setNumeroSubDaCercare(mmge.getSubAccertamento().getNumeroBigDecimal());
 			
 		}
 		

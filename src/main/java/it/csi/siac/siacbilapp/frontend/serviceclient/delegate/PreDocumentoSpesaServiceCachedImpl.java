@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedService;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServiceExecutor;
-import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiContiTesoreriaExecutor;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.LeggiTipiCausaleSpesaExecutor;
-import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.LeggiContiTesoreriaKeyAdapter;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.LeggiTipiCausaleSpesaKeyAdapter;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaCausaleSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaCausaleSpesaResponse;
@@ -40,8 +39,6 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceCausaleSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceCausaleSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InseriscePreDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InseriscePreDocumentoSpesaResponse;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiTipiCausaleSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiTipiCausaleSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioCausaleSpesa;
@@ -70,6 +67,7 @@ public class PreDocumentoSpesaServiceCachedImpl implements PreDocumentoSpesaServ
 
 	@Autowired
 	private transient PreDocumentoSpesaService preDocumentoSpesaService;
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
 
 	@Autowired
 	private CachedServiceExecutor cachedServiceExecutor;
@@ -152,11 +150,6 @@ public class PreDocumentoSpesaServiceCachedImpl implements PreDocumentoSpesaServ
 	@Override
 	public LeggiTipiCausaleSpesaResponse leggiTipiCausaleSpesa(LeggiTipiCausaleSpesa req) {
 		return cachedServiceExecutor.executeService(req, new LeggiTipiCausaleSpesaExecutor(preDocumentoSpesaService), new LeggiTipiCausaleSpesaKeyAdapter());
-	}
-
-	@Override
-	public LeggiContiTesoreriaResponse leggiContiTesoreria(LeggiContiTesoreria req) {
-		return cachedServiceExecutor.executeService(req, new LeggiContiTesoreriaExecutor(preDocumentoSpesaService), new LeggiContiTesoreriaKeyAdapter());
 	}
 
 	@Override

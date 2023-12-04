@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.causale;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.causale.ElementoCausale;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.causale.ElementoCausale
  * @version 1.0.0 10/03/2014
  *
  */
-public class RisultatiRicercaCausaleAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoCausale> {
+public class RisultatiRicercaCausaleAjaxModel extends PagedDataTableAjaxModel<ElementoCausale> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1949840562109980124L;

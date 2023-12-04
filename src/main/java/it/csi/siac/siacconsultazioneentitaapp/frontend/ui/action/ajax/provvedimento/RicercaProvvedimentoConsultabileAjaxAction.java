@@ -4,6 +4,10 @@
 */
 package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.action.ajax.provvedimento;
 
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -64,4 +68,11 @@ public class RicercaProvvedimentoConsultabileAjaxAction extends RicercaEntitaCon
 		return model.creaRequestRicercaSinteticaEntitaConsultabile();
 	}
 	
+	/**
+	 * SIAC-8222
+	 */
+	@Override
+	public Set<Cookie> getCookies() {
+		return model.getCookies();
+	}
 }

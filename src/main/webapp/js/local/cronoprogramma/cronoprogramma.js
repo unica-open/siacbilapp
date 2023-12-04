@@ -135,6 +135,15 @@ var Cronoprogramma = (function() {
         };
     }
     
+	/**
+     * Disabilita e abilita il salvataggio generale
+     *
+	 * @param disabled (boolean) true o false a seconda dell'azione da effettuare
+     */
+    function disabilitaSalvaGenerale(disabled){
+		$('#salvaCrono').attr('disabled', disabled);		 
+    }
+
     /**
      * Stampa i codici richiesti se presenti
      * @returns (function) una funzione che stampa i codici richiesti
@@ -314,6 +323,8 @@ var Cronoprogramma = (function() {
      * @param collapseId (String) l'id del collapse da caricare
      */
     function apriCollapseDettaglio(url, obj, collapseId) {
+		disabilitaSalvaGenerale(true);
+		
         return $.post(url, obj)
         .then(function(data) {
             $(collapseId).html(data)
@@ -333,10 +344,11 @@ var Cronoprogramma = (function() {
      * @param e (Event) l'evento scatenante l'invocazione
      */
     function closeCollapse(e) {
-        var target = $(e.target);
+		var target = $(e.target);
         var dataTarget = $(target.data('closeCollapse'));
         e.preventDefault();
         dataTarget.collapse('hide');
+		disabilitaSalvaGenerale(false);
     }
 
     /**
@@ -402,6 +414,8 @@ var Cronoprogramma = (function() {
 
             collapse.collapse('hide');
         }).always(spinner.removeClass.bind(spinner, 'activated'));
+		
+		disabilitaSalvaGenerale(false);
     }
 
     /**
@@ -550,9 +564,14 @@ var Cronoprogramma = (function() {
         button.overlay('show');
         $('#selezionaCronoprogramma').val('');
         $('#divSelezionaCronoprogramma').slideUp();
-        oggettoPerChiamataAjax.tipoProgettoRicerca = tipoProgetto;
+        //task-170
+        oggettoPerChiamataAjax.tipoProgettoRicerca = $('#tipoProgettoRicercaCrono').val();
         oggettoPerChiamataAjax.annoRicerca = $('#annoRicercaCrono').val();
+      	oggettoPerChiamataAjax.prova = $('#tipoProgettoRicercaCrono').val();
         oggettoPerChiamataAjax.progetto = {};
+        //task-170
+        oggettoPerChiamataAjax.tipoProgettoRicerca = {};
+        oggettoPerChiamataAjax.tipoProgettoStr = $('#tipoProgettoRicercaCrono').val();
         oggettoPerChiamataAjax.progetto.codice = $('#codiceProgettoRicercaCrono').val();
         
         
@@ -931,6 +950,8 @@ var Cronoprogramma = (function() {
             .filter('[value="false"]').prop('checked', true).end();
         $('#HIDDEN_tipologiaTitoloEntrata')[!esistente ? 'attr' : 'removeAttr']('disabled', true);
         $('#titoloEntrataEntrata, #tipologiaTitoloEntrata').val('');
+		//SIAC-8791
+		$('#HIDDEN_titoloEntrataEntrata', '#HIDDEN_tipologiaTitoloEntrata').val('');
         cleanCapitolo('Entrata', esistente, fieldsId);
     }
 
@@ -943,6 +964,8 @@ var Cronoprogramma = (function() {
         cleanCapitolo('Uscita', esistente, fieldsId);
         $('#HIDDEN_programmaUscita')[!esistente ? 'attr' : 'removeAttr']('disabled', true);
         $('#missioneUscita, #programmaUscita, #titoloSpesaUscita').val('');
+		//SIAC-8791
+		$('#HIDDEN_missioneUscita', '#HIDDEN_programmaUscita', '#HIDDEN_titoloSpesaUscita').val('');
     }
 
     /**
@@ -954,8 +977,10 @@ var Cronoprogramma = (function() {
      */
     function cleanCapitolo(tipo, esistente, fieldsId) {
         $('#numeroCapitolo' + tipo + ', #numeroArticolo' + tipo + ', #numeroUEB' + tipo).removeAttr('readonly').val('');
-        $('#uidCapitoloEntrata').val('');
-        $('#datiRiferimentoCapitolo' + tipo + 'Span').html('');
+        //$('#uidCapitoloEntrata').val('');
+        //SIAC-8791 
+		$('#uidCapitolo' + tipo).val('');
+		$('#datiRiferimentoCapitolo' + tipo + 'Span').html('');
 
         gestioneClassificazione(fieldsId, esistente);
     }

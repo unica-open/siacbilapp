@@ -40,7 +40,8 @@ public class RicercaComponenteCapitoloModel  extends ComponenteCapitoloModel {
 	private MacrotipoComponenteImportiCapitolo macroComponenteCapitolo;
 	private SottotipoComponenteImportiCapitolo sottoComponenteCapitolo;
 	
- 
+	//SIAC-7873
+	private boolean saltaControlloSuDateValidita = Boolean.FALSE;
 	
 	private List<MacrotipoComponenteImportiCapitolo> listaMacroTipo = new ArrayList<MacrotipoComponenteImportiCapitolo>();
 	private List<SottotipoComponenteImportiCapitolo> listaSottoTipo = new ArrayList<SottotipoComponenteImportiCapitolo>();
@@ -93,6 +94,9 @@ public class RicercaComponenteCapitoloModel  extends ComponenteCapitoloModel {
 				
 		// Injezione della utility di ricerca
 		request.setTipoComponenteImportiCapitolo(creaUtilityRicercaComponenteCapitolo());
+		
+		//SIAC-7873
+		request.setSaltaControlloSuDateValidita(isSaltaControlloSuDateValidita());
 		
 		return request;
 	}
@@ -180,11 +184,20 @@ public class RicercaComponenteCapitoloModel  extends ComponenteCapitoloModel {
 	public void setListaSottoTipo(List<SottotipoComponenteImportiCapitolo> listaSottoTipo) {
 		this.listaSottoTipo = listaSottoTipo;
 	}
- 
+
+	/**
+	 * @return the saltaControlloSuDateValidita
+	 */
+	public boolean isSaltaControlloSuDateValidita() {
+		return saltaControlloSuDateValidita;
+	}
+
+	/**
+	 * @param saltaControlloSuDateValidita the saltaControlloSuDateValidita to set
+	 */
+	public void setSaltaControlloSuDateValidita(boolean saltaControlloSuDateValidita) {
+		this.saltaControlloSuDateValidita = saltaControlloSuDateValidita;
+	}
+
 	 
-	
-	
-	
-	
-	
 }

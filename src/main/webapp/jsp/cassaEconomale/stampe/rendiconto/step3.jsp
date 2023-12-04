@@ -133,10 +133,10 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.new2.js"></script>
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}cassaEconomale/stampe/stampaCECRendiconto.step3.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.new2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cassaEconomale/stampe/stampaCECRendiconto.step3.js"></script>
 
 </body>
 </html>

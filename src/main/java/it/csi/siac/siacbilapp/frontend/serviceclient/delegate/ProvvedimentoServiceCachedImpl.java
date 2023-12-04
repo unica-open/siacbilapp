@@ -14,6 +14,8 @@ import it.csi.siac.siacattser.frontend.webservice.msg.InserisceProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.InserisceProvvedimentoResponse;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
+import it.csi.siac.siacattser.frontend.webservice.msg.RicercaPuntualeProvvedimento;
+import it.csi.siac.siacattser.frontend.webservice.msg.RicercaPuntualeProvvedimentoResponse;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaSinteticaProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaSinteticaProvvedimentoResponse;
 import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimento;
@@ -71,6 +73,18 @@ public class ProvvedimentoServiceCachedImpl implements ProvvedimentoService {
 	public RicercaSinteticaProvvedimentoResponse ricercaSinteticaProvvedimento(
 			RicercaSinteticaProvvedimento req) {
 		return provvedimentoService.ricercaSinteticaProvvedimento(req);
+	}
+
+	@Override
+	public RicercaProvvedimentoResponse ricercaProvvedimentoConParametri(RicercaProvvedimento parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RicercaPuntualeProvvedimentoResponse ricercaPuntualeProvvedimento(RicercaPuntualeProvvedimento parameters) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

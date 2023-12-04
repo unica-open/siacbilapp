@@ -113,10 +113,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}storniUEB/storni.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_collapse.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}storniUEB/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/storniUEB/storni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_collapse.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/storniUEB/aggiorna.js"></script>
 
 </body>
 </html>

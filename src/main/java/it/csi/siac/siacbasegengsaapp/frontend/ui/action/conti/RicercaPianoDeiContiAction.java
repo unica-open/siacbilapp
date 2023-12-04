@@ -24,7 +24,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.ContoService;
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaSinteticaContoFigliResponse;
@@ -95,7 +95,7 @@ public abstract class RicercaPianoDeiContiAction<M extends RicercaPianoDeiContiM
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				log.warn(methodName, errorMsg);
 				addErrori(response);
 				

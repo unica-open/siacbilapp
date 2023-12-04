@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfelapp.frontend.ui.model.fatturaelettronica;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfelapp.frontend.ui.util.wrapper.ElementoFatturaFEL;
 
 /**
@@ -13,7 +13,7 @@ import it.csi.siac.siacfelapp.frontend.ui.util.wrapper.ElementoFatturaFEL;
  * @author Marchino Alessandro
  * @version 1.0.0 - 08/06/2015
  */
-public class RisultatiRicercaFatturaElettronicaAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoFatturaFEL> {
+public class RisultatiRicercaFatturaElettronicaAjaxModel extends PagedDataTableAjaxModel<ElementoFatturaFEL> {
 		
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -6051383247960350936L;

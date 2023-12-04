@@ -69,15 +69,15 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaContoFIN.js"></script>
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_doc.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}cespiti/registroa/ricercaRegistroA.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaContoFIN.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_doc.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/registroa/ricercaRegistroA.js"></script>
 </body>
 </html>

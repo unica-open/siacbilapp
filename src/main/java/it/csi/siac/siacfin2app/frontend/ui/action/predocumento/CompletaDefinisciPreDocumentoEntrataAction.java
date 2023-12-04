@@ -4,30 +4,26 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.predocumento;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
+import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.predocumento.CompletaDefinisciPreDocumentoEntrataModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.CompletaDefiniscePreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTotaliPreDocumentoEntrataPerStato;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTotaliPreDocumentoEntrataPerStatoResponse;
-import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
-import it.csi.siac.siacfinser.model.Accertamento;
-import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+import it.csi.siac.siacfin2ser.model.CausaleEntrata;
+import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+
 
 /**
  * Classe di action per la ricerca del PreDocumento di Entrata per il completamento e la definizione
@@ -36,17 +32,20 @@ import it.csi.siac.siacfinser.model.soggetto.Soggetto;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class CompletaDefinisciPreDocumentoEntrataAction extends GenericPreDocumentoEntrataAction<CompletaDefinisciPreDocumentoEntrataModel> {
+public class CompletaDefinisciPreDocumentoEntrataAction extends BaseCompletaDefinisciPreDocumentoEntrataAction<CompletaDefinisciPreDocumentoEntrataModel> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 3049741139669487436L;
-
+	
 	@Override
 	public void prepare() throws Exception {
 		super.prepare();
 		
 		// Caricamento liste
 		try {
+			//SIAC-6780
+			caricaListaContoCorrente();
+			
 			caricaListaTipoCausale();
 			caricaListaCausaleEntrata();
 			caricaListaTipoAtto();
@@ -56,20 +55,175 @@ public class CompletaDefinisciPreDocumentoEntrataAction extends GenericPreDocume
 		} finally {
 			checkMetodoConclusoSenzaErrori();
 		}
+		
 	}
-	
+
 	@Override
 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
 	public String execute() throws Exception {
 		// Imposto i valori di default
+		
+		return SUCCESS;
+	}
+	
+	@Deprecated
+	public String ricercaPerCompletaDefinisciMassivo() {
+		final String methodName = "ricercaPerCompletaDefinisciMassivo";
+		
+		RicercaSinteticaPreDocumentoEntrata request = model.creaRequestRicercaSinteticaPreDocumentoEntrata();
+		logServiceRequest(request);
+		RicercaSinteticaPreDocumentoEntrataResponse response = preDocumentoEntrataService.ricercaSinteticaPreDocumentoEntrata(request);
+		logServiceResponse(response);
+		
+		if (response.hasErrori()) {
+			log.info(methodName, "Fallimento nella chiamata al servizio di ricerca sintetica");
+			addErrori(response);
+			return INPUT;
+		}
+		
+		int totaleElementi = response.getPreDocumenti().getTotaleElementi();
+		
+		if(totaleElementi == 0) {
+			log.debug(methodName, "Nessun risultato trovato");
+			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore());
+			return INPUT;
+		}
+		
+		log.debug(methodName, "Ricerca effettuata con successo. Totale preDocumenti: " + totaleElementi);
+		log.debug(methodName, "Imposto in sessione la request");
+		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_PREDOCUMENTI_ENTRATA, request);
+	
+		log.debug(methodName, "Imposto in sessione la lista");
+		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_PREDOCUMENTI_ENTRATA, response.getPreDocumenti());
+		
+		sessionHandler.setParametro(BilSessionParameter.RIENTRO_POSIZIONE_START, null);
+		sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA_PREDOCUMENTO, response.getImportoTotale());
+		
+		// Impostazione in sessione di alcuni parametri per l'abilitazione delle operazioni
+		sessionHandler.setParametro(BilSessionParameter.PREDOCUMENTO_CAUSALE_MANCANTE, isCausaleEntrataMancante());
+		
+		// SIAC-4280
+		sessionHandler.setParametro(BilSessionParameter.ABILITATA_MODIFICA_ASSOCIAZIONE_IMPUTAZIONI_CONTABILI_PREDOCUMENTO_ENTRATA, isAbilitataModificaImputazioniContabili());
+		sessionHandler.setParametro(BilSessionParameter.CAUSALE_SELEZIONATA_PREDOCUMENTO_ENTRATA, findCausale());
+
+		sessionHandler.setParametro(BilSessionParameter.FROM_COMPLETA_DEFINISCI, Boolean.TRUE);
+
 		return SUCCESS;
 	}
 	
 	/**
-	 * Completa e definisce
-	 * 
-	 * @return una Stringa corrispondente al risultato dell'invocazione
+	 * Controlla se presente il tipo della causale
+	 * @return boolean
 	 */
+	public boolean isContoCorrenteMancante() {
+		return model.getContoCorrente() != null && model.getContoCorrente().getUid() != 0 ? false : true;
+	}
+
+	/**
+	 * Controlla se presente il tipo della causale
+	 * @return boolean
+	 */
+	public boolean isSoggettoMancante() {
+		return model.getCausaleEntrata() != null && model.getCausaleEntrata().getUid() != 0 ? true : false;
+	}
+	
+	/**
+	 * Controlla se presente il tipo della causale
+	 * @return boolean
+	 */
+	public boolean isCausaleEntrataMancante() {
+		return model.getCausaleEntrata() != null && model.getCausaleEntrata().getUid() != 0 ? true : false;
+	}
+	
+	/**
+	 * Controlla se presente la causale
+	 * @return boolean
+	 */
+	public boolean isTipoCusaleMancante() {
+		return model.getTipoCausale() != null && model.getTipoCausale().getUid() != 0 ? true : false;
+	}
+	
+	/**
+	 * Controlla se la modifica delle imputazioni contabili sia abilitato
+	 * @return true se la modifica &eacute; abilitata; false altrimenti
+	 */
+	private Boolean isAbilitataModificaImputazioniContabili() {
+		final String methodName = "isAbilitataModificaImputazioniContabili";
+		// La modifica delle imputazioni e' abilitata solo se sono selezionati tipo e codice causale
+		boolean tipoCausaleSelezionato = isTipoCusaleMancante();
+		boolean causaleSelezionata = isCausaleEntrataMancante();
+		log.debug(methodName, "Tipo causale selezionato? " + tipoCausaleSelezionato + " - causale selezionata? " + causaleSelezionata);
+		return Boolean.valueOf(tipoCausaleSelezionato && causaleSelezionata);
+	}
+	
+	/**
+	 * Ottiene la causale di entrata dalla lista in sessione
+	 * @return la causale di entrata
+	 */
+	private CausaleEntrata findCausale() {
+		if(model.getCausaleEntrata() == null || model.getCausaleEntrata().getUid() == 0) {
+			return null;
+		}
+		return ComparatorUtils.searchByUid(model.getListaCausaleEntrata(), model.getCausaleEntrata());
+	}
+	
+	/**-
+	 * Ricerca dei totali
+	 * @return una stringa corrispondente al risultato dell'invocazione
+	 */
+	public String cercaTotali() {
+		final String methodName = "cercaTotali";
+		// Invocazione del servizio
+		RicercaTotaliPreDocumentoEntrataPerStato req =  model.creaRequestRicercaTotaliPreDocumentoEntrataPerStato();
+		RicercaTotaliPreDocumentoEntrataPerStatoResponse res = preDocumentoEntrataService.ricercaTotaliPreDocumentoEntrataPerStato(req);
+		
+		// Controllo gli errori
+		if(res.hasErrori()) {
+			// Si sono verificati degli errori: esco.
+			addErrori(res);
+			log.debug(methodName, "esecuzione del servizio RicercaTotaliPreDocumentoEntrataPerStato terminata con errori.");
+			return INPUT;
+		}
+		
+		impostaTotaliElenco(res);
+		impostaTotaliElencoNoCassa(res);
+		
+		return SUCCESS;
+	}
+	
+	/**
+	 * Validazione per il completamento e la definizione del preDocumento.
+	 */
+	@Override
+	public void validateCompletaDefinisci() {
+		boolean formValido =
+				checkCampoValorizzato(model.getDataCompetenzaDa(), "Data da") ||
+				checkCampoValorizzato(model.getDataCompetenzaA(), "Data a") ||
+				checkPresenzaIdEntita(model.getCausaleEntrata()) ||
+				checkPresenzaIdEntita(model.getContoCorrente());
+
+		
+		if(!formValido) {
+			addErrore(ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
+		}
+		checkCondition(model.getDataCompetenzaDa() == null || model.getDataCompetenzaA() == null
+				|| !model.getDataCompetenzaA().before(model.getDataCompetenzaDa()),
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Data competenza", "la data di competenza da non deve essere inferiore la data di competenza a"));
+		
+		//SIAC-7457
+		//Effettuo un controllo sulla capienza dell'importo da regolarizzare
+		if(model.getImportoPreDocumentiNoCassaTotale() != null && model.getProvvisorioCassa().getImportoDaRegolarizzare() != null) {
+			String keyProvvisorio = model.getProvvisorioCassa().getCodice();
+			checkCondition(!(model.getImportoPreDocumentiNoCassaTotale().compareTo(model.getProvvisorioCassa().getImportoDaRegolarizzare()) > 0), 
+					ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("completa e definisci","predisposizione di incasso", keyProvvisorio,
+							"L'importo delle predisposizioni supera l'importo da regolarizzare del provvisorio"));
+		}
+		
+		super.validateCompletaDefinisci();
+	}
+	
+	
+	@Override
 	public String completaDefinisci() {
 		final String methodName = "ricerca";
 		
@@ -84,186 +238,6 @@ public class CompletaDefinisciPreDocumentoEntrataAction extends GenericPreDocume
 		
 		addInformazione(ErroreCore.ELABORAZIONE_ASINCRONA_AVVIATA.getErrore("completamento e definizione della predisposizione di incasso", ""));
 		return SUCCESS;
-	}
-	
-	/**
-	 * Validazione per il completamento e la definizione del preDocumento.
-	 */
-	public void validateCompletaDefinisci() {
-		boolean formValido =
-				checkCampoValorizzato(model.getDataCompetenzaDa(), "Data da") ||
-				checkCampoValorizzato(model.getDataCompetenzaA(), "Data a") ||
-				checkPresenzaIdEntita(model.getCausaleEntrata());
-		
-		if(!formValido) {
-			addErrore(ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
-		}
-		checkCondition(model.getDataCompetenzaDa() == null || model.getDataCompetenzaA() == null
-				|| !model.getDataCompetenzaA().before(model.getDataCompetenzaDa()),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Data competenza", "la data di competenza da non deve essere inferiore la data di competenza a"));
-		
-		checkAttoAmministrativo();
-		checkAccertamento();
-		checkSoggetto();
-		checkCoerenzaSoggettoAccertamento();
-	}
-
-	/**
-	 * Controllo del provvedimento
-	 */
-	private void checkAttoAmministrativo() {
-		// richiamo il metodo di validazione
-		validazioneAttoAmministrativo();
-		
-		AttoAmministrativo aa = model.getAttoAmministrativo();
-		if(aa != null && aa.getUid() != 0) {
-			model.setTipoAtto(aa.getTipoAtto());
-			model.setStrutturaAmministrativoContabileAttoAmministrativo(aa.getStrutturaAmmContabile());
-		}
-	}
-
-	/**
-	 * Controllo di esistenza dell'accertamento
-	 */
-	private void checkAccertamento() {
-		Accertamento accertamento = model.getMovimentoGestione();
-		checkCondition(accertamento != null && accertamento.getAnnoMovimento() != 0 && accertamento.getNumero() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Accertamento"));
-		validazioneAccertamentoSubAccertamento();
-	}
-
-	/**
-	 * Controllo di esistenza del soggetto
-	 */
-	private void checkSoggetto() {
-		Soggetto soggetto = model.getSoggetto();
-		checkCondition(soggetto != null && StringUtils.isNotBlank(soggetto.getCodiceSoggetto()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Soggetto"));
-		validazioneSoggetto();
-	}
-
-	/**
-	 * Controllo di coerenza tra accertamento e soggetto
-	 */
-	private void checkCoerenzaSoggettoAccertamento() {
-		controlloConguenzaSoggettoMovimentoGestione(model.getSoggetto(), model.getMovimentoGestione(), model.getSubMovimentoGestione(),
-				"predisposizione di incasso", "accertamento");
-	}
-	
-	@Override
-	protected void checkDisponibilitaAccertamentoSubaccertamento() {
-		// Vuoto
-	}
-	
-	/**-
-	 * Ricerca dei totali
-	 * @return una stringa corrispondente al risultato dell'invocazione
-	 */
-	public String cercaTotali() {
-		final String methodName = "cercaTotali";
-		// Invocazione del servizio
-		RicercaTotaliPreDocumentoEntrataPerStato req = model.creaRequestRicercaTotaliPreDocumentoEntrataPerStato();
-		RicercaTotaliPreDocumentoEntrataPerStatoResponse res = preDocumentoEntrataService.ricercaTotaliPreDocumentoEntrataPerStato(req);
-		
-		// Controllo gli errori
-		if(res.hasErrori()) {
-			// Si sono verificati degli errori: esco.
-			addErrori(res);
-			log.debug(methodName, "esecuzione del servizio RicercaTotaliPreDocumentoEntrataPerStato terminata con errori.");
-			return INPUT;
-		}
-		impostaTotaliElenco(res);
-		
-		return SUCCESS;
-	}
-	
-	/**
-	 * Imposta totali elenco.
-	 *
-	 * @param res la response da cui ottenere i dati
-	 */
-	public void impostaTotaliElenco(RicercaTotaliPreDocumentoEntrataPerStatoResponse res) {
-		Map<StatoOperativoPreDocumento, BigDecimal> importiPreDocumenti = res.getImportiPreDocumenti();
-		Map<StatoOperativoPreDocumento, Long> numeroPreDocumenti = res.getNumeroPreDocumenti();
-
-		// Importi e numeri...
-		
-		// Incompleto
-		model.setNumeroPreDocumentiIncompleti(defaultToZero(numeroPreDocumenti.get(StatoOperativoPreDocumento.INCOMPLETO)));
-		model.setImportoPreDocumentiIncompleti(defaultToZero(importiPreDocumenti.get(StatoOperativoPreDocumento.INCOMPLETO)));
-		// Completi
-		model.setNumeroPreDocumentiCompleti(defaultToZero(numeroPreDocumenti.get(StatoOperativoPreDocumento.COMPLETO)));
-		model.setImportoPreDocumentiCompleti(defaultToZero(importiPreDocumenti.get(StatoOperativoPreDocumento.COMPLETO)));
-		// Annullati e definiti
-		model.setNumeroPreDocumentiAnnullatiDefiniti(numeroPerStati(numeroPreDocumenti, StatoOperativoPreDocumento.ANNULLATO, StatoOperativoPreDocumento.DEFINITO));
-		model.setImportoPreDocumentiAnnullatiDefiniti(importoPerStati(importiPreDocumenti, StatoOperativoPreDocumento.ANNULLATO, StatoOperativoPreDocumento.DEFINITO));
-		// Totale
-		model.setImportoPreDocumentiTotale(importoPerStati(importiPreDocumenti, StatoOperativoPreDocumento.values()));
-		model.setNumeroPreDocumentiTotale(numeroPerStati(numeroPreDocumenti, StatoOperativoPreDocumento.values()));
-	}
-
-	/**
-	 * Importo dei predoc per gli stati forniti
-	 * @param importiPreDocumenti gli importi
-	 * @param stati gli stati
-	 * @return gli importi
-	 */
-	private BigDecimal importoPerStati(Map<StatoOperativoPreDocumento, BigDecimal> importiPreDocumenti, StatoOperativoPreDocumento... stati) {
-		BigDecimal importoTotale = BigDecimal.ZERO;
-		Collection<StatoOperativoPreDocumento> statiToCheck = Arrays.asList(stati);
-		for(Entry<StatoOperativoPreDocumento, BigDecimal> entry : importiPreDocumenti.entrySet()) {
-			if(statiToCheck.contains(entry.getKey())) {
-				importoTotale = importoTotale.add(defaultToZero(entry.getValue()));
-			}
-		}
-		return importoTotale;
-	}
-	
-	/**
-	 * Numero dei predoc per gli stati forniti
-	 * @param numeroPreDocumenti il numero
-	 * @param stati gli stati
-	 * @return il numero
-	 */
-	private Long numeroPerStati(Map<StatoOperativoPreDocumento, Long> numeroPreDocumenti, StatoOperativoPreDocumento... stati) {
-		long numeroPredoc = 0;
-		Collection<StatoOperativoPreDocumento> statiToCheck = Arrays.asList(stati);
-		for(Entry<StatoOperativoPreDocumento, Long> entry : numeroPreDocumenti.entrySet()) {
-			if(statiToCheck.contains(entry.getKey())) {
-				numeroPredoc += defaultToZero(entry.getValue()).longValue();
-			}
-		}
-		return Long.valueOf(numeroPredoc);
-	}
-	
-	/**
-	 * Imposta il valore fornendo un default a zero
-	 * @param value il valore da impostare
-	 * @return il valore se non null; zero altrimento
-	 */
-	private Long defaultToZero(Long value) {
-		return value != null ? value : Long.valueOf(0L);
-	}
-	
-	/**
-	 * Imposta il valore fornendo un default a zero
-	 * @param value il valore da impostare
-	 * @return il valore se non null; zero altrimento
-	 */
-	private BigDecimal defaultToZero(BigDecimal value) {
-		return value != null ? value : BigDecimal.ZERO;
-	}
-	
-	/**
-	 * Validazione per la ricerca dei totali
-	 */
-	public void validateCercaTotali() {
-		boolean formValido =
-				checkCampoValorizzato(model.getDataCompetenzaDa(), "Data da") ||
-				checkCampoValorizzato(model.getDataCompetenzaA(), "Data a") ||
-				checkPresenzaIdEntita(model.getCausaleEntrata());
-		
-		if(!formValido) {
-			addErrore(ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
-		}
 	}
 	
 }

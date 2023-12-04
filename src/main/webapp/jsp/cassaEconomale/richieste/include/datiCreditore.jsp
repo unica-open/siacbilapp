@@ -5,12 +5,12 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<s:set name="asteriskAbsent"><c:out value="${param.asteriskAbsent}" default="false"/></s:set>
-<s:set name="shouldDisable"><c:out value="${param.shouldDisable}" default="false"/></s:set>
+<s:set var="asteriskAbsent"><c:out value="${param.asteriskAbsent}" default="false"/></s:set>
+<s:set var="shouldDisable"><c:out value="${param.shouldDisable}" default="false"/></s:set>
 <s:if test="%{#asteriskAbsent}">
-	<s:set name="asterisk">&#8203;</s:set>
+	<s:set var="asterisk">&#8203;</s:set>
 </s:if><s:else>
-	<s:set name="asterisk">&nbsp;*</s:set>
+	<s:set var="asterisk">&nbsp;*</s:set>
 </s:else>
 
 <s:hidden id="HIDDEN_soggettoDenominazione" name="richiestaEconomale.soggetto.denominazione" />

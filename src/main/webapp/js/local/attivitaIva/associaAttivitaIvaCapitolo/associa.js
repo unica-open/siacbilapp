@@ -164,7 +164,8 @@
                     {
                         aTargets : [ 3 ],
                         mData : function(source) {
-                            return source.gruppoAttivitaIva ? (source.gruppoAttivitaIva.codice + " - " + source.gruppoAttivitaIva.descrizione) : "";
+                            return source.gruppoAttivitaIva && source.gruppoAttivitaIva.codice && source.gruppoAttivitaIva.descrizione
+                            ? (source.gruppoAttivitaIva.codice + " - " + source.gruppoAttivitaIva.descrizione) : "";
                         }
                     },
                     {
@@ -263,7 +264,8 @@
                     {
                         aTargets : [ 4 ],
                         mData : function(source) {
-                            return source.gruppoAttivitaIva ? (source.gruppoAttivitaIva.codice + " - " + source.gruppoAttivitaIva.descrizione) : "";
+                            return source.gruppoAttivitaIva && source.gruppoAttivitaIva.codice && source.gruppoAttivitaIva.descrizione
+                            ? (source.gruppoAttivitaIva.codice + " - " + source.gruppoAttivitaIva.descrizione) : "";
                         }
                     }
                 ]

@@ -47,7 +47,12 @@ SPDX-License-Identifier: EUPL-1.2
 						<s:param name="href">risultatiRicercaAllegatoAtto_annulla.do</s:param>
 					</s:include>
 					<s:include value="/jsp/allegatoAtto/modaleCompletamentoRisultatiRicerca.jsp" />
-					<s:include value="/jsp/allegatoAtto/modaleInvioRisultatiRicerca.jsp" />
+					<s:if test="abilitaChecklist()">
+						<s:include value="/jsp/allegatoAtto/modaleInvioConChecklistRisultatiRicerca.jsp" />
+					</s:if>
+					<s:else>					
+						<s:include value="/jsp/allegatoAtto/modaleInvioRisultatiRicerca.jsp" />
+					</s:else>
 
 					<div class="Border_line"></div>
 					<p>
@@ -61,7 +66,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}allegatoAtto/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/risultatiRicerca.js"></script>
 
 </body>
 </html>

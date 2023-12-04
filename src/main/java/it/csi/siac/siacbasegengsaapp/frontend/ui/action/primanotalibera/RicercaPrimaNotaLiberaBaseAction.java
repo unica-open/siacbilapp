@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.RicercaPrimaNotaLiberaBaseModel;
@@ -37,7 +37,7 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaTipoBeneC
 import it.csi.siac.siaccespser.model.Cespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespite;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.CausaleService;
 import it.csi.siac.siacgenser.frontend.webservice.ContoService;
@@ -197,7 +197,7 @@ public abstract class RicercaPrimaNotaLiberaBaseAction<M extends RicercaPrimaNot
 			RicercaSinteticaModulareCausaleResponse res = causaleService.ricercaSinteticaModulareCausale(req);
 
 			if (res.hasErrori()) {
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaModulareCausale.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -230,7 +230,7 @@ public abstract class RicercaPrimaNotaLiberaBaseAction<M extends RicercaPrimaNot
 			RicercaSinteticaTipoBeneCespiteResponse res = classificazioneCespiteService.ricercaSinteticaTipoBeneCespite(req);
 
 			if (res.hasErrori()) {
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaTipoBeneCespite.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -274,7 +274,7 @@ public abstract class RicercaPrimaNotaLiberaBaseAction<M extends RicercaPrimaNot
 
 			if (res.hasErrori()) {
 				addErrori(res);
-				String msgErrore = createErrorInServiceInvocationString(req, res);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, res);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 
@@ -314,7 +314,7 @@ public abstract class RicercaPrimaNotaLiberaBaseAction<M extends RicercaPrimaNot
 		RicercaDettaglioBilancioResponse res = bilancioService.ricercaDettaglioBilancio(req);
 		
 		if(res.hasErrori()) {
-			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(req, res));
+			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(RicercaDettaglioBilancio.class, res));
 		}
 		
 		FaseBilancio faseBilancio = res.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
@@ -340,7 +340,7 @@ public abstract class RicercaPrimaNotaLiberaBaseAction<M extends RicercaPrimaNot
 		logServiceResponse(res);
 
 		if (res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaConto.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -367,7 +367,7 @@ public abstract class RicercaPrimaNotaLiberaBaseAction<M extends RicercaPrimaNot
 		logServiceResponse(res);
 
 		if (res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaCespite.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -451,7 +451,7 @@ public abstract class RicercaPrimaNotaLiberaBaseAction<M extends RicercaPrimaNot
 		RicercaSinteticaPrimaNotaResponse res = primaNotaService.ricercaSinteticaPrimaNota(req);
 		logServiceResponse(res);
 		if (res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaPrimaNota.class, res));
 			addErrori(res);
 			return INPUT;
 		}

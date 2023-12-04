@@ -103,11 +103,17 @@ public class RicercaVincoloModel extends GenericVincoloModel {
 		}
 		request.setTipiCapitolo(impostaTipiCapitolo());
 		
+		//SIAC-7192
+//		request.set
+		
 		getVincolo().setEnte(getEnte());
 		request.setVincolo(getVincolo());
 		
 		request.setParametriPaginazione(creaParametriPaginazione());
 		
+		//task-52
+		request.setRicercaCodiceLike(true);
+				
 		return request;
 	}
 	

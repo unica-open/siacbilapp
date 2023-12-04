@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureExcep
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.GenericAllegatoAttoAction;
 import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.AggiornaAllegatoAttoModel.TabVisualizzazione;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceElencoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
@@ -63,7 +63,8 @@ public class AssociaMovimentoAllegatoAttoAction extends AssociaMovimentoAllegato
 	private static final long serialVersionUID = -5526154664100115914L;
 	
 	@Autowired private transient CodificheService codificheService;
-	@Autowired private transient PreDocumentoSpesaService preDocumentoSpesaService;
+	@Autowired private transient ContoTesoreriaService contoTesoreriaService;
+
 
 	@Override
 	@BreadCrumb(GenericBilancioAction.MODEL_TITOLO)
@@ -79,7 +80,7 @@ public class AssociaMovimentoAllegatoAttoAction extends AssociaMovimentoAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioAllegatoAtto.class, res));
 			throwExceptionFromErrori(res.getErrori());
 		}
 		model.setAllegatoAtto(res.getAllegatoAtto());
@@ -117,7 +118,7 @@ public class AssociaMovimentoAllegatoAttoAction extends AssociaMovimentoAllegato
 		if(listaInSessione == null) {
 			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
 			logServiceRequest(request);
-			LeggiContiTesoreriaResponse response = preDocumentoSpesaService.leggiContiTesoreria(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
 			logServiceResponse(response);
 			
 			// Controllo gli errori
@@ -217,8 +218,9 @@ public class AssociaMovimentoAllegatoAttoAction extends AssociaMovimentoAllegato
 
 	/**
 	 * Validazione per il metodo {@link #completeStep1()}.
+	 * @throws WebServiceInvocationFailureException 
 	 */
-	public void validateCompleteStep1() {
+	public void validateCompleteStep1() throws WebServiceInvocationFailureException {
 		// Controllo la validita del soggetto
 		Soggetto soggetto = model.getSoggetto();
 		checkCondition(soggetto != null && StringUtils.isNotBlank(soggetto.getCodiceSoggetto()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Soggetto"), true);
@@ -227,20 +229,12 @@ public class AssociaMovimentoAllegatoAttoAction extends AssociaMovimentoAllegato
 		//SIAC-6840
 		//la modalita' AVVISO PAGOPA non e' ammessa per la funzione Associa Movimento
 		if(model.getModalitaPagamentoSoggetto() != null) {
-			checkCondition(checkModalitaPagamentoIsPagoPA(model.getModalitaPagamentoSoggetto().getUid()) ? true : false, ErroreFin.MOD_PAGO_PA_NON_AMMESSA.getErrore());
+			//SIAC-8853
+			checkCondition(!checkModalitaPagamentoIsPagoPA(model.getModalitaPagamentoSoggetto().getUid(), model.getListaModalitaPagamentoSoggetto()), 
+					ErroreFin.MOD_PAGO_PA_NON_AMMESSA.getErrore());	
 		}
 	}
 	
-	//SIAC-6840
-	private boolean checkModalitaPagamentoIsPagoPA(int uidModPag) {
-		List<ModalitaPagamentoSoggetto> listModPag = model.getListaModalitaPagamentoSoggetto();
-		for (ModalitaPagamentoSoggetto modPag : listModPag) {
-			if(modPag.getUid() == uidModPag && "APA".equals(modPag.getModalitaAccreditoSoggetto().getCodice())) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	/**
 	 * Metodo per l'ingresso nello step2.

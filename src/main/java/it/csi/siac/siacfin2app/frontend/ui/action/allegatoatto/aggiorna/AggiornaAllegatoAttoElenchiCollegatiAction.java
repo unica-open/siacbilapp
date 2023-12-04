@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -26,7 +25,6 @@ import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.model.paginazione.ListaPaginataImpl;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaAttributiQuotaDocumentoSpesa;
@@ -55,7 +53,6 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.SpezzaQuotaEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.SpezzaQuotaEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.SpezzaQuotaSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.SpezzaQuotaSpesaResponse;
-import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoModalitaPagamentoSoggetto;
 import it.csi.siac.siacfin2ser.model.Subdocumento;
@@ -138,7 +135,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(DisassociaElenco.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -200,7 +197,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AssociaElenco.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -284,7 +281,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		
 		if(res.hasErrori()) {
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioQuotaSpesa.class, res));
 		}
 		
 		model.setSubdocumentoSpesa(res.getSubdocumentoSpesa());
@@ -451,7 +448,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, res));
 			}
 			soggetto = res.getSoggetto();
 			
@@ -535,7 +532,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		
 		// Controllo gli errori
 		if(responseImporti.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(requestImporti, responseImporti));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaImportiQuoteDocumentoSpesa.class, responseImporti));
 			addErrori(responseImporti);
 			return;
 		}
@@ -549,7 +546,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(responseAttributi.hasErrori()) {
 			//si sono cverificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(requestAttributi, responseAttributi));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaAttributiQuotaDocumentoSpesa.class, responseAttributi));
 			addErrori(responseAttributi);
 			return;
 		}
@@ -572,7 +569,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificatoi degli erori:esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaImportiQuoteDocumentoEntrata.class, res));
 			addErrori(res);
 			return;
 		}
@@ -624,7 +621,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 			return;
 		}
 		checkCondition(!(provvisorioDiCassa.getAnno() == null ^ provvisorioDiCassa.getNumero() == null),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("anno e numero provvisorio", "devono essere contemporaneamente valorizzati o non valorizzati"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("anno e numero provvisorio", "devono essere contemporaneamente valorizzati o non valorizzati"));
 		if(provvisorioDiCassa.getAnno() == null) {
 			// Anno non presente, non continuo con la ricerca
 			log.debug(methodName, "Anno provvisorio non presente: esco");
@@ -638,7 +635,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			// Ho errori: esco subito
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvisorioDiCassaPerChiave.class, res));
 			addErrori(res);
 			return;
 		}
@@ -668,7 +665,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		checkCondition(siopeTipoDebito == null
 				|| !BilConstants.CODICE_SIOPE_DEBITO_TIPO_COMMERCIALE.getConstant().equals(siopeTipoDebito.getCodice())
 				|| (StringUtils.isNotBlank(subdocumentoSpesa.getCig()) ^ (subdocumentoSpesa.getSiopeAssenzaMotivazione() != null && subdocumentoSpesa.getSiopeAssenzaMotivazione().getUid() != 0)),
-				ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("CIG o Motivo di assenza CIG"));
+				new Errore("", "Occorre inserire CIG o Motivo di assenza CIG, ma non entrambi"));
 		
 	}
 
@@ -716,7 +713,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		//controllo se si siano verificati degli errori
 		if (res.hasErrori()) {
 			//si sono verificati dgeli errori: esco
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(SpezzaQuotaSpesa.class, res));
 			addErrori(res);
 			return;
 		}
@@ -724,18 +721,6 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		log.debug(methodName, "Quota spezzata correttamente");
 		// Comunico il successo dell'operazione
 		impostaInformazioneSuccesso();
-	}
-	
-	//SIAC-6840
-	private ModalitaPagamentoSoggetto modPagInUso(int uidModPag) {
-		ModalitaPagamentoSoggetto modPagToReturn = null;
-		List<ModalitaPagamentoSoggetto> listModPag = model.getListaModalitaPagamentoSoggettoFiltrate();
-		for (ModalitaPagamentoSoggetto modPag : listModPag) {
-			if(modPag.getUid() == uidModPag) {
-				modPagToReturn = modPag;
-			}
-		}
-		return modPagToReturn;
 	}
 	
 	/**
@@ -752,7 +737,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		//controllo se si siano verificati degli errori
 		if (res.hasErrori()) {
 			//si sono verificati degli errori, esco
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(SpezzaQuotaEntrata.class, res));
 			addErrori(res);
 			return;
 		}
@@ -819,18 +804,18 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 			checkNotNull(importoNew, nomeImporto + " nuovo");
 		} else {
 			checkCondition(!(importoOld == null ^ importoNew == null),
-					ErroreCore.VALORE_NON_VALIDO.getErrore(nomeImporto, "l'" + nomeImporto + " deve essere valorizzato se e solo se e' valorizzato quello originale"));
+					ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeImporto, "l'" + nomeImporto + " deve essere valorizzato se e solo se e' valorizzato quello originale"));
 		}
 		if(importoOld == null || importoNew == null) {
 			return;
 		}
 		
 		if (strictIneq) {
-			checkCondition(importoNew.compareTo(BigDecimal.ZERO) > 0, ErroreCore.VALORE_NON_VALIDO.getErrore(nomeImporto, "(deve essere positivo)"));
-			checkCondition(importoOld.compareTo(importoNew) > 0, ErroreCore.VALORE_NON_VALIDO.getErrore(nomeImporto, "(deve essere inferiore all'" + nomeImporto + " corrente)"));
+			checkCondition(importoNew.compareTo(BigDecimal.ZERO) > 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeImporto, "(deve essere positivo)"));
+			checkCondition(importoOld.compareTo(importoNew) > 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeImporto, "(deve essere inferiore all'" + nomeImporto + " corrente)"));
 		} else {
-			checkCondition(importoNew.compareTo(BigDecimal.ZERO) >= 0, ErroreCore.VALORE_NON_VALIDO.getErrore(nomeImporto, "(deve essere positivo)"));
-			checkCondition(importoOld.compareTo(importoNew) >= 0, ErroreCore.VALORE_NON_VALIDO.getErrore(nomeImporto, "(non deve essere superiore all'" + nomeImporto + " corrente)"));
+			checkCondition(importoNew.compareTo(BigDecimal.ZERO) >= 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeImporto, "(deve essere positivo)"));
+			checkCondition(importoOld.compareTo(importoNew) >= 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeImporto, "(non deve essere superiore all'" + nomeImporto + " corrente)"));
 		}
 	}
 	
@@ -864,7 +849,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaQuotaDaElenco.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -917,7 +902,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		//controllo se si siano verificati degli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaDatiSoggettoAllegatoAtto.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -968,7 +953,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaDatiSoggettoAllegatoAtto.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -1007,7 +992,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.warn(methodName, createErrorInServiceInvocationString(req, res));
+			log.warn(methodName, createErrorInServiceInvocationString(RicercaElenchiPerAllegatoAtto.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -1037,7 +1022,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaMassivaDatiSoggettoAllegatoAtto.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -1082,7 +1067,7 @@ public class AggiornaAllegatoAttoElenchiCollegatiAction extends AggiornaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDatiSospensioneAllegatoAtto.class, res));
 			addErrori(res);
 			return INPUT;
 		}

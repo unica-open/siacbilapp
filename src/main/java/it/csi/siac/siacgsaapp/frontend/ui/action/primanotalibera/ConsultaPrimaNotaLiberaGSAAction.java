@@ -4,12 +4,13 @@
 */
 package it.csi.siac.siacgsaapp.frontend.ui.action.primanotalibera;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.ConsultaPrimaNotaLiberaBaseAction;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgsaapp.frontend.ui.model.primanotalibera.ConsultaPrimaNotaLiberaGSAModel;
 
 /**
@@ -36,4 +37,12 @@ public class ConsultaPrimaNotaLiberaGSAAction extends ConsultaPrimaNotaLiberaBas
 		return super.execute();
 	}
 
+	/**
+	 * SIAC-8134
+	 * Caricamento dell'azione per la gestione della SAC
+	 */
+	@Override
+	public void caricaAzionePerSAC() {
+		model.setNomeAzioneSAC(AzioneConsentitaEnum.PRIMANOTALIBERA_GSA_GESTIONE.getNomeAzione());
+	}
 }

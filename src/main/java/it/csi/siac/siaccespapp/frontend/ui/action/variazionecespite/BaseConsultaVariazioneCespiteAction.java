@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccespapp.frontend.ui.action.variazionecespite;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;

@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.documento;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,11 +22,12 @@ import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.errore.ErroreAtt;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.documento.GenericDocumentoModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoService;
@@ -35,6 +37,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTipoDocumento;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTipoDocumentoResponse;
 import it.csi.siac.siacfin2ser.model.CodiceBollo;
 import it.csi.siac.siacfin2ser.model.Documento;
+import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.StatoSDIDocumento;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
@@ -48,6 +51,7 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveRe
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto.StatoOperativoAnagrafica;
+import it.csi.siac.sirfelser.model.FatturaFEL;
 
 /**
  * Classe di Action per la gestione della ricerca del Documento.
@@ -160,6 +164,30 @@ public abstract class GenericDocumentoAction <M extends GenericDocumentoModel> e
 		model.setListaTipoAtto(listaTipoAtto);
 	}
 	
+	/**
+	 * Caricamento dei dati della fattura FEL.
+	 */
+	protected void caricaDatiFatturaFEL() {
+		// Pulisco i dati
+		model.setFatturaFEL(null);
+		model.setSoggettoFEL(null);
+		FatturaFEL fatturaFEL = sessionHandler.getParametro(BilSessionParameter.FATTURA_FEL);
+		if(fatturaFEL == null) {
+			// Non ho i dati della fattura FEL
+			return;
+		}
+		// Pulisco il dato in sessione
+		sessionHandler.setParametro(BilSessionParameter.FATTURA_FEL, null);
+		
+		// Imposto i dati della fattura FEL nel model e calcolo i dafault
+		model.setFatturaFEL(fatturaFEL);
+		
+		// Ottengo il dato del soggetto da sessione
+		Soggetto soggettoFEL = sessionHandler.getParametro(BilSessionParameter.SOGGETTO);
+		sessionHandler.setParametro(BilSessionParameter.SOGGETTO, null);
+		model.setSoggettoFEL(soggettoFEL);
+	}
+
 	/**
 	 * Carica la lista stati operativi del documento (per ora necessaria solo alla ricerca)
 	 */
@@ -375,6 +403,27 @@ public abstract class GenericDocumentoAction <M extends GenericDocumentoModel> e
 				&& documento.getDataRepertorio() != null,
 			ErroreCore.FORMATO_NON_VALIDO.getErrore("Dati repertorio/protocollo", ": Registro, Anno, Numero e Data devono essere tutti valorizzati o tutti non valorizzati"));
 	}
+	
+	/**
+	 * Imposta l'importo.
+	 * 
+	 * @param documentoSpesa il documento di spesa
+	 * @param fatturaFEL     la fattura
+	 */
+	protected void impostaImportoFEL(Documento<?, ?> documento, FatturaFEL fatturaFEL) {
+		final String methodName = "impostaImporto";
+		if(!BilConstants.CODICE_DIVISA_EUR.getConstant().equals(fatturaFEL.getDivisa())) {
+			// Se la divisa non e' EURO, non imposto l'importo
+			log.debug(methodName, "La divisa della fattura " + fatturaFEL.getDivisa() + " non e' pari a " + BilConstants.CODICE_DIVISA_EUR.getConstant() + ": non imposto l'importo");
+			addInformazione(ErroreFin.DIVISA_FEL_NON_EURO.getErrore());
+			return;
+		}
+		// Impostato importo con divisa EURO
+		documento.setImporto(fatturaFEL.getImportoTotaleDocumento() == null ? BigDecimal.ZERO : fatturaFEL.getImportoTotaleDocumento().abs());
+		
+		log.debug(methodName, "Fattura.importoTotaleDocumento = " + fatturaFEL.getImportoTotaleDocumento() + " => documento.importo = " + documento.getImporto());
+	}
+	
 	/**
 	 * SIAC-6565
 	 * Carica la lista stati SDI del documento
@@ -395,5 +444,134 @@ public abstract class GenericDocumentoAction <M extends GenericDocumentoModel> e
 	 */
 	protected boolean isNumeric(String strNum) {
 		return strNum.matches("-?\\d+(\\.\\d+)?");
+	}
+
+	/**
+	 * SIAC-7567
+	 * Controlla i campi valorizzati se sono valorizzati correttamente
+	 * @param documento il documento da controllare
+	 * @param sogetto il sogetto del documento da controllare da controllare
+	 */
+	protected void checkErrorCigCupPA(DocumentoEntrata documento, Soggetto soggetto) {
+		String methodName = "checkErrorCigCupPA";
+		
+		//CIG
+		if(documento.getCig() != null) {
+			controlloCIG(documento.getCig().trim());				
+		}
+		//CUP
+		if(documento.getCup() != null) {
+			controlloCUP(documento.getCup().trim());						
+		}
+		
+		if(model.getErrori().size() > 0 && !model.getErrori().isEmpty()) {
+			log.debug(methodName, " - TROVATI: "+ model.getErrori().size() + " errori");
+		}
+		
+	}
+	
+	/**
+	 * SIAC-7567
+	 * Controlla se i campi di testo sono valorizzati
+	 * @param documento il documento da controllare
+	 * @param sogetto il sogetto del documento da controllare da controllare
+	 */
+	protected boolean checkWarningCigCupPA(DocumentoEntrata documento, Soggetto soggetto) {
+		String methodName = "checkWarningCigCupPA";
+		
+		documento = controlloPerInserisciDocumento(documento);
+		
+		if(documento != null && documento.isFatturaAttiva() 
+				&& soggetto != null && soggetto.isSoggettoPA()) {
+			//CIG
+			warnCondition(!(documento.getCig() == null || StringUtils.isBlank(documento.getCig())), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("CIG"), false);
+			//CUP
+			warnCondition(!(documento.getCup() == null || StringUtils.isBlank(documento.getCup())), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("CUP"), false);
+		}
+		
+		if(model.getMessaggi().size() > 0 && !model.getMessaggi().isEmpty()) {
+			log.debug(methodName, " - TROVATI: "+ model.getMessaggi().size() + " warnings");
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * SIAC-7567
+	 * @param documento
+	 */
+	private DocumentoEntrata controlloPerInserisciDocumento(DocumentoEntrata documento) {
+		//gestisco il caso dell'inserimento dove ho solo l'uid ma non il codice
+		if(documento != null && documento.getTipoDocumento().getCodice() == null && documento.getTipoDocumento().getUid() != 0) {
+			for (int i = 0; i < model.getListaTipoDocumento().size(); i++) {
+				if(documento.getTipoDocumento().getUid() == model.getListaTipoDocumento().get(i).getUid()) {
+					//se trovo una corrispondeza la passo per fare il controllo
+					documento.setTipoDocumento(model.getListaTipoDocumento().get(i));
+					break;
+				}
+			}
+		}
+		return documento;
+	}
+	
+	/**
+	 * SIAC-7567
+	 * @param cig
+	 */
+	private void controlloCIG(String cig) {
+		String methodName = "controlloCIG";
+		if (cig != null && StringUtils.isNotEmpty(cig) && cig.length() != 10) {
+			addErrore(ErroreCore.FORMATO_NON_VALIDO.getErrore("CIG", "10 caratteri alfanumerici"));
+		}
+		log.debug(methodName, " - STATO CIG : [VALIDO]");
+	}
+	
+	/**
+	 * SIAC-7567
+	 * @param cup
+	 */
+	private void controlloCUP(String cup) {
+		String methodName = "controlloCUP";
+		int cupLenght = cup.length();
+		//controllo che in prima e quarta posizione ci sia una lettera
+		if(cup != null && StringUtils.isNotEmpty(cup) && cupLenght == 15){
+			for (int i = 0; i < cupLenght; i++) {
+				if((i == 0 || i == 3) && StringUtils.isNumeric(String.valueOf(cup.charAt(i)))){
+					//TODO mettere un errore piu parlante?
+					addErrore(ErroreCore.FORMATO_NON_VALIDO.getErrore("CUP"));
+					break;
+				}
+			}
+		} else if(cup != null && StringUtils.isNotEmpty(cup) && cupLenght != 15){
+			// se diverso da lunghezza 15 cmq errore
+			addErrore(ErroreCore.FORMATO_NON_VALIDO.getErrore("CUP", "sono ammessi 15 caratteri alfanumerici"));
+		}
+		log.debug(methodName, " - STATO CUP : [VALIDO]");
+	}
+	
+	/**
+	 *	SIAC-7571
+	 */
+	protected void impostaTipoDocumentoDaFatturaFEL(Documento<?, ?> documento) {
+		String methodName = "checkTipoDocumentoFatturaFEL";
+		
+		TipoDocumento tipoDocumento = null;
+		
+		String tipDocFattFEL = model.getSceltaUtente() != null ? 
+				model.getSceltaUtente() : (String) sessionHandler.getParametro(BilSessionParameter.TIPO_DOCUMENTO_IMPORTA_FATTURA);
+
+		//SIAC-7718 svuoto il parametro una volta utilizzato
+		sessionHandler.setParametro(BilSessionParameter.TIPO_DOCUMENTO_IMPORTA_FATTURA, null);
+				
+		tipoDocumento = ComparatorUtils.findByCodice(model.getListaTipoDocumento(), tipDocFattFEL);
+		
+		if(tipoDocumento == null) {
+			log.info(methodName, "Tipo documento non trovato per codice  " + tipDocFattFEL);
+			return;
+		}
+		
+		//passo il tipoDocumento
+		documento.setTipoDocumento(tipoDocumento);
+		
 	}
 }

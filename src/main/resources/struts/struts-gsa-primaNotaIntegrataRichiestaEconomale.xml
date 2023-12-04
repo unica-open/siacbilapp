@@ -50,7 +50,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaValidaRichiestaEconomaleInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaValidaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -99,7 +99,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaRichiestaEconomaleInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaRichiestaEconomaleInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>

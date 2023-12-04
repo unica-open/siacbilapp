@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
@@ -35,7 +35,7 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaTestataDocumentoSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDocumento,
+public class RisultatiRicercaTestataDocumentoSpesaAjaxAction extends PagedDataTableAjaxAction<ElementoDocumento,
 	RisultatiRicercaDocumentoAjaxModel, DocumentoSpesa, RicercaSinteticaDocumentoSpesa, RicercaSinteticaDocumentoSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -82,12 +82,12 @@ public class RisultatiRicercaTestataDocumentoSpesaAjaxAction extends GenericRisu
 	}
 	
 	@Override
-	protected ElementoDocumentoSpesa ottieniIstanza(DocumentoSpesa e) throws FrontEndBusinessException {
+	protected ElementoDocumentoSpesa getInstance(DocumentoSpesa e) throws FrontEndBusinessException {
 		return ElementoDocumentoFactory.getInstanceSpesa(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaDocumentoSpesaResponse ottieniResponse(RicercaSinteticaDocumentoSpesa request) {
+	protected RicercaSinteticaDocumentoSpesaResponse getResponse(RicercaSinteticaDocumentoSpesa request) {
 		return documentoSpesaService.ricercaSinteticaTestataDocumentoSpesa(request);
 	}
 	
@@ -97,7 +97,7 @@ public class RisultatiRicercaTestataDocumentoSpesaAjaxAction extends GenericRisu
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isAggiornaConsentitoDocumentoSpesa(listaAzioniConsentite)

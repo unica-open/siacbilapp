@@ -4,6 +4,10 @@
 */
 package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.action.ajax.capitolo;
 
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -62,6 +66,14 @@ public class RicercaCapitoloSpesaConsultabileAjaxAction extends RicercaEntitaCon
 	@Override
 	protected RicercaSinteticaEntitaConsultabile creaRequest() {
 		return model.creaRequestRicercaSinteticaCapitoloSpesaConsultabile();
+	}
+
+	/**
+	 * SIAC-8222
+	 */
+	@Override
+	public Set<Cookie> getCookies() {
+		return model.getCookies();
 	}
 
 }

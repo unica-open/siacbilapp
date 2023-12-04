@@ -68,7 +68,7 @@ public class ConsultaRegistrazioneMovFinRichiestaEconomaleHelper extends Consult
 	 * @return the numeroImpegno
 	 */
 	public String getNumeroImpegno() {
-		return richiestaEconomale.getImpegno() != null ? FormatUtils.formatPlain(richiestaEconomale.getImpegno().getNumero()) : "";
+		return richiestaEconomale.getImpegno() != null ? FormatUtils.formatPlain(richiestaEconomale.getImpegno().getNumeroBigDecimal()) : "";
 	}
 	/**
 	 * @return the subImpegnoPresente
@@ -80,7 +80,7 @@ public class ConsultaRegistrazioneMovFinRichiestaEconomaleHelper extends Consult
 	 * @return the numeroSubImpegno
 	 */
 	public String getNumeroSubImpegno() {
-		return richiestaEconomale.getSubImpegno() != null ? FormatUtils.formatPlain(richiestaEconomale.getSubImpegno().getNumero()) : "";
+		return richiestaEconomale.getSubImpegno() != null ? FormatUtils.formatPlain(richiestaEconomale.getSubImpegno().getNumeroBigDecimal()) : "";
 	}
 	/**
 	 * @return the rendicontoRichiestaPresente

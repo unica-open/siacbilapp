@@ -194,7 +194,7 @@ SPDX-License-Identifier: EUPL-1.2
 											<td><s:property value="%{#quotaIvaDifferita.dataRegistrazione}"/>&nbsp;</td>
 											<td>
 												<a data-content="<s:property value="%{#quotaIvaDifferita.dataProtocolloDefinitivo}"/>" 
-														rel="popover" data-trigger="hover" 
+														data-toggle="popover" data-trigger="hover" 
 														href="#" data-original-title="Data Prot. definitivo">
 													<s:property value="%{#quotaIvaDifferita.numeroProtocolloDefinitivo}"/>
 												</a>
@@ -296,7 +296,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}documentoIva/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documentoIva/consulta.js"></script>
 
 </body>
 </html>

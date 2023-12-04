@@ -66,7 +66,7 @@ public class ElementoMovimentoConsultazionePrimaNotaIntegrataLiquidazione extend
 		return new StringBuilder()
 				.append(movimento.getImpegno().getAnnoMovimento())
 				.append(" - ")
-				.append(movimento.getImpegno().getNumero().toPlainString())
+				.append(movimento.getImpegno().getNumeroBigDecimal().toPlainString())
 				.toString();
 	}
 	

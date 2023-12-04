@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.registrazionemovfin.RisultatiRicercaRegistrazioneMovFinBaseAjaxModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.risultatiricerca.ElementoRegistrazioneMovFin;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.risultatiricerca.ElementoRegistrazioneMovFinFactory;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -47,7 +47,7 @@ import it.csi.siac.siacgenser.model.TipoCollegamento;
  * @version 1.0.0 - 05/10/2015
  *
  */
-public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoRegistrazioneMovFin,
+public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends PagedDataTableAjaxAction<ElementoRegistrazioneMovFin,
 	RisultatiRicercaRegistrazioneMovFinBaseAjaxModel, RegistrazioneMovFin, RicercaSinteticaRegistrazioneMovFin, RicercaSinteticaRegistrazioneMovFinResponse> {
 
 	/** Per la serialiazzazione */
@@ -118,12 +118,12 @@ public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends 
 	}
 
 	@Override
-	protected ElementoRegistrazioneMovFin ottieniIstanza(RegistrazioneMovFin e) {
+	protected ElementoRegistrazioneMovFin getInstance(RegistrazioneMovFin e) {
 		return ElementoRegistrazioneMovFinFactory.getInstance(e);
 	}
 
 	@Override
-	protected RicercaSinteticaRegistrazioneMovFinResponse ottieniResponse(RicercaSinteticaRegistrazioneMovFin request) {
+	protected RicercaSinteticaRegistrazioneMovFinResponse getResponse(RicercaSinteticaRegistrazioneMovFin request) {
 		return registrazioneMovFinService.ricercaSinteticaRegistrazioneMovFin(request);
 	}
 
@@ -133,7 +133,7 @@ public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends 
 	}
 
 	@Override
-	protected void gestisciAzioniConsentite(ElementoRegistrazioneMovFin instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoRegistrazioneMovFin instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		if(!isValidRegistrazione(instance)) {
 			instance.setAzioni("");
@@ -188,24 +188,24 @@ public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends 
 				azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_ANNO_NUMERO);
 				Impegno impegno = instance.obtainMovimentoCast();
 				anno = impegno.getAnnoMovimento();
-				numero = impegno.getNumero().intValue();
+				numero = impegno.getNumeroBigDecimal().intValue();
 			} else if(TipoCollegamento.ACCERTAMENTO.equals(tipoCollegamento)){
 				azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_ANNO_NUMERO);
 				Accertamento accertamento = instance.obtainMovimentoCast();
 				anno = accertamento.getAnnoMovimento();
-				numero = accertamento.getNumero().intValue();
+				numero = accertamento.getNumeroBigDecimal().intValue();
 			} else if(TipoCollegamento.SUBIMPEGNO.equals(tipoCollegamento)){
 				azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_ANNO_NUMERO_SUB);
 				SubImpegno subImpegno = instance.obtainMovimentoCast();
 				anno = subImpegno.getAnnoMovimento();
 				numero = subImpegno.getNumeroImpegnoPadre().intValue();
-				numeroSub = subImpegno.getNumero().intValue();
+				numeroSub = subImpegno.getNumeroBigDecimal().intValue();
 			} else if(TipoCollegamento.SUBACCERTAMENTO.equals(tipoCollegamento)){
 				azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_ANNO_NUMERO_SUB);
 				SubAccertamento subAccertamento = instance.obtainMovimentoCast();
 				anno = subAccertamento.getAnnoMovimento();
 				numero = subAccertamento.getNumeroAccertamentoPadre().intValue();
-				numeroSub = subAccertamento.getNumero().intValue();
+				numeroSub = subAccertamento.getNumeroBigDecimal().intValue();
 			} else if(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_SPESA.equals(tipoCollegamento)){
 				ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesa = instance.obtainMovimentoCast();
 				if(modificaMovimentoGestioneSpesa != null && modificaMovimentoGestioneSpesa.getSubImpegno() != null) {
@@ -213,12 +213,12 @@ public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends 
 					SubImpegno subImpegno = modificaMovimentoGestioneSpesa.getSubImpegno();
 					anno = subImpegno.getAnnoImpegnoPadre();
 					numero = subImpegno.getNumeroImpegnoPadre().intValue();
-					numeroSub = subImpegno.getNumero().intValue();
+					numeroSub = subImpegno.getNumeroBigDecimal().intValue();
 				} else if(modificaMovimentoGestioneSpesa != null && modificaMovimentoGestioneSpesa.getImpegno() != null) {
 					azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_ANNO_NUMERO_UID);
 					Impegno impegno = modificaMovimentoGestioneSpesa.getImpegno();
 					anno = impegno.getAnnoMovimento();
-					numero = impegno.getNumero().intValue();
+					numero = impegno.getNumeroBigDecimal().intValue();
 				}
 			} else if(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_ENTRATA.equals(tipoCollegamento)){
 				ModificaMovimentoGestioneEntrata modificaMovimentoGestioneSpesa = instance.obtainMovimentoCast();
@@ -227,12 +227,12 @@ public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends 
 					SubAccertamento subAccertamento = modificaMovimentoGestioneSpesa.getSubAccertamento();
 					anno = subAccertamento.getAnnoAccertamentoPadre();
 					numero = subAccertamento.getNumeroAccertamentoPadre().intValue();
-					numeroSub = subAccertamento.getNumero().intValue();
+					numeroSub = subAccertamento.getNumeroBigDecimal().intValue();
 				} else if(modificaMovimentoGestioneSpesa != null && modificaMovimentoGestioneSpesa.getAccertamento() != null) {
 					azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_ANNO_NUMERO_UID);
 					Accertamento accertamento = modificaMovimentoGestioneSpesa.getAccertamento();
 					anno = accertamento.getAnnoMovimento();
-					numero = accertamento.getNumero().intValue();
+					numero = accertamento.getNumeroBigDecimal().intValue();
 				}
 			} else if(TipoCollegamento.RATEO.equals(tipoCollegamento) || TipoCollegamento.RISCONTO.equals(tipoCollegamento)){
 				azioniBuilder.append(AZIONI_CONSENTITE_CONSULTA_UID_PRIMA_NOTA);
@@ -352,13 +352,13 @@ public abstract class RisultatiRicercaRegistrazioneMovFinBaseAjaxAction extends 
 	/**
 	 * @return l'azione consentita corrispondente alla gestione della prima nota integrata
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaGestionePrimaNotaIntegrata();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaGestionePrimaNotaIntegrata();
 	/**
 	 * @return l'azione consentita corrispondente alla gestione della registrazione movfin
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaGestioneRegistrazioneMovFin();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaGestioneRegistrazioneMovFin();
 	/**
 	 * @return l'azione consentita corrispondente alla ricerca della registrazione movfin
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaRicercaMovFin();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaRicercaMovFin();
 }

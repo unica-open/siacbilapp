@@ -20,7 +20,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.PrimaNotaService;
 import it.csi.siac.siacgenser.frontend.webservice.msg.CollegaPrimeNote;
@@ -168,7 +168,7 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAction<M extends Ris
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(ValidaPrimaNota.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -342,7 +342,7 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAction<M extends Ris
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String msgErrore = createErrorInServiceInvocationString(request, response);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 			listaTipiEvento = response.getCodifiche(TipoEvento.class);
@@ -371,7 +371,7 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAction<M extends Ris
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String msgErrore = createErrorInServiceInvocationString(request, response);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 			listaTipoRelazione = new ArrayList<TipoRelazionePrimaNota>();

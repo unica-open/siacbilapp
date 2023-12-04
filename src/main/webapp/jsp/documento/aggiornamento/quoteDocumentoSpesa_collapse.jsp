@@ -138,13 +138,13 @@ SPDX-License-Identifier: EUPL-1.2
 					<s:textfield id="annoMovimentoMovimentoGestione" name="movimentoGestione.annoMovimento" placeholder="anno" cssClass="span1 soloNumeri" maxlength="4" readonly="%{impegnoQuotaDisabilitato}"/>
 					<s:textfield id="numeroMovimentoGestione" name="movimentoGestione.numero" placeholder="numero" cssClass="span2 soloNumeri" value="%{movimentoGestione.numero.toString()}" readonly="%{impegnoQuotaDisabilitato}"/>
 					<s:textfield id="numeroSubmovimento" name="subMovimentoGestione.numero" placeholder="subimpegno" cssClass="span2 soloNumeri" maxlength="7" value="%{subMovimentoGestione.numero.toString()}" readonly="%{impegnoQuotaDisabilitato}"/>
-					<span class="al">
-						<label for="mutuoMovimentoGestione" class="radio inline">Mutuo</label>
-					</span>
-					<s:textfield id="mutuoMovimentoGestione" name="voceMutuo.numeroMutuo" cssClass="span3" readonly="%{impegnoQuotaDisabilitato}"/>
 					<span class="radio guidata <s:if test="%{impegnoQuotaDisabilitato}"> hide</s:if>">
 						<a class="btn btn-primary" data-toggle="modal" id="pulsanteAperturaCompilazioneGuidataImpegno">compilazione guidata</a>
 					</span>
+					<%-- SIAC-7859 -- workaround -- non trovo "chi" allarga il fieldset pertanto ne forzo il comportamento --%>
+					<s:if test="ingressoTabQuote">
+						<s:hidden id="ITQ" value="true"></s:hidden>
+					</s:if>
 				</div>
 			</div>
 			
@@ -153,7 +153,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<abbr title="codice identificativo gara">CIG</abbr>
 				</label>
 				<div class="controls">
-					<s:textfield id="cigMovimentoGestione" name="subdocumento.cig" cssClass="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" maxlength="10" readonly="%{impegnoQuotaDisabilitato}"/>
+					<s:textfield id="cigMovimentoGestione" name="subdocumento.cig" cssClass="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" maxlength="10" readonly="%{impegnoQuotaDisabilitato}"/>
 					<span class="al <s:if test="%{!showSiopeAssenzaMotivazione}"> hide </s:if>" data-assenza-cig>
 						<label for="siopeAssenzaMotivazione" class="radio inline">Motivo di assenza CIG</label>
 					</span>
@@ -174,12 +174,45 @@ SPDX-License-Identifier: EUPL-1.2
 					<abbr title="codice unico progetto">CUP</abbr>
 				</label>
 				<div class="controls">
-					<s:textfield id="cupMovimentoGestione" name="subdocumento.cup" cssClass="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" maxlength="15" readonly="%{impegnoQuotaDisabilitato}"/>
+					<s:textfield id="cupMovimentoGestione" name="subdocumento.cup" cssClass="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" maxlength="15" readonly="%{impegnoQuotaDisabilitato}"/>
 				</div>
 			</div>
 			
 		</fieldset>
-
+		<%-- SIAC-8153 START --%>
+		<h4 class="step-pane">Struttura competente
+		<%--
+			 <s:if test="strutturaCompetenteQuota != null">: <s:property value="%{strutturaCompetenteQuota.codice}"/> - <s:property value="%{strutturaCompetenteQuota.descrizione}"/></s:if>
+		 --%>
+		<span id="SPAN_impegnoH4"></span></h4>
+		<fieldset class="form-horizontal" id="fieldsetStrutturaCompetenteQuota">
+			<div class="control-group">
+				<label class="control-label">Struttura competente alla quale attribuire la spesa</label>
+				<div class="controls">
+					<div class="accordion span8 struttAmm whitespace-nowrap">
+						<div class="accordion-group">
+							<div class="accordion-heading">
+								<a class="accordion-toggle" id="accordionPadreStrutturaAmministrativa_QUOTA_SD" href="#struttAmm_QUOTE_SD">
+									<span id="SPAN_StrutturaAmministrativoContabile_QUOTE_SD">Seleziona la Struttura competente</span>
+								</a>
+							</div>
+							<div id="struttAmm_QUOTE_SD" class="accordion-body collapse">
+								<div class="accordion-inner">
+									<ul id="treeStruttAmm_QUOTE_SD" class="ztree treeStruttAmm"></ul>
+									<%-- 
+										<button type="button" id="pulsanteDelesezionaStrutturaAmministrativoContabile_QUOTE_SD" class="btn">Deseleziona</button>
+									--%>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid_QUOTE_SD" name="strutturaCompetenteQuota.uid" />
+			<s:hidden id="HIDDEN_StrutturaAmministrativoContabileCodice_QUOTE_SD" name="strutturaCompetenteQuota.codice" />
+			<s:hidden id="HIDDEN_StrutturaAmministrativoContabileDescrizione_QUOTE_SD" name="strutturaCompetenteQuota.descrizione" />
+		</fieldset>
+		<%-- SIAC-8153 END --%>
 		<s:if test="datiIvaAccessibileQuota">
 			<div id="divIva">
 				<h4 class="step-pane">Dati Iva</h4>

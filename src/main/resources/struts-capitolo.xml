@@ -23,9 +23,15 @@ SPDX-License-Identifier: EUPL-1.2
 			<interceptor name="siacConversionErrorInterceptor" class="it.csi.siac.siacbilapp.frontend.ui.util.interceptor.ConversionErrorSIACInterceptor" />
 			
 			<!-- Interceptor per la gestione dei breadcrumb -->
-			<interceptor name="breadCrumbs" class="org.softwareforge.struts2.breadcrumb.BreadCrumbInterceptor">
+			<!-- task-130-->
+			<!-- <interceptor name="breadCrumbs" class="org.softwareforge.struts2.breadcrumb.BreadCrumbInterceptor">
 				<param name="defaultRewindMode">AUTO</param>
 				<param name="defaultComparator">org.softwareforge.struts2.breadcrumb.NameComparator</param>
+			</interceptor>
+			 -->
+			 <interceptor name="breadCrumbs" class="xyz.timedrain.arianna.plugin.BreadCrumbInterceptor">
+				<param name="defaultRewindMode">AUTO</param>
+				<param name="defaultComparator">xyz.timedrain.arianna.plugin.NameComparator</param>
 			</interceptor>
 			
 			<!-- Interceptor per il salvataggio del model in sessione -->

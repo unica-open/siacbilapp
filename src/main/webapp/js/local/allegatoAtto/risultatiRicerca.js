@@ -126,6 +126,11 @@
             $('#formRisultatiRicercaAllegatoAtto').attr('action', href).submit();
             pulsante.attr('disabled', 'disabled');
         });
+        
+        if (modale.has('#descrAllegatoAtto').length) {
+        	$('#descrAllegatoAtto', modale).val(str);
+        }
+        
         modale.modal('show');
     }
 

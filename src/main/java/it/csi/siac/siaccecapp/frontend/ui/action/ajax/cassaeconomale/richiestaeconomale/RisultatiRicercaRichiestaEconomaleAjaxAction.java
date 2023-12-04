@@ -12,11 +12,10 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.richiestaeconomale.RisultatiRicercaModulareRichiestaEconomaleAjaxModel;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.richiestaeconomale.ElementoRichiestaEconomale;
@@ -27,6 +26,7 @@ import it.csi.siac.siaccecser.model.RichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per i risultati di ricerca modulare per la richiesta economale, gestione dell'AJAX.
@@ -35,7 +35,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  * @version 1.0.0 - 16/03/2017
  *
  */
-public abstract class RisultatiRicercaRichiestaEconomaleAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoRichiestaEconomale,
+public abstract class RisultatiRicercaRichiestaEconomaleAjaxAction extends PagedDataTableAjaxAction<ElementoRichiestaEconomale,
 		RisultatiRicercaModulareRichiestaEconomaleAjaxModel, RichiestaEconomale, RicercaSinteticaModulareRichiestaEconomale, RicercaSinteticaModulareRichiestaEconomaleResponse> {
 	
 	/** Per la serializzazione */
@@ -95,12 +95,12 @@ public abstract class RisultatiRicercaRichiestaEconomaleAjaxAction extends Gener
 	}
 
 	@Override
-	protected ElementoRichiestaEconomale ottieniIstanza(RichiestaEconomale e) throws FrontEndBusinessException {
+	protected ElementoRichiestaEconomale getInstance(RichiestaEconomale e) throws FrontEndBusinessException {
 		return new ElementoRichiestaEconomale(e);
 	}
 
 	@Override
-	protected RicercaSinteticaModulareRichiestaEconomaleResponse ottieniResponse(RicercaSinteticaModulareRichiestaEconomale request) {
+	protected RicercaSinteticaModulareRichiestaEconomaleResponse getResponse(RicercaSinteticaModulareRichiestaEconomale request) {
 		return richiestaEconomaleService.ricercaSinteticaModulareRichiestaEconomale(request);
 	}
 
@@ -110,7 +110,7 @@ public abstract class RisultatiRicercaRichiestaEconomaleAjaxAction extends Gener
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoRichiestaEconomale instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoRichiestaEconomale instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
@@ -192,7 +192,7 @@ public abstract class RisultatiRicercaRichiestaEconomaleAjaxAction extends Gener
 	 * @return <code>true</code> se la richiesta &eacute; stampabile; <code>false</code> in caso contrario
 	 */
 	protected boolean gestisciStampaRicevuta(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
 	}
 	/**
 	 * Gestione della stampa ricevuta del rendiconto: controlla se sia possibile stampare la richiesta.
@@ -270,7 +270,7 @@ public abstract class RisultatiRicercaRichiestaEconomaleAjaxAction extends Gener
 	}
 	
 	@Override
-	protected void eseguiOperazioniUlteriori() {
+	protected void executeEnd() {
 		BigDecimal totale = sessionHandler.getParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA);
 		model.setTotale(totale);
 	}

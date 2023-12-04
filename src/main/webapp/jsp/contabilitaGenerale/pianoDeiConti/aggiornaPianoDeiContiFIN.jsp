@@ -177,9 +177,9 @@ SPDX-License-Identifier: EUPL-1.2
 									<div class="control-group">
 										<label class="control-label" for="pianoDeiContiFinanziario">Codice Conto Finanziario</label>
 										<div class="controls">
-											<s:textfield id="pianoDeiContiFinanziario" name="conto.elementoPianoDeiConti.codice" cssClass="span6" disabled="%{!validitaNellAnnoCorrente || figlioNonDiLegge}"/>
+											<s:textfield id="pianoDeiContiFinanziario" name="conto.elementoPianoDeiConti.codice" cssClass="span6 campo-codice-pdc" disabled="%{!validitaNellAnnoCorrente || figlioNonDiLegge}"/>
 											<s:if test="%{!validitaNellAnnoCorrente || figlioNonDiLegge}">
-												<s:hidden name="conto.elementoPianoDeiConti.codice"/>
+												<s:hidden name="conto.elementoPianoDeiConti.codice" cssClass="campo-codice-pdc"/>
 											</s:if>
 											<span class="radio guidata">
 												<a class="btn btn-primary <s:if test='%{(!validitaNellAnnoCorrente && contoFinGuidataDisabled) || figlioNonDiLegge}'>disabled</s:if>" id="pulsanteCompilazioneGuidataContoFIN">
@@ -252,11 +252,11 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaContoFIN.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/pianoDeiConti/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/pianoDeiConti/aggiornaPianoDeiContiFIN.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaContoFIN.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/pianoDeiConti/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/pianoDeiConti/aggiornaPianoDeiContiFIN.js"></script>
 	
 </body>
 </html>

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaVariazioniAjaxModel;
@@ -31,7 +31,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaVariazioniCodificheAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoVariazione, 
+public class RisultatiRicercaVariazioniCodificheAjaxAction extends PagedDataTableAjaxAction<ElementoVariazione, 
 	RisultatiRicercaVariazioniAjaxModel, VariazioneCodificaCapitolo, RicercaVariazioneCodifiche, RicercaVariazioneCodificheResponse> {
 
 	/** Per la serializzazione */
@@ -58,12 +58,12 @@ public class RisultatiRicercaVariazioniCodificheAjaxAction extends GenericRisult
 	}
 	
 	@Override
-	protected ElementoVariazione ottieniIstanza(VariazioneCodificaCapitolo e) throws FrontEndBusinessException {
+	protected ElementoVariazione getInstance(VariazioneCodificaCapitolo e) throws FrontEndBusinessException {
 		return ElementoVariazioneFactory.getInstance(e, model.getEnte().getGestioneLivelli());
 	}
 	
 	@Override
-	protected RicercaVariazioneCodificheResponse ottieniResponse(RicercaVariazioneCodifiche request) {
+	protected RicercaVariazioneCodificheResponse getResponse(RicercaVariazioneCodifiche request) {
 		return variazioneDiBilancioService.ricercaVariazioneCodifiche(request);
 	}
 	

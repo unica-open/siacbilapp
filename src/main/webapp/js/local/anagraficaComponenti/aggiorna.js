@@ -81,11 +81,19 @@
             $("#previsione").css("background-color", "#f4f4f4");
             $('label[for="previsione"]').html("Default Previsione");
         }
-        var disableGestione = function(){
-            $("#gestione").attr("disabled", 'disabled');
-            $("#gestione").css("background-color", "#f4f4f4");
-            $('label[for="gestione"]').html("Tipo Gestione");
+        //SIAC--7349
+//        var disableGestione = function(){
+//            $("#gestione").attr("disabled", 'disabled');
+//            $("#gestione").css("background-color", "#f4f4f4");
+//            $('label[for="gestione"]').html("Tipo Gestione");
+//        }
+                
+        var disableImpegnabile = function(){
+            $("#impegnabile").attr("disabled", 'disabled');
+            $("#impegnabile").css("background-color", "#f4f4f4");
+            $('label[for="impegnabile"]').html("Impegnabile");
         }
+        
         
         var disablDataInizioValiditaCapitolo = function(){
             $("#dataInizioValiditaCapitolo").attr("disabled", 'disabled');
@@ -159,7 +167,9 @@
              disableDescrizione();
              disableAnno();
              disablePrevisione();
-             disableGestione();
+             //SIAC-7349
+             //disableGestione();
+             disableImpegnabile();
              disablDataInizioValiditaCapitolo();
         }else{
     		
@@ -170,7 +180,9 @@
         	$("#editComponenteCapitolo_componenteCapitolo_fonteFinanziariaComponenteImportiCapitolo").attr("disabled", 'disabled');
         	$("#editComponenteCapitolo_componenteCapitolo_anno").attr("disabled", 'disabled');
         	$("#editComponenteCapitolo_componenteCapitolo_propostaDefaultComponenteImportiCapitolo").attr("disabled", 'disabled');
-        	$("#editComponenteCapitolo_componenteCapitolo_tipoGestioneComponenteImportiCapitolo").attr("disabled", 'disabled');
+        	//SIAC-7349
+        	//$("#editComponenteCapitolo_componenteCapitolo_tipoGestioneComponenteImportiCapitolo").attr("disabled", 'disabled');
+        	$("#editComponenteCapitolo_componenteCapitolo_impegnabileComponenteImportiCapitolo").attr("disabled", 'disabled');
         	$("#editComponenteCapitolo_componenteCapitolo_dataInizioValidita").attr("disabled", 'disabled');
         	
         }

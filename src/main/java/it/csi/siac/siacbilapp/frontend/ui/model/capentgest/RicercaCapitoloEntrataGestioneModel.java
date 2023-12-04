@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import it.csi.siac.siacattser.model.AttoDiLegge;
+import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloEntrataModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettagliVariazioneImportoCapitoloNellaVariazione;
@@ -46,6 +47,9 @@ public class RicercaCapitoloEntrataGestioneModel extends CapitoloEntrataModel {
 	/* Tabella B */
 	private String flagRilevanteIva;
 	
+	//SIAC-7858 CM 19/05/2021
+	private String flagEntrataDubbiaEsigFCDE;
+	
 	/* Tabella C */
 	private AttoDiLegge attoDiLegge;
 	
@@ -58,6 +62,7 @@ public class RicercaCapitoloEntrataGestioneModel extends CapitoloEntrataModel {
 	private int uidVariazione;
 	private String direzioneProponente;
 	//***END SIAC 6884***//
+	
 	
 	/** Costruttore vuoto di default */
 	public RicercaCapitoloEntrataGestioneModel() {
@@ -123,6 +128,21 @@ public class RicercaCapitoloEntrataGestioneModel extends CapitoloEntrataModel {
 		this.codiceTipoClassificatoreStrutturaAmministrativoContabile = codiceTipoClassificatoreStrutturaAmministrativoContabile;
 	}
 
+	//SIAC-7858 CM 19/05/2021 Inizio
+	/**
+	 * @return the flagEntrataDubbiaEsigFCDE
+	 */
+	public String getFlagEntrataDubbiaEsigFCDE() {
+		return flagEntrataDubbiaEsigFCDE;
+	}
+
+	/**
+	 * @param flagEntrataDubbiaEsigFCDE the flagEntrataDubbiaEsigFCDE to set
+	 */
+	public void setFlagEntrataDubbiaEsigFCDE(String flagEntrataDubbiaEsigFCDE) {
+		this.flagEntrataDubbiaEsigFCDE = flagEntrataDubbiaEsigFCDE;
+	}
+	//SIAC-7858 CM 19/05/2021 Fine
 	/**
 	 * @return the flagRilevanteIva
 	 */
@@ -275,21 +295,21 @@ public class RicercaCapitoloEntrataGestioneModel extends CapitoloEntrataModel {
 		utility.setCategoriaCapitolo(getCapitoloEntrataGestione() != null ? getCapitoloEntrataGestione().getCategoriaCapitolo() : null);
 		
 		// Setting puntuale dei classificatori generici
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico1(), "setCodiceClassificatoreGenerico1");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico2(), "setCodiceClassificatoreGenerico2");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico3(), "setCodiceClassificatoreGenerico3");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico4(), "setCodiceClassificatoreGenerico4");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico5(), "setCodiceClassificatoreGenerico5");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico6(), "setCodiceClassificatoreGenerico6");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico7(), "setCodiceClassificatoreGenerico7");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico8(), "setCodiceClassificatoreGenerico8");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico9(), "setCodiceClassificatoreGenerico9");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico10(), "setCodiceClassificatoreGenerico10");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico11(), "setCodiceClassificatoreGenerico11");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico12(), "setCodiceClassificatoreGenerico12");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico13(), "setCodiceClassificatoreGenerico13");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico14(), "setCodiceClassificatoreGenerico14");
-		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico15(), "setCodiceClassificatoreGenerico15");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico36(), "setCodiceClassificatoreGenerico36");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico37(), "setCodiceClassificatoreGenerico37");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico38(), "setCodiceClassificatoreGenerico38");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico39(), "setCodiceClassificatoreGenerico39");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico40(), "setCodiceClassificatoreGenerico40");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico41(), "setCodiceClassificatoreGenerico41");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico42(), "setCodiceClassificatoreGenerico42");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico43(), "setCodiceClassificatoreGenerico43");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico44(), "setCodiceClassificatoreGenerico44");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico45(), "setCodiceClassificatoreGenerico45");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico46(), "setCodiceClassificatoreGenerico46");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico47(), "setCodiceClassificatoreGenerico47");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico48(), "setCodiceClassificatoreGenerico48");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico49(), "setCodiceClassificatoreGenerico49");
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getClassificatoreGenerico50(), "setCodiceClassificatoreGenerico50");
 		
 		// Classificatori
 		injettaCodiceCodificaNellaRicercaSeValida(utility, getTitoloEntrata(), "setCodiceTitoloEntrata");
@@ -314,6 +334,8 @@ public class RicercaCapitoloEntrataGestioneModel extends CapitoloEntrataModel {
 		
 		// Flags
 		injettaStringaRicercaSeValida(utility, flagRilevanteIva, "setFlagRilevanteIva");
+		//SIAC-7858 CM 19/05/2021
+		injettaStringaRicercaSeValida(utility, flagEntrataDubbiaEsigFCDE, "setFlagEntrataDubbiaEsigFCDE");
 		
 		// Codici tipo
 		injettaStringaRicercaSeValida(utility, codiceTipoClassificatoreSiope, "setCodiceTipoSiopeEntrata");

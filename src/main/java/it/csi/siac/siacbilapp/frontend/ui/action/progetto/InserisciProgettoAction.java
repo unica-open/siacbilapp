@@ -4,8 +4,10 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.progetto;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -24,7 +26,7 @@ import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -67,7 +69,9 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 			model.setProgetto(new Progetto());
 			model.getProgetto().setRilevanteFPV(Boolean.FALSE);
 			model.getProgetto().setInvestimentoInCorsoDiDefinizione(Boolean.TRUE);
-			model.getProgetto().setTipoProgetto(obtainTipoProgettoByFaseBilancio());
+			caricaFaseBilancio();
+			model.getProgetto().setTipoProgetto(getTipoProgettoByFaseBilancio());	
+			
 		}
 		
 		return SUCCESS;
@@ -172,7 +176,7 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 		}
 		log.debug(methodName, "Controllo che non vi sia un progetto gia' inserito utilizzando la ricerca puntuale");
 		
-		RicercaPuntualeProgetto request = model.creaRequestRicercaPuntualeProgetto(obtainTipoProgettoByFaseBilancio());
+		RicercaPuntualeProgetto request = model.creaRequestRicercaPuntualeProgetto(getTipoProgettoByFaseBilancio());
 		logServiceRequest(request);
 		
 		RicercaPuntualeProgettoResponse response = progettoService.ricercaPuntualeProgetto(request);
@@ -180,7 +184,7 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 		
 		if(response.hasErrori() && !response.verificatoErrore(ErroreCore.ENTITA_NON_TROVATA)) {
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaPuntualeProgetto.class, response));
 		}
 		if(response.getProgetto() != null) {
 			addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Progetto", model.getProgetto().getCodice()));
@@ -201,6 +205,8 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 		log.debug(methodName, "Inserimento dell'anagrafica del progetto");
 		
 		InserisceAnagraficaProgetto request = model.creaRequestInserisceAnagraficaProgetto();
+		//SIAC-8900
+		request.setByPassFaseBilancioProgetto(isBilancioEsercizioProvvisorio());
 		logServiceRequest(request);
 		
 		InserisceAnagraficaProgettoResponse response = progettoService.inserisceAnagraficaProgetto(request);
@@ -210,7 +216,7 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(InserisceAnagraficaProgetto.class, response));
 		}
 		
 		Progetto progetto = response.getProgetto();
@@ -245,8 +251,17 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 		checkCondition(!model.isProvvedimentoValorizzato() || !"ANNULLATO".equalsIgnoreCase(model.getAttoAmministrativo().getStatoOperativo()), ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore());
 		
 		//SIAC-6255
-		TipoProgetto tipoProgetto = obtainTipoProgettoByFaseBilancio();
-		checkCondition(tipoProgetto.equals(progetto.getTipoProgetto()) , ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Tipo progetto, atteso " + tipoProgetto.getDescrizione()));
+		//SIAC-8900
+		caricaFaseBilancio();
+		if(isBilancioEsercizioProvvisorio()) {
+			checkCondition(model.getProgetto().getTipoProgetto() != null , ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Tipo progetto"));
+		}else {
+			TipoProgetto tipoProgetto = getTipoProgettoByFaseBilancio();
+			checkCondition(tipoProgetto.equals(progetto.getTipoProgetto()) , ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Tipo progetto, atteso " + tipoProgetto.getDescrizione()));
+		}
+		
+		
+		
 	}
 	
 	/**
@@ -261,7 +276,7 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 		Progetto progetto = new Progetto();
 		progetto.setRilevanteFPV(Boolean.FALSE);
 		progetto.setInvestimentoInCorsoDiDefinizione(Boolean.TRUE);
-		progetto.setTipoProgetto(obtainTipoProgettoByFaseBilancio());
+		progetto.setTipoProgetto(getTipoProgettoByFaseBilancio());
 		model.setProgetto(progetto);
 		
 		return SUCCESS;
@@ -291,5 +306,8 @@ public class InserisciProgettoAction extends GenericProgettoAction<InserisciProg
 		
 		super.checkCasoDUsoApplicabile(cdu);
 	}
+	
+	
+			
 	
 }

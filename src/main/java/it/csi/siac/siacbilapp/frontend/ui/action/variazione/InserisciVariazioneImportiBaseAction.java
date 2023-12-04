@@ -14,14 +14,14 @@ import java.util.List;
 import javax.xml.bind.JAXB;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step3.SpecificaVariazioneImportoModel;
 import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step3.SpecificaVariazioneModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaVariazioneBilancio;
@@ -40,8 +40,8 @@ import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancioResponse;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReportResponse;
 import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
@@ -108,11 +108,10 @@ public abstract class InserisciVariazioneImportiBaseAction extends InserisciVari
 
 	@Override 
 	public String executeStep2() {
-		final String methodName = "executeStep2";
 		// Sposta il dato dell'anno della variazione nel campo dell'anno del capitolo da ricercare
 		model.getSpecificaImporti().setAnnoCapitolo(model.getAnnoEsercizioInt());
 		if(!model.getDefinisci().isAnagraficaInserita()){
-			return inserisciAnagraficaVariazione(methodName);
+			return inserisciAnagraficaVariazione();
 		}
 		return aggiornaAnagraficaVariazione();
 	}
@@ -138,7 +137,8 @@ public abstract class InserisciVariazioneImportiBaseAction extends InserisciVari
 	 * @param methodName
 	 * @return
 	 */
-	private String inserisciAnagraficaVariazione(final String methodName) {
+	private String inserisciAnagraficaVariazione() {
+		final String methodName ="inserisciAnagraficaVariazione";
 		InserisceAnagraficaVariazioneBilancio requestAnagrafica = model.creaRequestInserisceAnagraficaVariazioneDiBilancio();
 		InserisceAnagraficaVariazioneBilancioResponse responseAnagrafica = variazioneDiBilancioService.inserisceAnagraficaVariazioneBilancio(requestAnagrafica);
 
@@ -160,6 +160,8 @@ public abstract class InserisciVariazioneImportiBaseAction extends InserisciVari
 		model.setStatoOperativoVariazioneDiBilancio(variazioneInserita.getStatoOperativoVariazioneDiBilancio());
 		SpecificaVariazioneModel modelSpecifica = model.isGestioneUEB() ? model.getSpecificaUEB() : model.getSpecificaImporti();
 		modelSpecifica.setNote(variazioneInserita.getNote());
+		//SIAC-8332
+		modelSpecifica.setStatoVariazione(variazioneInserita.getStatoOperativoVariazioneDiBilancio());
 		modelSpecifica.setNumeroVariazione(variazioneInserita.getNumero());
 		return GO_TO_AGGIORNAMENTO;
 	}
@@ -519,7 +521,7 @@ public abstract class InserisciVariazioneImportiBaseAction extends InserisciVari
 		RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse response = variazioneDiBilancioService.ricercaDettagliVariazioneImportoCapitoloNellaVariazione(request);
 		
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettagliVariazioneImportoCapitoloNellaVariazione.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -684,8 +686,8 @@ public abstract class InserisciVariazioneImportiBaseAction extends InserisciVari
 	public String download() {
 		final String methodName = "download";
 		
-		StampaExcelVariazioneDiBilancio req = model.creaRequestStampaExcelVariazioneDiBilancio();
-		StampaExcelVariazioneDiBilancioResponse res = variazioneDiBilancioService.stampaExcelVariazioneDiBilancio(req);
+		VariazioneBilancioExcelReport req = model.creaRequestStampaExcelVariazioneDiBilancio();
+		VariazioneBilancioExcelReportResponse res = variazioneDiBilancioService.variazioneBilancioExcelReport(req);
 		
 		// Controllo gli errori
 		if(res.hasErrori()) {
@@ -696,7 +698,7 @@ public abstract class InserisciVariazioneImportiBaseAction extends InserisciVari
 		}
 		
 		byte[] bytes = res.getReport();
-		model.setContentType(res.getContentType());
+		model.setContentType(res.getContentType() == null ? null : res.getContentType().getMimeType());
 		model.setContentLength(Long.valueOf(bytes.length));
 		model.setFileName("esportazioneVariazione" + model.getDefinisci().getAnnoEsercizio() + "_" + model.getNumeroVariazione() + "." + res.getExtension());
 		model.setInputStream(new ByteArrayInputStream(bytes));

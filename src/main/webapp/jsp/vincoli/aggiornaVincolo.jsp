@@ -57,13 +57,29 @@ SPDX-License-Identifier: EUPL-1.2
 							</div>
 							<div class="control-group">
 								<span class="al">
-									<label for="genereVincolo" class="control-label">Tipo vincolo </label>
+									<label for="genereVincolo" class="control-label">Tipo vincolo *</label>
 								</span>
 								<div class="controls">
 									<s:select list="listaGenereVincolo" id="genereVincolo" name="vincolo.genereVincolo.uid" cssClass="span10" listKey="uid" listValue="%{codice + ' - ' + descrizione}"
 										headerKey="" headerValue="" />
 								</div>
 							</div>
+							<!-- SIAC-7192 -->
+							<div class="control-group">
+								<span class="al">
+									<label for="risorsaVincolata" class="control-label">Elenco Risorse Vincolate*
+										<a id="risorsaVincolataSpan" class="tooltip-test" title="Elenco Risorse Vincolate per Risultato di Amministrazione – All a2 e All a3" >
+											<i class="icon-info-sign">&nbsp;<span class="nascosto">Elenco Risorse Vincolate per Risultato di Amministrazione – All a2 e All a3</span></i>
+										</a>
+									</label>
+								</span>
+								<div class="controls">
+									<%--SIAC-7525 headerKey a 0 --%>
+									<s:select list="listaRisorsaVincolata" id="risorsaVincolata" name="vincolo.risorsaVincolata.uid" cssClass="span10" listKey="uid" listValue="%{codice + ' - ' + descrizione}"
+										headerKey="0" headerValue="" />
+								</div>
+							</div>
+							<!-- SIAC-7192 -->
 							<div class="control-group">
 								<span class="al">
 									<label for="note" class="control-label">Note </label>
@@ -305,7 +321,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}vincolo/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/vincolo/aggiorna.js"></script>
 
 </body>
 </html>

@@ -4,13 +4,13 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.allegatoatto;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoSubdocumentoDaAssociareAllegatoAtto;
 
 /**
  * Classe di Model per le chiamate AJAX relative al DataTable.
  */
-public class RisultatiRicercaQuoteDaAssociareAllegatoAttoAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoSubdocumentoDaAssociareAllegatoAtto<?, ?, ?, ?, ?>> {
+public class RisultatiRicercaQuoteDaAssociareAllegatoAttoAjaxModel extends PagedDataTableAjaxModel<ElementoSubdocumentoDaAssociareAllegatoAtto<?, ?, ?, ?, ?>> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -2423657356951859157L;

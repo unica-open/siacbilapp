@@ -231,9 +231,9 @@ public final class ValidationUtil {
 	 */
 	public static boolean isValidMovimentoGestioneFromSession(MovimentoGestione movimentoGestioneSession, MovimentoGestione movimentoGestioneModel) {
 		return movimentoGestioneSession != null && movimentoGestioneModel != null
-				&& movimentoGestioneSession.getNumero() != null && movimentoGestioneModel.getNumero() != null
+				&& movimentoGestioneSession.getNumeroBigDecimal() != null && movimentoGestioneModel.getNumeroBigDecimal() != null
 				&& movimentoGestioneSession.getAnnoMovimento() == movimentoGestioneModel.getAnnoMovimento()
-				&& movimentoGestioneSession.getNumero().compareTo(movimentoGestioneModel.getNumero()) == 0;
+				&& movimentoGestioneSession.getNumeroBigDecimal().compareTo(movimentoGestioneModel.getNumeroBigDecimal()) == 0;
 	}
 	
 	

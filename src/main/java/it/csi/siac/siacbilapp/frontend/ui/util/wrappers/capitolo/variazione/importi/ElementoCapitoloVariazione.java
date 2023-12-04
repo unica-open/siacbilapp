@@ -13,6 +13,7 @@ import org.apache.commons.lang3.SerializationUtils;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
 import it.csi.siac.siacbilser.model.Capitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitolo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
@@ -43,6 +44,10 @@ public class ElementoCapitoloVariazione implements Serializable, Cloneable, Mode
 	private BigDecimal fondoPluriennaleVincolato = BigDecimal.ZERO;
 	private String descrizione;
 
+	//SIAC-8003
+	private String codiceCategoriaCapitolo;
+
+
 	private String datiAccessorii;
 	private String denominazione;
 	private TipoCapitolo tipoCapitolo;
@@ -52,6 +57,7 @@ public class ElementoCapitoloVariazione implements Serializable, Cloneable, Mode
 	private Boolean daInserire = Boolean.FALSE;
 
 	private StatoOperativoElementoDiBilancio statoOperativoElementoDiBilancio;
+	
 
 	// Lista dei figli
 	private List<ElementoCapitoloVariazione> listaSottoElementi = new ArrayList<ElementoCapitoloVariazione>();
@@ -501,6 +507,14 @@ public class ElementoCapitoloVariazione implements Serializable, Cloneable, Mode
 	public Object clone() throws CloneNotSupportedException {
 		super.clone();
 		return SerializationUtils.clone(this);
+	}
+
+	public String getCodiceCategoriaCapitolo() {
+		return codiceCategoriaCapitolo;
+	}
+
+	public void setCodiceCategoriaCapitolo(String codiceCategoriaCapitolo) {
+		this.codiceCategoriaCapitolo = codiceCategoriaCapitolo;
 	}
 
 }

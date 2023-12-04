@@ -81,7 +81,7 @@ public abstract class RisultatiRicercaValidazionePrimaNotaIntegrataBaseAction<M 
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(ValidazioneMassivaPrimaNotaIntegrata.class, res));
 			addErrori(res);
 			return INPUT;
 		}

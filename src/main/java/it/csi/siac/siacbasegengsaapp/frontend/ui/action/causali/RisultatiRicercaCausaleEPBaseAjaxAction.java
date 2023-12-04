@@ -13,14 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.causali.RisultatiRicercaCausaleEPBaseAjaxModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.causali.ElementoCausaleEP;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacgenser.frontend.webservice.CausaleService;
@@ -36,7 +36,7 @@ import it.csi.siac.siacgenser.model.StatoOperativoCausaleEP;
  * @version 1.0.0 - 07/10/2015
  */
 
-public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoCausaleEP,
+public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends PagedDataTableAjaxAction<ElementoCausaleEP,
 		RisultatiRicercaCausaleEPBaseAjaxModel, CausaleEP, RicercaSinteticaCausale, RicercaSinteticaCausaleResponse> {
 
 	/** Per la serializzazione */
@@ -56,7 +56,7 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 			+ "</div>";
 	
 	@Autowired private transient CausaleService causaleService;
-	private FaseBilancio faseBilancio;
+	protected FaseBilancio faseBilancio;
 	
 		
 	@Override
@@ -84,12 +84,12 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 	}
 
 	@Override
-	protected ElementoCausaleEP ottieniIstanza(CausaleEP e) throws FrontEndBusinessException {
+	protected ElementoCausaleEP getInstance(CausaleEP e) throws FrontEndBusinessException {
 		return new ElementoCausaleEP(e);
 	}
 
 	@Override
-	protected RicercaSinteticaCausaleResponse ottieniResponse(RicercaSinteticaCausale request) {
+	protected RicercaSinteticaCausaleResponse getResponse(RicercaSinteticaCausale request) {
 		return causaleService.ricercaSinteticaCausale(request);
 	}
 
@@ -99,7 +99,7 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoCausaleEP instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoCausaleEP instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		final boolean gestioneAggiorna = gestisciAggiornamento(listaAzioniConsentite, instance);
@@ -144,7 +144,7 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 	 * @return <code>true</code> se l'utente pu&acute; gestire l'aggiornamento; <code>false</code> altrimenti
 	 */
 	private boolean gestisciAggiornamento(List<AzioneConsentita> listaAzioniConsentite, ElementoCausaleEP wrapper) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO)
+		return isFaseBilancioCoerenteConAzioniModificaCausale()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaGestioneCausaleEP(), listaAzioniConsentite)
 				// SIAC-5516: lo stato non puo' essere ANNULLATO
 				&& wrapper != null
@@ -161,7 +161,7 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 	 * @return <code>true</code> se l'utente pu&acute; gestire l'annullamento; <code>false</code> altrimenti
 	 */
 	private boolean gestisciAnnullamento(List<AzioneConsentita> listaAzioniConsentite, ElementoCausaleEP wrapper) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO)
+		return isFaseBilancioCoerenteConAzioniModificaCausale()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaGestioneCausaleEP(), listaAzioniConsentite)
 				// SIAC-5516: lo stato non puo' essere ANNULLATO
 				&& wrapper != null
@@ -189,7 +189,7 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 	 * @return <code>true</code> se l'utente pu&acute; gestire l'eliminazione; <code>false</code> altrimenti
 	 */
 	private boolean gestisciEliminazione(List<AzioneConsentita> listaAzioniConsentite) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO)
+		return isFaseBilancioCoerenteConAzioniModificaCausale()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaGestioneCausaleEP(), listaAzioniConsentite);
 	}
 
@@ -202,13 +202,14 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 	 * @return <code>true</code> se l'utente pu&acute; gestire la validazione; <code>false</code> altrimenti
 	 */
 	private boolean gestisciValidazione(List<AzioneConsentita> listaAzioniConsentite, ElementoCausaleEP wrapper) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO)
+		return isFaseBilancioCoerenteConAzioniModificaCausale()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaGestioneCausaleEP(), listaAzioniConsentite)
 				// SIAC-5516: lo stato non puo' essere ANNULLATO
 				&& wrapper != null
 				&& wrapper.retrieveStato() != null
 				&& !StatoOperativoCausaleEP.ANNULLATO.equals(wrapper.retrieveStato());
 	}
+
 	
 	/**
 	 * @return il codice dell'ambito di riferimento ('FIN/GSA')
@@ -218,12 +219,15 @@ public abstract class RisultatiRicercaCausaleEPBaseAjaxAction extends GenericRis
 	/**
 	 * @return l'azione consentita corrispondente alla gestione della causaleEP
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaGestioneCausaleEP();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaGestioneCausaleEP();
 	
 	/**
 	 * @return l'azione consentita corrispondente alla gestione della causaleEP
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaRicercaCausaleEP();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaRicercaCausaleEP();
+	
+	//SIAC-8323 e SIAC-8324
+	protected abstract boolean isFaseBilancioCoerenteConAzioniModificaCausale();
 	
 	
 }

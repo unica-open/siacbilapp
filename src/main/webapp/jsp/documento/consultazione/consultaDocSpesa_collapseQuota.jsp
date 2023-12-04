@@ -109,21 +109,42 @@ SPDX-License-Identifier: EUPL-1.2
 					<dfn>CUP</dfn>
 					<dl><s:property value="subdocumentoSpesa.cup" />&nbsp;</dl>
 				</li>
-				<li>
-					<dfn>Nr. Mutuo</dfn>
-					<dl><s:property value="subdocumentoSpesa.voceMutuo.numeroMutuo" />&nbsp;</dl>
-				</li>
+
 				<li>
 					<dfn>Disponibilit&agrave; di cassa</dfn>
 					<dl>
 						<s:if test="%{subdocumentoSpesa.subImpegno != null}">
 							<s:property value="subdocumentoSpesa.subImpegno.disponibilitaPagare" />
-						</s:if><s:else>
+						</s:if>
+						<s:else>
 							<s:property value="subdocumentoSpesa.impegno.disponibilitaPagare" />
 						</s:else>
 						&nbsp;
 					</dl>
 				</li>
+				<%--SIAC-8153 --%>
+				<li>
+					<dfn>Struttura Amministrativa Contabile</dfn>
+					<dl>
+						<%-- CAMBIO IN ANALISI	--%>
+						<s:if test="%{subdocumentoSpesa.strutturaCompetenteQuota != null}">
+							<s:property value="subdocumentoSpesa.strutturaCompetenteQuota.codice" /> - <s:property value="subdocumentoSpesa.strutturaCompetenteQuota.descrizione" />
+						</s:if>
+						<s:else>
+							<s:property value="subdocumentoSpesa.impegno.strutturaCompetenteLetta.codice" /> - <s:property value="subdocumentoSpesa.impegno.strutturaCompetenteLetta.descrizione" />
+							<%-- CAMBIO IN ANALISI			
+							<s:if test="%{subdocumentoSpesa.subImpegno != null}">
+								<s:property value="subdocumentoSpesa.subImpegno.strutturaCompetenteLetta.codice" /> - <s:property value="subdocumentoSpesa.subImpegno.strutturaCompetenteLetta.descrizione" />
+							</s:if>
+							<s:else>
+								<s:property value="subdocumentoSpesa.impegno.strutturaCompetenteLetta.codice" /> - <s:property value="subdocumentoSpesa.impegno.strutturaCompetenteLetta.descrizione" />
+							</s:else> 
+							--%>
+						</s:else>
+						&nbsp;
+					</dl>
+				</li>
+				<%--SIAC-8153 --%>
 			</ul>
 		</div>
 	</div>
@@ -167,6 +188,10 @@ SPDX-License-Identifier: EUPL-1.2
 				<li>
 					<dfn>Note</dfn>
 					<dl><s:property value="subdocumentoSpesa.note" />&nbsp;</dl>
+				</li>
+				<li>
+					<dfn>Predisposizione</dfn>
+					<dl><s:property value="%{subdocumentoSpesa.preDocumentoSpesa.numero}"/> - <s:property value="%{subdocumentoSpesa.preDocumentoSpesa.descrizione}"/></dl>
 				</li>
 			</ul>
 		</div>

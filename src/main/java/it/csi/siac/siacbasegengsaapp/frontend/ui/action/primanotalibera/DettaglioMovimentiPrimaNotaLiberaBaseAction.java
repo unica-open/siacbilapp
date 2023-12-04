@@ -54,7 +54,7 @@ public class DettaglioMovimentiPrimaNotaLiberaBaseAction<M extends DettaglioMovi
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaDettaglioPrimaNota.class, response));
 			addErrori(response);
 			return INPUT;
 		}

@@ -6,6 +6,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.progetto;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.progetto.GenericProgettoModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+import it.csi.siac.siacbilser.business.utility.FaseBilancioTipoProgettoMapper;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacbilser.frontend.webservice.ProgettoService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
@@ -38,7 +40,8 @@ import it.csi.siac.siacbilser.model.TipoAmbito;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 
 /**
  * Action astratta per il Progetto.
@@ -68,6 +71,8 @@ public class GenericProgettoAction<M extends GenericProgettoModel> extends Gener
 		log.debugStart(methodName, "caricaListaTipiAtto e caricaListaAmbiti");
 		caricaListaTipiAtto();
 		caricaListaAmbiti();
+		//SIAC-8900
+		caricaListaTipoProgetto();
 		log.debugEnd(methodName, "caricaListaTipiAtto e caricaListaAmbiti");
 	}
 	
@@ -133,18 +138,21 @@ public class GenericProgettoAction<M extends GenericProgettoModel> extends Gener
 	 * Ottiene il tipo progetto dalla fase di bilancio
 	 * @return il tipo di progetto
 	 */
-	protected TipoProgetto obtainTipoProgettoByFaseBilancio() {
+	protected TipoProgetto getTipoProgettoByFaseBilancio() {
 		Bilancio bilancio = model.getBilancio();
-		FaseBilancio fase  = null;
-		if(bilancio == null || bilancio.getFaseEStatoAttualeBilancio() == null || bilancio.getFaseEStatoAttualeBilancio().getFaseBilancio() == null) {
-			fase = caricaFaseBilancio();
-		} else {
-			fase = bilancio.getFaseEStatoAttualeBilancio().getFaseBilancio();
+		//SIAC-8900
+		if(isBilancioEsercizioProvvisorio()) {
+			return model.getProgetto().getTipoProgetto();
 		}
-		return FaseBilancio.PREVISIONE.equals(fase) || FaseBilancio.ESERCIZIO_PROVVISORIO.equals(fase)?
-				TipoProgetto.PREVISIONE
-				: FaseBilancio.GESTIONE.equals(fase)? 
-						TipoProgetto.GESTIONE : null;
+		
+		if(FaseBilancio.PREVISIONE.equals(bilancio.getFaseEStatoAttualeBilancio().getFaseBilancio())
+		   || FaseBilancio.ESERCIZIO_PROVVISORIO.equals(bilancio.getFaseEStatoAttualeBilancio().getFaseBilancio())) {
+			model.getProgetto().setTipoProgetto(TipoProgetto.PREVISIONE);
+		} else if(FaseBilancio.GESTIONE.equals(bilancio.getFaseEStatoAttualeBilancio().getFaseBilancio())) {
+			model.getProgetto().setTipoProgetto(TipoProgetto.GESTIONE);
+		}
+		
+		return model.getProgetto().getTipoProgetto();
 	}
 	
 	/**
@@ -210,6 +218,21 @@ public class GenericProgettoAction<M extends GenericProgettoModel> extends Gener
 		model.setListaTipiAmbito(listaTipiAmbito);
 	}
 	
+	//SIAC-8900
+	private void caricaListaTipoProgetto() {
+		model.setListaTipoProgetto(Arrays.asList(TipoProgetto.values()));
+	}
+	
+	//SIAC-8900
+	public void setTipoProgettoStr(String tipoProgetto) {
+		model.getProgetto().setTipoProgetto(TipoProgetto.byCodice(tipoProgetto));
+	}
+
+	
+	public String getTipoProgettoStr() {
+		return model.getProgetto().getTipoProgetto().getCodice();
+	}
+	
 	/**
 	 * Carica la lista dei tipi di atto 
 	 * 
@@ -221,7 +244,6 @@ public class GenericProgettoAction<M extends GenericProgettoModel> extends Gener
 		
 
 		List<ModalitaAffidamentoProgetto> listaModalitaAffidamento = sessionHandler.getParametro(BilSessionParameter.LISTA_MODALITA_AFFIDAMENTO);
-		
 		if(listaModalitaAffidamento == null) {
 			RicercaCodifiche request = model.creaRequestRicercaCodifiche(ModalitaAffidamentoProgetto.class);
 			log.debug(methodName, "Richiamo il WebService di caricamento dei Tipi di Provvedimento");
@@ -259,7 +281,7 @@ public class GenericProgettoAction<M extends GenericProgettoModel> extends Gener
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDeiCronoprogrammiCollegatiAlProgettoPerBilancio.class, res));
 		}
 		return res.getCronoprogrami();
 	}
@@ -295,4 +317,16 @@ public class GenericProgettoAction<M extends GenericProgettoModel> extends Gener
 		return listaFiltrata;
 	}
 	
+	//SIAC-8900
+	public boolean abilitaAzioneAggiornaProgetto() {
+		model.getBilancio();
+		sessionHandler.getEnte();
+		return Boolean.TRUE.equals(Boolean.parseBoolean(getParametroConfigurazioneEnte(
+				ParametroConfigurazioneEnteEnum.PROGETTO_ABILITA_GESTIONE_ESERCIZIO_PROVVISORIO)));
+	}
+	//SIAC-8900
+	public boolean isBilancioEsercizioProvvisorio() {
+		return FaseBilancio.ESERCIZIO_PROVVISORIO.equals(model.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio()) 
+				&& abilitaAzioneAggiornaProgetto();
+	}
 }

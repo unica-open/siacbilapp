@@ -228,6 +228,11 @@ public class InserisciDocumentoEntrataModel extends GenericDocumentoModel {
 		documento.setUid(0);
 		//SIAC 6677
 		documento.setIuv(null);
+		//SIAC-7567
+		documento.setCig(null);
+		documento.setCup(null);
+		//
+		documento.setIuv(null);
 		documento.setDataOperazione(null);
 		setDocumento(documento);
 	}
@@ -289,6 +294,11 @@ public class InserisciDocumentoEntrataModel extends GenericDocumentoModel {
 		
 		if(soggetto != null && soggetto.getUid() != 0) {
 			documentoEntrata.setSoggetto(soggetto);
+		}
+		
+		//SIAC-7717 passo la FatturaFel
+		if(getFatturaFEL() != null) {
+			documentoEntrata.setFatturaFEL(getFatturaFEL());
 		}
 		
 		return documentoEntrata;

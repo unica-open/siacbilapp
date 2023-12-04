@@ -85,7 +85,7 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}registroComunicazioniPCC/registroComunicazioniPCCConsultazioneSubdocumentoSpesa.js"></script>
-	<script type="text/javascript" src="${jspath}documento/consultaSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/registroComunicazioniPCC/registroComunicazioniPCCConsultazioneSubdocumentoSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/consultaSpesa.js"></script>
 </body>
 </html>

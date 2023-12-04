@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaConsultazioneMassivaCapitoloAjaxAction;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.WrapperAzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteWrapper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioMassivaCapitoloEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioMassivaCapitoloEntrataGestioneResponse;
@@ -41,7 +41,7 @@ public class RisultatiRicercaConsultazioneMassivaCapitoloEntrataGestioneAjaxActi
 	/** Costruttore vuoto di default */
 	public RisultatiRicercaConsultazioneMassivaCapitoloEntrataGestioneAjaxAction() {
 		super();
-		setNomeAzione(WrapperAzioniConsentite.ACTION_NAME_ENTRATA_GESTIONE);
+		setNomeAzione(AzioniConsentiteWrapper.ACTION_NAME_ENTRATA_GESTIONE);
 	}
 
 	@Override

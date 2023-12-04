@@ -34,6 +34,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<th scope="col">Fonte Di Finanziamento</th>
 									<th scope="col">Momento</th>
 									<th scope="col">Anno</th>
+									<th scope="col">Impegnabile</th>
 									<th scope="col">Default</th>
 									<th scope="col">Data Inizio</th>
 									<th scope="col">Data Fine</th>
@@ -59,7 +60,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}anagraficaComponenti/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/anagraficaComponenti/risultatiRicerca.js"></script>
 
 </body>
 </html>

@@ -143,7 +143,7 @@ public abstract class ConsultaPrimaNotaIntegrataManualeBaseModel extends Generic
 		if(mg instanceof SubAccertamento) {
 			return toInteger(((SubAccertamento) mg).getNumeroAccertamentoPadre());
 		}
-		return mg != null ? toInteger(mg.getNumero()) : null;
+		return mg != null ? toInteger(mg.getNumeroBigDecimal()) : null;
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public abstract class ConsultaPrimaNotaIntegrataManualeBaseModel extends Generic
 	 */
 	public Integer getNumeroSubmovimentoGestione() {
 		MovimentoGestione smg = retrieveMovimentoGestioneSub();
-		return smg != null ? toInteger(smg.getNumero()) : null;
+		return smg != null ? toInteger(smg.getNumeroBigDecimal()) : null;
 	}
 
 	/**
@@ -433,10 +433,10 @@ public abstract class ConsultaPrimaNotaIntegrataManualeBaseModel extends Generic
 			SubAccertamento sa = (SubAccertamento) acc;
 			prak.setAnnoAccertamento(Integer.valueOf(sa.getAnnoAccertamentoPadre()));
 			prak.setNumeroAccertamento(sa.getNumeroAccertamentoPadre());
-			prak.setNumeroSubDaCercare(sa.getNumero());
+			prak.setNumeroSubDaCercare(sa.getNumeroBigDecimal());
 		} else {
 			prak.setAnnoAccertamento(Integer.valueOf(acc.getAnnoMovimento()));
-			prak.setNumeroAccertamento(acc.getNumero());
+			prak.setNumeroAccertamento(acc.getNumeroBigDecimal());
 		}
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -472,10 +472,10 @@ public abstract class ConsultaPrimaNotaIntegrataManualeBaseModel extends Generic
 			SubImpegno si = (SubImpegno) imp;
 			prik.setAnnoImpegno(Integer.valueOf(si.getAnnoImpegnoPadre()));
 			prik.setNumeroImpegno(si.getNumeroImpegnoPadre());
-			prik.setNumeroSubDaCercare(si.getNumero());
+			prik.setNumeroSubDaCercare(si.getNumeroBigDecimal());
 		} else {
 			prik.setAnnoImpegno(Integer.valueOf(imp.getAnnoMovimento()));
-			prik.setNumeroImpegno(imp.getNumero());
+			prik.setNumeroImpegno(imp.getNumeroBigDecimal());
 		}
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();

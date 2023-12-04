@@ -10,7 +10,7 @@ import java.util.ArrayList;
 //import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -25,12 +25,15 @@ import it.csi.siac.siacbilser.model.ClassificatoreStipendi;
 import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Informazione;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 //import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.action.ordinativo.GenericEmissioneOrdinativiAction;
 import it.csi.siac.siacfin2app.frontend.ui.model.ordinativo.EmissioneOrdinativiPagamentoModel;
+import it.csi.siac.siacfin2ser.model.CommissioniDocumento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.Liste;
 import it.csi.siac.siacfinser.frontend.webservice.msg.ListeResponse;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
+import it.csi.siac.siacfinser.model.codifiche.CommissioneDocumento;
 import it.csi.siac.siacfinser.model.codifiche.TipiLista;
 
 /**
@@ -70,7 +73,7 @@ public class EmissioneOrdinativiPagamentoAction extends GenericEmissioneOrdinati
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(Liste.class, res));
 			}
 			listaDistinta = new ArrayList<CodificaFin>(res.getDistinta());
 			ComparatorUtils.sortByCodiceFin(listaDistinta);
@@ -156,6 +159,28 @@ public class EmissioneOrdinativiPagamentoAction extends GenericEmissioneOrdinati
 			}
 		}
 		model.setListaClassificatoreStipendi(listaFiltrata);
+	}
+	
+
+	//task-259
+	//task-291
+	protected void caricaCommissioniDefault() {
+		if(abilitaCampoDefaultCommissioniInserimentoOrdinativiPagamento()) {
+			if(model.getListaCommissioniDocumento().size()>1){
+				for(CommissioneDocumento lista : model.getListaCommissioniDocumento()){
+					if(CommissioniDocumento.ESENTE.getDescrizione().toUpperCase().equals(lista.getDescrizione().toUpperCase())){
+						model.setCommissioneDocumento(lista);
+						break;
+					}
+				}
+			}
+		}
+	}
+		
+	//task-259
+	private boolean abilitaCampoDefaultCommissioniInserimentoOrdinativiPagamento() {
+		return Boolean.TRUE.equals(Boolean.parseBoolean(getParametroConfigurazioneEnte(
+				ParametroConfigurazioneEnteEnum.INSERISCI_ORDINATIVO_PAGAMENTO_DEFAULT_COMMISSIONI)));
 	}
 	
 }

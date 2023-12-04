@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -30,7 +30,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaQuoteDaEmettereEntrataAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoSubdocumentoDaEmettereEntrata,
+public class RisultatiRicercaQuoteDaEmettereEntrataAjaxAction extends PagedDataTableAjaxAction<ElementoSubdocumentoDaEmettereEntrata,
 		RisultatiRicercaQuoteDaEmettereEntrataAjaxModel, SubdocumentoEntrata, RicercaQuoteDaEmettereEntrata, RicercaQuoteDaEmettereEntrataResponse> {
 	
 	/** Per la serializzazione */
@@ -56,12 +56,12 @@ public class RisultatiRicercaQuoteDaEmettereEntrataAjaxAction extends GenericRis
 	}
 	
 	@Override
-	protected ElementoSubdocumentoDaEmettereEntrata ottieniIstanza(SubdocumentoEntrata e) throws FrontEndBusinessException {
+	protected ElementoSubdocumentoDaEmettereEntrata getInstance(SubdocumentoEntrata e) throws FrontEndBusinessException {
 		return new ElementoSubdocumentoDaEmettereEntrata(e, model.isGestioneUEB());
 	}
 	
 	@Override
-	protected RicercaQuoteDaEmettereEntrataResponse ottieniResponse(RicercaQuoteDaEmettereEntrata request) {
+	protected RicercaQuoteDaEmettereEntrataResponse getResponse(RicercaQuoteDaEmettereEntrata request) {
 		return documentoEntrataService.ricercaQuoteDaEmettereEntrata(request);
 	}
 	

@@ -57,7 +57,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<div class="control-group">
 										<label class="control-label" for="codiceConto">Conto patrimoniale</label>
 										<div class="controls">
-											<s:textfield id="codiceContoPatrimoniale" name="tipoBeneCespite.contoPatrimoniale.codice" cssClass="span6" maxlength="200" />
+											<s:textfield id="codiceContoPatrimoniale" name="cespite.tipoBeneCespite.contoPatrimoniale.codice" cssClass="span6" maxlength="200" />
 											<span id="descrizioneContoPatrimonale"></span>
 											<span class="radio guidata">
 												<button type="button" data-selector-conto="<s:property value="contoPatrimonialeTipoBeneSelector"/>" data-selector-classe="<s:property value="contoPatrimonialeTipoBeneSelector.codiceClassePiano"/>" class="btn btn-primary" id="pulsanteCompilazioneGuidataContoPatrimoniale">compilazione guidata</button>
@@ -113,7 +113,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/contabilitaGenerale/include/modaleRicercaConto.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/conto.js"></script>
-	<script type="text/javascript" src="${jspath}cespiti/ammortamento/inserisciAmmortamentoMassivo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/conto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/ammortamento/inserisciAmmortamentoMassivo.js"></script>
 </body>
 </html>

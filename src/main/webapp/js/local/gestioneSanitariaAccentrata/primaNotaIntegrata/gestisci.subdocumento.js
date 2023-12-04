@@ -8,7 +8,10 @@
     var alertErrori = $("#ERRORI");
     var alertErroriModale = $("#ERRORI_modale");
     var alertInformazioni = $("#INFORMAZIONI");
-    var baseUrl = $("#HIDDEN_baseUrlSubdocumento").val();
+    var baseUrl = $("#HIDDEN_baseUrlSubdocumento").val(); 
+//SIAC-7388
+	var classiConciliazioneDigitazioneTestuale=["CONTI"];
+	var classiConciliazioneSelezioneEDigitazioneTestuale=["CREDITI", "DEBITI"];
 
     /**
      * Popolamento della tabella.
@@ -125,7 +128,7 @@
         // Imposto l'indice
         $("#indiceContoModale").val(idx);
         // Apro il modale
-        alertErroriModale.slideUp();
+        $('#ERRORI_modaleDettaglio').slideUp();
         $("#modaleAggiornamentoConto").modal("show");
     }
 
@@ -154,23 +157,88 @@
     /**
      * imposta la modale in modo tale che sia predisposta per la classe conti.
      * */
-    function impostaModalePerClasseConti(){
+  	function impostaModaleClassePerDigitazioneConto(isUnicaOpzioneDigitazione){
+		if(isUnicaOpzioneDigitazione){
+			$("#selezioneContoGuidata").hide();
+		}
+    	$("#selezioneContoTestuale").show();
+		$('#contoConciliazione').val("");
+		if(isUnicaOpzioneDigitazione){
+			$("#pulsanteSelezionaConto").substituteHandler('click', aggiornamentoContoClasseDaDigitazione.bind(undefined, undefined));	
+		}
+    	
+    }
+
+	function aggiornamentoContoClasseDaSelezioneEDigitazione(classeDiConciliazione){
+		var index = $("#HIDDEN_indiceModale").val();
+		var codiceConto = $('#contoConciliazione').val()? $('#contoConciliazione').val() : "";
+		var uisContoSelezionato = ($("#contiConciliazionePerTitoloModale").val() != null && $("#contiConciliazionePerTitoloModale").val() != "" )
+    		? $("#contiConciliazionePerTitoloModale").val() : 0;
+	    var valorizzatoCodiceConto =  codiceConto && codiceConto !== "";
+		if( valorizzatoCodiceConto && uisContoSelezionato && uisContoSelezionato !== 0){
+			if(impostaDatiNegliAlert(["COR_ERR_0029","Esiste un'incongruenza tra i parametri di input: il conto deve essere digitato o selezionato, non &egrave; possibile fare entrambe le operazioni."], $('#ERRORI_modaleDettaglio')))
+			return;
+		}
+		if(!valorizzatoCodiceConto){
+			var obj = {'contoDaSostituire.uid' : uisContoSelezionato, 'indiceConto': index};
+	        var url = baseUrl + "_aggiornaContoDaClasseDiConciliazione.do";
+	        chiamaAggiornamentoContoClasseConciliazione(obj, url);
+			return;
+		}
+		aggiornamentoContoClasseDaDigitazione(codiceConto, classeDiConciliazione);
+		
+		
+	}
+
+	function impostaModaleClassePerSelezioneConto(classeDiconciliazione,index, handlerSelezioneConto, isUnicaOpzioneDigitazione){
+		if(index === undefined){
+    		return;
+    	}
+		popolaElencoContiConciliazione(classeDiconciliazione,index);
+		if(handlerSelezioneConto && typeof handlerSelezioneConto === "function"){
+			$("#pulsanteSelezionaConto").substituteHandler('click',handlerSelezioneConto);
+		}
+		
+	   if(isUnicaOpzioneDigitazione){
+			$("#selezioneContoTestuale").hide();
+	   }
+		$("#selezioneContoGuidata").show();
+    	
+	}
+    /*function impostaModalePerClasseConti(){
     	$("#selezioneContoGuidata").slideUp();
     	$("#selezioneContoTestuale").slideDown();
     	$("#pulsanteSelezionaConto").substituteHandler('click', aggiornamentoContoDaClasseConciliazioneConti);
-    }
+    }*/
     
     /**
      * Gestisce le diverse impostazioni della modale a seconda del tipo di classe di conciliazione
      * */
     function gestisciClassiConciliazione(classeDiconciliazione, index){
-    	if(classeDiconciliazione === "CONTI"){
+	
+		//SIAC-7388
+		$('.info-aggiuntive-digitazione-selezione').hide();
+    	if(classiConciliazioneDigitazioneTestuale.includes(classeDiconciliazione)){	
+    		return impostaModaleClassePerDigitazioneConto(true);
+    	}
+		var permettiSiaDigitazioneCheSelezione = classiConciliazioneSelezioneEDigitazioneTestuale.includes(classeDiconciliazione);
+		if(permettiSiaDigitazioneCheSelezione){
+			$('.info-aggiuntive-digitazione-selezione').show();	
+    		impostaModaleClassePerDigitazioneConto(false);
+			impostaModaleClassePerSelezioneConto(classeDiconciliazione,index, aggiornamentoContoClasseDaSelezioneEDigitazione.bind(undefined, classeDiconciliazione), false);
+			return;
+    	}
+		impostaModaleClassePerSelezioneConto(classeDiconciliazione,index, aggiornamentoContoClasseDaSelezione.bind(undefined), true);
+    	
+/*
+		if(classeDiconciliazione === "CONTI"){
     		return impostaModalePerClasseConti();
     	}
     	$("#selezioneContoGuidata").slideDown();
     	$("#selezioneContoTestuale").slideUp();
     	popolaElencoContiConciliazione(classeDiconciliazione, index);
     	$("#pulsanteSelezionaConto").substituteHandler('click', aggiornamentoContoDaClasseConciliazione);
+*/
     }
     
     
@@ -218,8 +286,7 @@
     	}
 	   return $.postJSON(url, obj)
 	        .then(function(data) {
-	            if(impostaDatiNegliAlert(data.errori, alertErroriModale)) {
-	                 $("#modaleDettaglioConti").modal("hide");
+	            if(impostaDatiNegliAlert(data.errori, $('#ERRORI_modaleDettaglio'))) {
 	                // Errore: esco
 	                return;
 	            }
@@ -236,22 +303,22 @@
     /**
      * Aggiornamento del conto.
      */
-    function aggiornamentoContoDaClasseConciliazioneConti() {
+    function aggiornamentoContoClasseDaDigitazione(codiceConto, classeDiConciliazione) {
     	var index = $("#HIDDEN_indiceModale").val();
     	var codiceConto = $('#contoConciliazione').val()? $('#contoConciliazione').val() : "";
-    	var obj = {'conto.codice' : codiceConto, 'indiceConto': index};
-    	var url = baseUrl + "_aggiornaContoDaClasseDiConciliazioneConti.do";
+		var conciliazione = classeDiConciliazione || ''; 
+    	var obj = {'conto.codice' : codiceConto, 'indiceConto': index, 'classeDiConciliazioneContoDigitato': conciliazione};
+    	var url = baseUrl + "_aggiornaContoDaClasseDiConciliazioneConDigitazione.do";
     	chiamaAggiornamentoContoClasseConciliazione(obj, url);
     }
     
-    /**
-     * Aggiornamento del conto.
-     */
-    function aggiornamentoContoDaClasseConciliazione() {
+   function aggiornamentoContoClasseDaSelezione() {
     	var index = $("#HIDDEN_indiceModale").val();
     	var uisContoSelezionato = ($("#contiConciliazionePerTitoloModale").val() != null && $("#contiConciliazionePerTitoloModale").val() != "" )
     		? $("#contiConciliazionePerTitoloModale").val() : 0;
+	
         var obj = {'contoDaSostituire.uid' : uisContoSelezionato, 'indiceConto': index};
+       
         var url = baseUrl + "_aggiornaContoDaClasseDiConciliazione.do";
         chiamaAggiornamentoContoClasseConciliazione(obj, url);
     }

@@ -176,7 +176,7 @@ public abstract class GestioneSubImpegnoInsPrimaNotaIntegrataBaseAction<M extend
 			.append("/")
 			.append(subImpegno.getNumeroImpegnoPadre().toPlainString())
 			.append("-")
-			.append(subImpegno.getNumero().toPlainString());
+			.append(subImpegno.getNumeroBigDecimal().toPlainString());
 		if(StringUtils.isNotBlank(subImpegno.getDescrizione())) {
 			descrizione.append(" ")
 				.append(subImpegno.getDescrizione());
@@ -185,7 +185,7 @@ public abstract class GestioneSubImpegnoInsPrimaNotaIntegrataBaseAction<M extend
 			.append("/")
 			.append(subImpegno.getNumeroImpegnoPadre().toPlainString())
 			.append("-")
-			.append(subImpegno.getNumero().toPlainString())
+			.append(subImpegno.getNumeroBigDecimal().toPlainString())
 			.append(" (subimp)");
 
 		model.setDescrMovimentoFinanziario(movimento.toString());

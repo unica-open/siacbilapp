@@ -120,8 +120,8 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}allegatoAtto/gestioneElenco.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/inserisci_step2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/gestioneElenco.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/inserisci_step2.js"></script>
 	
 </body>
 </html>

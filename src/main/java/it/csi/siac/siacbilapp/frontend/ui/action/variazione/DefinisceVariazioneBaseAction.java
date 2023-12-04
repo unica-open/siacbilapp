@@ -8,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
+import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
+import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException.Level;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacbilser.frontend.webservice.VariazioneDiBilancioService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
+import it.csi.siac.siacbilser.model.VariazioneDiBilancio;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
  * Classe astratta per la gestione della definizione della variazione.
@@ -72,6 +77,16 @@ public abstract class DefinisceVariazioneBaseAction<M extends GenericBilancioMod
 						// Assestamento si può fare solo quando il bilancio è in ASSESTAMENTO
 				("ASSESTAMENTO".equalsIgnoreCase(applicazioneVariazione) &&
 					FaseBilancio.ASSESTAMENTO.equals(faseBilancio));
+	}
+	
+	protected void controllaStatoOperativoVariazione(VariazioneDiBilancio variazione){
+		final String methodName = "controllaStatoOperativoVariazione - Definisci Variazione";
+		if(!StatoOperativoVariazioneBilancio.PRE_DEFINITIVA.getDescrizione().equals(variazione.getStatoOperativoVariazioneDiBilancio().getDescrizione())) {
+			
+			log.debug(methodName, "operazione non ammessa : l'operazione e' valida solo per le variazioni in stato di: PRE-DEFINITIVA.");
+			throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("operazione valida solo per le variazioni in stato di: PRE-DEFINITIVA.").getTesto(), Level.ERROR);					
+		
+		}
 	}
 	
 	/**

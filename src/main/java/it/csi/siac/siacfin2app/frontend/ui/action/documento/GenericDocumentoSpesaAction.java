@@ -11,9 +11,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacfin2app.frontend.ui.model.documento.GenericDocumentoSpesaModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
@@ -232,7 +232,7 @@ public class GenericDocumentoSpesaAction<M extends GenericDocumentoSpesaModel> e
 		model.getDocumento().setTerminePagamento(BilConstants.TERMINE_PAGAMENTO.getId());
 		model.calcolaDataScadenzaDefault();
 		//SIAC-5346
-		model.setDisabilitaPCCSeUnivoco(AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite()));
+		model.setDisabilitaPCCSeUnivoco(AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite()));
 	}
 	
 }

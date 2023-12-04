@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
@@ -83,7 +83,7 @@ public class ConvalidaAllegatoAttoElenchiAction extends ConvalidaAllegatoAttoBas
 		logServiceRequest(req);
 		
 		// SIAC-5575: l'operazione asincrona deve essere sotto nome 'CONVALIDA'
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_CONVALIDA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_CONVALIDA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		// Invocazione del servizio asincrono
 		AsyncServiceResponse res = allegatoAttoService.convalidaAllegatoAttoPerElenchiAsync(wrapRequestToAsync(req, azioneRichiesta));
 		logServiceResponse(res);
@@ -91,7 +91,7 @@ public class ConvalidaAllegatoAttoElenchiAction extends ConvalidaAllegatoAttoBas
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(ConvalidaAllegatoAttoPerElenchi.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -160,7 +160,7 @@ public class ConvalidaAllegatoAttoElenchiAction extends ConvalidaAllegatoAttoBas
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RifiutaElenchi.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -204,7 +204,7 @@ public class ConvalidaAllegatoAttoElenchiAction extends ConvalidaAllegatoAttoBas
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(RifiutaElenchi.class, response));
 			addErrori(response);
 			return INPUT;
 		}

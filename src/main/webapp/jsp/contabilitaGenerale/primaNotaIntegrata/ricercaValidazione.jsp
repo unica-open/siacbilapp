@@ -73,6 +73,13 @@ SPDX-License-Identifier: EUPL-1.2
 										</span>
 									</div>
 								</div>
+								<!-- SIAC-8595 -->
+								<div class="control-group" id="annoMovimento"  style= "display:none">
+									<label class="control-label" for="annoPrimaNota">Anno movimento</label>
+									<div class="controls">
+										<s:textfield id="annoPrimaNota" cssClass="span1 soloNumeri" name="primaNota.anno"  maxlength="4" placeholder="anno" disabled="true" />
+									</div>
+								</div>
 								<div class="control-group">
 									<label class="control-label">Movimento finanziario</label>
 									<div class="controls">
@@ -117,6 +124,14 @@ SPDX-License-Identifier: EUPL-1.2
 											cssClass="span6" headerKey="" headerValue="" listValue="%{codice + ' - ' + descrizione}" disabled="true"
 											data-maintain="" />
 										<s:hidden name="statoOperativoPrimaNota" data-maintain="" />
+									</div>
+								</div>
+								
+								<!-- SIAC-8595 --> 
+								<div class="control-group">
+									<label class="control-label" for="annoPrimaNota">Anno</label>
+									<div class="controls">
+										<s:textfield id="annoPrimaNota" cssClass="span1 soloNumeri" name="primaNota.anno"  maxlength="4" placeholder="anno" disabled="true" />
 									</div>
 								</div>
 								
@@ -332,15 +347,15 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
 	
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaContoFIN.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_doc.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>	
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/primaNotaIntegrata/ricerca.js"></script>	
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaContoFIN.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_doc.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>	
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/primaNotaIntegrata/ricerca.js"></script>	
 	
 </body>
 </html>

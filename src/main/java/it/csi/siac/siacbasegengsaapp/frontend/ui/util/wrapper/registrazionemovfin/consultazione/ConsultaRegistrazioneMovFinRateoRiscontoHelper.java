@@ -154,7 +154,7 @@ public class ConsultaRegistrazioneMovFinRateoRiscontoHelper extends ConsultaRegi
 			MovimentoGestione movimentoGestione = (MovimentoGestione) movimento;
 			impostaDatiConsultazioneMovimento("Impegno",
 					Integer.toString(movimentoGestione.getAnnoMovimento()),
-					FormatUtils.formatPlain(movimentoGestione.getNumero()),
+					FormatUtils.formatPlain(movimentoGestione.getNumeroBigDecimal()),
 					movimentoGestione.getDescrizione(),
 					movimentoGestione.getSoggetto(),
 					null);

@@ -7,7 +7,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.capuscprev;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,8 @@ import it.csi.siac.siacbilapp.frontend.ui.action.commons.CapitoloUscitaAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscprev.ConsultaCapitoloUscitaPrevisioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilser.business.utility.helper.ComponenteImportiCapitoloPerAnnoHelper;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.TabellaImportiConComponentiCapitoloFactory;
+import it.csi.siac.siacbilser.business.utility.capitolo.ComponenteImportiCapitoloPerAnnoHelper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitolo;
@@ -29,9 +30,10 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUs
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisioneResponse;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
+import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * Classe di Action per la gestione della consultazione del Capitolo di Uscita
@@ -91,11 +93,14 @@ public class ConsultaCapitoloUscitaPrevisioneAction
 		// Controllo gli errori
 		if (res.hasErrori()) {
 			// si sono verificati degli errori: esco.
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioCapitoloUscitaPrevisione.class, res));
 		}
 		
 		sessionHandler.setParametro(BilSessionParameter.CAPITOLO_PER_RICERCA_DETTAGLIO_VARIAZIONE, res.getCapitoloUscitaPrevisione().getUid());
 
+		model.impostaDatiDaResponse(res);
+		
+		/*
 		// GESC014 Servizio per ricerca componenti del capitolo
 		RicercaComponenteImportiCapitolo reqComponenti = model.creaRequestRicercaComponenteImportiCapitolo();
 		RicercaComponenteImportiCapitoloResponse resComponenti = componenteImportiCapitoloService
@@ -123,8 +128,10 @@ public class ConsultaCapitoloUscitaPrevisioneAction
 		
 		
 		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
-				.toComponentiImportiCapitoloPerAnno(resComponenti.getListaImportiCapitolo());
+				.toComponentiImportiCapitoloPerAnno(resComponenti.getListaImportiCapitolo(), resComponenti.getImportiCapitoloAnniSuccessivi());
 		
+		
+		//SIAC-7349 - SR200 - MR - Start - 05/2020 - Nuovo metodo per mostrare componenti anni precedenti
 		//SIAC-7227
 		//passo la nuova lista al model con il match delle varie componenti
 //		if(resComponenti.getListaImportiCapitolo().get(0) != null) {
@@ -132,11 +139,40 @@ public class ConsultaCapitoloUscitaPrevisioneAction
 //		}
 		//
 		
+		
+		if(resComponenti.getListaImportiCapitolo().get(0) != null ) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedenteNew(importiComponentiCapitolo, resComponenti.getListaImportiCapitolo().get(0));
+		}
+		//END SIAC-7349
+		
+		//SIAC-7349 - SR200 - MR - Start - 07/05/2020 - Nuovo metodo per mostrare componenti negli anni successivi senza stanziamento
+		if(resComponenti.getListaImportiCapitoloAnniSuccessiviNoStanz() != null &&  !resComponenti.getListaImportiCapitoloAnniSuccessiviNoStanz().isEmpty()) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitolo, resComponenti.getListaImportiCapitoloAnniSuccessiviNoStanz());
+		}
+		//SIAC-7349 - End
+		
+		//SIAC-7349 - GS - Start - 20/07/2020 - Nuovo metodo per mostrare componenti nel triennio senza stanziamento
+		if(resComponenti.getListaImportiCapitoloTriennioNoStanz() != null &&  !resComponenti.getListaImportiCapitoloTriennioNoStanz().isEmpty()) {
+
+			int countDefault = 0;
+			for (ImportiCapitoloPerComponente i : importiComponentiCapitolo) {
+				if (i.isPropostaDefault()) 
+					countDefault++;
+			}  
+			int addIndex = importiComponentiCapitolo.size() - countDefault;
+			Integer annoEsercizio = Integer.valueOf(sessionHandler.getAnnoEsercizio());
+
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitolo, resComponenti.getListaImportiCapitoloTriennioNoStanz(), annoEsercizio, addIndex);
+		}
+		//SIAC-7349 - End
+		
+		
+
+		//SIAC-7349 - End
+		
 		model.setImportiComponentiCapitolo(importiComponentiCapitolo);
 		model.setImportiAnniSuccessivi(resComponenti.getImportiCapitoloAnniSuccessivi());
 		model.setImportiResidui(resComponenti.getImportiCapitoloResiduo());
-
-		model.impostaDatiDaResponse(res);
 
 		// COMPETENZA
 		List<ImportiCapitoloPerComponente> competenzaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
@@ -164,7 +200,7 @@ public class ConsultaCapitoloUscitaPrevisioneAction
 
 		model.setCassaStanziato((cassaComponenti.get(0) != null) ? cassaComponenti.get(0) : null);
 		model.setCassaPagato((cassaComponenti.get(1) != null) ? cassaComponenti.get(1) : null);
-
+*/
 		boolean isPrevisione = checkCaso();
 		// chiamata al servizio per sapere in quale fase di bilancio mi trovo
 		model.setCapGestioneEquivalentePresente(isPrevisione);
@@ -184,7 +220,7 @@ public class ConsultaCapitoloUscitaPrevisioneAction
 					.ricercaDettaglioCapitoloUscitaGestione(reqEq);
 			if (resEq.hasErrori()) {
 				// si sono verificati degli errori: esco.
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(reqEq, resEq));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioCapitoloUscitaGestione.class, resEq));
 			}
 			model.impostaImportiCapitoloEquivalente(resEq.getListaImportiCapitoloUG());
 
@@ -197,11 +233,40 @@ public class ConsultaCapitoloUscitaPrevisioneAction
 			if (responseEquiv.hasErrori()) {
 				// si sono verificati degli errori: esco.
 				throw new WebServiceInvocationFailureException(
-						createErrorInServiceInvocationString(requestEquiv, responseEquiv));
+						createErrorInServiceInvocationString(RicercaComponenteImportiCapitolo.class, responseEquiv));
 			}
 			List<ImportiCapitoloPerComponente> importiComponentiCapitoloEquiv = new ArrayList<ImportiCapitoloPerComponente>();
+//			importiComponentiCapitoloEquiv = ComponenteImportiCapitoloPerAnnoHelper
+//					.toComponentiImportiCapitoloPerAnno(responseEquiv.getListaImportiCapitolo());
+			
+			
+			//SIAC-7349 - SR50 riciclo - MR - Start - 21/05/2020 - Nuovo metodo per mostrare componenti negli anni successivi senza stanziamento
 			importiComponentiCapitoloEquiv = ComponenteImportiCapitoloPerAnnoHelper
-					.toComponentiImportiCapitoloPerAnno(responseEquiv.getListaImportiCapitolo());
+					.toComponentiImportiCapitoloPerAnno(responseEquiv.getListaImportiCapitolo(), responseEquiv.getImportiCapitoloAnniSuccessivi());
+			
+			if(responseEquiv.getListaImportiCapitolo().get(0) != null ) {
+				importiComponentiCapitoloEquiv = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedenteNew(importiComponentiCapitoloEquiv, responseEquiv.getListaImportiCapitolo().get(0));
+			}
+			//SIAC-7349 END
+
+			//SIAC-7349 - SR50 riciclo - MR - Start - 21/05/2020 - Nuovo metodo per mostrare componenti negli anni successivi senza stanziamento
+			if(responseEquiv.getListaImportiCapitoloAnniSuccessiviNoStanz() != null &&  !responseEquiv.getListaImportiCapitoloAnniSuccessiviNoStanz().isEmpty()) {
+				//SIAC-7871 fix 
+				//importiComponentiCapitoloEquiv = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitolo, responseEquiv.getListaImportiCapitoloAnniSuccessiviNoStanz());
+				importiComponentiCapitoloEquiv = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitoloEquiv, responseEquiv.getListaImportiCapitoloAnniSuccessiviNoStanz());
+
+			}
+			//SIAC-7349 - End
+
+			//SIAC-7349 - GS - Start - 20/07/2020 - Nuovo metodo per mostrare componenti nel triennio senza stanziamento
+			if(responseEquiv.getListaImportiCapitoloTriennioNoStanz() != null &&  !responseEquiv.getListaImportiCapitoloTriennioNoStanz().isEmpty()) {
+				Integer annoEsercizio = Integer.valueOf(sessionHandler.getAnnoEsercizio());
+				//SIAC-7871 fix 
+				//importiComponentiCapitoloEquiv = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitolo, responseEquiv.getListaImportiCapitoloTriennioNoStanz(),annoEsercizio);
+				importiComponentiCapitoloEquiv = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitoloEquiv, responseEquiv.getListaImportiCapitoloTriennioNoStanz(),annoEsercizio);
+				}
+			//SIAC-7349 - End
+			
 			model.setImportiComponentiCapitoloEquiv(importiComponentiCapitoloEquiv);
 			model.setImportiAnniSuccessiviEquiv(responseEquiv.getImportiCapitoloAnniSuccessivi());
 			model.setImportiResiduiEquiv(responseEquiv.getImportiCapitoloResiduo());
@@ -259,9 +324,31 @@ public class ConsultaCapitoloUscitaPrevisioneAction
 		boolean faseDiBilancioCompatibile = FaseBilancio.PREVISIONE.equals(faseBilancio);
 		if (res.hasErrori()) {
 			// si sono verificati degli errori: esco.
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioBilancio.class, res));
 		}
 		return faseDiBilancioCompatibile;
+	}
+	
+	
+	public String caricaImporti() {
+		RicercaComponenteImportiCapitolo reqComponenti = model.creaRequestRicercaComponenteImportiCapitolo();
+		RicercaComponenteImportiCapitoloResponse resComponenti = componenteImportiCapitoloService
+				.ricercaComponenteImportiCapitolo(reqComponenti);
+
+		// Controllo gli errori
+		if (resComponenti.hasErrori()) {
+			addErrori(resComponenti);
+			return INPUT;
+		}
+		TabellaImportiConComponentiCapitoloFactory factory = new TabellaImportiConComponentiCapitoloFactory();
+		factory.init(model.getAnnoEsercizioInt(), TipoCapitolo.CAPITOLO_USCITA_PREVISIONE, resComponenti);
+		factory.elaboraRigheConImportoIniziale();
+
+		model.setRigheImportiTabellaImportiCapitolo(factory.getRigheImportoTabellaElaborate());
+		model.setRigheComponentiTabellaImportiCapitolo(factory.getRigheComponentiElaborate());
+
+		return SUCCESS;
+
 	}
 
 }

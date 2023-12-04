@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.provvisoriocassa;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.provvisoriodicassa.ElementoProvvisorioDiCassa;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.provvisoriodicassa.Elem
  * @version 1.0.0 11/03/2016
  *
  */
-public class RisultatiRicercaSinteticaProvvisorioDiCassaAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoProvvisorioDiCassa> {
+public class RisultatiRicercaSinteticaProvvisorioDiCassaAjaxModel extends PagedDataTableAjaxModel<ElementoProvvisorioDiCassa> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -3341073866091955070L;

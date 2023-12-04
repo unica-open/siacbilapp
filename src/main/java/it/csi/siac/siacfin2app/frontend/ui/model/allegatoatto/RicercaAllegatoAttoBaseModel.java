@@ -15,7 +15,7 @@ import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
-import it.csi.siac.siaccorser.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.util.comparator.ComparatorUtil;
 import it.csi.siac.siacfin2app.frontend.ui.util.helper.MovimentoGestioneHelper;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaAllegatoAtto;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElenco;
@@ -267,17 +267,17 @@ public class RicercaAllegatoAttoBaseModel extends GenericAllegatoAttoModel {
 	 * @return the descrizioneCompletaMovimentoGestione
 	 */
 	public String getDescrizioneCompletaMovimentoGestione() {
-		if(impegno == null || impegno.getAnnoMovimento() == 0 || impegno.getNumero() == null) {
+		if(impegno == null || impegno.getAnnoMovimento() == 0 || impegno.getNumeroBigDecimal() == null) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder()
 				.append(": ")
 				.append(impegno.getAnnoMovimento())
 				.append(" / ")
-				.append(impegno.getNumero().toPlainString());
-		if(subImpegno != null && subImpegno.getNumero() != null) {
+				.append(impegno.getNumeroBigDecimal().toPlainString());
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
 			sb.append(" - ")
-				.append(subImpegno.getNumero().toPlainString());
+				.append(subImpegno.getNumeroBigDecimal().toPlainString());
 		}
 		return sb.toString();
 	}
@@ -417,8 +417,8 @@ public class RicercaAllegatoAttoBaseModel extends GenericAllegatoAttoModel {
 		final String provvedimentoDelim = "/";
 
 		if(getAttoAmministrativo() != null && getAttoAmministrativo().getUid() != 0) {
-			TipoAtto ta = ComparatorUtils.searchByUid(listaTipoAtto, getAttoAmministrativo().getTipoAtto());
-			StrutturaAmministrativoContabile sac =ComparatorUtils.searchByUidWithChildren(listaStrutturaAmministrativoContabile, getAttoAmministrativo().getStrutturaAmmContabile());
+			TipoAtto ta = ComparatorUtil.searchByUid(listaTipoAtto, getAttoAmministrativo().getTipoAtto());
+			StrutturaAmministrativoContabile sac =ComparatorUtil.searchByUidWithChildren(listaStrutturaAmministrativoContabile, getAttoAmministrativo().getStrutturaAmmContabile());
 			sb.append("PROVVEDIMENTO: ")
 				.append(getAttoAmministrativo().getAnno())
 				.append(provvedimentoDelim)
@@ -443,7 +443,7 @@ public class RicercaAllegatoAttoBaseModel extends GenericAllegatoAttoModel {
 			sb.append("IMPEGNO: ")
 				.append(getImpegno().getAnnoMovimento())
 				.append("/")
-				.append(getImpegno().getNumero().toPlainString());
+				.append(getImpegno().getNumeroBigDecimal().toPlainString());
 			sb.append(delim);
 		}
 		if(getElencoDocumentiAllegato() != null && getElencoDocumentiAllegato().getUid() != 0) {

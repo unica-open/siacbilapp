@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
@@ -20,7 +22,6 @@ import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoComponenteVariazione;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione.ElementoStatoOperativoVariazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.DefinisceAnagraficaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettagliVariazioneImportoCapitoloNellaVariazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioAnagraficaVariazioneBilancio;
@@ -36,10 +37,10 @@ import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
 import it.csi.siac.siaccommonapp.handler.session.SessionHandler;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
@@ -70,7 +71,7 @@ public class DefinisceVariazioneImportiModel extends GenericBilancioModel {
 	private String descrizioneVariazione;
 	private TipoVariazione tipoVariazione;
 	private Integer annoCompetenza;
-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+	private StatoOperativoVariazioneBilancio statoVariazione;
 	private String noteVariazione;
 	
 	private Integer uidProvvedimento;
@@ -325,7 +326,7 @@ public class DefinisceVariazioneImportiModel extends GenericBilancioModel {
 	/**
 	 * @return the statoVariazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
 		return statoVariazione;
 	}
 
@@ -335,7 +336,7 @@ public class DefinisceVariazioneImportiModel extends GenericBilancioModel {
 	 * @param statoVariazione the statoVariazione to set
 	 */
 	public void setStatoVariazione(
-			StatoOperativoVariazioneDiBilancio statoVariazione) {
+			StatoOperativoVariazioneBilancio statoVariazione) {
 		this.statoVariazione = statoVariazione;
 	}
 
@@ -1112,7 +1113,7 @@ public class DefinisceVariazioneImportiModel extends GenericBilancioModel {
 	 * @return the data inizio definizione variazione
 	 */
 	public String getDataDefinizioneVariazione(){
-		return StatoOperativoVariazioneDiBilancio.DEFINITIVA.equals(statoVariazione)? FormatUtils.formatDate(getDataInizioValiditaStatoVariazione()) : "";
+		return StatoOperativoVariazioneBilancio.DEFINITIVA.equals(statoVariazione)? FormatUtils.formatDate(getDataInizioValiditaStatoVariazione()) : "";
 	}
 	
 	/**
@@ -1135,6 +1136,16 @@ public class DefinisceVariazioneImportiModel extends GenericBilancioModel {
 			request.setRicercaAtti(utility);
 		}
 		return request;
+	}
+	
+	//SIAC-8332
+	public void impostaDatiNelModel(AzioneRichiesta azioneRichiesta) {
+		if(azioneRichiesta.getIdAttivita()!= null){
+			String[] splitted = StringUtils.split(azioneRichiesta.getIdAttivita(), "%&");
+			if(splitted.length > 0) {
+				uidVariazione = Integer.valueOf(splitted[0]);
+			}
+		}
 	}
 	
 	/**
@@ -1258,11 +1269,11 @@ public class DefinisceVariazioneImportiModel extends GenericBilancioModel {
 	}
 	
 	/**
-	 * Crea una request per il servizio {@link StampaExcelVariazioneDiBilancio}.
+	 * Crea una request per il servizio {@link VariazioneBilancioExcelReport}.
 	 * @return la request creata
 	 */
-	public StampaExcelVariazioneDiBilancio creaRequestStampaExcelVariazioneDiBilancio() {
-		StampaExcelVariazioneDiBilancio req = creaRequest(StampaExcelVariazioneDiBilancio.class);
+	public VariazioneBilancioExcelReport creaRequestStampaExcelVariazioneDiBilancio() {
+		VariazioneBilancioExcelReport req = creaRequest(VariazioneBilancioExcelReport.class);
 		
 		req.setEnte(getEnte());
 		req.setXlsx(getIsXlsx());

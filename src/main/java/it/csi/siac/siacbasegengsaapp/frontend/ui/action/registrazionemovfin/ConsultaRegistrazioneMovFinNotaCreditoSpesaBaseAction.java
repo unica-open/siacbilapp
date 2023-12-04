@@ -93,7 +93,7 @@ public abstract class ConsultaRegistrazioneMovFinNotaCreditoSpesaBaseAction<M ex
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoSpesa.class, res));
 		}
 
 		log.debug(methodName, "Documento ottenuto per uid " + uidDocumento);
@@ -115,7 +115,7 @@ public abstract class ConsultaRegistrazioneMovFinNotaCreditoSpesaBaseAction<M ex
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuoteByDocumentoSpesa.class, res));
 		}
 		return res.getSubdocumentiSpesa();
 	}
@@ -135,7 +135,7 @@ public abstract class ConsultaRegistrazioneMovFinNotaCreditoSpesaBaseAction<M ex
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaNoteCreditoIvaDocumentoSpesa.class, res));
 		}
 		return res.getSubdocumentoIvaSpesa();
 	}

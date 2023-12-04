@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -18,7 +18,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.DefinisceVariazioneCodific
 import it.csi.siac.siacbilser.frontend.webservice.msg.DefinisceVariazioneCodificheResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneCodificheResponse;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
@@ -57,7 +57,8 @@ public class DefinisceVariazioneCodificheAction extends DefinisceVariazioneBaseA
 		log.debug(methodName, "Ottengo l'azione richiesta dalla sessione");
 		AzioneRichiesta azioneRichiesta = sessionHandler.getAzioneRichiesta();
 		log.debug(methodName, "Injetto le variabili del processo");
-		model.injettaVariabiliProcesso(azioneRichiesta);
+		model.impostaDatiNelModel(azioneRichiesta);
+//		model.injettaVariabiliProcesso(azioneRichiesta);
 
 		log.debug(methodName, "Creo la request per la ricerca del capitolo");
 		if(model.getUidVariazione() == null) {
@@ -91,6 +92,10 @@ public class DefinisceVariazioneCodificheAction extends DefinisceVariazioneBaseA
 		if(responseProvvedimento.hasErrori()) {
 			log.debug(methodName, "Errore nella risposta del servizio");
 		}
+		
+		//SIAC-7555
+		controllaStatoOperativoVariazione(response.getVariazioneCodificaCapitolo());
+		//
 		
 		log.debug(methodName, "Impostazione dei dati nel model e in sessione");
 		model.impostaDatiDaResponseESessione(response, responseProvvedimento, sessionHandler);
@@ -139,7 +144,7 @@ public class DefinisceVariazioneCodificheAction extends DefinisceVariazioneBaseA
 		addInformazione(new Informazione("CRU_CON_2001", "L'operazione è stata completata con successo"));
 		
 		model.setDefinizioneEseguita(Boolean.TRUE);
-		model.setStatoVariazione(StatoOperativoVariazioneDiBilancio.DEFINITIVA);
+		model.setStatoVariazione(StatoOperativoVariazioneBilancio.DEFINITIVA);
 		
 		// Imposto i dati nel model
 		model.injettaDatiPostDefinizione(response);

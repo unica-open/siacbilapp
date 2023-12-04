@@ -14,11 +14,11 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.Entita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.model.Subdocumento;
@@ -78,7 +78,7 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction extends B
 	}
 
 	@Override
-	protected RicercaSinteticaPrimaNotaIntegrataResponse ottieniResponse(RicercaSinteticaPrimaNotaIntegrata req) {
+	protected RicercaSinteticaPrimaNotaIntegrataResponse getResponse(RicercaSinteticaPrimaNotaIntegrata req) {
 		return primaNotaService.ricercaSinteticaPrimaNotaIntegrata(req);
 	}
 
@@ -95,7 +95,7 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction extends B
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoPrimaNotaIntegrata instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoPrimaNotaIntegrata instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
@@ -189,7 +189,7 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction extends B
 	 * @return <code>true</code> se la validazione &eacute; consentita; <code>false</code> altrimenti
 	 */
 	private boolean gestisciValidazione(List<AzioneConsentita> listaAzioniConsentite, ElementoPrimaNotaIntegrata instance) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO)
+		return isFaseBilancioCompatibileConValidazione()
 			&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaValidaPrimaNotaIntegrata(), listaAzioniConsentite)
 			&& StatoOperativoPrimaNota.PROVVISORIO.equals(instance.getStatoOperativoPrimaNota());
 	}
@@ -215,11 +215,13 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction extends B
 	 * @return <code>true</code> se l'annullamento &eacute; consentita; <code>false</code> altrimenti
 	 */
 	private boolean gestisciAnnullamento(List<AzioneConsentita> listaAzioniConsentite, ElementoPrimaNotaIntegrata instance) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO)
+		return isFaseBilancioCompatibileConAnnullamento()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaGestisciPrimaNotaIntegrata(), listaAzioniConsentite)
 				&& StatoOperativoPrimaNota.PROVVISORIO.equals(instance.getStatoOperativoPrimaNota());
 
 	}
+
+	
 	
 	/**
 	 * Controlla che il collegamento sia eseguibile.
@@ -227,9 +229,9 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction extends B
 	 * @return <code>true</code> se il collegamento &eacute; consentito; <code>false</code> altrimenti
 	 */
 	private boolean gestisciCollegamento() {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO);
-
+		return isFaseBilancioCompatibileConCollegamento();
 	}
+	
 
 	/**
 	 * Controlla che l'aggiornamento sia eseguibile.
@@ -240,11 +242,23 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction extends B
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentita; <code>false</code> altrimenti
 	 */
 	private boolean gestisciAggiornamento(List<AzioneConsentita> listaAzioniConsentite, ElementoPrimaNotaIntegrata instance) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO)
+		return isFaseBilancioCompatibileConAggiornamento()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaAggiornaPrimaNotaIntegrata(), listaAzioniConsentite)
 				&& isStatoCoerenteConAggiornamento(instance);
 	}
 
+	//SIAC-8323
+	protected abstract boolean isFaseBilancioCompatibileConAggiornamento();
+
+	//SIAC-8323
+	protected abstract boolean isFaseBilancioCompatibileConValidazione();
+
+	//SIAC-8323
+	protected abstract boolean isFaseBilancioCompatibileConAnnullamento();
+	
+	//SIAC-8323
+	protected abstract boolean isFaseBilancioCompatibileConCollegamento();
+	
 	/**
 	 * Controlla se lo stato sia coerente con l'aggiornamento
 	 * @param instance l'istanza
@@ -298,23 +312,23 @@ public abstract class RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction extends B
 	/**
 	 * @return l'azione consentita corrispondente alla validazione della prima nota integrata
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaValidaPrimaNotaIntegrata();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaValidaPrimaNotaIntegrata();
 	/**
 	 * @return l'azione consentita corrispondente alla ricerca della prima nota integrata
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaRicercaPrimaNotaIntegrata();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaRicercaPrimaNotaIntegrata();
 	/**
 	 * @return l'azione consentita corrispondente alla gestione della prima nota integrata
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaGestisciPrimaNotaIntegrata();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaGestisciPrimaNotaIntegrata();
 	/**
 	 * @return l'azione consentita corrispondente alla gestione di retei e risconti della prima nota integrata
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaRateiRisconti();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaRateiRisconti();
 	// SIAC-4524
 	/**
 	 * @return l'azione consentita corrispondente all'aggiornamento della prima nota integrata
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaAggiornaPrimaNotaIntegrata();	
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaAggiornaPrimaNotaIntegrata();	
 	
 }

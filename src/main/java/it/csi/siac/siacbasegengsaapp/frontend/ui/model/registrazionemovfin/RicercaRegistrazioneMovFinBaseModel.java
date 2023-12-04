@@ -16,7 +16,7 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.list.SortedSetList;
+import it.csi.siac.siaccommon.util.collections.list.SortedSetList;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorEvento;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiElementoPianoDeiContiByCodiceAndAnno;
@@ -724,15 +724,15 @@ public abstract class RicercaRegistrazioneMovFinBaseModel extends GenericBilanci
 		RicercaAccertamentoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaAccertamentoPerChiaveOttimizzato.class, 1);
 		request.setEnte(getEnte());
 		//carico i sub solo se ho il numero del sub valorizzato
-		request.setCaricaSub( getSubAccertamento()  != null && getSubAccertamento().getNumero() != null);
+		request.setCaricaSub( getSubAccertamento()  != null && getSubAccertamento().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		if(getAccertamento() != null) {
 			RicercaAccertamentoK prak = new RicercaAccertamentoK();
 			prak.setAnnoEsercizio(getAnnoEsercizioInt());
 			prak.setAnnoAccertamento(Integer.valueOf(getAccertamento().getAnnoMovimento()));
-			prak.setNumeroAccertamento(getAccertamento().getNumero());
-			prak.setNumeroSubDaCercare(getSubAccertamento() != null && getSubAccertamento().getNumero() != null? getSubAccertamento().getNumero() : null);
+			prak.setNumeroAccertamento(getAccertamento().getNumeroBigDecimal());
+			prak.setNumeroSubDaCercare(getSubAccertamento() != null && getSubAccertamento().getNumeroBigDecimal() != null? getSubAccertamento().getNumeroBigDecimal() : null);
 			request.setpRicercaAccertamentoK(prak);
 		}
 		
@@ -758,15 +758,15 @@ public abstract class RicercaRegistrazioneMovFinBaseModel extends GenericBilanci
 		RicercaImpegnoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaImpegnoPerChiaveOttimizzato.class, 1);
 		request.setEnte(getEnte());
 		//carico i sub solo se ho il numero del sub valorizzato
-		request.setCaricaSub(getSubImpegno() != null && getSubImpegno().getNumero() != null);
+		request.setCaricaSub(getSubImpegno() != null && getSubImpegno().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		if(getImpegno() != null) {
 			RicercaImpegnoK prik = new RicercaImpegnoK();
 			prik.setAnnoEsercizio(getAnnoEsercizioInt());
 			prik.setAnnoImpegno(Integer.valueOf(getImpegno().getAnnoMovimento()));
-			prik.setNumeroImpegno(getImpegno().getNumero());
-			prik.setNumeroSubDaCercare(getSubImpegno() != null && getSubImpegno().getNumero() != null ? getSubImpegno().getNumero() : null);
+			prik.setNumeroImpegno(getImpegno().getNumeroBigDecimal());
+			prik.setNumeroSubDaCercare(getSubImpegno() != null && getSubImpegno().getNumeroBigDecimal() != null ? getSubImpegno().getNumeroBigDecimal() : null);
 			request.setpRicercaImpegnoK(prik);
 		}
 		

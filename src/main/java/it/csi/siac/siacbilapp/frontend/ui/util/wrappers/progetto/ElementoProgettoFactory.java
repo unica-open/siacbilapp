@@ -7,8 +7,11 @@ package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.BaseFactory;
 import it.csi.siac.siacbilser.model.Progetto;
+import it.csi.siac.siaccommon.util.number.NumberUtil;
 
 /**
  * Factory per il wrapping dei Progetti.
@@ -39,11 +42,8 @@ public final class ElementoProgettoFactory extends BaseFactory {
 				? capitaliseString(progetto.getStatoOperativoProgetto().name())
 				: "";
 		
-		String provvedimento = progetto.getAttoAmministrativo()!= null?
-										Integer.toString(progetto.getAttoAmministrativo().getAnno()).concat("/")
-										.concat(Integer.toString(progetto.getAttoAmministrativo().getNumero()).concat("/")
-										.concat(capitaliseString(progetto.getAttoAmministrativo().getTipoAtto().getDescrizione())))
-										:"";
+		String provvedimento = progetto.getAttoAmministrativo()!= null ? progetto.getAttoAmministrativo().getAnnoNumeroTipo() : "";
+
 		String ambito = progetto.getTipoAmbito() != null
 				? capitaliseString(progetto.getTipoAmbito().getDescrizione())
 				: "";
@@ -57,6 +57,7 @@ public final class ElementoProgettoFactory extends BaseFactory {
 		result.setProvvedimento(provvedimento);
 		result.setAmbito(ambito);
 		result.setCodiceTipoProgetto(codiceTipoProgetto);
+		result.setValoreComplessivo(NumberUtil.toImporto(progetto.getValoreComplessivo()));
 		return result;
 	}
 	

@@ -275,21 +275,21 @@ public class ConsultaMassivaCapitoloEntrataGestioneModel extends CapitoloEntrata
 		setTipoFinanziamentoEditabile(response.isModificabileMassivo(TipologiaClassificatore.TIPO_FINANZIAMENTO));
 		setTipoFondoEditabile(response.isModificabileMassivo(TipologiaClassificatore.TIPO_FONDO));
 		// Classificatori generici
-		setClassificatoreGenerico1Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_36));
-		setClassificatoreGenerico2Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_37));
-		setClassificatoreGenerico3Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_38));
-		setClassificatoreGenerico4Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_39));
-		setClassificatoreGenerico5Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_40));
-		setClassificatoreGenerico6Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_41));
-		setClassificatoreGenerico7Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_42));
-		setClassificatoreGenerico8Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_43));
-		setClassificatoreGenerico9Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_44));
-		setClassificatoreGenerico10Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_45));
-		setClassificatoreGenerico11Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_46));
-		setClassificatoreGenerico12Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_47));
-		setClassificatoreGenerico13Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_48));
-		setClassificatoreGenerico14Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_49));
-		setClassificatoreGenerico15Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_50));
+		setClassificatoreGenerico36Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_36));
+		setClassificatoreGenerico37Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_37));
+		setClassificatoreGenerico38Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_38));
+		setClassificatoreGenerico39Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_39));
+		setClassificatoreGenerico40Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_40));
+		setClassificatoreGenerico41Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_41));
+		setClassificatoreGenerico42Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_42));
+		setClassificatoreGenerico43Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_43));
+		setClassificatoreGenerico44Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_44));
+		setClassificatoreGenerico45Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_45));
+		setClassificatoreGenerico46Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_46));
+		setClassificatoreGenerico47Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_47));
+		setClassificatoreGenerico48Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_48));
+		setClassificatoreGenerico49Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_49));
+		setClassificatoreGenerico50Editabile(response.isModificabileMassivo(TipologiaClassificatore.CLASSIFICATORE_50));
 		
 		setSiopeEntrataEditabile(response.isModificabileMassivo(TipologiaClassificatore.SIOPE_ENTRATA) ||
 				response.isModificabileMassivo(TipologiaClassificatore.SIOPE_ENTRATA_I) ||

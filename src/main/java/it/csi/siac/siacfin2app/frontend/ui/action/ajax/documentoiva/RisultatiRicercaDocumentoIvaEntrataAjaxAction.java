@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -34,7 +34,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDocumentoIvaEntrataAjaxAction extends GenericRisultatiRicercaAjaxAction<
+public class RisultatiRicercaDocumentoIvaEntrataAjaxAction extends PagedDataTableAjaxAction<
 		ElementoDocumentoIva<DocumentoEntrata, SubdocumentoEntrata, SubdocumentoIvaEntrata>, 
 		RisultatiRicercaDocumentoIvaAjaxModel<DocumentoEntrata, SubdocumentoEntrata, SubdocumentoIvaEntrata>, SubdocumentoIvaEntrata,
 		RicercaSinteticaSubdocumentoIvaEntrata, RicercaSinteticaSubdocumentoIvaEntrataResponse> {
@@ -85,12 +85,12 @@ public class RisultatiRicercaDocumentoIvaEntrataAjaxAction extends GenericRisult
 	}
 	
 	@Override
-	protected ElementoDocumentoIva<DocumentoEntrata, SubdocumentoEntrata, SubdocumentoIvaEntrata> ottieniIstanza(SubdocumentoIvaEntrata e) {
+	protected ElementoDocumentoIva<DocumentoEntrata, SubdocumentoEntrata, SubdocumentoIvaEntrata> getInstance(SubdocumentoIvaEntrata e) {
 		return new ElementoDocumentoIva<DocumentoEntrata, SubdocumentoEntrata, SubdocumentoIvaEntrata>(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaSubdocumentoIvaEntrataResponse ottieniResponse(RicercaSinteticaSubdocumentoIvaEntrata request) {
+	protected RicercaSinteticaSubdocumentoIvaEntrataResponse getResponse(RicercaSinteticaSubdocumentoIvaEntrata request) {
 		return documentoIvaEntrataService.ricercaSinteticaSubdocumentoIvaEntrata(request);
 	}
 	
@@ -100,11 +100,11 @@ public class RisultatiRicercaDocumentoIvaEntrataAjaxAction extends GenericRisult
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoDocumentoIva<DocumentoEntrata, SubdocumentoEntrata, SubdocumentoIvaEntrata> instance,
+	protected void handleAzioniConsentite(ElementoDocumentoIva<DocumentoEntrata, SubdocumentoEntrata, SubdocumentoIvaEntrata> instance,
 			boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_IVA_ENTRATA_AGGIORNA, listaAzioniConsentite);
-		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_IVA_ENTRATA_CONSULTA, listaAzioniConsentite);
+		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_IVA_ENTRATA_AGGIORNA, listaAzioniConsentite);
+		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_IVA_ENTRATA_CONSULTA, listaAzioniConsentite);
 		
 		// Gestione delle azioni consentite
 		StringBuilder azioniBuilder = new StringBuilder();

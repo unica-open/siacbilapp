@@ -88,7 +88,7 @@ public class GenericAssociaAllegatoAttoAction<M extends GenericAssociaAllegatoAt
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			// Errore nell'invocazione del servizio: loggo, aggiungo al model ed esco
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			addErrori(response);
 			return;
 		}
@@ -145,7 +145,7 @@ public class GenericAssociaAllegatoAttoAction<M extends GenericAssociaAllegatoAt
 		
 		if(response.hasErrori()) {
 			// Errore nell'invocazione del servizio: loggo, aggiungo al model ed esco
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, response));
 			addErrori(response);
 			return;
 		}

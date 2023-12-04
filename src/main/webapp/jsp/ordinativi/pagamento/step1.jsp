@@ -211,13 +211,13 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}predocumento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/gestioneElenco.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}ordinativo/emissionePagamentoStep1.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/gestioneElenco.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ordinativo/emissionePagamentoStep1.js"></script>
 
 </body>
 </html>

@@ -48,7 +48,7 @@ public class EmissioneOrdinativiIncassoElencoAction extends EmissioneOrdinativiI
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaElencoDaEmettere.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -133,7 +133,7 @@ public class EmissioneOrdinativiIncassoElencoAction extends EmissioneOrdinativiI
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EmetteOrdinativiDiIncassoDaElenco.class, response));
 			addErrori(response);
 			return INPUT;
 		}

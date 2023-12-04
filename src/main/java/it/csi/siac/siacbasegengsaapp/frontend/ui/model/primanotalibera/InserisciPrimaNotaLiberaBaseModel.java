@@ -65,6 +65,8 @@ public abstract class InserisciPrimaNotaLiberaBaseModel  extends BaseInserisciAg
 		getPrimaNotaLibera().setListaMovimentiEP(listaMovimentiEP);
 		getPrimaNotaLibera().setAmbito(getAmbito());
 		getPrimaNotaLibera().setListaPrimaNotaFiglia(getListaPrimeNoteDaCollegare());
+		//SIAC-8134
+		popolaStrutturaCompetente();
 		request.setPrimaNota(getPrimaNotaLibera());
 
 		return request;
@@ -83,4 +85,12 @@ public abstract class InserisciPrimaNotaLiberaBaseModel  extends BaseInserisciAg
 		getPrimaNotaLibera().setTipoCausale(TipoCausale.Libera);
 	
 	}
+	
+	/**
+	 * SIAC-8134
+	 */
+	protected void popolaStrutturaCompetente() {
+		getPrimaNotaLibera().setStrutturaCompetente(getStrutturaCompetentePrimaNotaLibera());
+	}
+
 }

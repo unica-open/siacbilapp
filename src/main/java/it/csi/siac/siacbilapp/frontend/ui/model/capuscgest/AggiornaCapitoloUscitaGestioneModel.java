@@ -29,6 +29,7 @@ import it.csi.siac.siacbilser.model.PerimetroSanitarioSpesa;
 import it.csi.siac.siacbilser.model.PoliticheRegionaliUnitarie;
 import it.csi.siac.siacbilser.model.Programma;
 import it.csi.siac.siacbilser.model.RicorrenteSpesa;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
@@ -38,6 +39,8 @@ import it.csi.siac.siacbilser.model.TransazioneUnioneEuropeaSpesa;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUGest;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSinteticaImpegniSubImpegni;
+import it.csi.siac.siacfinser.model.ric.ParametroRicercaImpSub;
 
 /**
  * Classe di model per il Capitolo di Uscita Gestione. Contiene una mappatura
@@ -363,6 +366,7 @@ public class AggiornaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		PoliticheRegionaliUnitarie politicheRegionaliUnitarieDaInjettare = valutaInserimento(
 				getPoliticheRegionaliUnitarie(), classificatoreAggiornamento.getPoliticheRegionaliUnitarie(),
 				isPoliticheRegionaliUnitarieEditabile());
+		RisorsaAccantonata risorsaAccantonataDaInjettare = valutaInserimento(getRisorsaAccantonata(), classificatoreAggiornamento.getRisorsaAccantonata(), true);
 
 		// Injezione dei classificatori nella request
 		capitoloUscitaGestione.setEnte(getEnte());
@@ -383,7 +387,9 @@ public class AggiornaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		capitoloUscitaGestione.setPerimetroSanitarioSpesa(perimetroSanitarioSpesadaInjettare);
 		capitoloUscitaGestione.setTransazioneUnioneEuropeaSpesa(transazioneUnioneEuropeaSpesaDaInjettare);
 		capitoloUscitaGestione.setPoliticheRegionaliUnitarie(politicheRegionaliUnitarieDaInjettare);
-
+		//SIAC-7192
+		capitoloUscitaGestione.setRisorsaAccantonata(risorsaAccantonataDaInjettare);
+		
 		// Gli importi sono obbligatori
 		capitoloUscitaGestione.setListaImportiCapitoloUG(getListaImportiCapitolo());
 
@@ -480,6 +486,8 @@ public class AggiornaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		setPerimetroSanitarioSpesa(capitoloUscitaGestione.getPerimetroSanitarioSpesa());
 		setTransazioneUnioneEuropeaSpesa(capitoloUscitaGestione.getTransazioneUnioneEuropeaSpesa());
 		setPoliticheRegionaliUnitarie(capitoloUscitaGestione.getPoliticheRegionaliUnitarie());
+		//SIAC-7192
+		setRisorsaAccantonata(capitoloUscitaGestione.getRisorsaAccantonata());
 
 		// Importi
 		if (capitoloUscitaGestione.getListaImportiCapitoloUG() != null) {
@@ -611,6 +619,30 @@ public class AggiornaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		req.setCapitoloUscitaGestione(capitoloUscitaGestioneReq);
 
 		return req;
+	}
+
+	public RicercaSinteticaImpegniSubImpegni creaRequestRicercaImpegniSubImpegni() {
+		RicercaSinteticaImpegniSubImpegni request1 = creaRequest(RicercaSinteticaImpegniSubImpegni.class);
+		request1.setEnte(getEnte());
+		ParametroRicercaImpSub parametroRicercaImpSub = new ParametroRicercaImpSub();
+		parametroRicercaImpSub.setUidCapitolo(capitoloUscitaGestione.getUid());
+		parametroRicercaImpSub.setAnnoEsercizio(capitoloUscitaGestione.getAnnoCapitolo());
+		request1.setParametroRicercaImpSub(parametroRicercaImpSub);
+		request1.setNumPagina(1);
+		request1.setNumRisultatiPerPagina(1);
+		//
+		//nasce dallo spostare nel model questa request. Secondo me non puo' funzionare correttamente, ma la lascio qui per verifiche che lo spostamento non abbia creato problemi
+//				RicercaSinteticaImpegniSubImpegni request1 = new RicercaSinteticaImpegniSubImpegni();
+//				request1.setAnnoBilancio(request.getAnnoBilancio());
+//				request1.setEnte(sessionHandler.getEnte());
+//				request1.setRichiedente(sessionHandler.getRichiedente());		
+//				ParametroRicercaImpSub parametroRicercaImpSub = new ParametroRicercaImpSub();
+//				parametroRicercaImpSub.setUidCapitolo(request.getCapitoloUscitaGestione().getUid());
+//				parametroRicercaImpSub.setAnnoEsercizio(request.getCapitoloUscitaGestione().getAnnoCapitolo());
+//				request1.setParametroRicercaImpSub(parametroRicercaImpSub);
+//				request1.setNumPagina(1);
+//				request1.setNumRisultatiPerPagina(1);
+		return request1;
 	}
 
 }

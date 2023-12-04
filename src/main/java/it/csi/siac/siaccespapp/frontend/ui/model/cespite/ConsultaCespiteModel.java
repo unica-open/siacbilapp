@@ -18,7 +18,6 @@ import org.apache.commons.lang.StringUtils;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoConsultazioneScritturaPrimaNotaLibera;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaScrittureInventarioByEntitaCollegata;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaDettaglioAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaDismissioneCespite;
@@ -32,6 +31,7 @@ import it.csi.siac.siaccespser.model.DismissioneCespite;
 import it.csi.siac.siaccespser.model.DismissioneCespiteModelDetail;
 import it.csi.siac.siaccespser.model.VariazioneCespite;
 import it.csi.siac.siaccespser.model.VariazioneCespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siacfin2ser.model.LiquidazioneModelDetail;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrataModelDetail;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesaModelDetail;
@@ -54,15 +54,15 @@ public class ConsultaCespiteModel extends GenericCespiteModel {
 	/** Per la serializzazione*/
 	private static final long serialVersionUID = 2239866877794530430L;
 	
-private static final Map<TipoCollegamento, ModelDetail[]> MAPPING_DATI_FINANZIARI_DETAILS;
+private static final Map<TipoCollegamento, ModelDetailEnum[]> MAPPING_DATI_FINANZIARI_DETAILS;
 	
 	static {
-		Map<TipoCollegamento, ModelDetail[]> tmp = new HashMap<TipoCollegamento, ModelDetail[]>();
+		Map<TipoCollegamento, ModelDetailEnum[]> tmp = new HashMap<TipoCollegamento, ModelDetailEnum[]>();
 		
-		tmp.put(TipoCollegamento.LIQUIDAZIONE, new ModelDetail[] {LiquidazioneModelDetail.Impegno, LiquidazioneModelDetail.Soggetto, LiquidazioneModelDetail.PianoDeiConti});
+		tmp.put(TipoCollegamento.LIQUIDAZIONE, new ModelDetailEnum[] {LiquidazioneModelDetail.Impegno, LiquidazioneModelDetail.Soggetto, LiquidazioneModelDetail.PianoDeiConti});
 		
-		tmp.put(TipoCollegamento.SUBDOCUMENTO_SPESA, new ModelDetail[] {SubdocumentoSpesaModelDetail.TestataDocumento, SubdocumentoSpesaModelDetail.ImpegnoSubimpegnoPdc, SubdocumentoSpesaModelDetail.Liquidazione, SubdocumentoSpesaModelDetail.Ordinativo});
-		tmp.put(TipoCollegamento.SUBDOCUMENTO_ENTRATA, new ModelDetail[] {SubdocumentoEntrataModelDetail.TestataDocumento,SubdocumentoEntrataModelDetail.AccertamentoSubaccertamentoPdc, SubdocumentoEntrataModelDetail.Ordinativo});
+		tmp.put(TipoCollegamento.SUBDOCUMENTO_SPESA, new ModelDetailEnum[] {SubdocumentoSpesaModelDetail.TestataDocumento, SubdocumentoSpesaModelDetail.ImpegnoSubimpegnoPdc, SubdocumentoSpesaModelDetail.Liquidazione, SubdocumentoSpesaModelDetail.Ordinativo});
+		tmp.put(TipoCollegamento.SUBDOCUMENTO_ENTRATA, new ModelDetailEnum[] {SubdocumentoEntrataModelDetail.TestataDocumento,SubdocumentoEntrataModelDetail.AccertamentoSubaccertamentoPdc, SubdocumentoEntrataModelDetail.Ordinativo});
 		
 		MAPPING_DATI_FINANZIARI_DETAILS = Collections.unmodifiableMap(tmp);
 	}
@@ -437,7 +437,7 @@ private static final Map<TipoCollegamento, ModelDetail[]> MAPPING_DATI_FINANZIAR
 	 */
 	private RicercaScrittureInventarioByEntitaCollegata baseCreaRequestRicercaScrittureByEntitaCollegata() {
 		RicercaScrittureInventarioByEntitaCollegata req = creaRequest(RicercaScrittureInventarioByEntitaCollegata.class);
-		req.setModelDetails(new ModelDetail[] {
+		req.setModelDetails(new ModelDetailEnum[] {
 				PrimaNotaModelDetail.MovimentiEpModelDetail, 
 				PrimaNotaModelDetail.StatoOperativo, 
 				PrimaNotaModelDetail.StatoAccettazionePrimaNotaProvvisoria,
@@ -473,7 +473,7 @@ private static final Map<TipoCollegamento, ModelDetail[]> MAPPING_DATI_FINANZIAR
 		Cespite tc = new Cespite();
 		tc.setUid(getUidCespite());
 		req.setCespite(tc);
-		req.setModelDetails(new ModelDetail[] {DettaglioAmmortamentoAnnuoCespiteModelDetail.PrimaNotaModelDetail});
+		req.setModelDetails(new ModelDetailEnum[] {DettaglioAmmortamentoAnnuoCespiteModelDetail.PrimaNotaModelDetail});
 		req.setParametriPaginazione(creaParametriPaginazione());
 		return req;
 	}
@@ -535,7 +535,7 @@ private static final Map<TipoCollegamento, ModelDetail[]> MAPPING_DATI_FINANZIAR
 	 * Calcola i model detail per il tipo di collegamento selezionato
 	 * @return i model detail da utilizzare per il tipo di collegamento
 	 */
-	private ModelDetail[] ottieniModelDetailPerTipoCollegamento() {
+	private ModelDetailEnum[] ottieniModelDetailPerTipoCollegamento() {
 		return MAPPING_DATI_FINANZIARI_DETAILS.get(getTipoCollegamento());
 	}
 }

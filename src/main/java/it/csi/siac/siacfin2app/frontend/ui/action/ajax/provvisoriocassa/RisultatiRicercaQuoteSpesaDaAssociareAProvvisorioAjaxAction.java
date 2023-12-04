@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -30,7 +30,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaQuoteSpesaDaAssociareAProvvisorioAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoSubdocumentoDaAssociare, 
+public class RisultatiRicercaQuoteSpesaDaAssociareAProvvisorioAjaxAction extends PagedDataTableAjaxAction<ElementoSubdocumentoDaAssociare, 
 		RisultatiRicercaQuoteDaAssociareAProvvisorioAjaxModel, SubdocumentoSpesa , RicercaQuotePerProvvisorioSpesa, RicercaQuotePerProvvisorioSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -58,12 +58,12 @@ public class RisultatiRicercaQuoteSpesaDaAssociareAProvvisorioAjaxAction extends
 	}
 	
 	@Override
-	protected ElementoSubdocumentoDaAssociare ottieniIstanza(SubdocumentoSpesa e) {
+	protected ElementoSubdocumentoDaAssociare getInstance(SubdocumentoSpesa e) {
 		return ElementoSubdocumentoDaAssociareFactory.getInstance(e);
 	}
 	
 	@Override
-	protected RicercaQuotePerProvvisorioSpesaResponse ottieniResponse(RicercaQuotePerProvvisorioSpesa request) {	
+	protected RicercaQuotePerProvvisorioSpesaResponse getResponse(RicercaQuotePerProvvisorioSpesa request) {	
 		return documentoSpesaService.ricercaQuotePerProvvisorioSpesa(request);
 	}
 	

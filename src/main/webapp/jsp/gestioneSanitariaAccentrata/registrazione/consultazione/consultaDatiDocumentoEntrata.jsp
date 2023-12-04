@@ -72,14 +72,14 @@ SPDX-License-Identifier: EUPL-1.2
 		<s:iterator value="consultazioneHelper.listaQuote" var="q">
 			<tr>
 				<td>
-					<a rel="popover" href="#" data-original-title="Descrizione" data-trigger="hover" data-content="<s:property value="#q.descrizione"/>">
+					<a data-toggle="popover" href="#" data-original-title="Descrizione" data-trigger="hover" data-content="<s:property value="#q.descrizione"/>">
 						<s:property value="#q.numero"/>
 					</a>
 				</td>
 				<td>
 					<s:if test="%{#q.attoAmministrativo != null}">
 						<s:property value="#q.attoAmministrativo.anno"/> / <s:property value="#q.attoAmministrativo.numero"/> -
-						<a rel="popover" href="#" data-original-title="Oggetto" data-trigger="hover" data-content="<s:property value="#q.attoAmministrativo.oggetto"/>">
+						<a data-toggle="popover" href="#" data-original-title="Oggetto" data-trigger="hover" data-content="<s:property value="#q.attoAmministrativo.oggetto"/>">
 							<s:property value="#q.attoAmministrativo.tipoAtto.codice"/>
 						</a>
 						<s:if test="%{#q.attoAmministrativo.strutturaAmmContabile != null}">
@@ -90,9 +90,9 @@ SPDX-License-Identifier: EUPL-1.2
 				</td>
 				<td>
 					<s:if test="#q.accertamento != null">
-						<s:property value="#q.accertamento.annoMovimento"/> / <si:plainstringproperty value="#q.accertamento.numero"/>
+						<s:property value="#q.accertamento.annoMovimento"/> / <s:property value="#q.accertamento.numero"/>
 						<s:if test="%{#q.subAccertamento != null}">
-							- <si:plainstringproperty value="#q.subAccertamento.numero"/>
+							- <s:property value="#q.subAccertamento.numero"/>
 						</s:if>
 					</s:if>
 				</td>
@@ -165,7 +165,7 @@ SPDX-License-Identifier: EUPL-1.2
 									</td>
 									<td>
 										<s:if test="%{#mi.aliquota != null && #mi.aliquota.aliquotaIva != null}">
-											<a rel="popover" href="#" data-original-title="Percentuale aliquota" data-trigger="hover" data-content="<s:property value="#mi.aliquota.aliquotaIva.percentualeAliquota"/>">
+											<a data-toggle="popover" href="#" data-original-title="Percentuale aliquota" data-trigger="hover" data-content="<s:property value="#mi.aliquota.aliquotaIva.percentualeAliquota"/>">
 												<s:property value="#mi.aliquota.aliquotaIva.codice"/> - <s:property value="#mi.aliquota.aliquotaIva.descrizione"/>
 											</a>
 										</s:if>

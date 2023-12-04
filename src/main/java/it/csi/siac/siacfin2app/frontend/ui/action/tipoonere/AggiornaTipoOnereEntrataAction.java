@@ -101,7 +101,7 @@ public class AggiornaTipoOnereEntrataAction extends GenericAggiornaTipoOnereActi
 		checkCondition(accertamento.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno accertamento"));
 		checkCondition(accertamento.getAnnoMovimento() <= model.getAnnoEsercizioInt().intValue(),
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno accertamento", "sono ammessi solo movimenti di gestione o residui"));
-		checkCondition(accertamento.getNumero() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero accertamento"));
+		checkCondition(accertamento.getNumeroBigDecimal() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero accertamento"));
 		
 		if(hasErrori()) {
 			throw new ParamValidationException("Errore nei parametri di input");
@@ -183,8 +183,8 @@ public class AggiornaTipoOnereEntrataAction extends GenericAggiornaTipoOnereActi
 //					&& (subAccertamento == null || sa == null || sa.getNumero().equals(subAccertamento.getNumero()));
 //			checkCondition(!giaPresente, ErroreCore.RELAZIONE_GIA_PRESENTE.getErrore(), true);
 			//CORREZIONE SONAR
-			boolean accertamentoGiaPresente = (a.getAnnoMovimento() == accertamento.getAnnoMovimento()) && (a.getNumero().equals(accertamento.getNumero()));
-			boolean subAccertamentoGiaPresente = subAccertamento == null || sa == null || sa.getNumero().equals(subAccertamento.getNumero());
+			boolean accertamentoGiaPresente = (a.getAnnoMovimento() == accertamento.getAnnoMovimento()) && (a.getNumeroBigDecimal().equals(accertamento.getNumeroBigDecimal()));
+			boolean subAccertamentoGiaPresente = subAccertamento == null || sa == null || sa.getNumeroBigDecimal().equals(subAccertamento.getNumeroBigDecimal());
 			
 			checkCondition(!(accertamentoGiaPresente && subAccertamentoGiaPresente), ErroreCore.RELAZIONE_GIA_PRESENTE.getErrore(), true);
 		}
@@ -209,13 +209,13 @@ public class AggiornaTipoOnereEntrataAction extends GenericAggiornaTipoOnereActi
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, response));
 		}
 		if(response.getAccertamento() == null) {
 			//l'accertametno digitato non e' presente in archivio
 			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", request.getpRicercaAccertamentoK().getAnnoEsercizio() + "/"
 					+ request.getpRicercaAccertamentoK().getAnnoAccertamento() + "/" + request.getpRicercaAccertamentoK().getNumeroAccertamento()));
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, response));
 		}
 		return response;
 	}
@@ -232,7 +232,7 @@ public class AggiornaTipoOnereEntrataAction extends GenericAggiornaTipoOnereActi
 	 */
 	private SubAccertamento checkPresenzaSubAccertamentiNonAnnullati(List<SubAccertamento> listaSub, Accertamento accertamento, SubAccertamento subAccertamento) {
 		final String methodName = "checkPresenzaSubAccertamentiNonAnnullati";
-		boolean subAccertamentoDigitato = subAccertamento != null && subAccertamento.getNumero() != null;
+		boolean subAccertamentoDigitato = subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null;
 		log.debug(methodName, "Subaccertamento digitato? " + subAccertamentoDigitato + (subAccertamentoDigitato ? " (numero :" + subAccertamento + ")" : ""));
 		
 		boolean accertamentoSenzaSub = listaSub == null || listaSub.isEmpty();
@@ -248,7 +248,7 @@ public class AggiornaTipoOnereEntrataAction extends GenericAggiornaTipoOnereActi
 		
 		//l'operatore ha selezionato un sub: controllo che questo sia effettivamente tra i sub dell'accertamento
 		SubAccertamento subAccertamentoTrovato = ComparatorUtils.findByNumeroMovimentoGestione(accertamento.getElencoSubAccertamenti(), subAccertamento);
-		boolean isSubAccertamentoTrovato = !accertamentoSenzaSub && subAccertamentoTrovato != null && subAccertamentoTrovato.getNumero() != null;
+		boolean isSubAccertamentoTrovato = !accertamentoSenzaSub && subAccertamentoTrovato != null && subAccertamentoTrovato.getNumeroBigDecimal() != null;
 		log.debug(methodName, "Subaccertamento trovato? " + isSubAccertamentoTrovato + (isSubAccertamentoTrovato ? " (uid :" + subAccertamentoTrovato.getUid() + ")" : ""));
 		
 		//ho due casi: O l'operatore ha digitato un accertamento e questo e' presente tra i subaccertamenti caricati da servizio, OPPURE l'operatore non ha digitato il sub e l'accertamento e' senza sub
@@ -258,7 +258,7 @@ public class AggiornaTipoOnereEntrataAction extends GenericAggiornaTipoOnereActi
 				+ resultingCondition);
 		
 		checkCondition(resultingCondition, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubAccertamento",
-				accertamento.getAnnoMovimento() + "/" + accertamento.getNumero() + "-" + subAccertamento.getNumero()), true);
+				accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal() + "-" + subAccertamento.getNumeroBigDecimal()), true);
 		
 		return subAccertamentoTrovato;
 	}

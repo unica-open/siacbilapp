@@ -46,10 +46,20 @@ SPDX-License-Identifier: EUPL-1.2
 											<span class="al">
 												<label class="radio inline">&nbsp;</label>
 											</span>
-											<span>
-												<input type="text" disabled class="lbTextSmall span3" maxlength="30" value="<s:property value="progetto.tipoProgetto.descrizione"/>" />
-											</span>
-											<s:hidden name="progetto.tipoProgetto"/>
+											<!-- SIAC-8900 -->
+											<s:if test="bilancioEsercizioProvvisorio"> 
+												<span>
+													<s:select list="listaTipoProgetto" id="listaTipoProgetto" headerKey="" headerValue="" 
+														name="tipoProgettoStr" cssClass="span3" listKey="codice"
+                                    					listValue="descrizione" />
+												</span>
+											</s:if><s:else>
+												<span>
+                                    					<input type="text" disabled class="lbTextSmall span3" maxlength="30" value="<s:property value="progetto.tipoProgetto.descrizione"/>" />											
+												</span>
+											</s:else>
+											
+											<s:hidden name="progetto.tipoProgetto.descrizione"/>
 										</div>
 									</div>
 									
@@ -198,9 +208,9 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ztree/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricercaProvvedimento_collapse.js"></script>
-	<script type="text/javascript" src="${jspath}progetto/progetto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricercaProvvedimento_collapse.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/progetto/progetto.js"></script>
 
 </body>
 </html>

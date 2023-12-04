@@ -90,7 +90,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoEntrataBaseAction<M 
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoEntrata.class, res));
 		}
 		DocumentoEntrata notaCredito = res.getDocumento();
 		if(notaCredito == null) {
@@ -121,7 +121,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoEntrataBaseAction<M 
 		
 		if(resDP.hasErrori()) {
 			addErrori(resDP);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(reqDP, resDP));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoEntrata.class, resDP));
 		}
 		documentoPadre = resDP.getDocumento();
 		if(documentoPadre == null) {
@@ -149,7 +149,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoEntrataBaseAction<M 
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuoteByDocumentoEntrata.class, res));
 		}
 		return res.getSubdocumentiEntrata();
 	}
@@ -169,7 +169,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoEntrataBaseAction<M 
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaNoteCreditoIvaDocumentoEntrata.class, res));
 		}
 		return res.getSubdocumentoIvaEntrata();
 	}

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -112,7 +112,7 @@ public class CassaEconomaleOperazioniCassaGestioneAction extends CassaEconomaleB
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String message = createErrorInServiceInvocationString(request, response);
+			String message = createErrorInServiceInvocationString(RicercaTipoOperazioneDiCassa.class, response);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(message);
 		}
@@ -144,7 +144,7 @@ public class CassaEconomaleOperazioniCassaGestioneAction extends CassaEconomaleB
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String message = createErrorInServiceInvocationString(request, response);
+				String message = createErrorInServiceInvocationString(RicercaModalitaPagamentoCassa.class, response);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(message);
 			}
@@ -170,7 +170,7 @@ public class CassaEconomaleOperazioniCassaGestioneAction extends CassaEconomaleB
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String message = createErrorInServiceInvocationString(request, response);
+				String message = createErrorInServiceInvocationString(TipiProvvedimento.class, response);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(message);
 			}
@@ -279,7 +279,7 @@ public class CassaEconomaleOperazioniCassaGestioneAction extends CassaEconomaleB
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceOperazioneDiCassa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -353,7 +353,7 @@ public class CassaEconomaleOperazioniCassaGestioneAction extends CassaEconomaleB
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, response));
 			addErrori(response);
 			return;
 		}
@@ -412,7 +412,7 @@ public class CassaEconomaleOperazioniCassaGestioneAction extends CassaEconomaleB
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaOperazioneDiCassa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -449,7 +449,7 @@ public class CassaEconomaleOperazioniCassaGestioneAction extends CassaEconomaleB
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaOperazioneDiCassa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

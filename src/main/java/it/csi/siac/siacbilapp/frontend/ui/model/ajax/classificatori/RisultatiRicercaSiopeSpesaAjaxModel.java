@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.ajax.classificatori;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacbilser.model.SiopeSpesa;
  * @version 1.0.0 - 16/12/2015
  *
  */
-public class RisultatiRicercaSiopeSpesaAjaxModel extends GenericRisultatiRicercaAjaxModel<SiopeSpesa> {
+public class RisultatiRicercaSiopeSpesaAjaxModel extends PagedDataTableAjaxModel<SiopeSpesa> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 864654160602839550L;

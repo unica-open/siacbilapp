@@ -8,7 +8,10 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+import xyz.timedrain.arianna.plugin.Crumb;
+/*
 import org.softwareforge.struts2.breadcrumb.Crumb;
+*/
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;

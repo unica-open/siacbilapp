@@ -83,13 +83,13 @@ public abstract class ElementoSubdocumento<S extends Subdocumento<?, ?>, MG exte
 			.append(capitolo.getBilancio().getAnno())
 			.append("/")
 			.append(movimentoGestione.getAnnoMovimento());
-		if(movimentoGestione.getNumero() != null) {
+		if(movimentoGestione.getNumeroBigDecimal() != null) {
 			sb.append("/")
-				.append(movimentoGestione.getNumero().toPlainString());
+				.append(movimentoGestione.getNumeroBigDecimal().toPlainString());
 		}
-		if(subMovimentoGestione != null && subMovimentoGestione.getNumero() != null) {
+		if(subMovimentoGestione != null && subMovimentoGestione.getNumeroBigDecimal() != null) {
 			sb.append("/")
-				.append(subMovimentoGestione.getNumero().toPlainString());
+				.append(subMovimentoGestione.getNumeroBigDecimal().toPlainString());
 		}
 		return sb.toString();
 	}

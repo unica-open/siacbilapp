@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccespapp.frontend.ui.action.variazionecespite;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
@@ -48,7 +48,7 @@ public abstract class BaseRisultatiRicercaVariazioneCespiteAction<M extends Base
 		EliminaVariazioneCespite req = model.creaRequestEliminaVariazioneCespite();
 		EliminaVariazioneCespiteResponse res = cespiteService.eliminaVariazioneCespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(EliminaVariazioneCespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -76,7 +76,7 @@ public abstract class BaseRisultatiRicercaVariazioneCespiteAction<M extends Base
 		AggiornaVariazioneCespite req = model.creaRequestAggiornaVariazioneCespite();
 		AggiornaVariazioneCespiteResponse res = cespiteService.aggiornaVariazioneCespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(AggiornaVariazioneCespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -96,7 +96,7 @@ public abstract class BaseRisultatiRicercaVariazioneCespiteAction<M extends Base
 		RicercaDettaglioVariazioneCespite req = model.creaRequestRicercaDettaglioVariazioneCespite();
 		RicercaDettaglioVariazioneCespiteResponse res = cespiteService.ricercaDettaglioVariazioneCespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaDettaglioVariazioneCespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}

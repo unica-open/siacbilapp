@@ -107,7 +107,7 @@ public abstract class GenericCronoprogrammaAction<M extends GenericCronoprogramm
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioProgetto.class, response));
 		}
 		
 		model.popolaProgettoaDallaResponse(response);
@@ -250,7 +250,7 @@ public abstract class GenericCronoprogrammaAction<M extends GenericCronoprogramm
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoriByTipoElementoBil.class, response));
 		}
 		return response;
 	}
@@ -325,10 +325,14 @@ public abstract class GenericCronoprogrammaAction<M extends GenericCronoprogramm
 	public void validateInserisciDettaglioCronoprogrammaEntrata() {
 		String methodName = "validateInserisciDettaglioCronoprogrammaEntrata";
 		DettaglioEntrataCronoprogramma dec = model.getDettaglioEntrataCronoprogramma();
+		//SIAC-8791 - //task-62
+		//checkNotNull(dec.getNumeroCapitolo(), "Capitolo Entrata");
+		//checkNotNull(dec.getNumeroArticolo(), "Articolo Entrata");
 		checkNotNullNorEmpty(dec.getDescrizioneCapitolo(), "Descrizione Entrata");
 		checkNotNull(dec.getAnnoCompetenza(), "Anno");
 		checkNotNull(dec.getStanziamento(), "Valore previsto");
-		checkNotNull(dec.getIsAvanzoAmministrazione(), "Avanzo di amministrazione");
+		//task-171
+		//checkNotNull(dec.getIsAvanzoAmministrazione(), "Avanzo di amministrazione");
 		boolean isNecessarioControlloTipologia = false;
 		try {
 			isNecessarioControlloTipologia = necessitaControlloTitoloTipologia(dec);
@@ -384,7 +388,7 @@ public abstract class GenericCronoprogrammaAction<M extends GenericCronoprogramm
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioModulareCapitoloEntrataPrevisione.class, res));
 		}
 		
 		CapitoloEntrataPrevisione cep = res.getCapitoloEntrataPrevisione();
@@ -404,7 +408,7 @@ public abstract class GenericCronoprogrammaAction<M extends GenericCronoprogramm
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioModulareCapitoloEntrataGestione.class, res));
 		}
 		
 		CapitoloEntrataGestione cep = res.getCapitoloEntrataGestione();
@@ -443,6 +447,9 @@ public abstract class GenericCronoprogrammaAction<M extends GenericCronoprogramm
 	 */
 	public void validateInserisciDettaglioCronoprogrammaUscita() {
 		DettaglioUscitaCronoprogramma duc = model.getDettaglioUscitaCronoprogramma();
+		//SIAC-8791 - //task-62
+		//checkNotNull(duc.getNumeroCapitolo(), "Capitolo Spesa");
+		//checkNotNull(duc.getNumeroArticolo(), "Articolo Spesa");
 		checkNotNullNorEmpty(duc.getDescrizioneCapitolo(), "Descrizione Spesa");
 		checkNotNull(duc.getStanziamento(), "Valore previsto");
 		checkNotNullNorInvalidUid(duc.getMissione(), "Missione");

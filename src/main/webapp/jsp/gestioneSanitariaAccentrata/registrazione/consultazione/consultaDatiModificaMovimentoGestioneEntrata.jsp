@@ -21,13 +21,13 @@ SPDX-License-Identifier: EUPL-1.2
 	<tbody>
 		<s:iterator value="consultazioneHelper.listaModificaMovimentoGestione" var="mmg">
 			<tr>
-				<td><s:property value="#mmg.domStringModifiche" escape="false" /></td>
-				<td><s:property value="#mmg.domStringTipo" escape="false" /></td>
-				<td><s:property value="#mmg.domStringDescrizione" escape="false" /></td>
-				<td><s:property value="#mmg.domStringStato" escape="false" /></td>
-				<td><s:property value="#mmg.domStringProvvedimento" escape="false" /></td>
-				<td><s:property value="#mmg.domStringModificaDiSoggetto" escape="false" /></td>
-				<td class="tab_Right"><s:property value="#mmg.domStringModificaDiImporto" escape="false" /></td>
+				<td><s:property value="#mmg.domStringModifiche" escapeHtml="false" /></td>
+				<td><s:property value="#mmg.domStringTipo" escapeHtml="false" /></td>
+				<td><s:property value="#mmg.domStringDescrizione" escapeHtml="false" /></td>
+				<td><s:property value="#mmg.domStringStato" escapeHtml="false" /></td>
+				<td><s:property value="#mmg.domStringProvvedimento" escapeHtml="false" /></td>
+				<td><s:property value="#mmg.domStringModificaDiSoggetto" escapeHtml="false" /></td>
+				<td class="tab_Right"><s:property value="#mmg.domStringModificaDiImporto" escapeHtml="false" /></td>
 			</tr>
 		</s:iterator>
 	</tbody>
@@ -131,7 +131,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<ul class="htmlelt">
 				<li>
 					<dfn>Riaccertato</dfn>
-					<dl><s:property value="consultazioneHelper.daRiaccertamento" escape="false" /></dl>
+					<dl><s:property value="consultazioneHelper.daRiaccertamento" escapeHtml="false" /></dl>
 				</li>
 				<li>
 					<dfn>Anno Riaccertato</dfn>

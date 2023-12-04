@@ -6,4 +6,4 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ taglib uri="http://www.csi.it/taglibs/remincl-1.0" prefix="r" %>
 
 <%-- Caricamento del framework Google Code Prettify per JavaScript --%>
-<script type="text/javascript" src="${jspathexternal}google-code-prettify/prettify.js"></script>
+<script type="text/javascript" src="/siacbilapp/js/external/google-code-prettify/prettify.js"></script>

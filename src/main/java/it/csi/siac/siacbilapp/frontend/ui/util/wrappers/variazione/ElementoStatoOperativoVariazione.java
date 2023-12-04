@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 
 /**
  * The Class ElementostatoOperativoVariazione.
@@ -26,23 +26,23 @@ public class ElementoStatoOperativoVariazione implements Serializable {
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1L;
 	
-	private static final Map<StatoOperativoVariazioneDiBilancio, String> MAPPING_STATO;
+	private static final Map<StatoOperativoVariazioneBilancio, String> MAPPING_STATO;
 	
 	static {
-		Map<StatoOperativoVariazioneDiBilancio, String> tmp = new HashMap<StatoOperativoVariazioneDiBilancio, String>();
-		tmp.put(StatoOperativoVariazioneDiBilancio.ANNULLATA,  null);
-		tmp.put(StatoOperativoVariazioneDiBilancio.BOZZA,  null);
-		tmp.put(StatoOperativoVariazioneDiBilancio.CONSIGLIO,  "%VARIAZ_ORGANO_LEG%");
-		tmp.put(StatoOperativoVariazioneDiBilancio.GIUNTA,  "%VARIAZ_ORGANO_AMM%");
-		tmp.put(StatoOperativoVariazioneDiBilancio.PRE_DEFINITIVA,  null);
-		tmp.put(StatoOperativoVariazioneDiBilancio.DEFINITIVA,  null);
+		Map<StatoOperativoVariazioneBilancio, String> tmp = new HashMap<StatoOperativoVariazioneBilancio, String>();
+		tmp.put(StatoOperativoVariazioneBilancio.ANNULLATA,  null);
+		tmp.put(StatoOperativoVariazioneBilancio.BOZZA,  null);
+		tmp.put(StatoOperativoVariazioneBilancio.CONSIGLIO,  "%VARIAZ_ORGANO_LEG%");
+		tmp.put(StatoOperativoVariazioneBilancio.GIUNTA,  "%VARIAZ_ORGANO_AMM%");
+		tmp.put(StatoOperativoVariazioneBilancio.PRE_DEFINITIVA,  null);
+		tmp.put(StatoOperativoVariazioneBilancio.DEFINITIVA,  null);
 		
 		MAPPING_STATO = Collections.unmodifiableMap(tmp);
 	}
 	
 	private String etichettaOrganoAmministrativo;
 	private String etichettaOrganoLegislativo;
-	private StatoOperativoVariazioneDiBilancio statoOperativoVariazioneBilancio;
+	private StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio;
 	
 	/**
 	 * Instantiates a new elemento stato operativo variazione.
@@ -51,7 +51,7 @@ public class ElementoStatoOperativoVariazione implements Serializable {
 	 * @param etichettaOrganoAmministrativo the etichetta organo amministrativo
 	 * @param etichettaOrganoLegislativo the etichetta organo legislativo
 	 */
-	public ElementoStatoOperativoVariazione(StatoOperativoVariazioneDiBilancio statoOperativoVariazioneBilancio, String etichettaOrganoAmministrativo, String etichettaOrganoLegislativo){
+	public ElementoStatoOperativoVariazione(StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio, String etichettaOrganoAmministrativo, String etichettaOrganoLegislativo){
 		this.etichettaOrganoAmministrativo = etichettaOrganoAmministrativo;
 		this.etichettaOrganoLegislativo = etichettaOrganoLegislativo;
 		this.statoOperativoVariazioneBilancio = statoOperativoVariazioneBilancio;
@@ -74,7 +74,7 @@ public class ElementoStatoOperativoVariazione implements Serializable {
 	 *
 	 * @return the stato operativo variazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoOperativoVariazioneBilancio() {
+	public StatoOperativoVariazioneBilancio getStatoOperativoVariazioneBilancio() {
 		return statoOperativoVariazioneBilancio;
 	}
 	

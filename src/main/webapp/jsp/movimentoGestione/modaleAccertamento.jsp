@@ -23,7 +23,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<span class="al">
 						<label for="numeroAccertamentoModale" class="radio inline">Numero *</label>
 					</span>
-					<input type="text" name="modaleAccertamento.accertamento.numero" value="" class="lbTextSmall span2 soloNumeri" id="numeroAccertamentoModale" required>
+					<input type="text" name="modaleAccertamento.accertamento.numero" value="" class="lbTextSmall span2 soloNumeri trim" id="numeroAccertamentoModale" required>
 					<span class="al">
 						<a class="btn btn-primary pull-right" id="pulsanteRicercaAccertamentoModale">
 							<i class="icon-search icon"></i>cerca&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteRicercaAccertamentoModale"></i>

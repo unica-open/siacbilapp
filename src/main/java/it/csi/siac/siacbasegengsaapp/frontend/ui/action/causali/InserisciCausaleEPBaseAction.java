@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.action.causali;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.causali.InserisciCausaleEPBaseModel;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;

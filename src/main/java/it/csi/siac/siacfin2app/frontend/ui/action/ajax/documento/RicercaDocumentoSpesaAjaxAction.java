@@ -218,10 +218,10 @@ public class RicercaDocumentoSpesaAjaxAction extends GenericBilancioAction<Ricer
 		
 		//verifica dati movimento
 		boolean movimentoPresente = (model.getImpegno() !=null && model.getImpegno().getAnnoMovimento() != 0 && Integer.toString(model.getImpegno().getAnnoMovimento()) != null)
-				|| model.getImpegno().getNumero() != null;
+				|| model.getImpegno().getNumeroBigDecimal() != null;
 		model.setMovimentoPresente(Boolean.valueOf(movimentoPresente));
 		
-		log.debug(methodName, "movimento presente" + movimentoPresente + "-" + model.getImpegno().getAnnoMovimento() + "-" + model.getImpegno().getNumero());
+		log.debug(methodName, "movimento presente" + movimentoPresente + "-" + model.getImpegno().getAnnoMovimento() + "-" + model.getImpegno().getNumeroBigDecimal());
 		//controllo se l'elenco sia presente
 		boolean elencoPresente = model.getElencoDocumenti() != null && (model.getElencoDocumenti().getAnno() != null || model.getElencoDocumenti().getNumero() != null);
 		if(elencoPresente){
@@ -233,8 +233,8 @@ public class RicercaDocumentoSpesaAjaxAction extends GenericBilancioAction<Ricer
 
 		// Anno Impegno e numero devono essere entrambi presenti o entrambi assenti
 		if(movimentoPresente) {
-			if(((model.getImpegno().getAnnoMovimento() != 0 && Integer.toString(model.getImpegno().getAnnoMovimento()) != null) && model.getImpegno().getNumero() == null) ||
-					((model.getImpegno().getAnnoMovimento() == 0 || Integer.toString(model.getImpegno().getAnnoMovimento()) == null) && model.getImpegno().getNumero() != null)) {
+			if(((model.getImpegno().getAnnoMovimento() != 0 && Integer.toString(model.getImpegno().getAnnoMovimento()) != null) && model.getImpegno().getNumeroBigDecimal() == null) ||
+					((model.getImpegno().getAnnoMovimento() == 0 || Integer.toString(model.getImpegno().getAnnoMovimento()) == null) && model.getImpegno().getNumeroBigDecimal() != null)) {
 				checkCondition(false, ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno e Numero Movimento", ": devono essere entrambi valorizzati o non valorizzati"));
 			} else {
 				// sono entrambi valorizzati, verifico che esista l'impegno
@@ -280,7 +280,7 @@ public class RicercaDocumentoSpesaAjaxAction extends GenericBilancioAction<Ricer
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaQuoteByDocumentoSpesa.class, response));
 			addErrori(response);
 			return INPUT;
 		}

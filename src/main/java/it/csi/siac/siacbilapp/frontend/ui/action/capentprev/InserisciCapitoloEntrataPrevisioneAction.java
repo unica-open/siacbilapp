@@ -7,9 +7,14 @@ package it.csi.siac.siacbilapp.frontend.ui.action.capentprev;
 import java.math.BigDecimal;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumbTrail;
+import xyz.timedrain.arianna.plugin.Crumb;
+/*
 import org.softwareforge.struts2.breadcrumb.BreadCrumb;
 import org.softwareforge.struts2.breadcrumb.BreadCrumbTrail;
 import org.softwareforge.struts2.breadcrumb.Crumb;
+*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -27,6 +32,8 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.CalcolaTotaliStanziamentiD
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcolaTotaliStanziamentiDiPrevisioneResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiEntrataPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiEntrataPrevisioneResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloEntrataGestione;
@@ -39,13 +46,14 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloEnt
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloEntrataPrevisioneResponse;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.SiopeEntrata;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siaccommonapp.handler.session.CommonSessionParameter;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -128,6 +136,21 @@ public class InserisciCapitoloEntrataPrevisioneAction extends CapitoloEntrataAct
 			log.debug(methodName, "Default per il capitolo da inserire - UEB " + cep.getNumeroUEB());
 		}
 		
+		//task-86
+		if(abilitaNumerazioneAutomaticaCapitolo()) {
+			LeggiPropostaNumeroCapitolo req = model.leggiPropostaNumeroCapitolo();
+			logServiceRequest(req);
+			LeggiPropostaNumeroCapitoloResponse response = capitoloService.leggiPropostaNumeroCapitoloService(req);
+			logServiceResponse(response);
+			if(!response.hasErrori()) {
+				model.getCapitoloEntrataPrevisione().setNumeroCapitolo(response.getNumeroPropostoCapitolo());
+			}else {
+				log.debug(methodName, "Errore nella risposta del servizio");
+				addErrori(methodName, response);
+				log.debug(methodName, "Model: " + model);
+			}
+		}
+		
 		// CR-2559
 		impostaSiopeSeUnico();
 		// SIAC-4724
@@ -159,6 +182,17 @@ public class InserisciCapitoloEntrataPrevisioneAction extends CapitoloEntrataAct
 		// SIAC-5582: Forzo il flag accertato per cassa a false nel caso in cui NON sia gestibile
 		if(!model.isFlagAccertatoPerCassaVisibile()) {
 			model.getCapitoloEntrataPrevisione().setFlagAccertatoPerCassa(Boolean.FALSE);
+		}
+		
+
+		//task-244
+		if(model.getCapitoloEntrataPrevisione().getCategoriaCapitolo().getUid() >0)
+			model.getCapitoloEntrataPrevisione().setCategoriaCapitolo(caricaCategoriaCapitolo(model.getCapitoloEntrataPrevisione().getCategoriaCapitolo().getUid()));
+				
+		//task-244
+		if(CategoriaCapitoloEnum.categoriaIsFPV(model.getCapitoloEntrataPrevisione().getCategoriaCapitolo().getCodice()) || 
+				model.getCapitoloEntrataPrevisione().getCategoriaCapitolo().getCodice().equals(CategoriaCapitoloEnum.AAM.getCodice()) ) {
+			model.getCapitoloEntrataPrevisione().setFlagImpegnabile(null);
 		}
 		
 		InserisceCapitoloDiEntrataPrevisione request = model.creaRequestInserisceCapitoloDiEntrataPrevisione(statoOperativoElementoDiBilancio);
@@ -563,24 +597,32 @@ public class InserisciCapitoloEntrataPrevisioneAction extends CapitoloEntrataAct
 	@Override
 	protected void validaImportoCapitolo(ImportiCapitolo importi, int annoRispettoAEsercizio, boolean controlloGlobale, boolean forceCassaCoherence) {
 		int anno = model.getAnnoEsercizioInt() + annoRispettoAEsercizio;
-		if(importi == null) {
+		if(importi == null || importi.getStanziamento() == null) {
 			addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Competenza per anno " + anno));
-			if(controlloGlobale) {
-				addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Residui per anno " + anno));
-				addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Cassa per anno " + anno));
-			}
+			//SIAC-7517 non obbligatori secondo analisi
+//			if(controlloGlobale) {
+//				addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Residui per anno " + anno));
+//				addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Cassa per anno " + anno));
+//			}
 			return;
 		}
 		
 		// Gli importi sono valorizzati
 		checkImporto(importi.getStanziamento(), "Competenza", anno);
 		if(controlloGlobale) {
-			checkImporto(importi.getStanziamentoResiduo(), "Residui", anno);
-			checkImporto(importi.getStanziamentoCassa(), "Cassa", anno);
+			//SIAC-7517
+			//controllo solo se valorizzato
+			if(importi.getStanziamentoResiduo() != null) {
+				checkImporto(importi.getStanziamentoResiduo(), "Residui", anno);
+			}
+			if(importi.getStanziamentoCassa() != null){
+				checkImporto(importi.getStanziamentoCassa(), "Cassa", anno);
+			}
+			//
 			if(forceCassaCoherence && importi.getStanziamento() != null && importi.getStanziamentoResiduo() != null && importi.getStanziamentoCassa() != null
 					&& (importi.getStanziamentoResiduo().compareTo(BigDecimal.ZERO)>0 || importi.getStanziamento().compareTo(BigDecimal.ZERO)>0 )) {
 				checkCondition(importi.getStanziamentoCassa().subtract(importi.getStanziamento()).subtract(importi.getStanziamentoResiduo()).signum() <= 0,
-						ErroreCore.VALORE_NON_VALIDO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
+						ErroreCore.VALORE_NON_CONSENTITO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
 							+ FormatUtils.formatCurrency(importi.getStanziamento().add(importi.getStanziamentoResiduo())) + ")"));
 			}
 		}

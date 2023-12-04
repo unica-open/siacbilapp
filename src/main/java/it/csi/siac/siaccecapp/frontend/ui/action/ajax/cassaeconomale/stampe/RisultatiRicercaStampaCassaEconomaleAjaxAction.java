@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.stampe.RisultatiRicercaStampaCassaEconomaleAjaxModel;
@@ -30,7 +30,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaStampaCassaEconomaleAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoStampeCassaFile,
+public class RisultatiRicercaStampaCassaEconomaleAjaxAction extends PagedDataTableAjaxAction<ElementoStampeCassaFile,
  RisultatiRicercaStampaCassaEconomaleAjaxModel, StampeCassaFile, RicercaStampeCassaEconomale, RicercaStampeCassaEconomaleResponse> {
 	
 	/** Per la serializzazione */
@@ -61,12 +61,12 @@ public class RisultatiRicercaStampaCassaEconomaleAjaxAction extends GenericRisul
 	}
 	
 	@Override
-	protected ElementoStampeCassaFile ottieniIstanza(StampeCassaFile e) throws FrontEndBusinessException {
+	protected ElementoStampeCassaFile getInstance(StampeCassaFile e) throws FrontEndBusinessException {
 		return new ElementoStampeCassaFile(e);
 	}
 	
 	@Override
-	protected RicercaStampeCassaEconomaleResponse ottieniResponse(RicercaStampeCassaEconomale request) {
+	protected RicercaStampeCassaEconomaleResponse getResponse(RicercaStampeCassaEconomale request) {
 		return stampaCassaEconomaleService.ricercaStampeCassaEconomale(request);
 	}
 	
@@ -76,7 +76,7 @@ public class RisultatiRicercaStampaCassaEconomaleAjaxAction extends GenericRisul
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoStampeCassaFile instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoStampeCassaFile instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		// Gestione delle azioni consentite
 		Integer uidFile = instance.getUidFile();

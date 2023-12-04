@@ -16,7 +16,7 @@ import it.csi.siac.siacbilapp.BaseJUnit4TestCase;
 import it.csi.siac.siacbilapp.frontend.serviceclient.serviceexecutor.KeyAdapter;
 import it.csi.siac.siacbilapp.frontend.serviceclient.serviceexecutor.ParallelServiceExecutor;
 import it.csi.siac.siacbilapp.frontend.serviceclient.serviceexecutor.ServiceInvoker;
-import it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean;
+import it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Operatore;

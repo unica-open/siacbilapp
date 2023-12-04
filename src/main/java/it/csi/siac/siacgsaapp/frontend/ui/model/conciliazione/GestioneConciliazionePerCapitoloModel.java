@@ -21,7 +21,7 @@ import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloEGest;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloUGest;
 import it.csi.siac.siaccorser.model.Codifica;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaConciliazionePerCapitolo;
 import it.csi.siac.siacgenser.frontend.webservice.msg.EliminaConciliazionePerCapitolo;

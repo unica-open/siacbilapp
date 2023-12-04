@@ -30,20 +30,56 @@ SPDX-License-Identifier: EUPL-1.2
 						<div class="boxOrSpan2">
 							<div class="boxOrInline">
 								<p>Dati Causale</p>
-								<ul class="htmlelt">
-									<li>
-										<dfn>Causale</dfn>
-										<dl><s:property value="descrizioneCausale"/>&nbsp;</dl>
-									</li>
-									<li>
-										<dfn>Data registrazione</dfn>
-										<dl><s:property value="primaNotaLibera.dataRegistrazione"/>&nbsp;</dl>
-									</li>
-									<li>
-										<dfn>Descrizione</dfn>
-										<dl><s:property value="primaNotaLibera.descrizione"/>&nbsp;</dl>
-									</li>
-								</ul>
+								<div class="span4">
+									<ul class="htmlelt">
+										<li>
+											<dfn>Causale</dfn>
+											<dl><s:property value="descrizioneCausale"/>&nbsp;</dl>
+										</li>
+										<li>
+											<dfn>Data registrazione</dfn>
+											<dl><s:property value="primaNotaLibera.dataRegistrazione"/>&nbsp;</dl>
+										</li>
+										<li>
+											<dfn>Descrizione</dfn>
+											<dl><s:property value="primaNotaLibera.descrizione"/>&nbsp;</dl>
+										</li>
+									</ul>
+								</div>
+								<div class="span7">
+									<%-- SIAC-8134 --%>
+									<div class="control-group margin-medium">
+										<label class="control-label">Struttura competente </label>
+										<div class="controls">
+											<div class="accordion w-95 struttAmm">
+												<div id="fieldsetStrutturaCompetente">
+													<div class="accordion struttAmm">
+														<div class="accordion-group">
+															<div class="accordion-heading">
+																<a class="accordion-toggle" id="accordionPadreStrutturaAmministrativa_NOTA_LIBERA_SD" href="#struttAmm_PRIMA_NOTA_LIBERA">
+																	<span id="SPAN_StrutturaAmministrativoContabile_PRIMA_NOTA_LIBERA">
+																		<s:if test="strutturaCompetentePrimaNotaLibera != null && strutturaCompetentePrimaNotaLibera.codice != null && strutturaCompetentePrimaNotaLibera.descrizione != null">
+																			<s:property value="strutturaCompetentePrimaNotaLibera.codice" /> - <s:property value="strutturaCompetentePrimaNotaLibera.descrizione" />
+																		</s:if>
+																		<s:else>
+																			Nessuna Struttura Amministrativa Responsabile selezionata
+																		</s:else>
+																	</span>
+																</a>
+															</div>
+															<div id="struttAmm_PRIMA_NOTA_LIBERA" class="accordion-body collapse">
+																<%-- <div class="accordion-inner">
+																	<ul id="treeStruttAmm_PRIMA_NOTA_LIBERA" class="ztree treeStruttAmm"></ul>
+																</div> --%>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<%-- SIAC-8134 --%>
+								</div>
 							</div>
 						</div>
 						<div class="clear"></div>
@@ -160,7 +196,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/primaNotaLibera/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/primaNotaLibera/consulta.js"></script>
 
 </body>
 </html>

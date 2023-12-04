@@ -17,8 +17,12 @@ import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElenco;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoElencoDocumenti;
+import it.csi.siac.siacfin2ser.model.allegatoattochecklist.Checklist;
+import it.csi.siac.siacfinser.frontend.webservice.msg.Liste;
+import it.csi.siac.siacfinser.model.codifiche.TipiLista;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 /**
@@ -46,6 +50,23 @@ public class GenericAllegatoAttoModel extends GenericBilancioModel {
 	private List<TipoAtto> listaFiltrataTipoAtto = new ArrayList<TipoAtto>();
 	private List<StatoOperativoElencoDocumenti> listaStatoOperativoElencoDocumenti = new ArrayList<StatoOperativoElencoDocumenti>();
 	
+	//SIAC-7005
+	private List<ContoTesoreria> listaContoTesoreria = new ArrayList<ContoTesoreria>();
+
+	
+	// SIAC-8804
+	private Checklist checklist;
+	
+
+	public Checklist getChecklist() {
+		return checklist;
+	}
+
+	public void setChecklist(Checklist checklist) {
+		this.checklist = checklist;
+	}
+
+
 	/**
 	 * @return the allegatoAtto
 	 */
@@ -189,6 +210,20 @@ public class GenericAllegatoAttoModel extends GenericBilancioModel {
 	}
 	
 	/**
+	 * @return the listaContoTesoreria
+	 */
+	public List<ContoTesoreria> getListaContoTesoreria() {
+		return listaContoTesoreria;
+	}
+
+	/**
+	 * @param listaContoTesoreria the listaContoTesoreria to set
+	 */
+	public void setListaContoTesoreria(List<ContoTesoreria> listaContoTesoreria) {
+		this.listaContoTesoreria = listaContoTesoreria != null? listaContoTesoreria : null;
+	}
+	
+	/**
 	 * @return the denominazioneAllegatoAtto
 	 */
 	public String getDenominazioneAllegatoAtto() {
@@ -212,6 +247,22 @@ public class GenericAllegatoAttoModel extends GenericBilancioModel {
 		ricercaAtti.setStrutturaAmministrativoContabile(impostaEntitaFacoltativa(getStrutturaAmministrativoContabile()));
 		
 		request.setRicercaAtti(ricercaAtti);
+		return request;
+	}
+	
+    //SIAC-7005
+    /**
+	 * Crea una request per il servizio {@link Liste}
+	 * @param tipiLista i tipi di lista da cercare
+	 * @return la request creata
+	 */
+	public Liste creaRequestListe(TipiLista... tipiLista) {
+		Liste request = creaRequest(Liste.class);
+		
+		request.setEnte(getEnte());
+		request.setTipi(tipiLista);
+		request.setBilancio(getBilancio());
+		
 		return request;
 	}
 	

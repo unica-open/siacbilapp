@@ -32,7 +32,7 @@ public class ElementoMovimentoConsultazionePrimaNotaIntegrataAccertamento extend
 	
 	@Override
 	public String getNumero() {
-		return movimento != null && movimento.getNumero() != null ? movimento.getNumero().toPlainString() : "";
+		return movimento != null && movimento.getNumeroBigDecimal() != null ? movimento.getNumeroBigDecimal().toPlainString() : "";
 	}
 	
 	@Override

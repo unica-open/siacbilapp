@@ -83,6 +83,6 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}cespiti/ammortamento/ricercaCespiteAnteprimaAmmortamento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/ammortamento/ricercaCespiteAnteprimaAmmortamento.js"></script>
 </body>
 </html>

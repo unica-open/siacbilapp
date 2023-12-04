@@ -48,8 +48,8 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}cespiti/cespite/ricercaCespite_modale.js"></script>
-	<script type="text/javascript" src="${jspath}cespiti/registroa/gestioneRegistroA.js"></script>
-	<script type="text/javascript" src="${jspath}cespiti/registroa/aggiornaRegistroA.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/cespite/ricercaCespite_modale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/registroa/gestioneRegistroA.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/registroa/aggiornaRegistroA.js"></script>
 </body>
 </html>

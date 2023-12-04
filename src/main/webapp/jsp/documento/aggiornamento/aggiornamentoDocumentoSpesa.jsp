@@ -261,15 +261,15 @@ SPDX-License-Identifier: EUPL-1.2
 		</div>
 	</div>
 	
-	<!-- SIAC 6677 -->
-	<!-- SIAC-6840 riabilitazione campo -->
+	<%-- SIAC 6677 --%>
+	<%-- SIAC-6840 riabilitazione campo --%>
 	<div class="control-group"> 
 		<label class="control-label" for="codAvvisoPagoPA">Codice Avviso PagoPA</label> 
 		<div class="controls"> 
 			<s:textfield id="codAvvisoPagoPA" name="documento.codAvvisoPagoPA" cssClass="lbTextSmall span2 numeroNaturale" placeholder="Codice Avviso PagoPA" />
 		</div> 
 	</div> 
-	<!-- SIAC-6840 riabilitazione campo -->
+	<%-- SIAC-6840 riabilitazione campo --%>
 
 	<div class="step-pane active" id="datiPagamentoPadre">
 		<div class="accordion" >

@@ -90,7 +90,7 @@ public class BaseRichiestaEconomaleAction<M extends BaseRichiestaEconomaleModel>
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaClassificatoriGenericiCassaEconomale.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			
@@ -279,7 +279,7 @@ public class BaseRichiestaEconomaleAction<M extends BaseRichiestaEconomaleModel>
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response);
 			log.debug(methodName, errorMsg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMsg);
@@ -317,7 +317,7 @@ public class BaseRichiestaEconomaleAction<M extends BaseRichiestaEconomaleModel>
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response);
 			log.debug(methodName, errorMsg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMsg);

@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.ajax.documento;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2app.frontend.ui.model.ajax.documento.RisultatiRicercaSinteticaQuoteDocumentoEntrataBaseAjaxModel;
@@ -24,7 +24,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
  */
 public abstract class RisultatiRicercaSinteticaQuoteDocumentoEntrataCollegatoBaseAjaxAction<M extends RisultatiRicercaSinteticaQuoteDocumentoEntrataBaseAjaxModel>
 		extends
-		GenericRisultatiRicercaAjaxAction<ElementoSubdocumentoEntrata, M, SubdocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrataResponse> {
+		PagedDataTableAjaxAction<ElementoSubdocumentoEntrata, M, SubdocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrataResponse> {
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -2521846964745106821L;
 	
@@ -42,12 +42,12 @@ public abstract class RisultatiRicercaSinteticaQuoteDocumentoEntrataCollegatoBas
 	}
 	
 	@Override
-	protected ElementoSubdocumentoEntrata ottieniIstanza(SubdocumentoEntrata e) {
+	protected ElementoSubdocumentoEntrata getInstance(SubdocumentoEntrata e) {
 		return new ElementoSubdocumentoEntrata(e, model.isGestioneUEB());
 	}
 	
 	@Override
-	protected RicercaSinteticaModulareQuoteByDocumentoEntrataResponse ottieniResponse(RicercaSinteticaModulareQuoteByDocumentoEntrata request) {
+	protected RicercaSinteticaModulareQuoteByDocumentoEntrataResponse getResponse(RicercaSinteticaModulareQuoteByDocumentoEntrata request) {
 		return documentoEntrataService.ricercaSinteticaModulareQuoteByDocumentoEntrata(request);
 	}
 	

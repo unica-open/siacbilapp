@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.list.SortedSetList;
+import it.csi.siac.siaccommon.util.collections.list.SortedSetList;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorElementoElencoDocumentiAllegato;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorElencoDocumentiAllegato;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;

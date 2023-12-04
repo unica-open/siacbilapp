@@ -74,7 +74,7 @@ public class ConsultaRegistrazioneMovFinDocumentoEntrataBaseAction<M extends Con
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoEntrata.class, res));
 		}
 		
 		log.debug(methodName, "Documento ottenuto");
@@ -94,7 +94,7 @@ public class ConsultaRegistrazioneMovFinDocumentoEntrataBaseAction<M extends Con
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuoteByDocumentoEntrata.class, res));
 		}
 		return res.getSubdocumentiEntrata();
 	}

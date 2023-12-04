@@ -39,10 +39,6 @@ SPDX-License-Identifier: EUPL-1.2
 					<dfn>Descrizione</dfn>
 					<dl><s:property value="consultazioneHelper.liquidazione.impegno.descrizione"/></dl>
 				</li>
-				<li>
-					<dfn>Mutuo</dfn>
-					<dl><s:property value="consultazioneHelper.liquidazione.numeroMutuo"/></dl>
-				</li>
 			</ul>
 		</div>
 	</div>

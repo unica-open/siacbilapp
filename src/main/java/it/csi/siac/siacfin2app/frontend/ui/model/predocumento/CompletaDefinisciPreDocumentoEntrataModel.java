@@ -4,203 +4,86 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.predocumento;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.CompletaDefiniscePreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTotaliPreDocumentoEntrataPerStato;
+import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
 
 /**
  * Classe di model per la ricerca del PreDocumento di Entrata per il completamento e la definizione
  * 
  * @author Marchino Alessandro
  */
-public class CompletaDefinisciPreDocumentoEntrataModel extends GenericPreDocumentoEntrataModel {
+public class CompletaDefinisciPreDocumentoEntrataModel extends BaseCompletaDefinisciPreDocumentoEntrataModel {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -5080609141854299761L;
 	
-	private Date dataCompetenzaDa;
-	private Date dataCompetenzaA;
-	
-	private Long numeroPreDocumentiIncompleti;
-	private Long numeroPreDocumentiCompleti;
-	private Long numeroPreDocumentiAnnullatiDefiniti;
-	private Long numeroPreDocumentiTotale;
-	
-	private BigDecimal importoPreDocumentiIncompleti;
-	private BigDecimal importoPreDocumentiCompleti;
-	private BigDecimal importoPreDocumentiAnnullatiDefiniti;
-	private BigDecimal importoPreDocumentiTotale;
 	
 	/** Costruttore vuoto di default */
 	public CompletaDefinisciPreDocumentoEntrataModel() {
 		setTitolo("Completa e Definisci Predisposizione di Incasso");
 	}
 	
-	/**
-	 * @return the dataCompetenzaDa
-	 */
-	public Date getDataCompetenzaDa() {
-		return dataCompetenzaDa == null ? null : new Date(dataCompetenzaDa.getTime());
-	}
 
-	/**
-	 * @param dataCompetenzaDa the dataCompetenzaDa to set
-	 */
-	public void setDataCompetenzaDa(Date dataCompetenzaDa) {
-		this.dataCompetenzaDa = dataCompetenzaDa == null ? null : new Date(dataCompetenzaDa.getTime());
-	}
-
-	/**
-	 * @return the dataCompetenzaA
-	 */
-	public Date getDataCompetenzaA() {
-		return dataCompetenzaA == null ? null : new Date(dataCompetenzaA.getTime());
-	}
-
-	/**
-	 * @param dataCompetenzaA the dataCompetenzaA to set
-	 */
-	public void setDataCompetenzaA(Date dataCompetenzaA) {
-		this.dataCompetenzaA = dataCompetenzaA == null ? null : new Date(dataCompetenzaA.getTime());
-	}
-	
-	/**
-	 * @return the numeroPreDocumentiIncompleti
-	 */
-	public Long getNumeroPreDocumentiIncompleti() {
-		return this.numeroPreDocumentiIncompleti;
-	}
-
-	/**
-	 * @param numeroPreDocumentiIncompleti the numeroPreDocumentiIncompleti to set
-	 */
-	public void setNumeroPreDocumentiIncompleti(Long numeroPreDocumentiIncompleti) {
-		this.numeroPreDocumentiIncompleti = numeroPreDocumentiIncompleti;
-	}
-
-	/**
-	 * @return the numeroPreDocumentiCompleti
-	 */
-	public Long getNumeroPreDocumentiCompleti() {
-		return this.numeroPreDocumentiCompleti;
-	}
-
-	/**
-	 * @param numeroPreDocumentiCompleti the numeroPreDocumentiCompleti to set
-	 */
-	public void setNumeroPreDocumentiCompleti(Long numeroPreDocumentiCompleti) {
-		this.numeroPreDocumentiCompleti = numeroPreDocumentiCompleti;
-	}
-
-	/**
-	 * @return the numeroPreDocumentiAnnullatiDefiniti
-	 */
-	public Long getNumeroPreDocumentiAnnullatiDefiniti() {
-		return this.numeroPreDocumentiAnnullatiDefiniti;
-	}
-
-	/**
-	 * @param numeroPreDocumentiAnnullatiDefiniti the numeroPreDocumentiAnnullatiDefiniti to set
-	 */
-	public void setNumeroPreDocumentiAnnullatiDefiniti(Long numeroPreDocumentiAnnullatiDefiniti) {
-		this.numeroPreDocumentiAnnullatiDefiniti = numeroPreDocumentiAnnullatiDefiniti;
-	}
-
-	/**
-	 * @return the numeroPreDocumentiTotale
-	 */
-	public Long getNumeroPreDocumentiTotale() {
-		return this.numeroPreDocumentiTotale;
-	}
-
-	/**
-	 * @param numeroPreDocumentiTotale the numeroPreDocumentiTotale to set
-	 */
-	public void setNumeroPreDocumentiTotale(Long numeroPreDocumentiTotale) {
-		this.numeroPreDocumentiTotale = numeroPreDocumentiTotale;
-	}
-
-	/**
-	 * @return the importoPreDocumentiIncompleti
-	 */
-	public BigDecimal getImportoPreDocumentiIncompleti() {
-		return this.importoPreDocumentiIncompleti;
-	}
-
-	/**
-	 * @param importoPreDocumentiIncompleti the importoPreDocumentiIncompleti to set
-	 */
-	public void setImportoPreDocumentiIncompleti(BigDecimal importoPreDocumentiIncompleti) {
-		this.importoPreDocumentiIncompleti = importoPreDocumentiIncompleti;
-	}
-
-	/**
-	 * @return the importoPreDocumentiCompleti
-	 */
-	public BigDecimal getImportoPreDocumentiCompleti() {
-		return this.importoPreDocumentiCompleti;
-	}
-
-	/**
-	 * @param importoPreDocumentiCompleti the importoPreDocumentiCompleti to set
-	 */
-	public void setImportoPreDocumentiCompleti(BigDecimal importoPreDocumentiCompleti) {
-		this.importoPreDocumentiCompleti = importoPreDocumentiCompleti;
-	}
-
-	/**
-	 * @return the importoPreDocumentiAnnullatiDefiniti
-	 */
-	public BigDecimal getImportoPreDocumentiAnnullatiDefiniti() {
-		return this.importoPreDocumentiAnnullatiDefiniti;
-	}
-
-	/**
-	 * @param importoPreDocumentiAnnullatiDefiniti the importoPreDocumentiAnnullatiDefiniti to set
-	 */
-	public void setImportoPreDocumentiAnnullatiDefiniti(BigDecimal importoPreDocumentiAnnullatiDefiniti) {
-		this.importoPreDocumentiAnnullatiDefiniti = importoPreDocumentiAnnullatiDefiniti;
-	}
-
-	/**
-	 * @return the importoPreDocumentiTotale
-	 */
-	public BigDecimal getImportoPreDocumentiTotale() {
-		return this.importoPreDocumentiTotale;
-	}
-
-	/**
-	 * @param importoPreDocumentiTotale the importoPreDocumentiTotale to set
-	 */
-	public void setImportoPreDocumentiTotale(BigDecimal importoPreDocumentiTotale) {
-		this.importoPreDocumentiTotale = importoPreDocumentiTotale;
-	}
-	
 	/* ***** Requests ***** */
 
+
 	/**
-	 * Crea una request per il servizio di {@link CompletaDefiniscePreDocumentoEntrata}.
+	 * Crea una request per il servizio di {@link RicercaSinteticaPreDocumentoEntrata}.
+	 * 
 	 * @return la request creata
 	 */
-	public CompletaDefiniscePreDocumentoEntrata creaRequestCompletaDefiniscePreDocumentoEntrata() {
-		CompletaDefiniscePreDocumentoEntrata req = creaRequest(CompletaDefiniscePreDocumentoEntrata.class);
+	public RicercaSinteticaPreDocumentoEntrata creaRequestRicercaSinteticaPreDocumentoEntrata() {
+		RicercaSinteticaPreDocumentoEntrata request = creaRequest(RicercaSinteticaPreDocumentoEntrata.class);
 		
-		// Ricerca
-		req.setBilancio(getBilancio());
-		req.setCausaleEntrata(impostaEntitaFacoltativa(getCausaleEntrata()));
-		req.setDataCompetenzaDa(getDataCompetenzaDa());
-		req.setDataCompetenzaA(getDataCompetenzaA());
+		request.setCompletaDefinisciPreDoc(true);
 		
-		// Aggiornamento
-		req.setAttoAmministrativo(impostaEntitaFacoltativa(getAttoAmministrativo()));
-		req.setAccertamento(impostaEntitaFacoltativa(getMovimentoGestione()));
-		req.setSubAccertamento(impostaEntitaFacoltativa(getSubMovimentoGestione()));
-		req.setSoggetto(impostaEntitaFacoltativa(getSoggetto()));
+		request.setParametriPaginazione(creaParametriPaginazione(50));
 		
-		return req;
+		// Flags
+		request.setAnnoBilancio(getBilancio().getAnno());
+		request.setDataCompetenzaA(getDataCompetenzaA());
+		request.setDataCompetenzaDa(getDataCompetenzaDa());
+		request.setCausaleEntrataMancante(Boolean.FALSE);
+		request.setContoCorrenteMancante(Boolean.FALSE);
+		request.setSoggettoMancante(Boolean.FALSE);
+		request.setProvvedimentoMancante(Boolean.FALSE);
+		request.setEstraiNonIncassato(Boolean.FALSE);
+		request.setTipoCausale(getTipoCausale());
+		
+		//SIAC-6780
+//		request.setCausaleEntrata(getCausaleEntrata());
+		
+		PreDocumentoEntrata preDoc = new PreDocumentoEntrata();
+		preDoc.setEnte(getEnte());
+		
+		//SIAC-6780
+		preDoc.setContoCorrente(getContoCorrente());
+		preDoc.setSoggetto(getSoggetto());
+		preDoc.setAccertamento(getAccertamento());
+		preDoc.setAttoAmministrativo(getAttoAmministrativo());
+		preDoc.setCausaleEntrata(getCausaleEntrata());
+		//
+		
+		request.setPreDocumentoEntrata(preDoc);
+		
+		request.setDocumento(null);
+		
+		// SIAC-4383
+		request.setDataTrasmissioneDa(null);
+		request.setDataTrasmissioneA(null);
+		
+		// SIAC-4620
+		request.setNonAnnullati(null);
+		// SIAC-4772
+		request.setOrdinativoIncasso(null);
+		// SIAC-5250
+		request.setOrdinamentoPreDocumentoEntrata(null);
+		
+		return request;
 	}
+	
 	
 	/**
 	 * Crea una request per il servizio di {@link RicercaTotaliPreDocumentoEntrataPerStato}.
@@ -210,11 +93,56 @@ public class CompletaDefinisciPreDocumentoEntrataModel extends GenericPreDocumen
 		RicercaTotaliPreDocumentoEntrataPerStato req = creaRequest(RicercaTotaliPreDocumentoEntrataPerStato.class);
 		// Parametri di ricerca
 		req.setBilancio(getBilancio());
-		req.setCausaleEntrata(impostaEntitaFacoltativa(getCausaleEntrata()));
-		req.setDataCompetenzaDa(getDataCompetenzaDa());
-		req.setDataCompetenzaA(getDataCompetenzaA());
+		req.setRequestRicerca(new RicercaSinteticaPreDocumentoEntrata());
+		
+		PreDocumentoEntrata predoc = new PreDocumentoEntrata();
+		predoc.setEnte(getEnte());
+		predoc.setCausaleEntrata(impostaEntitaFacoltativa(getCausaleEntrata()));
+		predoc.setContoCorrente(impostaEntitaFacoltativa(getContoCorrente()));
+		
+		//SIAC-7443
+		predoc.setStrutturaAmministrativoContabile(impostaEntitaFacoltativa(getStrutturaAmministrativoContabile()));
+		
+		req.getRequestRicerca().setPreDocumentoEntrata(predoc);
+		req.getRequestRicerca().setTipoCausale(impostaEntitaFacoltativa(getTipoCausale()));;
+		req.getRequestRicerca().setDataCompetenzaDa(getDataCompetenzaDa());
+		req.getRequestRicerca().setDataCompetenzaA(getDataCompetenzaA());
 		
 		return req;
 	}
 	
+	/**
+	 * Crea una request per il servizio di {@link CompletaDefiniscePreDocumentoEntrata}.
+	 * @return la request creata
+	 */
+	public CompletaDefiniscePreDocumentoEntrata creaRequestCompletaDefiniscePreDocumentoEntrata() {
+		RicercaSinteticaPreDocumentoEntrata ricercaSinteticaPredocumentoEntrata = creaRequest(RicercaSinteticaPreDocumentoEntrata.class);
+		
+		PreDocumentoEntrata predoc = new PreDocumentoEntrata();
+		predoc.setEnte(getEnte());
+		predoc.setCausaleEntrata(impostaEntitaFacoltativa(getCausaleEntrata()));
+		predoc.setContoCorrente(impostaEntitaFacoltativa(getContoCorrente()));
+		
+		ricercaSinteticaPredocumentoEntrata.setPreDocumentoEntrata(predoc);
+		
+		ricercaSinteticaPredocumentoEntrata.setDataCompetenzaDa(getDataCompetenzaDa());
+		ricercaSinteticaPredocumentoEntrata.setDataCompetenzaA(getDataCompetenzaA());
+		
+		return creaRequestCompletaDefiniscePreDocumentoEntrata(ricercaSinteticaPredocumentoEntrata);
+		
+//		CompletaDefiniscePreDocumentoEntrata req = creaRequest(CompletaDefiniscePreDocumentoEntrata.class);
+//		// Ricerca
+//		req.setBilancio(getBilancio());
+//		req.setRicercaSinteticaPredocumentoentrata(ricercaSinteticaPredocumentoEntrata);
+//		// Aggiornamento
+//		req.setAttoAmministrativo(impostaEntitaFacoltativa(getAttoAmministrativo()));
+//		req.setAccertamento(impostaEntitaFacoltativa(getMovimentoGestione()));
+//		req.setSubAccertamento(impostaEntitaFacoltativa(getSubMovimentoGestione()));
+//		req.setSoggetto(impostaEntitaFacoltativa(getSoggetto()));
+//		
+//		req.setProvvisorioCassa(getProvvisorioCassa());
+		
+//		return req;
+	}
+
 }

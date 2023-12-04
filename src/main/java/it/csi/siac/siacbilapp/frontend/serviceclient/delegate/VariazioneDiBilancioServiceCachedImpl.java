@@ -48,8 +48,8 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodificheResponse;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancioResponse;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReportResponse;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 
@@ -191,8 +191,8 @@ public class VariazioneDiBilancioServiceCachedImpl implements VariazioneDiBilanc
 	}
 
 	@Override
-	public StampaExcelVariazioneDiBilancioResponse stampaExcelVariazioneDiBilancio(StampaExcelVariazioneDiBilancio parameters) {
-		return  variazioneDiBilancioService.stampaExcelVariazioneDiBilancio(parameters);
+	public VariazioneBilancioExcelReportResponse variazioneBilancioExcelReport(VariazioneBilancioExcelReport parameters) {
+		return  variazioneDiBilancioService.variazioneBilancioExcelReport(parameters);
 	}
 
 	@Override

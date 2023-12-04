@@ -25,35 +25,81 @@ SPDX-License-Identifier: EUPL-1.2
 					Importo documento: <s:property value="documento.importo" /> - Totale da pagare quote: <span id="SPAN_totaleDaPagareQuoteIntestazione"><s:property value="totaleDaPagareQuote" /></span>
 				</h4>
 				<h4 id="statoDocumento"><s:property value="stato" /></h4>
+				<!-- SIAC-7562 - 25/06/2020 - CM e GM -->
+				<s:if test="documento.tipoDocumento.codice == 'FTV' && model.statoSDIdescrizione != null">
+					<h4 id="statoSDI">Stato SDI: &nbsp;<s:property value="model.statoSDIdescrizione"/>&nbsp;
+						<s:if test="documento.dataCambioStatoFel != null">
+							dal 
+							<s:property value="documento.dataCambioStatoFel"/>    
+						</s:if>
+					</h4>
+				</s:if>
+				<br>
 				<s:hidden id="HIDDEN_anno_datepicker" value="%{documento.anno}" />
 				<s:hidden id="HIDDEN_statoOperativoDocumentoCompleto" value="%{statoOperativoDocumentoCompleto}" />
 
 				<ul class="nav nav-tabs">
-					<li <s:if test="!ingressoTabQuote">class="active"</s:if>><a data-toggle="tab" href="#tabAggiornamentoDocumento">Documenti di entrata</a></li>
-					<li <s:if test="ingressoTabQuote">class="active"</s:if>><a data-toggle="tab" href="#tabQuoteDocumento">Quote</a></li>
-					<li <s:if test="!flagDatiIvaAccessibile">class="hide"</s:if>><a data-toggle="tab" href="#tabDatiIva">Dati iva</a></li>
-					<s:if test="flagDocumentiCollegatiAccessibile">
-						<li><a data-toggle="tab" href="#tabDocumentiCollegati">Documenti Collegati</a></li>
+					<%-- SIAC-6988 INIZIO FL--%>
+					<s:if test="!flagStatoSDIInviatoFEL">
+						<li <s:if test="!ingressoTabQuote">class="active"</s:if>><a data-toggle="tab" href="#tabAggiornamentoDocumento">Documenti di entrata</a></li>
+						<li <s:if test="ingressoTabQuote">class="active"</s:if>><a data-toggle="tab" href="#tabQuoteDocumento">Quote</a></li>
+						<li <s:if test="!flagDatiIvaAccessibile">class="hide"</s:if>><a data-toggle="tab" href="#tabDatiIva">Dati iva</a></li>
+						<s:if test="flagDocumentiCollegatiAccessibile">
+							<li><a data-toggle="tab" href="#tabDocumentiCollegati">Documenti Collegati</a></li>
+						</s:if>
 					</s:if>
+					<s:else>
+						<li <s:if test="!ingressoTabQuote">class="active"</s:if>><a data-toggle="tab" href="#documentoEntrata">Documenti di entrata</a></li>
+						<li><a href="#quoteDocumentoEntrata" data-toggle="tab">Quote</a></li>
+							<s:if test="flagDatiIvaAccessibile">
+								<li><a href="#datiIvaDocumentoEntrata" data-toggle="tab">Dati Iva</a></li>
+							</s:if>
+							<li><a href="#documentiCollegatiDocumentoEntrata" data-toggle="tab">Documenti collegati</a></li>
+					</s:else>
+					<%-- SIAC-6988 FINE FL--%>
 					<s:if test="flagNoteCreditoAccessibile">
 						<li><a data-toggle="tab" href="#tabNoteCredito">Note credito</a></li>
 					</s:if>
 				</ul>
 				<div class="tab-content noOverflow">
-					<div id="tabAggiornamentoDocumento" class="tab-pane fade<s:if test="!ingressoTabQuote"> in active</s:if>">
+
+					<%-- SIAC-6988 INIZIO FL--%>
+					<s:if test="!flagStatoSDIInviatoFEL">
+						<div id="tabAggiornamentoDocumento" class="tab-pane fade<s:if test="!ingressoTabQuote"> in active</s:if>">
 						<s:include value="/jsp/documento/aggiornamento/aggiornamentoDocumentoEntrata.jsp" />
-					</div>
-					<div id="tabQuoteDocumento" class="tab-pane fade<s:if test="ingressoTabQuote"> in active</s:if>">
-						<s:include value="/jsp/documento/aggiornamento/quoteDocumentoEntrata.jsp" />
-					</div>
-					<div id="tabDatiIva" class="tab-pane fade <s:if test="!flagDatiIvaAccessibile">hide</s:if>">
-						<s:include value="/jsp/documento/aggiornamento/datiIvaDocumentoEntrata.jsp" />
-					</div>
-					<s:if test="flagDocumentiCollegatiAccessibile">
-						<div id="tabDocumentiCollegati" class="tab-pane fade">
-							<s:include value="/jsp/documento/aggiornamento/documentiCollegatiDocumentoEntrata.jsp" />
 						</div>
+	
+						<div id="tabQuoteDocumento" class="tab-pane fade<s:if test="ingressoTabQuote"> in active</s:if>">
+							<s:include value="/jsp/documento/aggiornamento/quoteDocumentoEntrata.jsp" />
+						</div>
+						<div id="tabDatiIva" class="tab-pane fade <s:if test="!flagDatiIvaAccessibile">hide</s:if>">
+							<s:include value="/jsp/documento/aggiornamento/datiIvaDocumentoEntrata.jsp" />
+						</div>
+						<s:if test="flagDocumentiCollegatiAccessibile">
+							<div id="tabDocumentiCollegati" class="tab-pane fade">
+								<s:include value="/jsp/documento/aggiornamento/documentiCollegatiDocumentoEntrata.jsp" />
+							</div>
+						</s:if>
 					</s:if>
+					<s:else>
+						<div class="tab-pane active" id="documentoEntrata">
+									<s:include value="/jsp/documento/consultazione/consultaDocEntrata_documentiEntrata.jsp" />
+						</div>
+						
+						<div class="tab-pane" id="quoteDocumentoEntrata">
+								<s:include value="/jsp/documento/consultazione/consultaDocEntrata_quote.jsp" />
+							</div>
+							<s:if test="flagDatiIvaAccessibile">
+								<div class="tab-pane" id="datiIvaDocumentoEntrata">
+									<s:include value="/jsp/documento/consultazione/consultaDocEntrata_datiIva.jsp" />
+								</div>
+							</s:if>
+							<div id="documentiCollegatiDocumentoEntrata" class="tab-pane fade">
+								<s:include value="/jsp/documento/aggiornamento/documentiCollegatiDocumentoEntrata.jsp" />
+							</div>
+					</s:else>
+					<%-- SIAC-6988 FINE FL--%>
+					
 					<s:if test="flagNoteCreditoAccessibile">
 						<div id="tabNoteCredito" class="tab-pane fade">
 							<s:include value="/jsp/documento/aggiornamento/noteCreditoDocumentoEntrata.jsp" />
@@ -71,22 +117,22 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_doc.js"></script>
-	<script type="text/javascript" src="${jspath}provvisorioDiCassa/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaEntrataAggiornamento.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaEntrataQuote.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaEntrataDatiIva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_doc.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaEntrataAggiornamento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaEntrataQuote.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaEntrataDatiIva.js"></script>
 	<s:if test="flagDocumentiCollegatiAccessibile">
-		<script type="text/javascript" src="${jspath}documento/aggiornaEntrataDocumentiCollegati.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaEntrataDocumentiCollegati.js"></script>
 	</s:if>
 	<s:if test="flagNoteCreditoAccessibile">
-		<script type="text/javascript" src="${jspath}documento/aggiornaEntrataNoteCredito.js"></script>
-		<script type="text/javascript" src="${jspath}documento/include/ricercaEntrataNoteCredito_Modale.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaEntrataNoteCredito.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documento/include/ricercaEntrataNoteCredito_Modale.js"></script>
 	</s:if>
 	
 </body>

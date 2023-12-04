@@ -11,6 +11,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioTipoDocumentoFEL;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoDocFEL;
+import it.csi.siac.siacbilser.model.TipoDocFEL;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodicePCC;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceUfficioDestinatarioPCC;
@@ -41,9 +44,27 @@ public class RicercaFatturaElettronicaModel extends GenericBilancioModel {
 	private CodicePCC codicePCC;
 	
 	private List<TipoDocumentoFEL> listaTipoDocumentoFEL = new ArrayList<TipoDocumentoFEL>();
+	//SIAC-7557
+	private List<TipoDocFEL> listaTipoDocumentoFELDB = new ArrayList<TipoDocFEL>();
+	
+ 
+	
+	
+	
 	private List<CodiceUfficioDestinatarioPCC> listaCodiceUfficioDestinatarioPCC = new ArrayList<CodiceUfficioDestinatarioPCC>();
 	private List<CodicePCC> listaCodicePCC = new ArrayList<CodicePCC>();
 	private List<StatoAcquisizioneFEL> listaStatoAcquisizioneFEL = new ArrayList<StatoAcquisizioneFEL>();
+	
+	
+	/**
+	 * Crea una request per il servizio di {@link RicercaDettaglioTipoDocumentoFEL}.
+	 * 
+	 * @return la request creata
+	 */
+	public RicercaTipoDocFEL creaRequestRicercaTipoDocFEL() {
+		RicercaTipoDocFEL request = creaRequest(RicercaTipoDocFEL.class);
+		return request;
+	}
 	
 	/** Costruttore vuoto di default */
 	public RicercaFatturaElettronicaModel() {
@@ -148,6 +169,27 @@ public class RicercaFatturaElettronicaModel extends GenericBilancioModel {
 		this.listaTipoDocumentoFEL = listaTipoDocumentoFEL != null ? listaTipoDocumentoFEL : new ArrayList<TipoDocumentoFEL>();
 	}
 	
+	
+	
+	
+	
+	
+	/**
+	 * @return the listaTipoDocumentoFELDB
+	 */
+	public List<TipoDocFEL> getListaTipoDocumentoFELDB()
+	{
+		return listaTipoDocumentoFELDB;
+	}
+
+	/**
+	 * @param listaTipoDocumentoFELDB the listaTipoDocumentoFELDB to set
+	 */
+	public void setListaTipoDocumentoFELDB(List<TipoDocFEL> listaTipoDocumentoFELDB)
+	{
+		this.listaTipoDocumentoFELDB = listaTipoDocumentoFELDB;
+	}
+
 	/**
 	 * @return the listaCodiceUfficioDestinatarioPCC
 	 */

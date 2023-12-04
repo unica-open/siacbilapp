@@ -148,10 +148,38 @@ SPDX-License-Identifier: EUPL-1.2
 								<div class="control-group">
 									<label for="missione" class="control-label">Missione *</label>
 									<div class="controls">
-										<s:select list="listaMissione" id="missione" name="missione.uid" required="true" cssClass="span10"
-											headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
+										<select id="missione" name="missione.uid" required class="span10">
+												<option value="0"></option>
+												<s:iterator value="listaMissione" var="mm">
+													<option data-codice="<s:property value="#mm.codice" />" value="<s:property value="#mm.uid"/>" <s:if test="%{missione.uid == #mm.uid}">selected</s:if>>
+														<s:property value="%{#mm.codice + ' - ' + #mm.descrizione}"/>
+													</option>
+												</s:iterator>
+										</select>
 									</div>
 								</div>
+								<!-- task-55 -->
+								<div id="containerFlagCapitoloDaNonInserireA1" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+									<div class="control-group">
+										<label for="flagCapitoloDaNonInserireA1" class="control-label">Capitolo da non inserire nell'allegato A1 *
+											<!-- task-55 -->
+											<a class="tooltip-test" title="Risorse Accantonate per Risultato di Amministrazione - Allegato a1" href="#">
+												<i class="icon-info-sign">&nbsp;
+													<span class="nascosto">Risorse Accantonate per Risultato di Amministrazione - Allegato a1</span>
+												</i>
+											</a>
+										</label>
+										<div class="controls">
+											<label class="radio inline">
+												<s:radio theme="simple" name="capitoloUscitaGestione.flagNonInserireAllegatoA1" list="#{true:'Sì'}" value="null"/>
+											</label>
+											<label class="radio inline">
+												<s:radio theme="simple" name="capitoloUscitaGestione.flagNonInserireAllegatoA1" list="#{false:'No'}" value="null"/>
+											</label>
+										</div>
+									</div>
+								</div>
+								
 								<div class="control-group">
 									<label for="programma" class="control-label">Programma *
 										<a class="tooltip-test" title="selezionare prima la Missione" href="#">
@@ -167,7 +195,8 @@ SPDX-License-Identifier: EUPL-1.2
 									</div>
 								</div>
 								<div class="control-group">
-									<label for="classificazioneCofog" class="control-label">Cofog
+								<!-- task-9 obbligatorio cofog -->
+									<label for="classificazioneCofog" class="control-label">Cofog *
 										<a class="tooltip-test" title="selezionare prima il Programma" href="#">
 											<i class="icon-info-sign">&nbsp;
 												<span class="nascosto">selezionare prima il Programma</span>
@@ -306,10 +335,25 @@ SPDX-License-Identifier: EUPL-1.2
 										</select>
 									</div>
 								</div>
+								<div id="containerRisorsaAccantonata" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+									<div class="control-group">
+										<label for="risorsaAccantonata" class="control-label">Risorsa accantonata * </label>
+										<div class="controls">
+											<select id="risorsaAccantonata" name="risorsaAccantonata.uid"  <s:if test='%{!missioneFondi}'>disabled</s:if> class="span10">
+												<option value="0" <s:if test="%{risorsaAccantonata == null || risorsaAccantonata.uid == 0}">selected</s:if> ></option>
+												<s:iterator value="listaRisorsaAccantonata" var="dd">
+													<option data-codice="<s:property value="#dd.codice" />" value="<s:property value="#dd.uid"/>" <s:if test="%{risorsaAccantonata != null && risorsaAccantonata.uid == #dd.uid}">selected</s:if>>
+														<s:property value="%{#dd.codice + ' - ' + #dd.descrizione}"/>
+													</option>
+												</s:iterator>
+											</select>
+										</div>
+									</div>
+								</div>
 								<div class="control-group">
 									<label for="flagImpegnabile" class="control-label">Impegnabile</label>
 									<div class="controls">
-										<s:checkbox id="flagImpegnabile" name="capitoloUscitaGestione.flagImpegnabile" />
+										<s:checkbox id="flagImpegnabile" disabled='%{missioneFondi}' name="capitoloUscitaGestione.flagImpegnabile" />
 									</div>
 								</div>
 							</fieldset>
@@ -554,9 +598,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloUscita.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloUscitaGestione/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloUscita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloUscitaGestione/inserisci.js"></script>
 </body>
 </html>

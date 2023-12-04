@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacfin2ser.model.AttivitaIva;
@@ -139,11 +139,11 @@ public class ElementoSubdocumentoIvaEntrata extends SubdocumentoEntrata implemen
 				.append("/")
 				.append(accertamento.getAnnoMovimento())
 				.append("/")
-				.append(accertamento.getNumero().toPlainString());
+				.append(accertamento.getNumeroBigDecimal().toPlainString());
 			SubAccertamento subAccertamento = getSubAccertamento();
 			if(subAccertamento != null) {
 				result.append("-")
-					.append(subAccertamento.getNumero().toPlainString());
+					.append(subAccertamento.getNumeroBigDecimal().toPlainString());
 			}
 		}
 		return result.toString();

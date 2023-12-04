@@ -12,6 +12,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.BaseInse
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.BaseInserisciAggiornaPrimaNotaLiberaBaseAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgsaapp.frontend.ui.model.primanotaintegratamanuale.InserisciPrimaNotaIntegrataManualeGSAModel;
 /**
  * Classe di action per l'inserimento della prima nota integrata manuale, sezione dei movimenti dettaglio
@@ -31,5 +32,12 @@ public class InserisciContoPrimaNotaIntegrataManualeGSAAction extends BaseInseri
 	@Override
 	protected BilSessionParameter getBilSessionParameterListeCausali() {
 		return BilSessionParameter.LISTA_CAUSALE_EP_INTEGRATA_MANUALE_GSA;
+	}
+	@Override
+	protected boolean getFaseDiBilancioNonCompatibile(FaseBilancio faseBilancio) {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return
+		FaseBilancio.PLURIENNALE.equals(faseBilancio) ||
+		FaseBilancio.PREVISIONE.equals(faseBilancio);
 	}
 }

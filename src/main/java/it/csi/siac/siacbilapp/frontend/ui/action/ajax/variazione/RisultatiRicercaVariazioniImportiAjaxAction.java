@@ -5,7 +5,7 @@
 
 package it.csi.siac.siacbilapp.frontend.ui.action.ajax.variazione;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaVariazioniAjaxModel;
@@ -32,7 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaVariazioniImportiAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoVariazione, 
+public class RisultatiRicercaVariazioniImportiAjaxAction extends PagedDataTableAjaxAction<ElementoVariazione, 
 	RisultatiRicercaVariazioniAjaxModel, VariazioneImportoCapitolo, RicercaVariazioneBilancio, RicercaVariazioneBilancioResponse> {
 	
 	/** Per la serializzazione */
@@ -60,12 +60,12 @@ public class RisultatiRicercaVariazioniImportiAjaxAction extends GenericRisultat
 	}
 
 	@Override
-	protected ElementoVariazione ottieniIstanza(VariazioneImportoCapitolo e) throws FrontEndBusinessException {
+	protected ElementoVariazione getInstance(VariazioneImportoCapitolo e) throws FrontEndBusinessException {
 		return ElementoVariazioneFactory.getInstance(e,model.getEnte().getGestioneLivelli());
 	}
 
 	@Override
-	protected RicercaVariazioneBilancioResponse ottieniResponse(RicercaVariazioneBilancio request) {
+	protected RicercaVariazioneBilancioResponse getResponse(RicercaVariazioneBilancio request) {
 		return variazioneDiBilancioService.ricercaVariazioneBilancio(request);
 	}
 

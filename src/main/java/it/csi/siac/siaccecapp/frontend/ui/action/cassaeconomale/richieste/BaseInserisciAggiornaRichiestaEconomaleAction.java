@@ -22,10 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
@@ -54,6 +53,7 @@ import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.file.File;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
 import it.csi.siac.siacfinser.model.codifiche.ModalitaAccreditoSoggetto;
@@ -118,7 +118,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 	protected void checkCasoDUsoApplicabile() {
 		List<AzioneConsentita> azioniConsentite = sessionHandler.getAzioniConsentite();
 		
-		AzioniConsentite[] azioniRichieste = retrieveAzioniConsentite();
+		AzioneConsentitaEnum[] azioniRichieste = retrieveAzioniConsentite();
 		boolean consentito = AzioniConsentiteFactory.isConsentitoAll(azioniConsentite, azioniRichieste);
 		if(!consentito) {
 			throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("non si dispone dei permessi necessari per l'esecuzione").getTesto(),
@@ -130,7 +130,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 	 * Ottiene le azioni consentite richieste per l'attivazione della funzionalit&agrave;
 	 * @return le azioni richieste
 	 */
-	protected abstract AzioniConsentite[] retrieveAzioniConsentite();
+	protected abstract AzioneConsentitaEnum[] retrieveAzioniConsentite();
 
 	/**
 	 * Compone il testo per il check della cassa economale
@@ -338,7 +338,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 		modalitaPagamentoCassa = ComparatorUtils.searchByUidEventuallyNull(model.getListaModalitaPagamentoCassa(), modalitaPagamentoCassa);
 		log.debug(methodName, "Modalita trovata? " + (modalitaPagamentoCassa != null));
 		if(modalitaPagamentoCassa == null) {
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("modalita' di pagamento della cassa", "non e' presente tra quelle elencate"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("modalita' di pagamento della cassa", "non e' presente tra quelle elencate"));
 			return SUCCESS;
 		}
 		// Ho il dato. Estraggo il necessario
@@ -414,7 +414,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String msgErrore = createErrorInServiceInvocationString(request, response);
+				String msgErrore = createErrorInServiceInvocationString(RicercaModalitaPagamentoCassa.class, response);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 			listaModalitaPagamentoCassa = response.getModalitaPagamentoCassa();
@@ -442,7 +442,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String msgErrore = createErrorInServiceInvocationString(request, response);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 			listaModalitaPagamentoDipendente = response.getCodifiche(ModalitaPagamentoDipendente.class);
@@ -477,7 +477,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -707,7 +707,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 		modalitaPagamentoDipendente = ComparatorUtils.searchByUidEventuallyNull(model.getListaModalitaPagamentoDipendente(), modalitaPagamentoDipendente);
 		log.debug(methodName, "Modalita trovata? " + (modalitaPagamentoDipendente != null));
 		if(modalitaPagamentoDipendente == null) {
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("modalita' di pagamento del dipendente", "non e' presente tra quelle elencate"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("modalita' di pagamento del dipendente", "non e' presente tra quelle elencate"));
 			return SUCCESS;
 		}
 		// Ho il dato. Estraggo il necessario
@@ -904,7 +904,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 		mps = ComparatorUtils.searchByUidEventuallyNull(model.getListaModalitaPagamentoSoggettoDifferenteIban(), mps);
 		log.debug(methodName, "Modalita trovata? " + (mps == null));
 		if(mps == null) {
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("IBAN", "non e' presente tra quelli elencate"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("IBAN", "non e' presente tra quelli elencate"));
 			return SUCCESS;
 		}
 		
@@ -994,7 +994,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(StampaRicevutaRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -1035,7 +1035,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(StampaRicevutaRendicontoRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -1110,7 +1110,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String msg = createErrorInServiceInvocationString(request, response);
+			String msg = createErrorInServiceInvocationString(CalcolaDisponibilitaCassaEconomale.class, response);
 			log.info(methodName, msg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(msg);
@@ -1154,7 +1154,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			}
 			if(response.getSoggetto() == null) {
 				String errorMsg = "Nessun soggetto corrispondente al codice " + codiceSoggetto + " trovato";
@@ -1205,7 +1205,7 @@ public abstract class BaseInserisciAggiornaRichiestaEconomaleAction<M extends Ba
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			}
 			if(response.getSoggetto() == null) {
 				String errorMsg = "Nessun soggetto corrispondente al codice " + codiceSoggetto + " trovato";

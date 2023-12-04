@@ -107,6 +107,32 @@
 
     }
  
+
+	 /**
+     * Disassocia il cronoprogramma ad fpv (SIAC-8870)
+     *
+     * @param event (Event)  l'evento invocante la funzione
+     * @param uid   (Number) l'uid del cronoprogramma
+     */
+    function disassociaCronoprogrammaFPV(url){
+        var uid = $('#HIDDEN_UidDaDisassociare').val();
+        if(!url){
+        	return;
+        }
+
+        $.postJSON(url, {uidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV : uid}, function(data) {
+            if (impostaDatiNegliAlert(data.errori, alertErrori)) {
+                $('#msgDisassociaCronoprogrammaFPV').modal('hide');
+                return;
+            }
+            impostaDatiNegliAlert(data.informazioni, $('#INFORMAZIONI'));
+            $('#msgDisassociaCronoprogrammaFPV').modal('hide');
+
+            // Refresho la tabella
+            tabellaCronoprogrammiAssociati('cronoprogrammiNelProgetto', data);
+        });
+
+    }
     /**
      * Mostra la modale di annullamento del cronoprogramma con i 2 bottoni
      * @param crono (Object) il cronoprogramma
@@ -133,6 +159,25 @@
        
         $('#msgAssociaCronoprogrammaFPV').modal('show');
     }
+
+    /**
+     * Mostra il modale di disassociazione cronoprogramma FPV (SIAC-8870).
+     * 
+     * @param crono (Object) il cronoprogramma
+     */
+    function showModaleDisassociaCronoprogrammaFPV(crono, msgAzione, urlSalva) {
+        // Per ora mostro solo la versione del cronoprogramma volendo si puo aggiungere anche la descrizione dipende dall'analisi
+        // In questo caso non dice niente ho inserito solo la versione
+        var spanCronoDett = ' ' + crono.versione + ' ';
+        var innerMsgAzione = msgAzione || '';
+        $('#HIDDEN_UidDaDisassociare').val(crono.uid);
+        $('#msgDisassociaCronoprogrammaFPVspan').text(msgAzione + spanCronoDett);
+      
+        $('#pulsanteDisassociaCronoprogrammaFPV').eventPreventDefault('click',disassociaCronoprogrammaFPV.bind(undefined, urlSalva));
+       
+        $('#msgDisassociaCronoprogrammaFPV').modal('show');
+    }
+    
     
     /**
      * Chiamate ajax per il caricamento degli impegni in base ai parametri di ricerca
@@ -404,6 +449,7 @@
                     $('.pulsanteAnnullaCronoprogramma', nTd).eventPreventDefault('click', showModaleAnnullaCronoprogramma.bind(undefined, oData));
                     $('.pulsanteConsultaCronoprogramma', nTd).eventPreventDefault('click', consultaCronoprogramma.bind(undefined, oData, nTd));
                     $('.pulsanteAssociaCronoprogrammaFPV', nTd).eventPreventDefault('click', showModaleAssociaCronoprogrammaFPV.bind(undefined, oData, 'Stai per collegare il cronoprogramma ', 'aggiornaProgettoAssociaCronoprogrammaPerFPV.do'));
+					$('.pulsanteDisassociaCronoprogrammaFPV', nTd).eventPreventDefault('click', showModaleDisassociaCronoprogrammaFPV.bind(undefined, oData, 'Stai per disassociare il cronoprogramma ', 'aggiornaProgettoDisassociaCronoprogrammaPerFPV.do'));
                     $('.pulsanteSimulaCronoprogrammaFPV', nTd).eventPreventDefault('click', showModaleAssociaCronoprogrammaFPV.bind(undefined, oData, 'Stai per simulare il collegamento del cronoprogramma ', 'aggiornaProgetto_simulaFPV.do'));
                     $('.pulsanteAnnullaSimulaCronoprogrammaFPV', nTd).eventPreventDefault('click', showModaleAssociaCronoprogrammaFPV.bind(undefined, oData, 'Stai annullare il collegamento provvisorio del cronoprogramma ', 'aggiornaProgetto_annullaSimulaFPV.do'));
                 }}
@@ -688,11 +734,19 @@
     }
     
     function annulla(){
-     	 var $form = $('form');   	 
-     	 var uid = $('#aggiornamentoProgetto_progetto_uid').val(); 
-     	 $form.attr('action', 'aggiornaProgetto.do?uidDaAggiornare='+ uid);
-     	 $form.submit();
-     }
+    	 var $form = $('form');   	 
+    	 var uid = $('#aggiornamentoProgetto_progetto_uid').val(); 
+    	 $form.attr('action', 'aggiornaProgetto.do?uidDaAggiornare='+ uid);
+    	 $form.submit();
+    }
+
+    function setFieldsToReadonly() {
+    	if ($("#disabilitaAggiornaCampi").data('disabilita')) {
+    	   	$('.canBeReadonly').prop('readonly', true);
+    	   	$(".canBeReadonly > option:not(:selected)").remove();
+    	   	$(".accordion-body.canBeReadonly").remove();
+    	}
+    }
 
     
     $(function() {
@@ -728,5 +782,10 @@
             this.reset();
         });
 
+        
+        // SIAC-8703
+        
+        setFieldsToReadonly();
+        
     });
 }());

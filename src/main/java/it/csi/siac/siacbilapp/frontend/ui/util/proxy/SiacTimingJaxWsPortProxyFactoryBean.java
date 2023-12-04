@@ -8,6 +8,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean;
 
 import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonapp.util.log.LogWebUtil;
 
 /**
  * Factory bean per il proxy verso JAX-WS.
@@ -17,6 +18,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
  * @see JaxWsPortProxyFactoryBean
  *
  */
+@Deprecated
 public class SiacTimingJaxWsPortProxyFactoryBean extends JaxWsPortProxyFactoryBean {
 	
 	private LogUtil log;
@@ -24,7 +26,7 @@ public class SiacTimingJaxWsPortProxyFactoryBean extends JaxWsPortProxyFactoryBe
 	@Override
 	public void prepare() {
 		super.prepare();
-		log = new LogUtil(getServiceInterface());
+		log = new LogWebUtil(getServiceInterface());
 	}
 	
 	@Override

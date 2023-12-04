@@ -84,26 +84,41 @@ SPDX-License-Identifier: EUPL-1.2
 		</action>
 		
 		<action name="ricercaCapitoloSpesaConsultabileAjax_download" class="ricercaCapitoloSpesaConsultabileAjaxAction" method="download">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="defaultStack"/>
+  			<interceptor-ref name="cookieProvider"/>
 			<result name="success" type="entitaConsultabileStream" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		
 		<action name="ricercaCapitoloEntrataConsultabileAjax_download" class="ricercaCapitoloEntrataConsultabileAjaxAction" method="download">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="defaultStack"/>
+  			<interceptor-ref name="cookieProvider"/>
 			<result name="success" type="entitaConsultabileStream" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		
 		<action name="ricercaProvvedimentoConsultabileAjax_download" class="ricercaProvvedimentoConsultabileAjaxAction" method="download">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="defaultStack"/>
+  			<interceptor-ref name="cookieProvider"/>			
 			<result name="success" type="entitaConsultabileStream" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		
 		<action name="ricercaSoggettoConsultabileAjax_download" class="ricercaSoggettoConsultabileAjaxAction" method="download">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="defaultStack"/>
+  			<interceptor-ref name="cookieProvider"/>			
 			<result name="success" type="entitaConsultabileStream" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		
 		<action name="ricercaEntitaConsultabileAjax_download" class="ricercaEntitaConsultabileAjaxAction" method="download">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="defaultStack"/>
+  			<interceptor-ref name="cookieProvider"/>			
 			<result name="success" type="entitaConsultabileStream" />
 			<result name="input" type="customMessagesJSON" />
 		</action>

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLibera;
-import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.model.Ambito;
@@ -45,7 +44,7 @@ import it.csi.siac.siacgenser.model.TipoRelazionePrimaNota;
  * @version 1.0.0 - 14/04/2015
  *
  */
-public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseModel extends GenericBilancioModel {
+public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseModel extends BasePrimaNotaLiberaModel {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -5650709800328793574L;
@@ -113,7 +112,6 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseModel extends Gene
 	private Missione missione;
 	private Programma programma;
 	private List<Missione> listaMissione = new ArrayList<Missione>();
-
 	
 	// SIAC-5336
 	private ClassificatoreGSA classificatoreGSA;

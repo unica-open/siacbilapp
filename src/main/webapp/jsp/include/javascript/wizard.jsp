@@ -6,4 +6,4 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ taglib uri="http://www.csi.it/taglibs/remincl-1.0" prefix="r" %>
 
 <%-- Caricamento del framework Wizard per JavaScript --%>
-<script type="text/javascript" src="${jspathexternal}bwizard.min.js"></script>
+<script type="text/javascript" src="/siacbilapp/js/external/bwizard.min.js"></script>

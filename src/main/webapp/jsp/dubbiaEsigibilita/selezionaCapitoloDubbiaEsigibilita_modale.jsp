@@ -10,6 +10,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:set var="suffix">${param.suffix}</s:set>
 </c:if>
 
+<c:if test="${param.baseActionName != null}">
+  <s:set var="baseActionName">${param.baseActionName}</s:set>
+</c:if>
+
 <div id="modaleGuidaCapitolo<s:property value="%{#suffix}" />" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="guidaCapLabel" aria-hidden="true">
 	<div class="row-fluid">
 		<div class="modal-header">
@@ -114,6 +118,7 @@ SPDX-License-Identifier: EUPL-1.2
 												<button type="button" class="btn btn-primary pull-right" data-toggle="collapse" data-target="#struttAmm_modale<s:property value='%{#suffix}' default='' />">Conferma</button>
 											</div>
 											<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid" name="modale.strutturaAmministrativoContabile.uid" />
+											<s:hidden id="nomeAzioneSAC" value="FCDE" />
 										</div>
 									</div>
 								</div>
@@ -159,10 +164,12 @@ SPDX-License-Identifier: EUPL-1.2
 				</table>
 			</div>
 			<p class="margin-large">
-				<button type="button" class="btn" data-dismiss="modal"
-					aria-hidden="true">indietro</button>
-				<button type="button" id="pulsanteConfermaCapitoli" class="btn btn-primary">conferma</button>
+				<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">indietro</button>
+				<button type="button" id="pulsanteConfermaCapitoli" class="btn btn-primary" data-submit>conferma</button>
 			</p>
+			<s:hidden id="HIDDEN_baseActionName" name="baseActionName" />
+			<s:form id="formRicercaCapitoli_hidden" cssClass="hide" novalidate="novalidate" action="%{#baseActionName + '_confermaCapitoliModale'}" method="post"></s:form>
+		
 		</div>
 	</div>
 </div>

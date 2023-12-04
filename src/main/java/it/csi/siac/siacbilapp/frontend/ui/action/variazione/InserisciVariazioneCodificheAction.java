@@ -161,6 +161,10 @@ public class InserisciVariazioneCodificheAction extends InserisciVariazioneBaseA
 		// Imposto il numero della variazione
 		model.getSpecificaCodifiche().setNumeroVariazione(response.getVariazioneCodificaCapitolo().getNumero());
 		
+		// Imposto lo stato
+		//SIAC-8332-REGP
+		model.getSpecificaCodifiche().setStatoVariazione(response.getVariazioneCodificaCapitolo().getStatoOperativoVariazioneDiBilancio());
+		
 		if(!Boolean.TRUE.equals(response.getIsProvvedimentoPresente())) {
 			addMessaggio(ErroreBil.PROVVEDIMENTO_VARIAZIONE_NON_PRESENTE.getErrore());
 		}

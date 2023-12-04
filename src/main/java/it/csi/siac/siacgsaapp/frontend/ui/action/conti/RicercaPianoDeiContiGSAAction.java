@@ -6,7 +6,7 @@ package it.csi.siac.siacgsaapp.frontend.ui.action.conti;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -17,9 +17,9 @@ import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AnnullaConto;
@@ -213,9 +213,9 @@ public class RicercaPianoDeiContiGSAAction extends RicercaPianoDeiContiAction<Ri
 	@Override
 	protected boolean isGestioneConsentita() {
 		List<AzioneConsentita> listaAzioni = sessionHandler.getAzioniConsentite();
-		Boolean azioneConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PIANO_DEI_CONTI_GESTISCI_PIANO_DEI_CONTI_GSA, listaAzioni);
-		FaseBilancio faseBilancio = sessionHandler.getParametro(BilSessionParameter.FASE_BILANCIO);
-		return  Boolean.TRUE.equals(azioneConsentita) && !FaseBilancio.CHIUSO.equals(faseBilancio);
+		Boolean azioneConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PIANO_DEI_CONTI_GESTISCI_PIANO_DEI_CONTI_GSA, listaAzioni);
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return  Boolean.TRUE.equals(azioneConsentita); //&& !FaseBilancio.CHIUSO.equals(sessionHandler.getParametro(BilSessionParameter.FASE_BILANCIO));
 	}
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siacbasegengsaapp.frontend.ui.action.conti.BaseInserisciAggiornaPianoDeiContiAction#getBilSessionParameterListaClassiPiano()

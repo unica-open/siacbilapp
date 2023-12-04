@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaCapitoloMassivoAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.WrapperAzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteWrapper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaMassivaCapitoloEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaMassivaCapitoloEntrataGestioneResponse;
@@ -41,7 +41,7 @@ public class RisultatiRicercaCapitoloEntrataGestioneMassivoAjaxAction extends Ge
 		super();
 		setParametroSessioneLista(BilSessionParameter.RISULTATI_RICERCA_SINTETICA_CAPITOLO_ENTRATA_GESTIONE);
 		setParametroSessioneRequest(BilSessionParameter.REQUEST_RICERCA_SINTETICA_MASSIVA_CAPITOLO);
-		setNomeAzione(WrapperAzioniConsentite.ACTION_NAME_ENTRATA_GESTIONE);
+		setNomeAzione(AzioniConsentiteWrapper.ACTION_NAME_ENTRATA_GESTIONE);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class RisultatiRicercaCapitoloEntrataGestioneMassivoAjaxAction extends Ge
 	}
 
 	@Override
-	protected RicercaSinteticaMassivaCapitoloEntrataGestioneResponse ottieniResponse(RicercaSinteticaMassivaCapitoloEntrataGestione request) {
+	protected RicercaSinteticaMassivaCapitoloEntrataGestioneResponse getResponse(RicercaSinteticaMassivaCapitoloEntrataGestione request) {
 		return capitoloEntrataGestioneService.ricercaSinteticaMassivaCapitoloEntrataGestione(request);
 	}
 

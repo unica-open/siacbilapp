@@ -48,7 +48,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<a id="pulsanteCollegaEntrataNotaCreditoEsistente" class="btn btn-secondary">
 				collega nota esistente&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteCollegaEntrataNotaCreditoEsistente"></i>
 			</a>
-		</s:if>			
+			</s:if>
 		<a id="pulsanteDettaglioQuoteNotaCredito" class="btn btn-secondary">
 			dettaglio quote&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteDettaglioQuoteNotaCredito"></i>
 		</a>

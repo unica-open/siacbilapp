@@ -36,11 +36,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneTotale" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneTotale">
-			<result name="success" type="chain">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="success" type="redirectAction">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
 		</action>
 		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneAltroUfficio" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneAltroUfficio">
-			<result name="success" type="chain">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="success" type="redirectAction">inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
 		</action>
 		<action name="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomale_annullaStep1" class="inserisciRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="annullaStep1">
@@ -131,11 +131,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneTotale" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneTotale">
-			<result name="success" type="chain">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="success" type="redirectAction">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
 		</action>
 		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_restituzioneAltroUfficio" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleGiustificativiAction" method="restituzioneAltroUfficio">
-			<result name="success" type="chain">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
+			<result name="success" type="redirectAction">aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_completeStep1</result>
 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpesePerMissione/rendiconto/step1.jsp</result>
 		</action>
 		<action name="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomale_annullaStep1" class="aggiornaRendicontoAnticipoSpesePerMissioneCassaEconomaleAction" method="annullaStep1">

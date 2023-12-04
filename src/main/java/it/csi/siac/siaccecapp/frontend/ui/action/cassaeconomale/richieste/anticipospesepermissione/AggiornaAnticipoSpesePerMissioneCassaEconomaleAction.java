@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.anticipospesepermissione;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -15,7 +15,6 @@ import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesExcep
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospesepermissione.AggiornaAnticipoSpesePerMissioneCassaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.msg.AggiornaRichiestaEconomale;
 import it.csi.siac.siaccecser.frontend.webservice.msg.AggiornaRichiestaEconomaleResponse;
@@ -26,6 +25,7 @@ import it.csi.siac.siaccecser.model.RichiestaEconomale;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.Valuta;
 
 /**
@@ -119,7 +119,7 @@ public class AggiornaAnticipoSpesePerMissioneCassaEconomaleAction extends BaseIn
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -179,14 +179,14 @@ public class AggiornaAnticipoSpesePerMissioneCassaEconomaleAction extends BaseIn
 	 */
 	public String annullaStep2(){
 		String methodName = "annullaStep2";
-		log.debug(methodName, "mov: " + model.getMovimentoGestione().getNumero() + " copia: "+model.getMovimentoGestioneCopia().getNumero());
+		log.debug(methodName, "mov: " + model.getMovimentoGestione().getNumeroBigDecimal() + " copia: "+model.getMovimentoGestioneCopia().getNumeroBigDecimal());
 		model.setMovimentoGestione(model.getMovimentoGestioneCopia());
 		model.setSubMovimentoGestione(model.getSubMovimentoGestioneCopia());
 		return SUCCESS;
 	}
 	
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA};
 	}
 }

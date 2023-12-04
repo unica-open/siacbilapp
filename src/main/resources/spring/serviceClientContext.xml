@@ -26,6 +26,18 @@ SPDX-License-Identifier: EUPL-1.2
         </entry>
     </util:map>
 
+    <!-- SIAC-8050 per servizi pesanti, impostazione dei timeout a 10 minuti -->
+    <util:map id="jaxwsCustomPropertiesHeavy">
+        <!-- Sets timeout until a connection is established -->
+        <entry key="javax.xml.ws.client.connectionTimeout">
+            <value type="java.lang.Integer">600000</value>
+        </entry>
+        <!-- Sets timeout until a response is received -->
+        <entry key="javax.xml.ws.client.receiveTimeout">
+            <value type="java.lang.Integer">600000</value>
+        </entry>
+    </util:map>
+
     <!--
         Per utilizzare il servizio all'interno della propria Action o componente di Spring basta dichiarare un field a livello di classe in questo modo:
 
@@ -41,7 +53,7 @@ SPDX-License-Identifier: EUPL-1.2
     -->
 
     <!-- @@@@@@ Capitolo @@@@@@ -->
-    <bean id="capitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="capitoloService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -53,7 +65,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="capitoloUscitaPrevisioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="capitoloUscitaPrevisioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloUscitaPrevisioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -65,7 +77,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="capitoloUscitaGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="capitoloUscitaGestioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloUscitaGestioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -77,7 +89,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="capitoloEntrataPrevisioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="capitoloEntrataPrevisioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataPrevisioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloEntrataPrevisioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -89,7 +101,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="capitoloEntrataGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="capitoloEntrataGestioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CapitoloEntrataGestioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -103,7 +115,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 
     <!-- @@@@@@ Classificatori @@@@@@ -->
-    <bean id="classificatoreBilService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+    <bean id="classificatoreBilService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ClassificatoreBilService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -117,7 +129,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Atti @@@@@@ -->
-    <bean id="attoDiLeggeService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="attoDiLeggeService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacattser.frontend.webservice.AttoDiLeggeService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/AttoDiLeggeService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/att/svc/1.0" />
@@ -129,21 +141,21 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <!-- @@@@@@ Variazione di bilancio @@@@@@ -->
-    <bean id="variazioneDiBilancioService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <!-- @@@@@@ Variazione di bilancio @@@@@@ SIAC-8050 si aumenta il timeout a 10 minuti lato client -->
+    <bean id="variazioneDiBilancioService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.VariazioneDiBilancioService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/VariazioneDiBilancioService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
         <property name="serviceName" value="VariazioneDiBilancioService" />
         <property name="endpointAddress" value="${endpoint.url.service.bil}/VariazioneDiBilancioService" />
         <property name="lookupServiceOnStartup" value="false" />
-        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="customProperties" ref="jaxwsCustomPropertiesHeavy"/>
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
     <!-- @@@@@@ Provvedimento @@@@@@ -->
-    <bean id="provvedimentoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="provvedimentoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.att}/ProvvedimentoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/att/svc/1.0" />
@@ -156,7 +168,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Vincolo @@@@@@ -->
-    <bean id="vincoloCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="vincoloCapitoloService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.VincoloCapitoloService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/VincoloCapitoloService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -169,7 +181,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Progetto @@@@@@ -->
-    <bean id="progettoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="progettoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ProgettoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ProgettoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -182,7 +194,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Bilancio @@@@@@ -->
-    <bean id="bilancioService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="bilancioService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.BilancioService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/BilancioService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -195,7 +207,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Codifiche @@@@@@ -->
-    <bean id="codificheService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="codificheService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.CodificheService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CodificheService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -208,7 +220,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Fondi dubbia esigibilita' @@@@@@ -->
-    <bean id="fondiDubbiaEsigibilitaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="fondiDubbiaEsigibilitaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.FondiDubbiaEsigibilitaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/FondiDubbiaEsigibilitaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -220,7 +232,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="azioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="azioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.AzioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/AzioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -235,7 +247,7 @@ SPDX-License-Identifier: EUPL-1.2
     <!-- ################ Servizi di FIN2 ################# -->
 
 	<!-- @@@@@@ Documento @@@@@@ -->
-    <bean id="documentoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="documentoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -248,7 +260,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Documento Spesa @@@@@@ -->
-    <bean id="documentoSpesaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="documentoSpesaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoSpesaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -261,7 +273,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Documento Entrata @@@@@@ -->
-    <bean id="documentoEntrataService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="documentoEntrataService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoEntrataService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoEntrataService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -274,7 +286,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
     
     <!-- @@@@@@ Elenco documenti allegato @@@@@@ -->
-    <bean id="elencoDocumentiAllegatoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="elencoDocumentiAllegatoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.ElencoDocumentiAllegatoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/ElencoDocumentiAllegatoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -287,7 +299,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ PreDocumento Spesa @@@@@@ -->
-    <bean id="preDocumentoSpesaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="preDocumentoSpesaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/PreDocumentoSpesaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -300,7 +312,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ PreDocumento Entrata @@@@@@ -->
-    <bean id="preDocumentoEntrataService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="preDocumentoEntrataService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoEntrataService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/PreDocumentoEntrataService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -313,7 +325,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Documento IVA @@@@@@ -->
-    <bean id="documentoIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="documentoIvaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoIvaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -326,7 +338,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Documento IVA Spesa @@@@@@ -->
-    <bean id="documentoIvaSpesaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="documentoIvaSpesaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaSpesaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoIvaSpesaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -339,7 +351,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Documento IVA Entrata @@@@@@ -->
-    <bean id="documentoIvaEntrataService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="documentoIvaEntrataService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaEntrataService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/DocumentoIvaEntrataService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -352,7 +364,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Attivita IVA Capitolo @@@@@@ -->
-    <bean id="attivitaIvaCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="attivitaIvaCapitoloService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.AttivitaIvaCapitoloService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/AttivitaIvaCapitoloService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -365,7 +377,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Gruppo Attivita IVA @@@@@@ -->
-    <bean id="gruppoAttivitaIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="gruppoAttivitaIvaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.GruppoAttivitaIvaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/GruppoAttivitaIvaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -378,7 +390,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Registro IVA @@@@@@ -->
-    <bean id="registroIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="registroIvaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.RegistroIvaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/RegistroIvaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -391,7 +403,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Stampa IVA @@@@@@ -->
-    <bean id="stampaIvaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="stampaIvaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.StampaIvaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/StampaIvaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -404,7 +416,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Allegato Atto @@@@@@ -->
-    <bean id="allegatoAttoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="allegatoAttoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.AllegatoAttoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/AllegatoAttoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -417,7 +429,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Tipo Onere @@@@@@ -->
-    <bean id="tipoOnereService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="tipoOnereService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.TipoOnereService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/TipoOnereService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -430,7 +442,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Emissione Ordinativo @@@@@@ -->
-    <bean id="emissioneOrdinativiService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="emissioneOrdinativiService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.EmissioneOrdinativiService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/EmissioneOrdinativiService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -443,7 +455,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ PCC @@@@@@ -->
-    <bean id="registroComunicazioniPCCService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="registroComunicazioniPCCService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.RegistroComunicazioniPCCService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/RegistroComunicazioniPCCService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -456,7 +468,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
 
     <!-- @@@@@@ Ordine @@@@@@ -->
-    <bean id="ordineService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="ordineService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.OrdineService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/OrdineService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
@@ -471,7 +483,7 @@ SPDX-License-Identifier: EUPL-1.2
     <!-- ################ Servizi di CEC ################# -->
 
     <!-- @@@@@@ Cassa Economale @@@@@@ -->
-    <bean id="cassaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="cassaEconomaleService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.CassaEconomaleService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.cec}/CassaEconomaleService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cec/svc/1.0" />
@@ -482,7 +494,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="richiestaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="richiestaEconomaleService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.RichiestaEconomaleService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.cec}/RichiestaEconomaleService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cec/svc/1.0" />
@@ -493,7 +505,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="stampaCassaEconomaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="stampaCassaEconomaleService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccecser.frontend.webservice.StampaCassaEconomaleService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/StampaCassaEconomaleService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cec/svc/1.0" />
@@ -506,7 +518,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
     
     <!-- ################ Servizi di GEN ################# -->
-    <bean id="contoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="contoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.ContoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/ContoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
@@ -517,7 +529,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="causaleService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="causaleService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.CausaleService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/CausaleService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
@@ -528,7 +540,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-     <bean id="primaNotaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+     <bean id="primaNotaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.PrimaNotaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.integ}/PrimaNotaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
@@ -539,7 +551,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="registrazioneMovFinService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="registrazioneMovFinService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.RegistrazioneMovFinService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/RegistrazioneMovFinService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
@@ -550,7 +562,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="conciliazioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="conciliazioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.ConciliazioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/ConciliazioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
@@ -562,7 +574,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
     
-    <bean id="classificatoreGSAService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="classificatoreGSAService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacgenser.frontend.webservice.ClassificatoreGSAService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.gen}/ClassificatoreGSAService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/gen/svc/1.0" />
@@ -577,7 +589,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 
     <!-- ################ Servizi di FEL ################# -->
-    <bean id="fatturaElettronicaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="fatturaElettronicaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.sirfelser.frontend.webservice.FatturaElettronicaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fel}/FatturaElettronicaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fel/svc/1.0" />
@@ -590,7 +602,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
     
      <!-- ################ Servizi di consultazione entita collegate ################# -->
-    <bean id="consultazioneEntitaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="consultazioneEntitaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacconsultazioneentitaser.frontend.webservice.ConsultazioneEntitaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ConsultazioneEntitaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -603,7 +615,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
     
     <!-- Cespiti -->
-    <bean id="classificazioneCespiteService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="classificazioneCespiteService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccespser.frontend.webservice.ClassificazioneCespiteService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ClassificazioneCespiteService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cesp/svc/1.0" />
@@ -614,7 +626,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-     <bean id="cespiteService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+     <bean id="cespiteService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccespser.frontend.webservice.CespiteService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/CespiteService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cesp/svc/1.0" />
@@ -626,7 +638,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
     
-    <bean id="primaNotaCespiteService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="primaNotaCespiteService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccespser.frontend.webservice.PrimaNotaCespiteService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/PrimaNotaCespiteService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cesp/svc/1.0" />
@@ -640,7 +652,7 @@ SPDX-License-Identifier: EUPL-1.2
     
     <!-- ################ Servizi di Core ################# -->
 
-    <bean id="coreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="coreService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.CoreService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/CoreService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -652,7 +664,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="false" />
     </bean>
 
-    <bean id="classificatoreService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+    <bean id="classificatoreService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/ClassificatoreService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -665,7 +677,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="false" />
     </bean>
 
-    <bean id="operazioneAsincronaService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="operazioneAsincronaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/OperazioneAsincronaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -677,7 +689,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="fileService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="fileService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.FileService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/FileService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -690,7 +702,7 @@ SPDX-License-Identifier: EUPL-1.2
     </bean>
     
     <!-- ################ Servizi di FIN ################# -->
-    <bean id="classificatoreFinService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="classificatoreFinService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.ClassificatoreFinService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/ClassificatoreFinService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
@@ -701,7 +713,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="genericService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="genericService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.GenericService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/GenericService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
@@ -712,7 +724,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="movimentoGestioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="movimentoGestioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/MovimentoGestioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
@@ -723,7 +735,20 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="soggettoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    
+	<bean id="movimentoGestioneBilService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.MovimentoGestioneService" />
+		<property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/MovimentoGestioneBilService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+		<property name="serviceName" value="MovimentoGestioneBilService" />
+		<property name="endpointAddress" value="${endpoint.url.service.bil}/MovimentoGestioneBilService" />
+		<property name="customProperties" ref="jaxwsCustomProperties"/>
+		<property name="lookupServiceOnStartup" value="false" />
+		<property name="logSOAPMessages" value="true" />
+	</bean>
+	
+    
+    <bean id="soggettoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.SoggettoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/SoggettoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
@@ -734,7 +759,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="liquidazioneService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="liquidazioneService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/LiquidazioneService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
@@ -745,7 +770,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="provvisorioService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="provvisorioService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/ProvvisorioService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
@@ -756,7 +781,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
-    <bean id="ordinativoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="ordinativoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.OrdinativoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/OrdinativoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
@@ -768,7 +793,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="elaborazioniService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="elaborazioniService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ElaborazioniService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ElaborazioniService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -780,7 +805,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
     
-    <bean id="quadroEconomicoService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="quadroEconomicoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.QuadroEconomicoService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/QuadroEconomicoService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -792,7 +817,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-	<bean id="backofficeModificaCigService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+	<bean id="backofficeModificaCigService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.BackofficeModificaCigService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/BackofficeModificaCigService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -804,7 +829,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
     
-    <bean id="tipoComponenteImportiCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="tipoComponenteImportiCapitoloService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.TipoComponenteImportiCapitoloService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/TipoComponenteImportiCapitoloService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -815,7 +840,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
 
-    <bean id="componenteImportiCapitoloService" class="it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+    <bean id="componenteImportiCapitoloService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
         <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/ComponenteImportiCapitoloService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
@@ -825,5 +850,69 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="advices" value="${service.proxy.advices}" />
         <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
     </bean>
+    
+    
+    <!-- SIAC-7556 -->
+     <bean id="pagoPAService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.pagopa.frontend.webservice.PagoPAService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/PagoPAService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/pagopa/svc/1.0" />
+        <property name="serviceName" value="PagoPAService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/PagoPAService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+   
+    <!-- SIAC-7557 -->
+    <bean id="tipoDocumentoServiceFEL" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.TipoDocumentoFELService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/TipoDocumentoFELService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="TipoDocumentoFELService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/TipoDocumentoFELService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <!-- SIAC-8853 -->
+    <bean id="oilService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.OilService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/OilService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" />
+        <property name="serviceName" value="OilService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin}/OilService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+
+    <bean id="mutuoService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacbilser.frontend.webservice.MutuoService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.bil}/MutuoService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/bil/svc/1.0" />
+        <property name="serviceName" value="MutuoService" />
+        <property name="endpointAddress" value="${endpoint.url.service.bil}/MutuoService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+    
+    <bean id="contoTesoreriaService" class="it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean" primary="true">
+        <property name="serviceInterface" value="it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService" />
+        <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin2}/ContoTesoreriaService?wsdl" />
+        <property name="namespaceUri" value="http://siac.csi.it/fin2/svc/1.0" />
+        <property name="serviceName" value="ContoTesoreriaService" />
+        <property name="endpointAddress" value="${endpoint.url.service.fin2}/ContoTesoreriaService" />
+        <property name="lookupServiceOnStartup" value="false" />
+        <property name="customProperties" ref="jaxwsCustomProperties"/>
+        <property name="advices" value="${service.proxy.advices}" />
+        <property name="logSOAPMessages" value="${service.proxy.soapLog}" />
+    </bean>
+
+    
       
 </beans>

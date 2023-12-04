@@ -10,13 +10,19 @@ import java.util.Date;
 import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaOrdine;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AttivaRegistrazioniContabiliEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.EliminaOrdine;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmettiFatturaFelEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceOrdine;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOrdiniDocumento;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
+import it.csi.siac.siacfin2ser.model.Ordine;
+import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrataModelDetail;
 
 /**
@@ -59,6 +65,18 @@ public class RisultatiRicercaDocumentoEntrataModel extends GenericBilancioModel 
 	private BigDecimal totaleQuote = BigDecimal.ZERO;
 
 	private String riepilogoRicerca;
+
+	//SIAC-6780
+	private BigDecimal importoPreDocumento;
+	private BigDecimal importoSubDocumento;
+	private String messaggioRichiestaConfermaProsecuzione;
+	private boolean proseguireConElaborazione = Boolean.FALSE;
+	private Subdocumento<?,?> subdocumento;
+	private Integer uidSubDocumentoDaAssociare;
+	
+	//SIAC-7557
+	private List<Ordine> listaOrdine = new ArrayList<Ordine>();
+	private Ordine ordine;
 	
 	/** Costruttore vuoto di default */
 	public RisultatiRicercaDocumentoEntrataModel() {
@@ -247,8 +265,117 @@ public class RisultatiRicercaDocumentoEntrataModel extends GenericBilancioModel 
 	public void setUidVersoFel(int uidVersoFel) {
 		this.uidVersoFel = uidVersoFel;
 	}
+	
+	/**
+	 * @return the messaggioRichiestaConfermaProsecuzione
+	 */
+	public String getMessaggioRichiestaConfermaProsecuzione() {
+		return messaggioRichiestaConfermaProsecuzione;
+	}
+	
+	/**
+	 * @param messaggioRichiestaConfermaProsecuzione the messaggioRichiestaConfermaProsecuzione to set
+	 */
+	public void setMessaggioRichiestaConfermaProsecuzione(String messaggioRichiestaConfermaProsecuzione) {
+		this.messaggioRichiestaConfermaProsecuzione = messaggioRichiestaConfermaProsecuzione;
+	}
+	
+	/**
+	 * @return the proseguiConWarning
+	 */
+	public boolean isProseguireConElaborazione() {
+		return proseguireConElaborazione;
+	}
+	
+	/**
+	 * @param proseguiConWarning the proseguiConWarning to set
+	 */
+	public void setProseguireConElaborazione(boolean proseguireConElaborazione) {
+		this.proseguireConElaborazione = proseguireConElaborazione;
+	}
 
+	/**
+	 * @return the importoSubDocumento
+	 */
+	public BigDecimal getImportoSubDocumento() {
+		return importoSubDocumento;
+	}
+	
+	/**
+	 * @param importoSubDocumento the importoSubDocumento to set
+	 */
+	public void setImportoSubDocumento(BigDecimal importoSubDocumento) {
+		this.importoSubDocumento = importoSubDocumento;
+	}
+	
+	/**
+	 * @return the accertamento
+	 */
+	public Subdocumento<?,?> getSubdocumento() {
+		return subdocumento;
+	}
+	
+	/**
+	 * @param accertamento the accertamento to set
+	 */
+	public void setSubdocumento(Subdocumento<?,?> subdocumento) {
+		this.subdocumento = subdocumento;
+	}
+	
+	
+	/**
+	 * @return the contoTesoreria
+	 */
+	public ContoTesoreria getContoTesoreria() {
+		return contoTesoreria;
+	}
+
+	/**
+	 * @param contoTesoreria the contoTesoreria to set
+	 */
+	public void setContoTesoreria(ContoTesoreria contoTesoreria) {
+		this.contoTesoreria = contoTesoreria;
+	}
+
+	/**
+	 * @return the listaContoTesoreria
+	 */
+	public List<ContoTesoreria> getListaContoTesoreria() {
+		return listaContoTesoreria;
+	}
+
+	/**
+	 * @param listaContoTesoreria the listaContoTesoreria to set
+	 */
+	public void setListaContoTesoreria(List<ContoTesoreria> listaContoTesoreria) {
+		this.listaContoTesoreria = listaContoTesoreria;
+	}
+
+	public BigDecimal getImportoPreDocumento() {
+		return importoPreDocumento;
+	}
+	
+	public void setImportoPreDocumento(BigDecimal importoPreDocumento) {
+		this.importoPreDocumento = importoPreDocumento;
+	}
+	
+	/**
+	 * @return the uidSubDocumentoDaAssociare
+	 */
+	public Integer getUidSubDocumentoDaAssociare() {
+		return uidSubDocumentoDaAssociare;
+	}
+	
+	/**
+	 * @param uidSubDocumentoDaAssociare the uidSubDocumentoDaAssociare to set
+	 */
+	public void setUidSubDocumentoDaAssociare(Integer uidSubDocumentoDaAssociare) {
+		this.uidSubDocumentoDaAssociare = uidSubDocumentoDaAssociare;
+	}
+	
+	
 	/* Requests */
+
 
 	/**
 	 * Crea una request per il servizio di Annulla DocumentoEntrata.
@@ -336,34 +463,64 @@ public class RisultatiRicercaDocumentoEntrataModel extends GenericBilancioModel 
 		return request;
 	}
 
-	/**
-	 * @return the contoTesoreria
-	 */
-	public ContoTesoreria getContoTesoreria() {
-		return contoTesoreria;
+    //SIAC-7557
+	public RicercaOrdiniDocumento creaRequestRicercaOrdiniDocumento() {
+		RicercaOrdiniDocumento request = creaRequest(RicercaOrdiniDocumento.class);
+		
+		DocumentoEntrata documento = new DocumentoEntrata();
+		documento.setUid(getUidDaConsultare());
+		request.setDocumentoEntrata(documento);
+		
+		return request;
 	}
 
-	/**
-	 * @param contoTesoreria the contoTesoreria to set
-	 */
-	public void setContoTesoreria(ContoTesoreria contoTesoreria) {
-		this.contoTesoreria = contoTesoreria;
+	public List<Ordine> getListaOrdine() {
+		return listaOrdine;
 	}
 
-	/**
-	 * @return the listaContoTesoreria
-	 */
-	public List<ContoTesoreria> getListaContoTesoreria() {
-		return listaContoTesoreria;
+	public void setListaOrdine(List<Ordine> listaOrdine) {
+		this.listaOrdine = listaOrdine;
 	}
 
-	/**
-	 * @param listaContoTesoreria the listaContoTesoreria to set
-	 */
-	public void setListaContoTesoreria(List<ContoTesoreria> listaContoTesoreria) {
-		this.listaContoTesoreria = listaContoTesoreria;
+	public Ordine getOrdine() {
+		return ordine;
 	}
 
-
-    
+	public void setOrdine(Ordine ordine) {
+		this.ordine = ordine;
+	}
+	
+	/**
+	 * Crea una request per il servizio di {@link AggiornaOrdine}.
+	 * 
+	 * @return la request creata
+	 */
+	public AggiornaOrdine creaRequestAggiornaOrdine() {
+		AggiornaOrdine request = creaRequest(AggiornaOrdine.class);
+		request.setOrdine(getOrdine());
+		return request;
+	}
+	
+	/**
+	 * Crea una request per il servizio di {@link EliminaOrdine}.
+	 * 
+	 * @return la request creata
+	 */
+	public EliminaOrdine creaRequestEliminaOrdine() {
+		EliminaOrdine request = creaRequest(EliminaOrdine.class);
+		request.setOrdine(getOrdine());
+		return request;
+	}
+	
+	/**
+	 * Crea una request per il servizio di {@link InserisceOrdine}.
+	 * 
+	 * @return la request creata
+	 */
+	public InserisceOrdine creaRequestInserisceOrdine() {
+		InserisceOrdine request = creaRequest(InserisceOrdine.class);
+		request.setOrdine(getOrdine());
+		return request;
+	}
+	//FINE SIAC-7557
 }

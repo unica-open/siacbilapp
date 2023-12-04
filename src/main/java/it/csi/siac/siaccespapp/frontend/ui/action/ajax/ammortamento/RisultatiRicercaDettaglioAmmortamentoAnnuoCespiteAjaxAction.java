@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.ammortamento.RisultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjaxModel;
@@ -28,7 +28,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDettaglioAmmortamentoAnnuoCespite, RisultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjaxModel, DettaglioAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAmmortamentoAnnuoCespiteResponse> {
+public class RisultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjaxAction extends PagedDataTableAjaxAction<ElementoDettaglioAmmortamentoAnnuoCespite, RisultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjaxModel, DettaglioAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAmmortamentoAnnuoCespiteResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -65,12 +65,12 @@ public class RisultatiRicercaDettaglioAmmortamentoAnnuoCespiteAjaxAction extends
 	}
 
 	@Override
-	protected ElementoDettaglioAmmortamentoAnnuoCespite ottieniIstanza(DettaglioAmmortamentoAnnuoCespite e) throws FrontEndBusinessException {
+	protected ElementoDettaglioAmmortamentoAnnuoCespite getInstance(DettaglioAmmortamentoAnnuoCespite e) throws FrontEndBusinessException {
 		return new ElementoDettaglioAmmortamentoAnnuoCespite(e);
 	}
 
 	@Override
-	protected RicercaSinteticaDettaglioAmmortamentoAnnuoCespiteResponse ottieniResponse(RicercaSinteticaDettaglioAmmortamentoAnnuoCespite req) {
+	protected RicercaSinteticaDettaglioAmmortamentoAnnuoCespiteResponse getResponse(RicercaSinteticaDettaglioAmmortamentoAnnuoCespite req) {
 		return cespiteService.ricercaSinteticaDettaglioAmmortamentoAnnuoCespite(req);
 	}
 

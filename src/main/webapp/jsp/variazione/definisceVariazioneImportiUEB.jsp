@@ -58,7 +58,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<s:iterator value="listaCapitoli" var="entry" status="status">
 										<tr>
 											<td scope="row">
-												<a href="#" data-trigger="hover" rel="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
+												<a href="#" data-trigger="hover" data-toggle="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
 													<s:property value="%{#entry.denominazione}"/>
 												</a>
 												<s:if test='%{#entry.datiAccessorii != null && #entry.datiAccessorii != "" }'>
@@ -122,7 +122,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}variazioni/variazioni.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/definisci.importi.ueb.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/definisci.importi.ueb.js"></script>
 </body>
 </html>

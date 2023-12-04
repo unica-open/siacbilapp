@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.rimborsospese;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -13,7 +13,6 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.rimborsospese.InserisciRimborsoSpeseCassaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomale;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomaleResponse;
@@ -25,6 +24,7 @@ import it.csi.siac.siaccecser.model.TipoGiustificativo;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.Valuta;
 
 /**
@@ -130,7 +130,7 @@ public class InserisciRimborsoSpeseCassaEconomaleAction extends BaseInserisciAgg
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -203,7 +203,7 @@ public class InserisciRimborsoSpeseCassaEconomaleAction extends BaseInserisciAgg
 	}
 	
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_RIMBORSO_SPESE_INSERISCI, AzioniConsentite.CASSA_ECONOMALE_RIMBORSO_SPESE_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_RIMBORSO_SPESE_INSERISCI, AzioneConsentitaEnum.CASSA_ECONOMALE_RIMBORSO_SPESE_ABILITA};
 	}
 }

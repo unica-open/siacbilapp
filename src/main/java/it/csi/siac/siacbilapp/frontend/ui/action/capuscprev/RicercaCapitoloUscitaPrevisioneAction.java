@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,9 +18,11 @@ import it.csi.siac.siacbilapp.frontend.ui.action.commons.CapitoloUscitaAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscprev.RicercaCapitoloUscitaPrevisioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitoloFactory;
-import it.csi.siac.siacbilser.business.utility.helper.ComponenteImportiCapitoloPerAnnoHelper;
+import it.csi.siac.siacbilser.business.utility.capitolo.ComponenteImportiCapitoloPerAnnoHelper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitoloResponse;
@@ -40,7 +42,9 @@ import it.csi.siac.siacbilser.model.Macroaggregato;
 import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
+import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
+import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
@@ -49,6 +53,7 @@ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Action per la gestione della Ricerca per il Capitolo di Uscita Previsione.
@@ -84,6 +89,7 @@ public class RicercaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction<
 	protected void caricaListaCodificheDiBase(BilConstants codiceTipoElementoBilancio) {
 		super.caricaListaCodificheDiBase(codiceTipoElementoBilancio);
 		caricaListaClassificatoriGenerici(codiceTipoElementoBilancio);
+		caricaListaCodificheUscita();
 	}
 	
 	@Override
@@ -211,7 +217,6 @@ public class RicercaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction<
 	 */
 	public String ricercaDettaglio() {
 		final String methodName = "ricercaDettaglio";
-		
 		log.debug(methodName, "Validazione dei campi");
 		boolean valido = validaRicercaComeDatoAggiuntivo();
 		if(!valido) {
@@ -299,69 +304,107 @@ public class RicercaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction<
 		boolean isSacAfferente = sacAfferente(sacDaAssociare, struttureAccount, ricercaDettaglioVariazione(uidVar).getVariazioneImportoCapitolo().getDirezioneProponente().getCodice());
 		
 		boolean firstChapter = checkFirstChapter(responseDettagli.getListaDettaglioVariazioneImportoCapitolo());
-
+		
+		//SIAC-7629 (SIAC-7811) VG
+		Boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
+		String tipoVarCode="";
+		RicercaDettaglioAnagraficaVariazioneBilancioResponse anagraficaVar = ricercaDettaglioVariazione(uidVar);
+		if(anagraficaVar!= null && anagraficaVar.getVariazioneImportoCapitolo()!= null
+				&& anagraficaVar.getVariazioneImportoCapitolo().getTipoVariazione()!=null){
+			tipoVarCode = anagraficaVar.getVariazioneImportoCapitolo().getTipoVariazione().getCodice();
+		}
 			
 		//SE PRIMO CAPITOLO LO FACCIO ASSOCIARE, CONTROLLANDO SAC E FONDI REGIONALI
 		if(model.isRegionePiemonte()){	
 			if(isSacAfferente && isFondiRegionali){ //stessa sac e fondi regionali, mostra il capitolo da aggiungere				
 				model.setCapitoloUscitaPrevisione(cupDaAssociare);
 				return SUCCESS;							
-			}else{
-				responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
-				addErrori(responseRicercaPuntuale);
-				return SUCCESS;							
 			}					
-		}else{
+			responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+			addErrori(responseRicercaPuntuale);
+			return SUCCESS;							
+		}
+		if(firstChapter){
+			if(isSacAfferente){ //stessa sac e fondi regionali, mostra il capitolo da aggiungere				
+				model.setCapitoloUscitaPrevisione(cupDaAssociare);
+				return SUCCESS;							
+			}
+			responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+			addErrori(responseRicercaPuntuale);
+			return SUCCESS;							
 			
-			if(firstChapter){
-				if(isSacAfferente){ //stessa sac e fondi regionali, mostra il capitolo da aggiungere				
-					model.setCapitoloUscitaPrevisione(cupDaAssociare);
-					return SUCCESS;							
-				}else{
+		}
+		if(!firstChapter){
+			
+			int uidPrimoCapitoloInserito = responseDettagli.getListaDettaglioVariazioneImportoCapitolo().get(0).getCapitolo().getUid();
+			RicercaDettaglioCapitoloUscitaPrevisioneResponse resPrimoCapitolo = ricercaDettaglioCapitolo(uidPrimoCapitoloInserito);
+			CapitoloUscitaPrevisione capAssociato = resPrimoCapitolo.getCapitoloUscitaPrevisione();
+			//StrutturaAmministrativoContabile primoCapitoloSac = (capAssociato.getStrutturaAmministrativoContabile() !=null) ? capAssociato.getStrutturaAmministrativoContabile(): null;
+			TitoloSpesa titoloSpesaPrimoCapitolo = (capAssociato.getTitoloSpesa() != null) ? capAssociato.getTitoloSpesa(): null;
+			Missione missionePrimoCapitolo = capAssociato.getMissione() != null ? capAssociato.getMissione() : null ;			
+			Macroaggregato macroaggregatoPrimoCapitolo = (capAssociato.getMacroaggregato() != null) ? capAssociato.getMacroaggregato() : null;
+			
+			
+			/*
+			 * BEFORE SIAC-7629 (SIAC-7811) VG
+			 */
+//				if(isSacAfferente &&
+//								titoloSpesaPrimoCapitolo != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitolo.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
+//								&& titoloSpesaPrimoCapitolo.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
+//								missionePrimoCapitolo !=null && missioneDaAssociare !=null && 
+//										missionePrimoCapitolo.getCodice()!=null && missioneDaAssociare.getCodice()!=null &&
+//												missionePrimoCapitolo.getCodice().equals(missioneDaAssociare.getCodice()) &&
+//												macroaggregatoPrimoCapitolo !=null && macroaggregatoDaAssociare !=null && 
+//														macroaggregatoPrimoCapitolo.getCodice()!=null && macroaggregatoDaAssociare.getCodice()!=null &&
+//																macroaggregatoPrimoCapitolo.getCodice().equals(macroaggregatoDaAssociare.getCodice())){
+//					
+//					model.setCapitoloUscitaPrevisione(cupDaAssociare);
+//					return SUCCESS;
+//				}else{
+//					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+//					addErrori(responseRicercaPuntuale);
+//					return SUCCESS;
+//				}
+			
+			
+			/*
+			 * SIAC-7629 (SIAC-7811) VG
+			 * SE DECENTRATO E SE LA TIPOLOGIA DELLA VARIAZIONE E' VL
+			 * IL CONTROLLO SU TITOLO, MISSIONE E PROGRAMMA NON VIENE EFFETTUATO 
+			 */
+			//CHECK SAC AFFERENTE
+			if(isSacAfferente){
+				//SE DECENTRATO E VL CONTROLLIAMO MISSIONE TIPOLOGIA E PROGRAMMA
+				if(!isDecentrato || !TipoVariazione.VARIAZIONE_DECENTRATA_LEGGE.getCodice().equals(tipoVarCode)){
+					//CHECK SU MISSIONE TIPOLOGIA E PROGRAMMA
+					if(titoloSpesaPrimoCapitolo != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitolo.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
+							&& titoloSpesaPrimoCapitolo.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
+							missionePrimoCapitolo !=null && missioneDaAssociare !=null && 
+							missionePrimoCapitolo.getCodice()!=null && missioneDaAssociare.getCodice()!=null &&
+							missionePrimoCapitolo.getCodice().equals(missioneDaAssociare.getCodice()) &&
+							macroaggregatoPrimoCapitolo !=null && macroaggregatoDaAssociare !=null && 
+							macroaggregatoPrimoCapitolo.getCodice()!=null && macroaggregatoDaAssociare.getCodice()!=null &&
+							macroaggregatoPrimoCapitolo.getCodice().equals(macroaggregatoDaAssociare.getCodice())){
+						
+						model.setCapitoloUscitaPrevisione(cupDaAssociare);
+						return SUCCESS;
+					}
 					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
 					addErrori(responseRicercaPuntuale);
-					return SUCCESS;							
-				}
-
-			}else if(!firstChapter){
-					
-				int uidPrimoCapitoloInserito = responseDettagli.getListaDettaglioVariazioneImportoCapitolo().get(0).getCapitolo().getUid();
-				RicercaDettaglioCapitoloUscitaPrevisioneResponse resPrimoCapitolo = ricercaDettaglioCapitolo(uidPrimoCapitoloInserito);
-				CapitoloUscitaPrevisione capAssociato = resPrimoCapitolo.getCapitoloUscitaPrevisione();
-				//StrutturaAmministrativoContabile primoCapitoloSac = (capAssociato.getStrutturaAmministrativoContabile() !=null) ? capAssociato.getStrutturaAmministrativoContabile(): null;
-				TitoloSpesa titoloSpesaPrimoCapitolo = (capAssociato.getTitoloSpesa() != null) ? capAssociato.getTitoloSpesa(): null;
-				Missione missionePrimoCapitolo = capAssociato.getMissione() != null ? capAssociato.getMissione() : null ;			
-				Macroaggregato macroaggregatoPrimoCapitolo = (capAssociato.getMacroaggregato() != null) ? capAssociato.getMacroaggregato() : null;
-				
-				if(isSacAfferente &&
-								titoloSpesaPrimoCapitolo != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitolo.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
-								&& titoloSpesaPrimoCapitolo.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
-								missionePrimoCapitolo !=null && missioneDaAssociare !=null && 
-										missionePrimoCapitolo.getCodice()!=null && missioneDaAssociare.getCodice()!=null &&
-												missionePrimoCapitolo.getCodice().equals(missioneDaAssociare.getCodice()) &&
-												macroaggregatoPrimoCapitolo !=null && macroaggregatoDaAssociare !=null && 
-														macroaggregatoPrimoCapitolo.getCodice()!=null && macroaggregatoDaAssociare.getCodice()!=null &&
-																macroaggregatoPrimoCapitolo.getCodice().equals(macroaggregatoDaAssociare.getCodice())){
-					
-					model.setCapitoloUscitaPrevisione(cupDaAssociare);
 					return SUCCESS;
-						
-						
-				}else{
-						
-					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
-					addErrori(responseRicercaPuntuale);
-					return SUCCESS;
-						
+					
 				}
-
-			}else{
-				responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
-				addErrori(responseRicercaPuntuale);
+				//DECENTRATO E TIPOLOGIA VL
+				model.setCapitoloUscitaPrevisione(cupDaAssociare);
 				return SUCCESS;
 			}
+			responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+			addErrori(responseRicercaPuntuale);
+			return SUCCESS;
 		}
-				
+		responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+		addErrori(responseRicercaPuntuale);
+		return SUCCESS;
 	}
 	
 	
@@ -381,26 +424,79 @@ public class RicercaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction<
 	 */
 	//SIAC-6881
 	public String ricercaComponenteImportiCapitolo() {
+		sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, null);
+
 		final String methodName="ricercaComponenteImportiCapitolo";
 		RicercaComponenteImportiCapitolo req = model.creaRequestRicercaComponenteImportiCapitolo();
+		//SIAC-7349 - SR220 - Start - MR - Abilito la nuova chiamata al servizio
+		req.setAbilitaCalcoloDisponibilita(true);		
+		
+		//SIAC-7349 - End
 		RicercaComponenteImportiCapitoloResponse response =  componenteImportiCapitoloService.ricercaComponenteImportiCapitolo(req);
 		if(response.hasErrori()) {
 			log.info(methodName, "errori durante la chiamata al servizio di ricerca delle componenti del capitolo.");
 			addErrori(response);
-			return SUCCESS;
+			return INPUT;
 		}
 		//COMPETENZA
-		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
+		//SIAC-7349 - SR220 - MR - STart - 29/04/2020 commento per utilizzare nuovi metodi creati nell'helper con la nuova response
+		/*List<ImportiCapitoloPerComponente> importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
 				.toComponentiImportiCapitoloPerAnno(response.getListaImportiCapitolo(),
-						response.getImportiCapitoloResiduo(), response.getImportiCapitoloAnniSuccessivi());//ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(response.getListaImportiCapitolo());
+						response.getImportiCapitoloResiduo(), response.getImportiCapitoloAnniSuccessivi());//ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(response.getListaImportiCapitolo());*/
+		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = new ArrayList<ImportiCapitoloPerComponente>();
+		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
+				.toComponentiImportiCapitoloPerAnno(response.getListaImportiCapitolo(), response.getImportiCapitoloAnniSuccessivi());
+		
+		//SIAC-7349 - Start - SR210 - MR - 16/04/2020 
+		//Per non introdurre regressione, viene fatta una deepCopy dell'array, e successivamente
+		//vengono aggiunte le Disponibilita in un nuovo array, e rimosso la disponibilita dall'arrey master.
+		estraiDettagliVisualizzazione(importiComponentiCapitolo);
+		
+		//END SIAC
+		
+		//SIAC-7349 - Start - SR200 - MR - 08/05/2020 ->devo clonare l'array per evitare il problema del riferimento dell'array in sessione
+		if(!importiComponentiCapitolo.isEmpty()){
+			List<ImportiCapitoloPerComponente> cloneImportiComponentiCapitolo1 = ReflectionUtil.deepClone(importiComponentiCapitolo);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, cloneImportiComponentiCapitolo1);
+		}else{
+			//SIAC-7349 - Start - SR200 - MR - 08/05/2020 ->Sposto prima dell'aver calcolato gli anni precedenti e le componenti non associate
+			sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, importiComponentiCapitolo.isEmpty()? null : importiComponentiCapitolo);
+			//End - SIAC-7349			
+		}
+		//END SIAC-7349
+		
+		
 		//SIAC-7227
 		//passo la nuova lista al model con il match delle varie componenti
 		if(response.getListaImportiCapitolo() != null & !response.getListaImportiCapitolo().isEmpty() &&  response.getListaImportiCapitolo().get(0) != null) {
-			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedenteNew(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
 		}
-		model.setImportiComponentiCapitolo(importiComponentiCapitolo);
-		sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, importiComponentiCapitolo.isEmpty()? null : importiComponentiCapitolo);
 		
+		//SIAC-7349 - SR200 - MR - Start - 07/05/2020 - Nuovo metodo per mostrare componenti negli anni successivi senza stanziamento
+		if(response.getListaImportiCapitoloAnniSuccessiviNoStanz() != null &&  !response.getListaImportiCapitoloAnniSuccessiviNoStanz().isEmpty()) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitolo, response.getListaImportiCapitoloAnniSuccessiviNoStanz());
+		}
+		//SIAC-7349 - End
+		
+		//SIAC-7349 - GS - Start - 21/07/2020 - Nuovo metodo per mostrare componenti nel triennio senza stanziamento
+		if(response.getListaImportiCapitoloTriennioNoStanz() != null &&  !response.getListaImportiCapitoloTriennioNoStanz().isEmpty()) {
+
+			int countDefault = 0;
+			for (ImportiCapitoloPerComponente i : importiComponentiCapitolo) {
+				if (i.isPropostaDefault()) 
+					countDefault++;
+			}  
+			int addIndex = importiComponentiCapitolo.size() - countDefault;
+			Integer annoEsercizio = Integer.valueOf(sessionHandler.getAnnoEsercizio());
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitolo, response.getListaImportiCapitoloTriennioNoStanz(), annoEsercizio, addIndex);
+		}
+		//SIAC-7349 - End
+		
+		
+		model.setImportiComponentiCapitolo(importiComponentiCapitolo);
+		//SIAC-7349 - Start - SR200 - MR - 08/05/2020 ->Sposto prima dell'aver calcolato gli anni precedenti e le componenti non associate
+		//sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, importiComponentiCapitolo.isEmpty()? null : importiComponentiCapitolo);
+		//End - SIAC-7349
 		List<ImportiCapitoloPerComponente> competenzaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
 		ComponenteImportiCapitoloPerAnnoHelper.buildCompetenzaRowUP(response.getListaImportiCapitolo(),response.getImportiCapitoloResiduo(),response.getImportiCapitoloAnniSuccessivi(),competenzaComponenti);
 		model.setCompetenzaComponenti(competenzaComponenti);
@@ -412,7 +508,40 @@ public class RicercaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction<
 		List<ImportiCapitoloPerComponente> cassaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
 		ComponenteImportiCapitoloPerAnnoHelper.buildCassaRow( response.getListaImportiCapitolo(),response.getImportiCapitoloResiduo(),response.getImportiCapitoloAnniSuccessivi(),cassaComponenti);
 		model.setCassaComponenti(cassaComponenti);
+		model.setTipologiaCapitolo("CAP-UP");
+		
+		
 		return SUCCESS;
+	}
+
+	protected void estraiDettagliVisualizzazione(List<ImportiCapitoloPerComponente> importiComponentiCapitolo) {
+		int sizeImporti = importiComponentiCapitolo.size();
+				
+		List<Integer> indiciDettagliDispImpVar= new ArrayList<Integer>();
+				
+		List<ImportiCapitoloPerComponente> listaDisponibilitaImpegnare = new ArrayList<ImportiCapitoloPerComponente>();
+		List<ImportiCapitoloPerComponente> listaDisponibilitaVariare = new ArrayList<ImportiCapitoloPerComponente>();
+		for(int i=0; i<sizeImporti; i++){
+			TipoDettaglioComponenteImportiCapitolo dettaglioComponente = importiComponentiCapitolo.get(i).getTipoDettaglioComponenteImportiCapitolo();
+			if(dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE)
+							||dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAVARIARE)){
+				indiciDettagliDispImpVar.add(i);							
+			}
+		}
+		for(Integer index : indiciDettagliDispImpVar){
+			TipoDettaglioComponenteImportiCapitolo tipoDettaglioComponente = importiComponentiCapitolo.get(index).getTipoDettaglioComponenteImportiCapitolo();
+					
+			if(tipoDettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE)){
+				listaDisponibilitaImpegnare.add(ReflectionUtil.deepClone(importiComponentiCapitolo.get(index)));				
+			} else if(tipoDettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAVARIARE)){
+				listaDisponibilitaVariare.add(ReflectionUtil.deepClone(importiComponentiCapitolo.get(index)));				
+			}
+		}
+		int j=indiciDettagliDispImpVar.size()-1;
+		while (j>=0) {
+			importiComponentiCapitolo.remove(importiComponentiCapitolo.get(indiciDettagliDispImpVar.get(j)));
+			j--;			
+		}
 	}
 	
 	
@@ -467,7 +596,8 @@ public class RicercaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction<
 					// Controllo i flags
 				checkStringaValorizzata(model.getFlagFunzioniDelegate(), "FlagFunzioniDelegate") ||
 				checkStringaValorizzata(model.getFlagPerMemoria(), "FlagPerMemoria") ||
-				checkStringaValorizzata(model.getFlagRilevanteIva(), "FlagRilevanteIva");
+				checkStringaValorizzata(model.getFlagRilevanteIva(), "FlagRilevanteIva") || 
+				checkPresenzaIdEntita(model.getRisorsaAccantonata());
 		
 		checkCondition(formValido, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore(""));
 		log.debug(methodName, "Ricerca valida? " + formValido);
@@ -590,6 +720,13 @@ public class RicercaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction<
 		return false;
 	}
 	
+	@Override
+	protected List<TitoloSpesa> ottieniListaTitoloSpesaDaSessione() {
+		//SIAC-8619
+		List<TitoloSpesa> lista = sessionHandler.getParametro(BilSessionParameter.LISTA_TITOLO_SPESA);
+		List<TitoloSpesa> listaOrig = sessionHandler.getParametro(BilSessionParameter.LISTA_TITOLO_SPESA_ORIGINALE);
+		return lista != null && !lista.isEmpty()? lista : listaOrig;
+	}
 	
 
 	

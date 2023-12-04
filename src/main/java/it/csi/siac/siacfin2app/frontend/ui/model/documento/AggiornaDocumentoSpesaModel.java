@@ -10,17 +10,19 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siaccorser.model.Codifica;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocumento;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoSubdocumentoIvaSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDocumentoDiSpesa;
@@ -62,6 +64,7 @@ import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoImpresa;
 import it.csi.siac.siacfin2ser.model.TipoIvaSplitReverse;
 import it.csi.siac.siacfin2ser.model.TipoOnere;
+import it.csi.siac.siacfinser.frontend.webservice.msg.AccreditoTipoOilIsPagoPA;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
@@ -69,7 +72,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisorioDiCassaP
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione.StatoOperativoLiquidazione;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa.TipoProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.ric.RicercaImpegnoK;
 import it.csi.siac.siacfinser.model.ric.RicercaProvvisorioDiCassaK;
@@ -104,7 +106,6 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 	
 	private Impegno movimentoGestione;
 	private SubImpegno subMovimentoGestione;
-	private VoceMutuo voceMutuo;
 	
 	private DettaglioOnere dettaglioOnere;
 	private AttivitaOnere attivitaOnere;
@@ -294,19 +295,6 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		this.subMovimentoGestione = subMovimentoGestione;
 	}
 
-	/**
-	 * @return the voceMutuo
-	 */
-	public VoceMutuo getVoceMutuo() {
-		return voceMutuo;
-	}
-
-	/**
-	 * @param voceMutuo the voceMutuo to set
-	 */
-	public void setVoceMutuo(VoceMutuo voceMutuo) {
-		this.voceMutuo = voceMutuo;
-	}
 
 	/**
 	 * @return the dettaglioOnere
@@ -364,16 +352,12 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		this.subdocumentoIva = subdocumentoIva;
 	}
 
-	/**
-	 * @return the fatturaFEL
-	 */
+	@Override
 	public FatturaFEL getFatturaFEL() {
 		return fatturaFEL;
 	}
 
-	/**
-	 * @param fatturaFEL the fatturaFEL to set
-	 */
+	@Override
 	public void setFatturaFEL(FatturaFEL fatturaFEL) {
 		this.fatturaFEL = fatturaFEL;
 	}
@@ -1381,7 +1365,7 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 	 * @return nomeAzioneSAC the nomeAzioneSAC to set
 	 */
 	public String getNomeAzioneSAC() {
-		return AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA.getNomeAzione();
+		return AzioneConsentitaEnum.DOCUMENTO_SPESA_AGGIORNA.getNomeAzione();
 	}
 	
 	/**
@@ -1480,12 +1464,12 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		request.setEnte(getEnte());
 		
 		RicercaImpegnoK pRicercaImpegnoK = creaRicercaImpegnoK(impegno);
-		pRicercaImpegnoK.setNumeroSubDaCercare(getSubMovimentoGestione()!= null? getSubMovimentoGestione().getNumero() : null);
+		pRicercaImpegnoK.setNumeroSubDaCercare(getSubMovimentoGestione()!= null? getSubMovimentoGestione().getNumeroBigDecimal() : null);
 		request.setpRicercaImpegnoK( pRicercaImpegnoK);
 		
 		//il default e' carica sub -> true
 		//se non ho indicato il subimpegno, non devo Caricare niente: 
-		request.setCaricaSub(getSubMovimentoGestione()!= null && getSubMovimentoGestione().getNumero()!= null);
+		request.setCaricaSub(getSubMovimentoGestione()!= null && getSubMovimentoGestione().getNumeroBigDecimal()!= null);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		datiOpzionaliElencoSubTuttiConSoloGliIds.setEscludiAnnullati(true);
@@ -1555,7 +1539,6 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		
 		getSubdocumento().setImpegno(movimentoGestione);
 		getSubdocumento().setSubImpegno(impostaEntitaFacoltativa(subMovimentoGestione));
-		getSubdocumento().setVoceMutuo(impostaEntitaFacoltativa(getVoceMutuo()));
 		// Forzo a null per evitare problemi di mapping
 		getSubdocumento().setProvvisorioCassa(impostaEntitaFacoltativa(subdocumento.getProvvisorioCassa()));
 		
@@ -1571,6 +1554,10 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		// SIAC-5115
 		request.setGestisciSospensioni(true);
 		getSubdocumento().setSospensioni(getListaSospensioneSubdocumento());
+		
+		//SIAC-8153
+		gestisciStrutturaContabileQuota(movgest);
+		
 		return request;
 	}
 	
@@ -1642,7 +1629,6 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		
 		getSubdocumento().setImpegno(getMovimentoGestione());
 		getSubdocumento().setSubImpegno(impostaEntitaFacoltativa(getSubMovimentoGestione()));
-		getSubdocumento().setVoceMutuo(impostaEntitaFacoltativa(getVoceMutuo()));
 		
 		// Campi da reinserire se cancellati
 		getSubdocumento().setDocumento(creaDocumentoPerInserimentoQuota());
@@ -1661,9 +1647,13 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		request.setGestisciSospensioni(true);
 		getSubdocumento().setSospensioni(getListaSospensioneSubdocumento());
 		
+		//SIAC-8153
+		gestisciStrutturaContabileQuota(movgest);
+		
+		
 		return request;
 	}
-	
+
 	/**
 	 * Crea una request per il servizio di {@link AggiornaQuotaDocumentoSpesa}.
 	 * 
@@ -1968,7 +1958,7 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoImpegno(impegno.getAnnoMovimento());
-		utility.setNumeroImpegno(impegno.getNumero());
+		utility.setNumeroImpegno(impegno.getNumeroBigDecimal());
 		
 		return utility;
 	}
@@ -1982,6 +1972,42 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		DocumentoSpesa documentoSpesa = new DocumentoSpesa();
 		documentoSpesa.setUid(getDocumento().getUid());
 		return documentoSpesa;
+	}
+	
+	/**
+	 * SIAC-8153
+	 * 
+	 * Gestisce la creazione o meno della Struttura competente associata alla quota.
+	 * L'entita' e' facoltativa, se presente un impegno e per la quota non e' specificata
+	 * una struttura, eredito quella dell'impegno.
+	 * In assenza di entrambe la quota non eredita nulla.
+	 * 
+	 * @param movgest
+	 */
+	private void gestisciStrutturaContabileQuota(Impegno movgest) {
+		if((movgest != null && StringUtils.isNotBlank(movgest.getStrutturaCompetente()) 
+				&& movgest.getStrutturaCompetenteLetta() != null) || (getStrutturaCompetenteQuota() != null &&
+				getStrutturaCompetenteQuota().getUid() != 0)) {
+			getSubdocumento().setStrutturaCompetenteQuota(creaStrutturaAmministrativoContabileQuota(movgest));
+		}
+	}
+
+	/**
+	 * SIAC-8153
+	 * 
+	 * Crea una struttura amministrativa contabile per l'inserimento della quota 
+	 *  
+	 * @return la struttura amministrativa contabile per l'injezione nella request
+	 */
+	private StrutturaAmministrativoContabile creaStrutturaAmministrativoContabileQuota(Impegno impegno) {
+		StrutturaAmministrativoContabile struttura = new StrutturaAmministrativoContabile();
+		if(getStrutturaCompetenteQuota() != null && getStrutturaCompetenteQuota().getUid() != 0) {
+			struttura = getStrutturaCompetenteQuota();
+		} else {
+			struttura = impegno.getStrutturaCompetenteLetta();
+			struttura.setUid(new Integer(impegno.getStrutturaCompetente()));
+		}
+		return struttura;
 	}
 	
 	/* Utility */
@@ -2246,5 +2272,10 @@ public class AggiornaDocumentoSpesaModel extends AggiornaDocumentoModel {
 		}
 		return ris;
 		//return editDateteFromPccActive;
+	}
+	
+	//SIAC-8853
+	public AccreditoTipoOilIsPagoPA creaRequestAccreditoTipoOilIsPagoPA() {
+		return creaRequest(AccreditoTipoOilIsPagoPA.class);
 	}
 }

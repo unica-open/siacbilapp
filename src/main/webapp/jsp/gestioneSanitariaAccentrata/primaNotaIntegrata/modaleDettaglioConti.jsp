@@ -7,7 +7,7 @@ SPDX-License-Identifier: EUPL-1.2
 <div aria-hidden="true" aria-labelledby="modaleDettaglioContiLabel" role="dialog" tabindex="-1" class="modal hide fade" id="modaleDettaglioConti">
 	<div class="modal-header">
 		<button aria-hidden="true" data-dismiss="modal" class="close" type="button">&times;</button>
-		<h3 id="modaleDettaglioContiLabel">Selezionare il conto da sostituire alla classe di conciliazione</h3>
+		<h3 id="modaleDettaglioContiLabel">Selezionare <span class="hide info-aggiuntive-digitazione-selezione"> o digitare</span> il conto da sostituire alla classe di conciliazione</h3>
 	</div>
 	<div class="modal-body">
 		<div class="alert alert-error hide" id="ERRORI_modaleDettaglio">
@@ -18,14 +18,15 @@ SPDX-License-Identifier: EUPL-1.2
 		</div>
 		<fieldset id="fieldsetModaleSelezioneConto" class="form-horizontal">
 			<s:hidden id="HIDDEN_indiceModale"/>
+			 
 			<div class="control-group" id ="selezioneContoGuidata" >
-				<label class="control-label" for="contiConciliazionePerTitoloModale">Conto</label>
+				<label class="control-label" for="contiConciliazionePerTitoloModale">Conto </label>
 				<div class="controls">
-					<select id="contiConciliazionePerTitoloModale"></select>
+					<select id="contiConciliazionePerTitoloModale" class="span6"></select>
 				</div>
 			</div>
 			<div class="control-group" id ="selezioneContoTestuale" >			
-				<label class="control-label" for="contoConciliazione">Conto</label>
+				<label class="control-label" for="contoConciliazione">Conto </label>
 				<div class="controls">
 					<s:textfield id="contoConciliazione" name="conto.codice" cssClass="span6"/>
 				</div>

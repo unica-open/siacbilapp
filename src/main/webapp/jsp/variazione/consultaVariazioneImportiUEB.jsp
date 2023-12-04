@@ -103,8 +103,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}variazioni/variazioni.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/variazioniImporti.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/consulta.importi.ueb.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioniImporti.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/consulta.importi.ueb.js"></script>
 </body>
 </html>

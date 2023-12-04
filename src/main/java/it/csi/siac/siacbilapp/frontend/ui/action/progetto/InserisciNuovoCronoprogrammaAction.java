@@ -5,7 +5,7 @@
 package it.csi.siac.siacbilapp.frontend.ui.action.progetto;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -36,10 +36,14 @@ public class InserisciNuovoCronoprogrammaAction extends BaseInserisciCronoprogra
 	public String execute() throws Exception {
 		final String methodName = "execute";
 		checkCasoDUsoApplicabile();
+		//task-170
+		caricaListaTipiProgetto();
 		
 		try {
 			effettuaCaricamentoDettaglioProgetto();
 //			effettuaCaricamentoCronoprogrammiCollegati();
+			//task-170
+			model.setTipoProgettoRicerca(model.getProgetto().getTipoProgetto());
 			effettuaCaricamentoListeClassificatori();
 		} catch(WebServiceInvocationFailureException wsife) {
 			log.info(methodName, wsife.getMessage());

@@ -5,11 +5,15 @@
 package it.csi.siac.siacbilapp.frontend.ui.action.capuscprev;
 
 import java.math.BigDecimal;
-import java.util.List;
-
+import java.util.ArrayList;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumbTrail;
+import xyz.timedrain.arianna.plugin.Crumb;
+/*
 import org.softwareforge.struts2.breadcrumb.BreadCrumb;
 import org.softwareforge.struts2.breadcrumb.BreadCrumbTrail;
 import org.softwareforge.struts2.breadcrumb.Crumb;
+*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,31 +27,39 @@ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.ClassificatoreAggiornamentoCapitoloUscita;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.ClassificatoreAggiornamentoFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.TabellaImportiConComponentiCapitoloFactory;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService;
-import it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService;
+import it.csi.siac.siacbilser.frontend.webservice.TipoComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaCapitoloDiUscitaPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaCapitoloDiUscitaPrevisioneResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaAttributiModificabiliCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaClassificatoriModificabiliCapitoloResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisioneResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoComponenteImportiCapitoloPerCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoComponenteImportiCapitoloPerCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioniCapitoloPerAggiornamentoCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioniCapitoloPerAggiornamentoCapitoloResponse;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
+import it.csi.siac.siacbilser.model.CategoriaCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
-import it.csi.siac.siacbilser.model.ImportiCapitoloUP;
+import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
+import it.csi.siac.siacbilser.model.StatoTipoComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonapp.handler.session.CommonSessionParameter;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSinteticaImpegniSubImpegni;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSinteticaImpegniSubimpegniResponse;
@@ -69,9 +81,9 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 	
 	@Autowired private transient CapitoloUscitaPrevisioneService capitoloUscitaPrevisioneService;
 	
-	@Autowired private transient ComponenteImportiCapitoloService componenteImportiCapitoloService;
-	
 	@Autowired private transient MovimentoGestioneService movimentoGestioneService;
+	
+	@Autowired private transient TipoComponenteImportiCapitoloService tipoComponenteImportiCapitoloService;
 	
 	/** Indica se sia necessario tornare indietro di due crumbs a termine dell'aggiornamento */
 	private boolean tornareDiDueIndietroDopoAggiornamento;
@@ -107,7 +119,7 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 	 */
 	private void checkIsDecentrato() {
 		final String methodName = "checkIsDecentrato";
-		Boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.CAPITOLO_USCITA_PREVISIONE_AGGIORNA_DECENTRATO, sessionHandler.getAzioniConsentite());
+		Boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.CAPITOLO_USCITA_PREVISIONE_AGGIORNA_DECENTRATO, sessionHandler.getAzioniConsentite());
 		log.debug(methodName, "Decentrato? " + decentrato);
 		model.setDecentrato(decentrato);
 	}
@@ -152,22 +164,16 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 			model.setCapitoloFondino(false);
 		}
 
-//		//RICERCA SE IL CAPITOLO HA IMPEGNI SIAC-6884 PROVA. DA TOGLIERE DALLA ACTION LA COSTRUZIONE DELLA REQUEST FIXME e TODO
-//		RicercaSinteticaImpegniSubImpegni request = new RicercaSinteticaImpegniSubImpegni();
-//		request.setAnnoBilancio(responseRicercaDettaglio.getCapitoloUscitaPrevisione().getAnnoCapitolo());
-//		request.setEnte(sessionHandler.getEnte());
-//		request.setRichiedente(sessionHandler.getRichiedente());		
-//		ParametroRicercaImpSub parametroRicercaImpSub = new ParametroRicercaImpSub();
-//		parametroRicercaImpSub.setUidCapitolo(responseRicercaDettaglio.getCapitoloUscitaPrevisione().getUid());
-//		parametroRicercaImpSub.setAnnoEsercizio(responseRicercaDettaglio.getCapitoloUscitaPrevisione().getAnnoCapitolo());
-//		request.setParametroRicercaImpSub(parametroRicercaImpSub);
-//		request.setNumPagina(1);
-//		request.setNumRisultatiPerPagina(1);
-//		RicercaSinteticaImpegniSubimpegniResponse responseTotaleImpegniCapitolo = movimentoGestioneService.ricercaSinteticaImpegniSubimpegni(request);
-//		//qui bisognerebbe reindirizzare all'input in quanto non è possibile validare la JSP se il servizio fallisce.
+		//task-236
+		if(responseRicercaDettaglio.getCapitoloUscitaPrevisione()!= null &&
+			responseRicercaDettaglio.getCapitoloUscitaPrevisione().getCategoriaCapitolo() != null) {
+			//model.getCapitoloUscitaPrevisione().setCategoriaCapitolo(responseRicercaDettaglio.getCapitoloUscitaPrevisione().getCategoriaCapitolo());
+			session.put("categoriaScelta", responseRicercaDettaglio.getCapitoloUscitaPrevisione().getCategoriaCapitolo());
+		}
 		
 		log.debug(methodName, "Impostazione dei dati nel model");
 		model.impostaDatiDaResponse(responseRicercaDettaglio);
+		
 		log.debug(methodName, "Caricamento delle ulteriori liste");
 		caricaListaCodificheAggiornamento();
 		
@@ -186,7 +192,7 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 			logServiceResponse(responseRicercaVariazioni);
 			
 			if(responseRicercaVariazioni.hasErrori()) {
-				log.debug(methodName, createErrorInServiceInvocationString(requestRicercaVariazioni, responseRicercaVariazioni));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaVariazioniCapitoloPerAggiornamentoCapitolo.class, responseRicercaVariazioni));
 				addErrori(responseRicercaVariazioni);
 				return INPUT;
 			}
@@ -221,6 +227,11 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 		sessionHandler.setParametroXmlType(BilSessionParameter.EDITABILITA_CLASSIFICATORI, responseClassificatoriModificabili);
 		sessionHandler.setParametroXmlType(BilSessionParameter.EDITABILITA_ATTRIBUTI, responseAttributiModificabili);
 		
+		
+		// SIAC-8859 per aggiornamento ricerca 
+		sessionHandler.cleanSafelyExcluding(BilSessionParameter.RISULTATI_RICERCA_SINTETICA_CAPITOLO_USCITA_PREVISIONE, BilSessionParameter.RIENTRO_POSIZIONE_START);
+		sessionHandler.setParametro(BilSessionParameter.RIENTRO, "S");
+		
 		return SUCCESS;
 	}
 	
@@ -246,33 +257,37 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 		AggiornaCapitoloDiUscitaPrevisione request = model.creaRequestAggiornaCapitoloDiUscitaPrevisione(classificatoreAggiornamento);
 		logServiceRequest(request);
 		
-		//SIAC-6884 controllo impegni
-		RicercaSinteticaImpegniSubImpegni request1 = new RicercaSinteticaImpegniSubImpegni();
-		request1.setAnnoBilancio(model.getCapitoloUscitaPrevisione().getBilancioAnno());
-		request1.setEnte(sessionHandler.getEnte());
-		request1.setRichiedente(sessionHandler.getRichiedente());		
-		ParametroRicercaImpSub parametroRicercaImpSub = new ParametroRicercaImpSub();
-		parametroRicercaImpSub.setUidCapitolo(model.getCapitoloUscitaPrevisione().getUid());
-		parametroRicercaImpSub.setAnnoEsercizio(model.getCapitoloUscitaPrevisione().getAnnoCapitolo());
-		request1.setParametroRicercaImpSub(parametroRicercaImpSub);
-		request1.setNumPagina(1);
-		request1.setNumRisultatiPerPagina(1);
-		RicercaSinteticaImpegniSubimpegniResponse responseTotaleImpegniCapitolo = movimentoGestioneService.ricercaSinteticaImpegniSubimpegni(request1);
-		//qui bisognerebbe reindirizzare all'input in quanto non è possibile validare la JSP se il servizio fallisce.
-		if (responseTotaleImpegniCapitolo.getListaImpegni() !=null && responseTotaleImpegniCapitolo.getListaImpegni().size()>0) {
+		
+		//SIAC-7600 mi assicuro che il controllo venga effettuato solo per il fondino
+		ClassificatoreGenerico classGen3 =  model.getClassificatoreGenerico3();
+				
+		if((classGen3 != null && "SI".equals(classGen3.getDescrizione())) 
+				&& (classGen3.getTipoClassificatore() != null && "Capitolo Budget".equals(classGen3.getTipoClassificatore().getDescrizione()))) {
+		
+			//SIAC-6884 controllo impegni
+			RicercaSinteticaImpegniSubImpegni request1 = new RicercaSinteticaImpegniSubImpegni();
+			request1.setAnnoBilancio(model.getCapitoloUscitaPrevisione().getBilancioAnno());
+			request1.setEnte(sessionHandler.getEnte());
+			request1.setRichiedente(sessionHandler.getRichiedente());		
+			ParametroRicercaImpSub parametroRicercaImpSub = new ParametroRicercaImpSub();
+			parametroRicercaImpSub.setUidCapitolo(model.getCapitoloUscitaPrevisione().getUid());
+			parametroRicercaImpSub.setAnnoEsercizio(model.getCapitoloUscitaPrevisione().getAnnoCapitolo());
+			request1.setParametroRicercaImpSub(parametroRicercaImpSub);
+			request1.setNumPagina(1);
+			request1.setNumRisultatiPerPagina(1);
+			RicercaSinteticaImpegniSubimpegniResponse responseTotaleImpegniCapitolo = movimentoGestioneService.ricercaSinteticaImpegniSubimpegni(request1);
+			//qui bisognerebbe reindirizzare all'input in quanto non è possibile validare la JSP se il servizio fallisce.
 			
-			String str = 	"collegati: " +responseTotaleImpegniCapitolo.getListaImpegni().size();
-			//TODO 28/11/2019 MODIFICARE MESSAGGIO DI ERRORE
-			addMessaggio(ErroreBil.CAPITOLO_CON_VARIAZIONI_NON_DEFINITIVE_COLLEGATE.getErrore(str));
-			caricaListaCodificheAggiornamento();
-			return INPUT;
-		}
+			if (responseTotaleImpegniCapitolo.getListaImpegni() != null && responseTotaleImpegniCapitolo.getListaImpegni().size() > 0) {
+				
+				String str = "" + responseTotaleImpegniCapitolo.getListaImpegni().size();
+				//SIAC-7600 cambio l'errore
+				addMessaggio(ErroreBil.CAPITOLO_BUDGET_CON_IMPEGNI_COLLEGATI.getErrore(str));
+				caricaListaCodificheAggiornamento();
+				return INPUT;
+			}
 		
-		
-		
-		
-		
-		
+		}		
 		
 		
 		
@@ -331,8 +346,7 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 		return SUCCESS;
 	}
 	
-	@Override
-	public void validate() {
+	public void validateAggiornaCDU() {
 		CapitoloUscitaPrevisione cup = model.getCapitoloUscitaPrevisione();
 		if(cup != null && !model.isGestioneUEB()){
 			cup.setNumeroUEB(Integer.valueOf(1));
@@ -354,21 +368,21 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 			checkCondition(!model.isTitoloSpesaEditabile() || (model.getTitoloSpesa() != null && model.getTitoloSpesa().getUid() != 0), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Titolo"));
 			checkCondition(!model.isMacroaggregatoEditabile() || (model.getMacroaggregato() != null && model.getMacroaggregato().getUid() != 0), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Macroaggregato"));
 			checkCondition(!model.isElementoPianoDeiContiEditabile() || (model.getElementoPianoDeiConti() != null && model.getElementoPianoDeiConti().getUid() != 0), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Elemento del Piano dei Conti"));
+			//task-9
+			checkCondition(!model.isClassificazioneCofogEditabile() || (model.getClassificazioneCofog() != null && model.getClassificazioneCofog().getUid() != 0), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Cofog"));
+			
 		}
 		
 		checkCondition(!model.isStrutturaAmministrativoContabileEditabile() || (model.getStrutturaAmministrativoContabile() != null && model.getStrutturaAmministrativoContabile().getUid() != 0),
 				ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Struttura Amministrativa Responsabile"));
 		
+		checkCondition(!isMissioneWithCodice(CODICE_MISSIONE_20) || model.idEntitaPresente(model.getRisorsaAccantonata()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("risorsa accantonata"));
+		
 		//validaImportoCapitoloUscitaPrevisione();
-	}
-	
-	/**
-	 * Unifica la validazione per gli Importi del Capitolo di Uscita Previsione.
-	 */
-	private void validaImportoCapitoloUscitaPrevisione() {
-		validaImportoCapitolo(model.getImportiCapitoloUscitaPrevisione0(), 0, true, true);
-		validaImportoCapitolo(model.getImportiCapitoloUscitaPrevisione1(), 1, false, true);
-		validaImportoCapitolo(model.getImportiCapitoloUscitaPrevisione2(), 2, false, true);
+		//task-55
+		if(model.getMissione().getUid() == 118538) {
+			checkNotNull(cup.getFlagNonInserireAllegatoA1(), "Capitolo da non inserire nell'allegato A1");
+		}
 	}
 	
 	/**
@@ -442,23 +456,76 @@ public class AggiornaCapitoloUscitaPrevisioneAction extends CapitoloUscitaAction
 			if(forceCassaCoherence && importi.getStanziamento() != null && importi.getStanziamentoResiduo() != null && importi.getStanziamentoCassa() != null
 					&& (importi.getStanziamentoResiduo().compareTo(BigDecimal.ZERO)>0 || importi.getStanziamento().compareTo(BigDecimal.ZERO)>0 )) {
 				checkCondition(importi.getStanziamentoCassa().subtract(importi.getStanziamento()).subtract(importi.getStanziamentoResiduo()).signum() <= 0,
-						ErroreCore.VALORE_NON_VALIDO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
+						ErroreCore.VALORE_NON_CONSENTITO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
 							+ FormatUtils.formatCurrency(importi.getStanziamento().add(importi.getStanziamentoResiduo())) + ")"));
 			}
 		}
 	}
 	
-	//SIAC-6884
-	private boolean checkStanziamentiNegativi(List<ImportiCapitoloUP> listUP) {
-		for(ImportiCapitoloUP icup : listUP){
-			if(icup.getStanziamento().compareTo(BigDecimal.ZERO)<0){
-				return true;
-			}
-		}
-		return false;
+	public void validateCaricaImporti() {
+		checkNotNullNorInvalidUid(model.getCapitoloUscitaPrevisione(), "identificativo univoco del capitolo per caricamento degli importi");
 	}
 	
+	public String caricaImporti() {
+		caricaTipiComponentiDefault();
+		RicercaComponenteImportiCapitolo reqComponenti = model.creaRequestRicercaComponenteImportiCapitolo();
+		RicercaComponenteImportiCapitoloResponse resComponenti = componenteImportiCapitoloService
+				.ricercaComponenteImportiCapitolo(reqComponenti);
+
+		// Controllo gli errori
+		if (resComponenti.hasErrori()) {
+			addErrori(resComponenti);
+			return INPUT;
+		}
+		
+		//task-236
+		CategoriaCapitolo categoriaScelta = (CategoriaCapitolo) session.get("categoriaScelta");
+				
+		TabellaImportiConComponentiCapitoloFactory factory = new TabellaImportiConComponentiCapitoloFactory();
+		//task-236
+		//factory.init(model.getAnnoEsercizioInt(), TipoCapitolo.CAPITOLO_USCITA_PREVISIONE, resComponenti, model.getListaTipoComponentiDefault());
+		factory.init(model.getAnnoEsercizioInt(), categoriaScelta,TipoCapitolo.CAPITOLO_USCITA_PREVISIONE, resComponenti, model.getListaTipoComponentiDefault());			
+		factory.elaboraRigheTabellaConComponentiDefault();
+
+		model.setRigheImportiTabellaImportiCapitolo(factory.getRigheImportoTabellaElaborate());
+		model.setRigheComponentiTabellaImportiCapitolo(factory.getRigheComponentiElaborate());
+		model.setStanziamentiNegativiPresenti(factory.presenteAlmenoUnImportoNegativo());
+		model.setPresentiComponentiNonFresco(factory.esistonoComponentiNonFrescoCollegateAlCapitolo());
+
+		return SUCCESS;
+
+	}
 	
+	private void caricaTipiComponentiDefault() {
+		RicercaTipoComponenteImportiCapitoloPerCapitolo req = model.creaRicercaTipoComponenteImportiCapitoloPerCapitolo();
+		RicercaTipoComponenteImportiCapitoloPerCapitoloResponse res = tipoComponenteImportiCapitoloService.ricercaTipoComponenteImportiCapitoloPerCapitolo(req);
+		
+		if(res.hasErrori()) {
+			addErrori(res);
+			return;
+		}
+		
+		model.setListaTipoComponentiDefault(new ArrayList<TipoComponenteImportiCapitolo>());
+		
+		for (TipoComponenteImportiCapitolo tipo : res.getListaTipoComponenteImportiCapitolo()) {
+			if(!isTipoComponenteValida(tipo) || !isPropostaDefault(tipo)) {
+				continue;
+			}
+			
+			model.getListaTipoComponentiDefault().add(tipo);
+		}
+		
+	}
+
+	private boolean isTipoComponenteValida(TipoComponenteImportiCapitolo tp) {
+		StatoTipoComponenteImportiCapitolo stato = tp.getStatoTipoComponenteImportiCapitolo() ;
+		return stato != null & StatoTipoComponenteImportiCapitolo.VALIDO.equals(stato);
+	}
 	
-	
+	private boolean isPropostaDefault(TipoComponenteImportiCapitolo tp) {
+		PropostaDefaultComponenteImportiCapitolo proposta = tp.getPropostaDefaultComponenteImportiCapitolo();
+		return PropostaDefaultComponenteImportiCapitolo.SI.equals(proposta) 
+				|| PropostaDefaultComponenteImportiCapitolo.SOLO_PREVISIONE.equals(proposta);
+	}
+
 }

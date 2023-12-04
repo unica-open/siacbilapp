@@ -45,10 +45,10 @@ public class ElementoMovimentoConsultazionePrimaNotaIntegrataSubdocumentoEntrata
 		StringBuilder sb = new StringBuilder()
 				.append(movimento.getAccertamento().getAnnoMovimento())
 				.append("/")
-				.append(movimento.getAccertamento().getNumero().toPlainString());
+				.append(movimento.getAccertamento().getNumeroBigDecimal().toPlainString());
 		if(movimento.getSubAccertamento() != null) {
 			sb.append("-")
-				.append(movimento.getSubAccertamento().getNumero().toPlainString());
+				.append(movimento.getSubAccertamento().getNumeroBigDecimal().toPlainString());
 		}
 		
 		return sb.toString();

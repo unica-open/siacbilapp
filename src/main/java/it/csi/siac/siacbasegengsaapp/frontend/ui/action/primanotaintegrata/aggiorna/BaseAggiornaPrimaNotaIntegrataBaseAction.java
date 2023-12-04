@@ -20,7 +20,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenapp.frontend.ui.util.ElementoMovimentoConsultazionePrimaNotaIntegrata;
@@ -165,7 +165,7 @@ public abstract class BaseAggiornaPrimaNotaIntegrataBaseAction<M extends BaseAgg
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioPrimaNota.class, response);
 			log.info(methodName, errorMsg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMsg);
@@ -196,13 +196,17 @@ public abstract class BaseAggiornaPrimaNotaIntegrataBaseAction<M extends BaseAgg
 		
 		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
 		boolean faseDiBilancioNonCompatibile = 
-				FaseBilancio.PLURIENNALE.equals(faseBilancio) ||
-				FaseBilancio.PREVISIONE.equals(faseBilancio) ||
-				FaseBilancio.CHIUSO.equals(faseBilancio);
+				isFaseBilancioNonCompatibile(faseBilancio);
 		
 		if(faseDiBilancioNonCompatibile) {
 			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
 		}
+	}
+
+	protected boolean isFaseBilancioNonCompatibile(FaseBilancio faseBilancio) {
+		return FaseBilancio.PLURIENNALE.equals(faseBilancio) ||
+		FaseBilancio.PREVISIONE.equals(faseBilancio) ||
+		FaseBilancio.CHIUSO.equals(faseBilancio);
 	}
 	
 	
@@ -246,7 +250,7 @@ public abstract class BaseAggiornaPrimaNotaIntegrataBaseAction<M extends BaseAgg
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(OttieniEntitaCollegatePrimaNota.class, res));
 			addErrori(res);
 			return INPUT;
 		}

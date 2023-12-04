@@ -241,8 +241,8 @@ public abstract class VariazioneBaseAction<M extends GenericBilancioModel> exten
 	public static class AsyncResponsePresentConRichiestaConfermaVariazioneImportiResult extends CustomJSONResult {
 		/** Per la serializzazione */
 		private static final long serialVersionUID = 3541102918432843926L;
-		/** Propriet&agrave; da includere nel JSON creato */
-		private static final String INCLUDE_PROPERTIES = "errori.*, messaggi.*, informazioni.*, richiediConfermaQuadratura, richiediConfermaMancanzaProvvedimentoVariazioneBilancio, isAsyncResponsePresent";
+		/** Propriet&agrave; da includere nel JSON creato */ //SIAC-7629 inserito richiediConfermaQuadraturaCP
+		private static final String INCLUDE_PROPERTIES = "errori.*, messaggi.*, informazioni.*, richiediConfermaQuadratura, richiediConfermaQuadraturaCP, richiediConfermaMancanzaProvvedimentoVariazioneBilancio, isAsyncResponsePresent";
 
 		/** Empty default constructor */
 		public AsyncResponsePresentConRichiestaConfermaVariazioneImportiResult() {

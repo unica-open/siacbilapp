@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacfin2ser.model.AttivitaIva;
@@ -143,10 +143,10 @@ public class ElementoSubdocumentoIvaSpesa extends SubdocumentoSpesa implements M
 			result.append(getAnnoEsercizio())
 				.append("/")
 				.append(impegno.getAnnoMovimento())
-				.append("/").append(impegno.getNumero().toPlainString());
+				.append("/").append(impegno.getNumeroBigDecimal().toPlainString());
 			SubImpegno subImpegno = getSubImpegno();
 			if(subImpegno != null) {
-				result.append("-").append(subImpegno.getNumero().toPlainString());
+				result.append("-").append(subImpegno.getNumeroBigDecimal().toPlainString());
 			}
 		}
 		return result.toString();

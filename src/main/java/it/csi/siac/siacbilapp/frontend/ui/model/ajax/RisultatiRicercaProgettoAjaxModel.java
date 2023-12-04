@@ -13,7 +13,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto.ElementoProgett
  * @version 1.0.0 06/02/2014
  *
  */
-public class RisultatiRicercaProgettoAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoProgetto> {
+public class RisultatiRicercaProgettoAjaxModel extends PagedDataTableAjaxModel<ElementoProgetto> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1949840562109980124L;

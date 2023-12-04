@@ -20,6 +20,9 @@ SPDX-License-Identifier: EUPL-1.2
 				<div class="contentPage">
 					<s:form method="post" action="aggiornamentoProgetto" novalidate="novalidate">
 						<s:hidden name="progetto.uid"/>
+						
+						<span id="disabilitaAggiornaCampi" class="hide" data-disabilita='<s:property value="disabilitaAggiornamentoCampi()" />'></span>
+						
 						<s:if test="decentrato">
 							<%-- Aggiungere campi disabled, tranne codice e investimento in corso di definizione --%>
 							<s:hidden name="progetto.descrizione"/>
@@ -41,7 +44,7 @@ SPDX-License-Identifier: EUPL-1.2
 							<div class="control-group">
 								<label class="control-label" for="codice">Codice *</label>
 								<div class="controls">
-									<s:textfield name="progetto.codice" id="codice" cssClass="lbTextSmall span2" maxlength="200" disabled="codiceProgettoAutomatico || decentrato" />
+									<s:textfield name="progetto.codice" id="codice" cssClass="lbTextSmall span2 canBeReadonly" maxlength="200" disabled="codiceProgettoAutomatico || decentrato" />
 									<s:if test="codiceProgettoAutomatico || decentrato">
 										<s:hidden name="progetto.codice" />
 									</s:if>
@@ -50,7 +53,7 @@ SPDX-License-Identifier: EUPL-1.2
 									</span>
 									<span>
 										<input type="text" disabled class="lbTextSmall span3" maxlength="30" value="<s:property value="progetto.tipoProgetto.descrizione"/>" />
-									</span>
+									</span>	
 									<s:hidden name="progetto.tipoProgetto"/>
 								</div>
 							</div>
@@ -65,13 +68,13 @@ SPDX-License-Identifier: EUPL-1.2
 								<span class="al"> <label for="descrizione" class="control-label">Descrizione *</label>
 								</span>
 								<div class="controls">
-									<s:textarea rows="1" cols="15" id="descrizione" cssClass="span9" name="progetto.descrizione" maxlength="500" disabled="decentrato"></s:textarea>
+									<s:textarea rows="1" cols="15" id="descrizione" cssClass="span9 canBeReadonly" name="progetto.descrizione" maxlength="500" disabled="decentrato"></s:textarea>
 								</div>
 							</div>
 							<div class="control-group">
 								<label for="ambito" class="control-label">Ambito</label>
 								<div class="controls">
-									<s:select list="listaTipiAmbito" cssClass="span8" name="progetto.tipoAmbito.uid" id="ambito" headerKey="" headerValue=""
+									<s:select list="listaTipiAmbito" cssClass="span8 canBeReadonly" name="progetto.tipoAmbito.uid" id="ambito" headerKey="" headerValue=""
 										listKey="uid" listValue="%{codice + ' - ' + descrizione}" disabled="decentrato" />
 								</div>
 							</div>
@@ -84,7 +87,7 @@ SPDX-License-Identifier: EUPL-1.2
 							<div class="control-group">
 								<label class="control-label" for="valoreComplessivoProgetto">Valore complessivo</label>
 								<div class="controls">
-									<s:textfield id="valoreComplessivoProgetto" cssClass="lbTextSmall span3 soloNumeri decimale" name="progetto.valoreComplessivo"
+									<s:textfield id="valoreComplessivoProgetto" cssClass="lbTextSmall span3 soloNumeri decimale canBeReadonly" name="progetto.valoreComplessivo"
 										maxlength="20" placeholder="valoreComplessivo" disabled="decentrato && parereRegolaritaValido" />
 								</div>
 							</div>
@@ -116,7 +119,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<label for="noteProgetto" class="control-label">Note</label>
 								</span>
 								<div class="controls">
-									<s:textarea id="noteProgetto" rows="2" cols="15" cssClass="span8" name="progetto.note" maxlength="500" disabled="decentrato"></s:textarea>
+									<s:textarea id="noteProgetto" rows="2" cols="15" cssClass="span8 canBeReadonly" name="progetto.note" maxlength="500" disabled="decentrato"></s:textarea>
 								</div>
 							</div>
 							
@@ -125,7 +128,7 @@ SPDX-License-Identifier: EUPL-1.2
 											<abbr title="codice unico progetto">CUP</abbr>
 										</label>
 										<div class="controls">
-											<s:textfield id="cupProgetto" name="progetto.cup" cssClass="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" maxlength="15"/>
+											<s:textfield id="cupProgetto" name="progetto.cup" cssClass="span3 canBeReadonly forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" maxlength="15"/>
 										</div>
 									</div>
 									
@@ -139,7 +142,7 @@ SPDX-License-Identifier: EUPL-1.2
 															<span id="SPAN_StrutturaAmministrativoContabileProgetto">Seleziona la Struttura amministrativa</span>
 														</a>
 													</div>
-													<div id="strutturaAmministrativoContabileProgetto" class="accordion-body collapse">
+													<div id="strutturaAmministrativoContabileProgetto" class="accordion-body collapse canBeReadonly">
 														<div class="accordion-inner">
 															<ul id="treeStrutturaAmministrativoContabileProgetto" class="ztree"></ul>
 														</div>
@@ -171,7 +174,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<div class="control-group">
 										<label class="control-label" for="rupProgetto"><abbr title="responsabile unico progetto">RUP</abbr></label>
 										<div class="controls">
-											<s:textfield id="rupProgetto" cssClass="lbTextSmall span3" name="progetto.responsabileUnico"/>
+											<s:textfield id="rupProgetto" cssClass="lbTextSmall span3 canBeReadonly" name="progetto.responsabileUnico"/>
 										</div>
 									</div>
 									
@@ -275,18 +278,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<th class="tab_Right">Anni successivi</th>
 								</tr>
 								
-								<%-- <tr>
-									<th scope="col">&nbsp;</th>
-									<th scope="col" >Versione Cronoprogramma</th>
-									<th scope="col">Descrizione</th>
-									<th scope="col">Associato FPV</th>
-									<th scope="col">Da definire</th>
-									<th class="tab_Right" scope="col">Spese <s:property value="%{annoEsercizioInt}" /></th>
-									<th class="tab_Right" scope="col">Spese <s:property value="%{annoEsercizioInt + 1}" /></th>
-									<th class="tab_Right" scope="col">Spese <s:property value="%{annoEsercizioInt + 2}" /></th>
-									<th class="tab_Right" scope="col">Spese anni successivi</th>
-									<th scope="col">&nbsp;</th>
-								</tr> --%>
+							
 							</thead>
 							<tbody>
 							</tbody>
@@ -432,6 +424,29 @@ SPDX-License-Identifier: EUPL-1.2
 			</div>
 	</div>
 	<%-- end modale Associa  cronoprogramma Fpv ahmad --%>
+	
+	<%-- modale Disassocia  cronoprogramma Fpv begin  --%>
+	<div id="msgDisassociaCronoprogrammaFPV" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="msgDisassociaLabel" aria-hidden="true">
+			<s:hidden id="HIDDEN_UidDaDisassociare" name="uidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV" />
+			<s:hidden id="HIDDEN_versioneCronoprogrammaDaDisassociare" name="versioneCronoprogrammaDaDisassociare" />
+			<s:hidden id="HIDDEN_descrizioneCronoprogrammaDaDisassociare" name="descrizioneCronoprogrammaDaDisassociare" />
+			
+			<div class="modal-body">
+				<div class="alert alert-error alert-persistent">
+					<button type="button" class="close" data-hide="alert">&times;</button>
+					<p>
+						<strong>Attenzione!</strong>
+					</p>
+					<p><span id="msgDisassociaCronoprogrammaFPVspan"></span> dal calcola FPV<br></p>
+					<p>sei sicuro di voler proseguire?</p>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">no, indietro</button>
+				<button id="pulsanteDisassociaCronoprogrammaFPV" class="btn btn-primary" >si, prosegui</button>
+			</div>
+	</div>
+	<%-- end modale Disassocia  cronoprogramma Fpv ahmad --%>
 	
 	<%-- Modale quadratura --%>
 	<div id="modaleVerificaQuadratura" aria-hidden="true" aria-labelledby="verQuadraturaLabel" role="dialog" tabindex="-1" class="modal hide fade">
@@ -589,8 +604,8 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ztree/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricercaProvvedimento_collapse.js"></script>
-	<script type="text/javascript" src="${jspath}progetto/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricercaProvvedimento_collapse.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/progetto/aggiorna.js"></script>
 </body>
 </html>

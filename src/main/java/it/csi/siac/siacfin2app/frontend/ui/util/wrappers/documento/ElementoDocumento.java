@@ -48,6 +48,10 @@ public class ElementoDocumento implements Serializable, ModelWrapper, Comparable
 	//SIAC-5617
 	private String tipoDocumentoCode;
 	
+	//SIAC-7557
+	private Integer idTipoDocumento;
+	
+	
 	// SIAC-6565
 	private String statoSDI;
 	private String esitoStatoSDI;
@@ -301,6 +305,25 @@ public class ElementoDocumento implements Serializable, ModelWrapper, Comparable
 		this.tipoDocumentoCode = tipoDocumentoCode;
 	}
 
+	
+	//SIAC-7557
+	
+	/**
+	 * @return the idTipoDocumento
+	 */
+	public Integer getIdTipoDocumento()
+	{
+		return idTipoDocumento;
+	}
+
+	/**
+	 * @param idTipoDocumento the idTipoDocumento to set
+	 */
+	public void setIdTipoDocumento(int idTipoDocumento)
+	{
+		this.idTipoDocumento = idTipoDocumento;
+	}
+	//SIAC-7557
 	/**
 	 * @return the statoSDI
 	 */
@@ -383,6 +406,34 @@ public class ElementoDocumento implements Serializable, ModelWrapper, Comparable
 		return Boolean.TRUE.equals(tipoALG);
 	}
 	
+	
+	//SIAC-6988 inizio FL
+	/**
+	 *  Controlla se si tratta di una nota di accredito .
+	 *  CODICE_NOTE_ACCREDITO("NCV"),
+	 * */
+	
+	public boolean checkNotaAccredito() {
+		if (tipoDocumentoCode != null && !tipoDocumentoCode.equals("")) {
+			return BilConstants.CODICE_NOTE_ACCREDITO.getConstant().equalsIgnoreCase(tipoDocumentoCode);	
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * Controlla se il documento &eacute; in uno stato SDI per la gestione delle note di credito. in caso di FTV
+	 * 
+	 * @return <code>true</code> se il gruppo del tipo &eacute; nota credito; <code>false</code> altrimenti
+	 */
+	public boolean isGestioneStatoSDINota() {
+	 
+			return checkNotaAccredito() && checkStatoSDIFEL();
+		 
+	}
+	
+	//SIAC-6988 fine FL	
+	
 	/**
 	 * Controlla se il documento &eacute; in uno stato conforme per la gestione delle note di credito.
 	 * 
@@ -463,5 +514,15 @@ public class ElementoDocumento implements Serializable, ModelWrapper, Comparable
 				StatoSDIDocumento.SCARTATO_FEL.getCodice().equalsIgnoreCase(statoSDI);
 	}
 	
-	
+	/** SIAC-6988 FL
+	 * Controlla se lo stato SDI &eacute; valido per consentire EmettiFattura e Aggiorna.
+	 * @return se lo stato sia valido
+	 */
+	public boolean checkStatoSDIFEL() {
+		
+		return   StatoSDIDocumento.DECORR_TERMINI.getCodice().equalsIgnoreCase(statoSDI)  ||
+				StatoSDIDocumento.ACCET_CONSEG.getCodice().equalsIgnoreCase(statoSDI)  ||
+				StatoSDIDocumento.INVIATA_FEL.getCodice().equalsIgnoreCase(statoSDI);
+		
+	}
 }

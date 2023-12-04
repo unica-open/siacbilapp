@@ -2,7 +2,6 @@
 All configuration MUST be set in the `buildfiles/<env>.properties` file used for compilation
 - current.env = the currently executing environment
 - nome.ambiente = the name of the environment
-- datasource.jndi-url = no more used. May be left to blank or to a default value
 - messageSources.cacheSeconds = no more used. May be left to -1
 - remincl.resource.provider = URL to the remote resources
 - remincl.cache.time = caching time for the remote resources (default: 8 hours)
@@ -11,11 +10,6 @@ All configuration MUST be set in the `buildfiles/<env>.properties` file used for
 - sso.filter.url.pattern = URL pattern for the SSO filter
     (specify a non-existing extension to prevent SSO checks)
 - sso.loginHandler = fully-qualified class name for the SSO handler
-- urlServerParacadute = URL for SSOBart implementation (unused)
-- edu.yale.its.tp.cas.client.filter.serverName = SSOBart server (unused)
-- edu.yale.its.tp.cas.client.filter.validateUrl = SSOBart validation url (unused)
-- ssobart.java.naming.provider.url = SSOBart naming provider (unused)
-- ssobart.multi = SSOBart parameter (unused)
 - endpoint.url.service.core = Endpoint for the COR backend service
 - endpoint.url.service.att = Endpoint for the ATT backend service
 - endpoint.url.service.bil = Endpoint for the BIL backend service
@@ -47,6 +41,7 @@ All configuration MUST be set in the `buildfiles/<env>.properties` file used for
   - YEARLY = Consider the item as stale if a year has past since the caching
 - jspath = the path for the local JavaScript files (for proxying support)
 - jspathexternal = the path for the external JavaScript files (for proxying support)
+- service.proxy.factory = proxy class for service interface
 - service.proxy.advices = comma-separed list of fully-qualified class names
     for the advices to add to the service proxies
 - service.proxy.soapLog = whether to log the SOAP requests and responses

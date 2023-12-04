@@ -45,7 +45,7 @@ SPDX-License-Identifier: EUPL-1.2
 												Seleziona la Struttura amministrativa &nbsp;
 												<i class="icon-spin icon-refresh spinner" id="SPINNER_StrutturaAmministrativoContabile"></i>
 											</a>
-											<!-- Modal -->
+											<%-- Modal --%>
 											<div id="struttAmm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 												<div class="modal-header">
 													<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -85,34 +85,22 @@ SPDX-License-Identifier: EUPL-1.2
 									</div>
 									<%-- SIAC 6929 --%>
 									<div class="control-group">
-										<span class="control-label">Blocco Ragioneria</span>
-											<div class="controls">
-												<label class="radio-inline" style="display:initial; margin-right: 10px;">
-													<s:radio id="bloccoRagioneria"  name="bloccoRagioneria" list="#{'TUTTI':'Tutti'}" /> Tutti
-												</label>
-												<label class="radio-inline" style="display:initial; margin-right: 10px;"> 
-													<s:radio id="bloccoRagioneria" name="bloccoRagioneria" list="#{'SI':'Si'}" /> Si 
-												</label>
-												<label class="radio-inline" style="display:initial; margin-right: 10px;">
-													<s:radio id="bloccoRagioneria"  name="bloccoRagioneria" list="#{'NO':'No'}" /> No
-												</label>
-											</div>	
+										<span class="control-label radio-inline">Blocco Ragioneria</span>
+										<div class="controls">
+											<s:radio id="bloccoRagioneria" style="display:initial; margin-right: 10px;" checked="true" name="bloccoRagioneria" list="#{'TUTTI':'Tutti'}" /> <%-- Tutti --%>
+											<s:radio id="bloccoRagioneria" style="display:initial; margin-right: 10px;" name="bloccoRagioneria" list="#{'SI':'Si'}" /> <%-- Si --%>
+											<s:radio id="bloccoRagioneria" style="display:initial; margin-right: 10px;" name="bloccoRagioneria" list="#{'NO':'No'}" />  <%-- No--%>
+										</div>	
 									</div>
 									<div class="control-group">
-											<span class="control-label">Inserito Manualmente</span>
-												<div class="controls">
-													<label class="radio-inline" style="display:initial; margin-right: 10px;">
-														<s:radio id="bloccoRagioneria"  name="inseritoManualmente" list="#{'TUTTI':'Tutti'}" /> Tutti
-													</label>
-													<label class="radio-inline" style="display:initial; margin-right: 10px;"> 
-														<s:radio id="bloccoRagioneria" name="inseritoManualmente" list="#{'SI':'Si'}" /> Si 
-													</label>
-													<label class="radio-inline" style="display:initial; margin-right: 10px;">
-														<s:radio id="bloccoRagioneria"  name="inseritoManualmente" list="#{'NO':'No'}" /> No
-													</label>
-												</div>	
-											</div>
-									<!-- SIAC 6929 -->
+										<span class="control-label radio-inline">Inserito Manualmente</span>
+										<div class="controls">
+											<s:radio id="bloccoRagioneria" style="display:initial; margin-right: 10px;" cssClass="radio-inline" checked="true" name="inseritoManualmente" list="#{'TUTTI':'Tutti'}" />  <%--Tutti--%>
+											<s:radio id="bloccoRagioneria" style="display:initial; margin-right: 10px;" cssClass="radio-inline" name="inseritoManualmente" list="#{'SI':'Si'}" /> <%-- Si --%>
+											<s:radio id="bloccoRagioneria" style="display:initial; margin-right: 10px;" cssClass="radio-inline" name="inseritoManualmente" list="#{'NO':'No'}" />  <%-- No--%>
+										</div>	
+									</div>
+									<%-- SIAC 6929 --%>
 									<div class="control-group">
 										<label for="noteProvvedimento" class="control-label">Note</label>
 										<div class="controls">
@@ -137,8 +125,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}provvedimento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca.js"></script>
 
 </body>
 </html>

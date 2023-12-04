@@ -15,7 +15,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.impo
 import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo;
-import it.csi.siac.siaccommon.util.number.NumberUtils;
+import it.csi.siac.siaccommon.util.number.NumberUtil;
 
 /**
  * Wrapper per i dati di variazione importo del singolo capitolo.
@@ -93,7 +93,12 @@ public class ElementoVariazioneImportoSingoloCapitolo implements ModelWrapper, S
 				.append(computeDettaglio())
 				.append(computeAttoAmministrativo(variazioneImportoSingoloCapitolo.getAttoAmministrativo(), "Provvedimento variazione di PEG"))
 				.append(computeAttoAmministrativo(variazioneImportoSingoloCapitolo.getAttoAmministrativoVariazioneDiBilancio(), "Provvedimento variazione di bilancio"))
-				.append(computeImporti()).append("</div>").append("</div>").append("</div>").toString();
+				.append(computeImporti()).append("</div>")
+				//SIAC-8331
+				.append("<div>")
+				.append("<a id=\"consultataVariazioneImporti\" class=\"btn btn-secondary pull-right\" href=\"consultaImportiVariazione.do?uidVariazioneDaConsultare="+variazioneImportoSingoloCapitolo.getUid()+ "\">consulta variazione</a>")
+				.append("</div>")
+				.append("</div>").append("</div>").toString();
 	}
 
 	/**
@@ -106,7 +111,8 @@ public class ElementoVariazioneImportoSingoloCapitolo implements ModelWrapper, S
 				.append("<dt>Stato</dt>").append("<dd>").append(getDescrizioneStatoOperativoVariazioneBilancio()).append("&nbsp;</dd>")
 				.append("<dt>Applicazione</dt>").append("<dd>").append(getNameApplicazioneVariazione()).append("&nbsp;</dd>")
 				.append("<dt>Descrizione</dt>").append("<dd>").append(variazioneImportoSingoloCapitolo.getDescrizione()).append("&nbsp;</dd>")
-				.append("<dt>Note</dt>").append("<dd>").append(variazioneImportoSingoloCapitolo.getNote()).append("&nbsp;</dd>")
+				//task-107
+				.append("<dt>Note</dt>").append("<dd>").append(getDescrizioneNote()).append("&nbsp;</dd>")
 				.append("<dt>Tipo Variazione</dt>").append("<dd>").append(getDescrizioneTipoVariazione()).append("&nbsp;</dd>")
 				.append("</dl>")
 				.toString();
@@ -378,13 +384,22 @@ public class ElementoVariazioneImportoSingoloCapitolo implements ModelWrapper, S
 	 * @return il testo
 	 */
 	private String toImporto(BigDecimal db) {
-		return db != null ? NumberUtils.toImporto(db) : "";
+		return db != null ? NumberUtil.toImporto(db) : "";
 	}
 
 	@Override
 	public int getUid() {
 		return variazioneImportoSingoloCapitolo.getUid();
 	}
-
+	
+	/**
+	 * Gets the note.
+	 *
+	 * @return the descrizioneNote
+	 */
+	//task-107
+	private String getDescrizioneNote() {
+		return variazioneImportoSingoloCapitolo.getNote() != null ? variazioneImportoSingoloCapitolo.getNote() : "";
+	}
 
 }

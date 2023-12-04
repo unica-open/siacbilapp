@@ -11,8 +11,16 @@
 /* Document ready */
 !function($) {
     'use strict';
+    
+    //SIAC-7246
+    function setDefaultDataInizioValiditaCapitolo(){
+        $('#dataInizioValiditaCapitolo').val('01/01/'+$('#HIDDEN_annoBil').val());
+    }
 
     $(function () {
+
+        //SIAC-7246
+        setDefaultDataInizioValiditaCapitolo();
 
         var disabledFonteFinanziamento = function(){
             $("#fonteFinanziamento option").remove();

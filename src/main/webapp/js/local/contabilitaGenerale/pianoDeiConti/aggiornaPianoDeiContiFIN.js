@@ -140,7 +140,7 @@
         Soggetto.inizializza("#codiceSoggetto", "#HIDDEN_soggettoCodiceFiscale", "#HIDDEN_denominazioneSoggetto", "#datiRiferimentoSoggettoSpan","#pulsanteCompilazioneGuidataSoggetto");
         Conto.inizializza(undefined, undefined, "#contoCollegato", '#descrizioneContoCollegato', "#pulsanteCompilazioneGuidataConto", false);
         if (!($("#pulsanteCompilazioneGuidataContoFIN").is(".disabled"))) {
-            ContoFIN.inizializza( "#pianoDeiContiFinanziario", "#pulsanteCompilazioneGuidataContoFIN");
+            ContoFIN.inizializza( ".campo-codice-pdc", "#pulsanteCompilazioneGuidataContoFIN");
         }
         mostraONascondiDatiAggiuntivi();
         gestioneCategoriaCespiti();

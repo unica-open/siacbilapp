@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -101,7 +101,7 @@ public class InserisciProvvedimentoAction extends GenericBilancioAction<Inserisc
 		
 		if (res.hasErrori()) {
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(InserisceProvvedimento.class, res));
 		}
 		model.getAttoAmministrativo().setNumero(res.getAttoAmministrativoInserito().getNumero());
 		// Imposto la SAC se necessario

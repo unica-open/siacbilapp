@@ -15,6 +15,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriGeneric
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiTreePianoDeiContiResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatoreGenerico;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatoreGenericoResponse;
+import it.csi.siac.siacbilser.model.CategoriaCapitolo;
 import it.csi.siac.siacbilser.model.CategoriaTipologiaTitolo;
 import it.csi.siac.siacbilser.model.PerimetroSanitarioEntrata;
 import it.csi.siac.siacbilser.model.RicorrenteEntrata;
@@ -23,6 +24,8 @@ import it.csi.siac.siacbilser.model.TipoFondo;
 import it.csi.siac.siacbilser.model.TipologiaTitolo;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TransazioneUnioneEuropeaEntrata;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Filter;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
@@ -90,21 +93,21 @@ public abstract class CapitoloEntrataAction<M extends CapitoloEntrataModel> exte
 		/* Transazione Unione Europea Entrata */
 		List<TransazioneUnioneEuropeaEntrata> listaTransazioneUnioneEuropeaEntrata = sessionHandler.getParametro(BilSessionParameter.LISTA_TRANSAZIONE_UNIONE_EUROPEA_ENTRATA);
 		/* Classificatori Generici */
-		List<ClassificatoreGenerico> listaClassificatoreGenerico1 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_36);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico2 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_37);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico3 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_38);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico4 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_39);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico5 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_40);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico6 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_41);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico7 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_42);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico8 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_43);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico9 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_44);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico10 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_45);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico11 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_46);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico12 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_47);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico13 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_48);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico14 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_49);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico15 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_50);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico36 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_36);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico37 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_37);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico38 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_38);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico39 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_39);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico40 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_40);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico41 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_41);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico42 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_42);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico43 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_43);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico44 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_44);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico45 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_45);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico46 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_46);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico47 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_47);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico48 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_48);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico49 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_49);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico50 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_50);
 		
 		/* Boolean per il controllo della necessita' di caricamento delle liste da servizio */
 		boolean almenoUnaListaNulla = listaTipoFinanziamento == null
@@ -112,21 +115,21 @@ public abstract class CapitoloEntrataAction<M extends CapitoloEntrataModel> exte
 				|| listaRicorrenteEntrata == null
 				|| listaPerimetroSanitarioEntrata == null
 				|| listaTransazioneUnioneEuropeaEntrata == null
-				|| listaClassificatoreGenerico1 == null
-				|| listaClassificatoreGenerico2 == null
-				|| listaClassificatoreGenerico3 == null
-				|| listaClassificatoreGenerico4 == null
-				|| listaClassificatoreGenerico5 == null
-				|| listaClassificatoreGenerico6 == null
-				|| listaClassificatoreGenerico7 == null
-				|| listaClassificatoreGenerico8 == null
-				|| listaClassificatoreGenerico9 == null
-				|| listaClassificatoreGenerico10 == null
-				|| listaClassificatoreGenerico11 == null
-				|| listaClassificatoreGenerico12 == null
-				|| listaClassificatoreGenerico13 == null
-				|| listaClassificatoreGenerico14 == null
-				|| listaClassificatoreGenerico15 == null;
+				|| listaClassificatoreGenerico36 == null
+				|| listaClassificatoreGenerico37 == null
+				|| listaClassificatoreGenerico38 == null
+				|| listaClassificatoreGenerico39 == null
+				|| listaClassificatoreGenerico40 == null
+				|| listaClassificatoreGenerico41 == null
+				|| listaClassificatoreGenerico42 == null
+				|| listaClassificatoreGenerico43 == null
+				|| listaClassificatoreGenerico44 == null
+				|| listaClassificatoreGenerico45 == null
+				|| listaClassificatoreGenerico46 == null
+				|| listaClassificatoreGenerico47 == null
+				|| listaClassificatoreGenerico48 == null
+				|| listaClassificatoreGenerico49 == null
+				|| listaClassificatoreGenerico50 == null;
 		
 		if(almenoUnaListaNulla) {
 			log.debug(methodName, "Caricamento delle liste di classificatori generici da servizio");
@@ -162,21 +165,21 @@ public abstract class CapitoloEntrataAction<M extends CapitoloEntrataModel> exte
 			listaRicorrenteEntrata = response.getClassificatoriRicorrenteEntrata();
 			listaPerimetroSanitarioEntrata = response.getClassificatoriPerimetroSanitarioEntrata();
 			listaTransazioneUnioneEuropeaEntrata = response.getClassificatoriTransazioneUnioneEuropeaEntrata();
-			listaClassificatoreGenerico1 = response.getClassificatoriGenerici36();
-			listaClassificatoreGenerico2 = response.getClassificatoriGenerici37();
-			listaClassificatoreGenerico3 = response.getClassificatoriGenerici38();
-			listaClassificatoreGenerico4 = response.getClassificatoriGenerici39();
-			listaClassificatoreGenerico5 = response.getClassificatoriGenerici40();
-			listaClassificatoreGenerico6 = response.getClassificatoriGenerici41();
-			listaClassificatoreGenerico7 = response.getClassificatoriGenerici42();
-			listaClassificatoreGenerico8 = response.getClassificatoriGenerici43();
-			listaClassificatoreGenerico9 = response.getClassificatoriGenerici44();
-			listaClassificatoreGenerico10 = response.getClassificatoriGenerici45();
-			listaClassificatoreGenerico11 = response.getClassificatoriGenerici46();
-			listaClassificatoreGenerico12 = response.getClassificatoriGenerici47();
-			listaClassificatoreGenerico13 = response.getClassificatoriGenerici48();
-			listaClassificatoreGenerico14 = response.getClassificatoriGenerici49();
-			listaClassificatoreGenerico15 = response.getClassificatoriGenerici50();
+			listaClassificatoreGenerico36 = response.getClassificatoriGenerici36();
+			listaClassificatoreGenerico37 = response.getClassificatoriGenerici37();
+			listaClassificatoreGenerico38 = response.getClassificatoriGenerici38();
+			listaClassificatoreGenerico39 = response.getClassificatoriGenerici39();
+			listaClassificatoreGenerico40 = response.getClassificatoriGenerici40();
+			listaClassificatoreGenerico41 = response.getClassificatoriGenerici41();
+			listaClassificatoreGenerico42 = response.getClassificatoriGenerici42();
+			listaClassificatoreGenerico43 = response.getClassificatoriGenerici43();
+			listaClassificatoreGenerico44 = response.getClassificatoriGenerici44();
+			listaClassificatoreGenerico45 = response.getClassificatoriGenerici45();
+			listaClassificatoreGenerico46 = response.getClassificatoriGenerici46();
+			listaClassificatoreGenerico47 = response.getClassificatoriGenerici47();
+			listaClassificatoreGenerico48 = response.getClassificatoriGenerici48();
+			listaClassificatoreGenerico49 = response.getClassificatoriGenerici49();
+			listaClassificatoreGenerico50 = response.getClassificatoriGenerici50();
 		}
 		/* Impostazione nel model delle liste */
 		model.setListaTipoFinanziamento(listaTipoFinanziamento);
@@ -184,38 +187,38 @@ public abstract class CapitoloEntrataAction<M extends CapitoloEntrataModel> exte
 		model.setListaRicorrenteEntrata(listaRicorrenteEntrata);
 		model.setListaPerimetroSanitarioEntrata(listaPerimetroSanitarioEntrata);
 		model.setListaTransazioneUnioneEuropeaEntrata(listaTransazioneUnioneEuropeaEntrata);
-		model.setListaClassificatoreGenerico1(listaClassificatoreGenerico1);
-		model.setListaClassificatoreGenerico2(listaClassificatoreGenerico2);
-		model.setListaClassificatoreGenerico3(listaClassificatoreGenerico3);
-		model.setListaClassificatoreGenerico4(listaClassificatoreGenerico4);
-		model.setListaClassificatoreGenerico5(listaClassificatoreGenerico5);
-		model.setListaClassificatoreGenerico6(listaClassificatoreGenerico6);
-		model.setListaClassificatoreGenerico7(listaClassificatoreGenerico7);
-		model.setListaClassificatoreGenerico8(listaClassificatoreGenerico8);
-		model.setListaClassificatoreGenerico9(listaClassificatoreGenerico9);
-		model.setListaClassificatoreGenerico10(listaClassificatoreGenerico10);
-		model.setListaClassificatoreGenerico11(listaClassificatoreGenerico11);
-		model.setListaClassificatoreGenerico12(listaClassificatoreGenerico12);
-		model.setListaClassificatoreGenerico13(listaClassificatoreGenerico13);
-		model.setListaClassificatoreGenerico14(listaClassificatoreGenerico14);
-		model.setListaClassificatoreGenerico15(listaClassificatoreGenerico15);
+		model.setListaClassificatoreGenerico36(listaClassificatoreGenerico36);
+		model.setListaClassificatoreGenerico37(listaClassificatoreGenerico37);
+		model.setListaClassificatoreGenerico38(listaClassificatoreGenerico38);
+		model.setListaClassificatoreGenerico39(listaClassificatoreGenerico39);
+		model.setListaClassificatoreGenerico40(listaClassificatoreGenerico40);
+		model.setListaClassificatoreGenerico41(listaClassificatoreGenerico41);
+		model.setListaClassificatoreGenerico42(listaClassificatoreGenerico42);
+		model.setListaClassificatoreGenerico43(listaClassificatoreGenerico43);
+		model.setListaClassificatoreGenerico44(listaClassificatoreGenerico44);
+		model.setListaClassificatoreGenerico45(listaClassificatoreGenerico45);
+		model.setListaClassificatoreGenerico46(listaClassificatoreGenerico46);
+		model.setListaClassificatoreGenerico47(listaClassificatoreGenerico47);
+		model.setListaClassificatoreGenerico48(listaClassificatoreGenerico48);
+		model.setListaClassificatoreGenerico49(listaClassificatoreGenerico49); 
+		model.setListaClassificatoreGenerico50(listaClassificatoreGenerico50);
 		
 		/* Impostazione dei labels */
-		model.setLabelClassificatoreGenerico1(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico1, 1));
-		model.setLabelClassificatoreGenerico2(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico2, 2));
-		model.setLabelClassificatoreGenerico3(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico3, 3));
-		model.setLabelClassificatoreGenerico4(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico4, 4));
-		model.setLabelClassificatoreGenerico5(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico5, 5));
-		model.setLabelClassificatoreGenerico6(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico6, 6));
-		model.setLabelClassificatoreGenerico7(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico7, 7));
-		model.setLabelClassificatoreGenerico8(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico8, 8));
-		model.setLabelClassificatoreGenerico9(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico9, 9));
-		model.setLabelClassificatoreGenerico10(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico10, 10));
-		model.setLabelClassificatoreGenerico11(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico11, 11));
-		model.setLabelClassificatoreGenerico12(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico12, 12));
-		model.setLabelClassificatoreGenerico13(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico13, 13));
-		model.setLabelClassificatoreGenerico14(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico14, 14));
-		model.setLabelClassificatoreGenerico15(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico15, 15));
+		model.setLabelClassificatoreGenerico36(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico36, 1));
+		model.setLabelClassificatoreGenerico37(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico37, 2));
+		model.setLabelClassificatoreGenerico38(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico38, 3));
+		model.setLabelClassificatoreGenerico39(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico39, 4));
+		model.setLabelClassificatoreGenerico40(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico40, 5));
+		model.setLabelClassificatoreGenerico41(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico41, 6));
+		model.setLabelClassificatoreGenerico42(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico42, 7));
+		model.setLabelClassificatoreGenerico43(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico43, 8));
+		model.setLabelClassificatoreGenerico44(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico44, 9));
+		model.setLabelClassificatoreGenerico45(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico45, 10));
+		model.setLabelClassificatoreGenerico46(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico46, 11));
+		model.setLabelClassificatoreGenerico47(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico47, 12));
+		model.setLabelClassificatoreGenerico48(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico48, 13));
+		model.setLabelClassificatoreGenerico49(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico49, 14));
+		model.setLabelClassificatoreGenerico50(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico50, 15));
 	}
 
 	/**
@@ -314,23 +317,34 @@ public abstract class CapitoloEntrataAction<M extends CapitoloEntrataModel> exte
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			// Errori nel caricamento dei label
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaTipoClassificatoreGenerico.class, res));
 		}
 		// Impostazione dei label
-		model.setLabelClassificatoreGenerico1(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_36)));
-		model.setLabelClassificatoreGenerico2(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_37)));
-		model.setLabelClassificatoreGenerico3(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_38)));
-		model.setLabelClassificatoreGenerico4(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_39)));
-		model.setLabelClassificatoreGenerico5(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_40)));
-		model.setLabelClassificatoreGenerico6(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_41)));
-		model.setLabelClassificatoreGenerico7(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_42)));
-		model.setLabelClassificatoreGenerico8(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_43)));
-		model.setLabelClassificatoreGenerico9(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_44)));
-		model.setLabelClassificatoreGenerico10(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_45)));
-		model.setLabelClassificatoreGenerico11(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_46)));
-		model.setLabelClassificatoreGenerico12(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_47)));
-		model.setLabelClassificatoreGenerico13(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_48)));
-		model.setLabelClassificatoreGenerico14(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_49)));
-		model.setLabelClassificatoreGenerico15(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_50)));
+		model.setLabelClassificatoreGenerico36(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_36)));
+		model.setLabelClassificatoreGenerico37(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_37)));
+		model.setLabelClassificatoreGenerico38(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_38)));
+		model.setLabelClassificatoreGenerico39(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_39)));
+		model.setLabelClassificatoreGenerico40(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_40)));
+		model.setLabelClassificatoreGenerico41(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_41)));
+		model.setLabelClassificatoreGenerico42(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_42)));
+		model.setLabelClassificatoreGenerico43(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_43)));
+		model.setLabelClassificatoreGenerico44(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_44)));
+		model.setLabelClassificatoreGenerico45(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_45)));
+		model.setLabelClassificatoreGenerico46(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_46)));
+		model.setLabelClassificatoreGenerico47(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_47)));
+		model.setLabelClassificatoreGenerico48(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_48)));
+		model.setLabelClassificatoreGenerico49(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_49)));
+		model.setLabelClassificatoreGenerico50(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_50)));
 	}
+
+	//task-244
+	public CategoriaCapitolo caricaCategoriaCapitolo (int uid) {
+		return CollectionUtil.findFirst(model.getListaCategoriaCapitolo(), new Filter<CategoriaCapitolo>() {
+			@Override
+			public boolean isAcceptable(CategoriaCapitolo source) {
+				return source.getUid() == uid;
+			}});
+	}
+	
+	
 }

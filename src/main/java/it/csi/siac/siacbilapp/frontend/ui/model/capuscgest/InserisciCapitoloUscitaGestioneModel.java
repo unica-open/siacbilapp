@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloUscitaModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisione;
@@ -25,7 +23,6 @@ import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUGest;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUPrev;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloUGest;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloUPrev;
-import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 
@@ -252,6 +249,9 @@ public class InserisciCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		impostaIlParametroNelCapitolo(capitoloUscitaGestione, getTransazioneUnioneEuropeaSpesa());
 		impostaIlParametroNelCapitolo(capitoloUscitaGestione, getPoliticheRegionaliUnitarie());
 		
+		//SIAC-7192
+		impostaIlParametroNelCapitolo(capitoloUscitaGestione, getRisorsaAccantonata());
+		
 		request.setCapitoloUscitaGestione(capitoloUscitaGestione);
 
 		
@@ -337,6 +337,8 @@ public class InserisciCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		
 		capitoloUscitaGestione.setCategoriaCapitolo(cap.getCategoriaCapitolo());
 		capitoloUscitaGestione.setFlagImpegnabile(cap.getFlagImpegnabile());
+		//task-55
+		capitoloUscitaGestione.setFlagNonInserireAllegatoA1(cap.getFlagNonInserireAllegatoA1());
 		// SIAC-4878
 		setTipoFinanziamento(cap.getTipoFinanziamento());
 		setTipoFondo(cap.getTipoFondo());
@@ -374,6 +376,8 @@ public class InserisciCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		
 		capitoloUscitaGestione.setCategoriaCapitolo(cap.getCategoriaCapitolo());
 		capitoloUscitaGestione.setFlagImpegnabile(cap.getFlagImpegnabile());
+		//task-55
+		capitoloUscitaGestione.setFlagNonInserireAllegatoA1(cap.getFlagNonInserireAllegatoA1());
 
 		// SIAC-4878
 		setTipoFinanziamento(cap.getTipoFinanziamento());
@@ -508,10 +512,13 @@ public class InserisciCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		capitoloUscitaGestione.setPerimetroSanitarioSpesa(getPerimetroSanitarioSpesa());
 		capitoloUscitaGestione.setTransazioneUnioneEuropeaSpesa(getTransazioneUnioneEuropeaSpesa());
 		capitoloUscitaGestione.setPoliticheRegionaliUnitarie(getPoliticheRegionaliUnitarie());
+		//SIAC-7192
+		capitoloUscitaGestione.setRisorsaAccantonata(getRisorsaAccantonata());
 		
 		// Impostazione degli importi
 		capitoloUscitaGestione.setImportiCapitoloUG(importiCapitoloUscitaGestione0);
 		capitoloUscitaGestione.setListaImportiCapitolo(getListaImportiCapitoloUG());
 	}
+	
 
 }

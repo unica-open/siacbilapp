@@ -67,12 +67,12 @@ public final class MovimentoGestioneHelper {
 	 */
 	public static RicercaImpegnoPerChiaveOttimizzato creaRequestRicercaImpegnoPerChiaveOttimizzato(Integer annoEsercizio, Ente ente, Richiedente richiedente, Impegno impegno, SubImpegno subImpegno){
 				
-		if(subImpegno == null || subImpegno.getNumero() == null){
+		if(subImpegno == null || subImpegno.getNumeroBigDecimal() == null){
 			return creaRequestRicercaImpegnoPerChiaveOttimizzato(annoEsercizio, ente, richiedente, impegno);
 		}
 		RicercaImpegnoPerChiaveOttimizzato req = popolaCampiComuniRequestRicercaImpegnoPerChiaveOttimizzato(annoEsercizio, ente, richiedente, impegno);
 		req.setCaricaSub(true);
-		req.getpRicercaImpegnoK().setNumeroSubDaCercare(subImpegno.getNumero());
+		req.getpRicercaImpegnoK().setNumeroSubDaCercare(subImpegno.getNumeroBigDecimal());
 		
 		return req;
 	}
@@ -118,7 +118,7 @@ public final class MovimentoGestioneHelper {
 		RicercaImpegnoK ricercaImpegnoK = new RicercaImpegnoK();
 		ricercaImpegnoK.setAnnoEsercizio(annoEsercizio);
 		ricercaImpegnoK.setAnnoImpegno(impegno.getAnnoMovimento());
-		ricercaImpegnoK.setNumeroImpegno(impegno.getNumero());
+		ricercaImpegnoK.setNumeroImpegno(impegno.getNumeroBigDecimal());
 		
 		req.setpRicercaImpegnoK(ricercaImpegnoK);
 		req.setEnte(ente);
@@ -171,7 +171,7 @@ public final class MovimentoGestioneHelper {
 		}
 		RicercaAccertamentoPerChiaveOttimizzato req = popolaCampiComuniRequestRicercaAccertamentoPerChiaveOttimizzato(annoEsercizio, ente, richiedente, accertamento);
 		req.setCaricaSub(true);
-		req.getpRicercaAccertamentoK().setNumeroSubDaCercare(subAccertamento.getNumero());
+		req.getpRicercaAccertamentoK().setNumeroSubDaCercare(subAccertamento.getNumeroBigDecimal());
 		
 		return req;
 	}
@@ -194,7 +194,7 @@ public final class MovimentoGestioneHelper {
 		RicercaAccertamentoK ricercaAccertamentoK = new RicercaAccertamentoK();
 		ricercaAccertamentoK.setAnnoEsercizio(annoEsercizio);
 		ricercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		ricercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+		ricercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 		
 		req.setpRicercaAccertamentoK(ricercaAccertamentoK);
 		req.setEnte(ente);

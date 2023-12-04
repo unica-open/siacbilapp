@@ -4,14 +4,14 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.Informazione;
@@ -94,7 +94,7 @@ public class RisultatiRicercaAllegatoAttoOperazioniMultipleAction extends Risult
 	 */
 	private String completaMultiplo(CompletaAllegatoAttoMultiplo req) {
 		final String methodName = "completaMultiplo";
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_COMPLETA_MULTIPLO.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_COMPLETA_MULTIPLO.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = allegatoAttoService.completaAllegatoAttoMultiploAsync(wrapRequestToAsync(req, azioneRichiesta));
 		if(response.hasErrori()) {
 			log.debug(methodName, "si sono verificati errori nella chiamata al servizio.");
@@ -150,7 +150,7 @@ public class RisultatiRicercaAllegatoAttoOperazioniMultipleAction extends Risult
 	 */
 	private String convalidaMultiplo(ConvalidaAllegatoAttoPerElenchiMultiplo req) {
 		final String methodName = "completaMultiplo";
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_CONVALIDA_MULTIPLO.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_CONVALIDA_MULTIPLO.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = allegatoAttoService.convalidaAllegatoAttoPerElenchiMultiploAsync(wrapRequestToAsync(req, azioneRichiesta));
 		if(response.hasErrori()) {
 			log.debug(methodName, "si sono verificati errori nella chiamata al servizio.");
@@ -187,7 +187,7 @@ public class RisultatiRicercaAllegatoAttoOperazioniMultipleAction extends Risult
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(ControlloImportiImpegniVincolati.class, response));
 			addErrori(response);
 			return INPUT;
 		}

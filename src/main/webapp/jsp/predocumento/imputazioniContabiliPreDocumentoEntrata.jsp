@@ -157,3 +157,32 @@ SPDX-License-Identifier: EUPL-1.2
 		</div>
 	</div>
 </fieldset>
+<%-- SIAC-7423 --%>
+<s:if test="modificaAssociazioniContabiliAbilitato">
+	<fieldset class="form-horizontal imputazioniContabiliProvvisorio">
+		<s:hidden id="HIDDEN_TipoProvvisorioCassa" />
+		<h4 class="step-pane">Provvisorio di Cassa
+		<span class="datiRIFProvvisorioCassa" id="datiRiferimentoProvvisorioCassaSpan">
+			<s:property value="datiRiferimentoProvvisorioCassa || %{anno} / %{numero} - %{causale}" />
+		</span>
+		</h4>
+		<div class="control-group">
+			<label for="codiceProvvisorioCassa" class="control-label">Anno</label>
+			<div class="controls">
+				<s:textfield id="annoProvvisorioCassa" name="provvisorioCassa.anno" cssClass="lbTextSmall span2" placeholder="%{'anno'}" />
+				<label for="importoProvvisorioCassa" class="radio inline">Numero</label>
+				<s:textfield id="numeroProvvisorioCassa" name="provvisorioCassa.numero" cssClass="lbTextSmall span2" placeholder="%{'numero'}" />
+				<label for="importoProvvisorioCassa" class="radio inline">Importo</label>
+				<s:textfield id="importoProvvisorioCassa" name="provvisorioCassa.importo" cssClass="lbTextSmall soloNumeri span2" placeholder="%{'importo'}" />
+				<label for="importoDaRegolarizzareProvvisorioCassa" class="radio inline">Da regolarizzare</label>
+				<s:textfield id="importoDaRegolarizzareProvvisorioCassa" name="provvisorioCassa.importoDaRegolarizzare" cssClass="lbTextSmall soloNumeri span2"  placeholder="%{'importo da regolarizzare'}" disabled="true" />
+				&nbsp;
+				<s:hidden id="HIDDEN_CausaleProvvisorioCassa" name="provvisorioCassa.causale" value="%{causale}" />
+				<span class="radio guidata">
+					<button type="button" class="btn btn-primary" id="pulsanteCompilazioneGuidataProvvisorioCassa">compilazione guidata</button>
+				</span>
+			</div>
+		</div>
+	</fieldset>
+</s:if>
+<%-- SIAC-7423 --%>

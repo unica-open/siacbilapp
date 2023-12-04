@@ -9,6 +9,8 @@ window.interazioni = window.interazioni || {};
     var $document = $(document);
     var Base = function() {
     };
+    //SIAC-8222
+    var cookieRegex = /siac_ajax_print=(.+?)(?:;|$)/;
 
     global.impostaErroriNelBootbox = impostaErroriNelBootbox;
     global.endDownload = endDownload;
@@ -204,7 +206,10 @@ window.interazioni = window.interazioni || {};
     function esportaRisultati(arrayOfRequestParameters, urlRicercaEntita, isXlsx, e){
         var container, params, url, html, arr;
         e.preventDefault();
-
+        
+        //SIAC-8222
+        abilitaPulsanti(false);
+        
         // TODO: Fallback per explorer
 //        var formEsporta, inputForDownload;
 //        if(window.navigator.appName === 'Microsoft Internet Explorer') {
@@ -233,36 +238,66 @@ window.interazioni = window.interazioni || {};
 
         $("#formEsportaRisultatiConsultazioneEntita").addClass('form-submitted');
         container.html(html);
+        
+        endDownload();
     }
 
     /**
+     * SIAC-8222 refactoring per gestire i cookie
      * Callback per la gestione del download.
      */
     function endDownload() {
         var cnt = $('#iframeContainer').find('iframe').contents();
         var html = cnt.find('body').html();
         $("#formEsportaRisultatiConsultazioneEntita").removeClass('form-submitted');
-        if(!html) {
-        	//Download completato correttamente. Esco.
-            return;
-        }
-        if(/^<pre/.test(html) && /errori/.test(html)){
-        	//Errore applicativo.
-        	var parsed;
-        	try {
-        		parsed = JSON.parse(html.replace(/<\/?pre.*?>/g, ''));
-        	} catch (syntaxError){
-        		return bootboxAlert(html);
-        	}
-	        parsed.errori = parsed.errori || [];
-	        return bootboxAlert('<ul><li>' + parsed.errori.map(function(el) {
-	            return el.codice + ' - ' + el.descrizione;
-	        }).join('</li><li>') + '</li></ul>');
-   		}
         
-        //ERROR 500 o 404 o altro.
-   		return bootboxAlert(html);
+        var regexResult = cookieRegex.exec(document.cookie);
+
+        if(regexResult) {
+            if(!html) {
+            	abilitaPulsanti(true);
+            	rimuoviCookie();
+            	//Download completato correttamente. Esco.
+            	return;
+            }
+            if(/^<pre/.test(html) && /errori/.test(html)){
+            	//Errore applicativo.
+            	var parsed;
+            	try {
+            		parsed = JSON.parse(html.replace(/<\/?pre.*?>/g, ''));
+            	} catch (syntaxError){
+            		return bootboxAlert(html);
+            	}
+            	
+            	abilitaPulsanti(true);
+            	rimuoviCookie();
+            	
+            	parsed.errori = parsed.errori || [];
+            	return bootboxAlert('<ul><li>' + parsed.errori.map(function(el) {
+            		return el.codice + ' - ' + el.descrizione;
+            	}).join('</li><li>') + '</li></ul>');
+            }
+            
+            //ERROR 500 o 404 o altro.
+            return bootboxAlert(html);
+        }
+
+   		setTimeout(endDownload.bind(undefined, html), 250);
    		
+    }
+    
+    function rimuoviCookie(){
+    	document.cookie = 'siac_ajax_print' + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+    
+    function abilitaPulsanti(daAbilitare){
+    	if(daAbilitare){
+        	$("#pulsanteEsportaRisultatiConsultazioneEntita").removeAttr('disabled');
+        	$("#pulsanteEsportaRisultatiConsultazioneEntitaXlsx").removeAttr('disabled');
+    	} else {
+        	$("#pulsanteEsportaRisultatiConsultazioneEntita").attr('disabled', 'disabled');
+        	$("#pulsanteEsportaRisultatiConsultazioneEntitaXlsx").attr('disabled', 'disabled');
+    	}
     }
 
     /**

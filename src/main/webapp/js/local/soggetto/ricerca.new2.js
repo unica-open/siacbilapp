@@ -343,7 +343,7 @@
 
         e.preventDefault();
         if(checkedSoggetto.length === 0) {
-            impostaDatiNegliAlert(['Necessario selezionare un soggetto'], alertErrori, false);
+            impostaDatiNegliAlert(['Necessario selezionare un soggetto'], this.$alertErrori, false);
             return;
         }
 
@@ -499,6 +499,11 @@
         if(!soggetto) {
             return;
         }
+        
+        if (soggetto.$codice.data('carica-dettaglio') === false) {
+        	return;
+        }
+        
         soggetto.$codice.substituteHandler('change', soggetto.caricaDettaglioSoggettoInner.bind(soggetto));
         if(initialTrigger) {
             soggetto.$codice.trigger('change');

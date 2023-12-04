@@ -13,7 +13,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione.ElementoVaria
  * @version 1.0.0 03/11/2013
  *
  */
-public class RisultatiRicercaVariazioniAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoVariazione> {
+public class RisultatiRicercaVariazioniAjaxModel extends PagedDataTableAjaxModel<ElementoVariazione> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1949840562109980124L;

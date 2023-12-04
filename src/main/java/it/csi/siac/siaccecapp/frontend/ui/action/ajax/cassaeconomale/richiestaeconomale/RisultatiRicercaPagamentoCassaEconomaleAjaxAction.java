@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.richiestaeconomale.ElementoRichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per i risultati di ricerca per il pagamento, gestione dell'AJAX.
@@ -37,21 +37,21 @@ public class RisultatiRicercaPagamentoCassaEconomaleAjaxAction extends Risultati
 				|| instance.isStatoOperativoDaRendicontare())
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_ABILITA);
 	}
 
 	@Override
 	protected boolean gestisciAnnullamento(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
 		// SIAC-5623: aggiunto controllo abilitazione
 //		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, listaAzioniConsentite);
-		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_ABILITA);
+		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_ABILITA);
 	}
 
 	@Override
 	protected boolean gestisciConsultazione(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
 		// SIAC-5623: aggiunto controllo abilitazione
 //		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_RICERCA, listaAzioniConsentite);
-		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_RICERCA, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_ABILITA);
+		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_ABILITA);
 	}
 	
 	

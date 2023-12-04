@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgsaapp.frontend.ui.action.registrazionemovfin;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -61,7 +61,7 @@ public class RisultatiRicercaRegistrazioneMassivaMovFinGSAAction extends Risulta
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RegistraMassivaPrimaNotaIntegrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.conti.RisultatiRicercaPianoDeiContiAjaxModel;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -28,7 +28,7 @@ import it.csi.siac.siacgenser.model.Conto;
 
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaPianoDeiContiAjaxAction extends GenericRisultatiRicercaAjaxAction<Conto,
+public class RisultatiRicercaPianoDeiContiAjaxAction extends PagedDataTableAjaxAction<Conto,
 RisultatiRicercaPianoDeiContiAjaxModel, Conto, RicercaSinteticaContoFigli, RicercaSinteticaContoFigliResponse> {
 
 	/** Per la serializzazione */
@@ -54,12 +54,12 @@ RisultatiRicercaPianoDeiContiAjaxModel, Conto, RicercaSinteticaContoFigli, Ricer
 	}
 
 	@Override
-	protected Conto ottieniIstanza(Conto e) throws FrontEndBusinessException {
+	protected Conto getInstance(Conto e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaSinteticaContoFigliResponse ottieniResponse(RicercaSinteticaContoFigli request) {
+	protected RicercaSinteticaContoFigliResponse getResponse(RicercaSinteticaContoFigli request) {
 		return contoService.ricercaSinteticaContoFigli(request);
 	}
 

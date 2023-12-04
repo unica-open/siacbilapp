@@ -6,8 +6,8 @@ package it.csi.siac.siacbilapp.frontend.ui.action.ajax.classificatori.ricercasin
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaClassificatore;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaClassificatoreResponse;
@@ -24,7 +24,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  * @param <M> la tipizzazione del model
  *
  */
-public abstract class RisultatiRicercaClassificatoreGerachicoAjaxAction<CG extends ClassificatoreGerarchico, M extends GenericRisultatiRicercaAjaxModel<CG>> extends GenericRisultatiRicercaAjaxAction<CG,
+public abstract class RisultatiRicercaClassificatoreGerachicoAjaxAction<CG extends ClassificatoreGerarchico, M extends PagedDataTableAjaxModel<CG>> extends PagedDataTableAjaxAction<CG,
 	M, Codifica, RicercaSinteticaClassificatore, RicercaSinteticaClassificatoreResponse> {
 	
 	/** Per la serializzazione */
@@ -43,7 +43,7 @@ public abstract class RisultatiRicercaClassificatoreGerachicoAjaxAction<CG exten
 	}
 
 	@Override
-	protected RicercaSinteticaClassificatoreResponse ottieniResponse(RicercaSinteticaClassificatore request) {
+	protected RicercaSinteticaClassificatoreResponse getResponse(RicercaSinteticaClassificatore request) {
 		return classificatoreBilService.ricercaSinteticaClassificatore(request);
 	}
 

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.documento;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoSubdocumentoSpesa;
 
 /**
@@ -13,7 +13,7 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoSubdo
  * @author Alessandro Marchino
  *
  */
-public class RisultatiRicercaSinteticaQuoteDocumentoSpesaBaseAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoSubdocumentoSpesa> {
+public class RisultatiRicercaSinteticaQuoteDocumentoSpesaBaseAjaxModel extends PagedDataTableAjaxModel<ElementoSubdocumentoSpesa> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 2898856410752948354L;

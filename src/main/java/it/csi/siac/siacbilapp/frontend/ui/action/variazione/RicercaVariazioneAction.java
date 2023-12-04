@@ -6,11 +6,10 @@ package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -33,18 +32,18 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioRe
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBaseResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodifiche;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService;
 import it.csi.siac.siaccorser.frontend.webservice.msg.LeggiStrutturaAmminstrativoContabile;
 import it.csi.siac.siaccorser.frontend.webservice.msg.LeggiStrutturaAmminstrativoContabileResponse;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.Codifica;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Action per la ricerca dello variazione di bilancio.
@@ -135,8 +134,10 @@ public class RicercaVariazioneAction extends GenericBilancioAction<RicercaVariaz
 		/* Se Ricerca Variazioni di Bilancio */
 		// se siamo in variazioni di codifiche è TRUE, altrimenti FALSE
 		if (Boolean.FALSE.equals(tipoVariazione)) {
+			//SIAC-8771-REGP
+			boolean limitaRicerca = isAzioneConsentita(AzioneConsentitaEnum.RICERCA_VARIAZIONI_LIMITATA);
 			// caso di variazioni di IMPORTI
-			RicercaVariazioneBilancio req = model.creaRequestRicercaVariazioneBilancio();
+			RicercaVariazioneBilancio req = model.creaRequestRicercaVariazioneBilancio(limitaRicerca);
 			logServiceRequest(req);
 			request = req;
 
@@ -270,7 +271,7 @@ public class RicercaVariazioneAction extends GenericBilancioAction<RicercaVariaz
 	private void caricaStatoVariazione() {
 		List<ElementoStatoOperativoVariazione> instances = new ArrayList<ElementoStatoOperativoVariazione>();
 		instances = ElementoStatoOperativoVariazioneFactory.getInstances(model.getEnte().getGestioneLivelli(),
-				Arrays.asList(StatoOperativoVariazioneDiBilancio.values()));
+				Arrays.asList(StatoOperativoVariazioneBilancio.values()));
 		model.setListaStatoVariazione(instances);
 	}
 

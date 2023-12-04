@@ -10,13 +10,6 @@ window.siacAppVersion = function() {
     doLog('${product-version}');
 };
 
-//window.siacImplVersion = function() {
-//var str = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Header/><soapenv:Body/></soapenv:Envelope>';
-//$.post('${endpoint.url.service.bil}/TestService', str)
-//.then(function(data) {
-//  doLog(data.getElementsByTagNameNS('*', 'versionResponse')[0].childNodes[0].nodeValue);
-//});
-//};
 
 window.onerror = function(msg, url, line, colNo, err) {
 	var stringaErrore = "Error: " + msg + "\nURL: " + url + "\nLine #: " + line;
@@ -172,6 +165,7 @@ function capitalizeFirstChar(lowerCaseString){
 		  return chr.toUpperCase();
 	});
 }
+
 /**
  * Elabora la stringa passata in input ritornando la stessa con il primo carattere minuscolo.
  *  
@@ -189,6 +183,17 @@ function lowerFirstChar(upperCaseString){
 	});
 }
 
+function parsePercent(num) {
+    return parseLocalNum(num.replace(/%$/g, ""));
+}
+
+function formatPercent(num, prec = 2) {
+    return formatMoney(num, prec) + '%';
+}
+
+function formatDecimal(num, prec = 2) {
+    return formatMoney(num, prec);
+}
 
 /**
  * Parsing di un numero escludendo il locale.
@@ -211,7 +216,11 @@ function parseLocalNum(num) {
     if(num === undefined || num === null){
         return '';
     }
-    return num.replace(/\./g, "").replace(/\,/g, ".");
+    if(num === '0') return num;
+    // SIAC-8505 per le virgole da /g passiamo a /i per sostituire solo la prima occorrenza
+    num = num.replace(/\./g, "").replace(/\,/i, ".");
+    // se e' presente almeno un altra virgola questa ed i successivi valori saranno eliminati
+    return num.indexOf(',') === -1 ? num : num.slice(0, num.indexOf(','));
 }
 
 /**
@@ -230,6 +239,24 @@ function formatDate(data) {
     var date = new Date(data);
     return !isNaN(date.getTime()) && (('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear()) || "";
 }
+
+/**
+ * Date parsing in DD/MM/YYYY format.
+ * <br>
+ * @param d (String) date to parse
+ *
+ * @returns (Date) the parsed date
+ */
+function parseDate(d) {
+    if(!d || d === '') {
+        return null;
+    }
+    
+    var split = d.split('/');
+
+    return new Date(split[2], split[1] - 1, split[0]);
+}
+
 
 /**
  * Popolamento della select.
@@ -518,6 +545,21 @@ function defaultPerDataTable(sel, defaultValue, operation) {
         return oper(res);
     };
 }
+
+function deepValue(element, path, defaultValue) {
+    var split = path.split('.');
+    var length = split.length;
+    var defVal = defaultValue !== undefined ? defaultValue : '';
+    var res = element;
+    var i;
+    for(i = 0 ; i < length; i++) {
+        if(res[split[i]] === undefined) {
+            return defVal;
+        }
+        res = res[split[i]];
+    }
+    return res;
+}
 /**
  * Funzione che restituisce l'argomento invariato
  * @param e (any) l'argomento
@@ -715,6 +757,18 @@ jQuery.fn.forzaMaiuscole = function() {
 };
 
 
+jQuery.fn.forzaVirgolaDecimale = function() {
+    return this
+		.on("input", function(e) {
+			$(this).val($(this).val().replace('.', ','));
+		})
+    	.on("focus", function(e) {
+    		$(this).val($(this).val().replace(/\./g, ''));
+    	})
+    	;
+}; 
+
+
 /**
  * Gestione dei valori minimi e massimi
  */
@@ -753,6 +807,7 @@ jQuery.fn.gestioneDeiDecimali = function(positiveMultiplier, negativeMultiplier)
      */
     function onblur() {
         var self = $(this);
+        var numeroDecimali = self.data('decimalPlaces') || 2;
         var importo = self.val();
         if(positiveMultiplier !== undefined && importo > 0){
             self.val(importo * positiveMultiplier);
@@ -764,7 +819,7 @@ jQuery.fn.gestioneDeiDecimali = function(positiveMultiplier, negativeMultiplier)
         var number = parseFloat(numberString);
 
         if (!isNaN(number)) {
-            self.val(number.formatMoney());
+            self.val(number.formatMoney(numeroDecimali));
         }
     }
 
@@ -960,6 +1015,31 @@ jQuery.fn.reset = function() {
         this.reset();
     });
 };
+
+
+
+jQuery.fn.readonly = function() {
+	this.each(function() {
+		var $this = jQuery(this);
+		$this.focus(function() { this.blur() });
+		var tagName = $this.prop('tagName').toLowerCase();
+		
+		if (tagName === 'select') {
+			$this.css("pointer-events", "none").wrap('<span style="cursor: not-allowed"></span>');
+			return;
+		}
+		
+		if (tagName === 'input') {
+			if (this.type.toLowerCase() === 'radio') {
+				$this
+					.css("cursor", "not-allowed")
+					.click(function(e){ e.stopPropagation(); return false; });
+				return;
+			}
+		}
+	});
+};
+
 
 /**
  * Inverts the selection.
@@ -1237,15 +1317,19 @@ BigNumber.config({
 /**
  * Formattazione degli importi in decimale per la valuta
  * @params val (string | number) il valore da formattare
+ * @params prec (string | number) cifre decimali, default 2
  * @returns (string) il valore formattato
  */
-function formatMoney(val) {
+function formatMoney(val, prec) {
     var res = '';
-    if(val === undefined || val === null || isNaN(val) || val === '') {
+    if(prec === undefined) {
+       prec = 2;
+    }
+    if(val === undefined || val === null || isNaN(val) || !isFinite(val) || val === '') {
         return '';
     }
     try {
-        res = new BigNumber(val).toFormat(2, BigNumber.ROUND_HALF_UP);
+        res = new BigNumber(val).toFormat(prec, BigNumber.ROUND_HALF_UP);
     } catch(err) {
         // Per sicurezza
         doLog('Error: ' + err);
@@ -1395,11 +1479,12 @@ jQuery(function() {
     });
 
     // Popover
-    jQuery('.popover-test').popover();
-    jQuery("a[rel=popover]").popover()
-        .click(function(e) {
-            e.preventDefault();
-        });
+
+    jQuery('[data-toggle="popover"]').popover();
+    jQuery('a[data-toggle="popover"]').click(function(e) {
+	        e.preventDefault();
+	    }
+	);
 
     // Tabs
     jQuery('.nav.nav-tabs').tab()
@@ -1526,10 +1611,12 @@ jQuery(function() {
     jQuery(".soloNumeri").allowedChars({
         numeric : true
     });
+    
     jQuery(".numeroNaturale").allowedChars({
         regExp : /[0-9]/
     });
 
+    
     // Chosen (integrare le opzioni)
     jQuery(".chosen-select").chosen({
         allow_single_deselect : true,
@@ -1539,6 +1626,9 @@ jQuery(function() {
 
     // Multi-select
     jQuery(".multiselect").multiSelect();
+
+    
+    jQuery(".readonly").readonly();
 
     /*
      * Gestione dell'hide sull'alert. Per ottenere cio', basta sostituire il
@@ -1555,7 +1645,9 @@ jQuery(function() {
     //jQuery(".decimale-negativo").gestioneDeiDecimaliNegativi();
     jQuery(".decimale-negativo").gestioneDeiDecimali(-1);
 
-    jQuery('input[data-force-uppercase]').forzaMaiuscole();
+    jQuery('input.forzaMaiuscole').forzaMaiuscole();
+    
+    jQuery('input.forzaVirgolaDecimale').forzaVirgolaDecimale();
     
     // Gestione dei campi con massimo e minimo
     jQuery("[data-min][data-max]").gestioneMinMax();
@@ -1593,7 +1685,7 @@ jQuery(function() {
             doLog(e);
         }
         if(doSubmit && !e.isDefaultPrevented()) {
-            $body.overlay('show');
+            $body.overlay('show').trigger('showOverlay');
             return true;
         }
         e && e.preventDefault();
@@ -1606,5 +1698,39 @@ jQuery(function() {
         bootboxAlert(originalErrore);
     });
     
+    
+    $("#submit-on-enter-key").closest('form').find(':input:not(textarea)').on("keypress	", function(e) {
+        var code = e.which || e.keyCode || e.charCode;
+        if(code === 13) { // 13 === VK_ENTER
+            e.preventDefault();
+            $("#submit-on-enter-key").click();
+        }
+    });
+    
+    $("form.ignore-enter-key").on("keypress", ":input:not(textarea)", function(e) {
+        var code = e.which || e.keyCode || e.charCode;
+        if(code === 13) { // 13 === VK_ENTER
+            e.preventDefault();
+            return false;
+        }
+    });
+    
     $body.overlay({loader: false});
+    
+	$('.disableOverlay').click(function(){
+		$body.data('disableOverlay', true);
+	});
+	
+	$body
+		.data('disableOverlay', false)
+		.on('showOverlay', function() {
+			if ($body.data('disableOverlay')) {
+				$body.overlay('hide');
+			}
+			
+			$body.data('disableOverlay', false);
+		});
+
+	
+
 });

@@ -11,7 +11,7 @@ import java.util.List;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.list.SortedSetList;
+import it.csi.siac.siaccommon.util.collections.list.SortedSetList;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioAllegatoAtto;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;

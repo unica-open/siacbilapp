@@ -29,7 +29,7 @@ import it.csi.siac.siacbilser.model.TitoloSpesa;
 //import it.csi.siac.siacgenser.model.CategoriaCespiti;
   import it.csi.siac.siaccespser.model.CategoriaCespiti;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.ListeGestioneSoggetto;
@@ -96,7 +96,7 @@ public abstract class BaseInserisciAggiornaPianoDeiContiAction<M extends BaseIns
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 			}
 			
 			listaClassePiano = response.getCodifiche(ClassePiano.class);
@@ -119,7 +119,7 @@ public abstract class BaseInserisciAggiornaPianoDeiContiAction<M extends BaseIns
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaClassiPianoAmmortamento.class, response));
 		}
 		
 		model.setListaClassiAmmortamento(response.getClassiPiano());
@@ -157,7 +157,7 @@ public abstract class BaseInserisciAggiornaPianoDeiContiAction<M extends BaseIns
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoriByTipoElementoBil.class, response));
 		}
 		return response;
 	}
@@ -197,7 +197,7 @@ public abstract class BaseInserisciAggiornaPianoDeiContiAction<M extends BaseIns
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(ListeGestioneSoggetto.class, response));
 			}
 			listaClassiSoggetto = response.getListaClasseSoggetto();
 			ComparatorUtils.sortByCodiceFin(listaClassiSoggetto);
@@ -228,7 +228,7 @@ public abstract class BaseInserisciAggiornaPianoDeiContiAction<M extends BaseIns
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 			}
 			listaTipoContoDaSessione = response.getCodifiche(TipoConto.class);
 			listaCategoriaCespitiDaSessione = response.getCodifiche(CategoriaCespiti.class);
@@ -262,7 +262,7 @@ public abstract class BaseInserisciAggiornaPianoDeiContiAction<M extends BaseIns
 				log.debug(methodName, "Nessun codice trovato");
 				addMessaggio(ErroreCore.ENTITA_NON_TROVATA.getErrore("codifica di bilancio", "relativa alla classe piano " + uidClasse));
 			} else if(resLTCB.hasErrori()) {
-				log.info(methodName, createErrorInServiceInvocationString(reqLTCB, resLTCB));
+				log.info(methodName, createErrorInServiceInvocationString(LeggiTreeCodiceBilancio.class, resLTCB));
 				addErrori(resLTCB);
 				return;
 			}

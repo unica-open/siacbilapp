@@ -69,6 +69,15 @@
         }
 
         $("form").substituteHandler("reset", ricaricamentoSelectGerarchiche);
+        
+        //task-244
+        var codiceCategoriaCapitolo = $("option:selected", "#categoriaCapitolo").data("codice");
+	    if(codiceCategoriaCapitolo != null){
+			if(codiceCategoriaCapitolo.match(/FPV.*/) || codiceCategoriaCapitolo === "AAM"){
+				$("#flagImpegnabile").attr("disabled", "disabled");
+			}
+	    }
+
 
     });
 }(jQuery, window, Capitolo, CapitoloEntrata));

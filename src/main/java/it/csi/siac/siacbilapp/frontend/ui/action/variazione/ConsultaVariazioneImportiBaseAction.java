@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.variazione.ConsultaVariazioneImportiModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazioneFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.VariazioneDiBilancioService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettagliVariazioneImportoCapitoloNellaVariazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse;
@@ -23,10 +21,8 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioAnagrafica
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioAnagraficaVariazioneBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSingoloDettaglioVariazioneImportoCapitoloNellaVariazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSingoloDettaglioVariazioneImportoCapitoloNellaVariazioneResponse;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancioResponse;
-import it.csi.siac.siaccommonapp.util.exception.UtenteNonLoggatoException;
-import it.csi.siac.siaccorser.model.Account;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReportResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -60,19 +56,17 @@ public abstract class ConsultaVariazioneImportiBaseAction
 		}
 		log.debug(methodName, "Creo la request per la ricerca dell'anagrafica della variazione");
 
-		RicercaDettaglioAnagraficaVariazioneBilancio request = model
-				.creaRequestRicercaDettaglioAnagraficaVariazioneBilancio();
+		RicercaDettaglioAnagraficaVariazioneBilancio request = model.creaRequestRicercaDettaglioAnagraficaVariazioneBilancio();
 		logServiceRequest(request);
 		//System.out.println(request);
 
 		log.debug(methodName, "Invocazione del servizio di ricerca");
 
-		RicercaDettaglioAnagraficaVariazioneBilancioResponse response = variazioneDiBilancioService
-				.ricercaDettaglioAnagraficaVariazioneBilancio(request);
+		RicercaDettaglioAnagraficaVariazioneBilancioResponse response = variazioneDiBilancioService.ricercaDettaglioAnagraficaVariazioneBilancio(request);
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioAnagraficaVariazioneBilancio.class, response));
 			addErrori(response);
 			throwExceptionFromErrori(model.getErrori());
 		}
@@ -102,7 +96,7 @@ public abstract class ConsultaVariazioneImportiBaseAction
 				.ricercaDettagliVariazioneImportoCapitoloNellaVariazione(request);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettagliVariazioneImportoCapitoloNellaVariazione.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -146,8 +140,8 @@ public abstract class ConsultaVariazioneImportiBaseAction
 	public String download() {
 		final String methodName = "download";
 
-		StampaExcelVariazioneDiBilancio req = model.creaRequestStampaExcelVariazioneDiBilancio();
-		StampaExcelVariazioneDiBilancioResponse res = variazioneDiBilancioService.stampaExcelVariazioneDiBilancio(req);
+		VariazioneBilancioExcelReport req = model.creaRequestStampaExcelVariazioneDiBilancio();
+		VariazioneBilancioExcelReportResponse res = variazioneDiBilancioService.variazioneBilancioExcelReport(req);
 
 		// Controllo gli errori
 		if (res.hasErrori()) {
@@ -158,9 +152,12 @@ public abstract class ConsultaVariazioneImportiBaseAction
 		}
 
 		byte[] bytes = res.getReport();
-		model.setContentType(res.getContentType());
+		model.setContentType(res.getContentType() == null ? null : res.getContentType().getMimeType());
 		model.setContentLength(Long.valueOf(bytes.length));
-		model.setFileName("esportazioneVariazione" + model.getAnnoCompetenza() + "_" + model.getNumeroVariazione() + "."
+		//SIAC-8150 controllo su anno competenza
+		model.setFileName("esportazioneVariazione" + (model.getAnnoCompetenza() != null 
+				? model.getAnnoCompetenza() : (model.getAnnoEsercizio() != null 
+					? model.getAnnoEsercizio() : model.getBilancio().getAnno())) + "_" + model.getNumeroVariazione() + "."
 				+ res.getExtension());
 		model.setInputStream(new ByteArrayInputStream(bytes));
 

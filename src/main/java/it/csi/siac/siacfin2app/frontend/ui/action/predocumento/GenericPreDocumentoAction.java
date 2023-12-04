@@ -33,9 +33,14 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.predocumento.GenericPreDocumentoModel;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.GenericService;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
@@ -84,6 +89,12 @@ public class GenericPreDocumentoAction<M extends GenericPreDocumentoModel> exten
 	@Autowired protected transient SoggettoService soggettoService;
 	/** Serviz&icirc; del provvedimento */
 	@Autowired protected transient ProvvedimentoService provvedimentoService;
+	//XXX PER IL CARICAMENTO DELLA TESORERIA:::: DA SPOSTARE
+	/** Serviz&icirc; del predocumento di spesa */
+
+	@Autowired protected transient PreDocumentoSpesaService preDocumentoSpesaService;
+	
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
 	
 	/** Risultato corrispondente all'aggiornamento */
 	protected static final String AGGIORNA = "aggiorna";
@@ -313,6 +324,33 @@ public class GenericPreDocumentoAction<M extends GenericPreDocumentoModel> exten
 	}
 	
 	/**
+	 * Carica la lista del Conto Tesoreria.
+	 * 
+	 * @throws WebServiceInvocationFailureException nel caso in cui l'invocazione del servizio fallisca
+	 */
+	protected void caricaListaContoTesoreria() throws WebServiceInvocationFailureException {
+		List<ContoTesoreria> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_CONTO_TESORERIA);
+		if(listaInSessione == null) {
+			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
+			logServiceRequest(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
+			logServiceResponse(response);
+			
+			// Controllo gli errori
+			if(response.hasErrori()) {
+				//si sono verificati degli errori: esco.
+				addErrori(response);
+				throw new WebServiceInvocationFailureException("caricaListaContoTesoreria");
+			}
+			
+			listaInSessione = response.getContiTesoreria();
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CONTO_TESORERIA, listaInSessione);
+		}
+		
+		model.setListaContoTesoreria(listaInSessione);
+	}
+	
+	/**
 	 * Carica la lista dei comuni.
 	 * 
 	 * @throws WebServiceInvocationFailureException nel caso in cui l'invocazione del servizio fallisca
@@ -329,7 +367,7 @@ public class GenericPreDocumentoAction<M extends GenericPreDocumentoModel> exten
 			if(response.hasErrori()) {
 				// Se ho errori, invece, loggo
 				logServiceResponse(response);
-				log.info(methodName, createErrorInServiceInvocationString(request, response));
+				log.info(methodName, createErrorInServiceInvocationString(ListaComuni.class, response));
 				addErrori(response);
 				throw new WebServiceInvocationFailureException("ListaComuni");
 			}

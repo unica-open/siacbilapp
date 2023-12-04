@@ -167,14 +167,30 @@
      * Gestione del submit del form
      */
     function gestisciSubmitForm() {
-        var i;
-        var str;
-        for(i in selectedDatas) {
+        // SIAC-7752
+        schermaSubmit($('#submitAssociaDocumento_1'));
+        schermaSubmit($('#submitAssociaDocumento_2'));
+        //
+
+        // SIAC-7753 assegno un valore a str per evitare undefined
+        var str = "";
+        // dichiaro la variabile i nel for in
+        for(var i in selectedDatas) {
             if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
                 str += '<input type="hidden" name="mappaUidSubdocumenti[' + i + ']" value="' + selectedDatas[i].famiglia + '" />';
             }
         }
         $('form').append(str);
+    }
+
+    /**
+     * SIAC-7752
+     * @param jQueryElement $elementoDaSchermare 
+     */
+    function schermaSubmit($elementoDaSchermare){
+        $elementoDaSchermare
+        .overlay('show')
+        .prop("disabled", true);
     }
 
     $(function() {

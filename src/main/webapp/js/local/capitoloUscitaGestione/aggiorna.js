@@ -53,15 +53,27 @@
 			$("#flagImpegnabile").attr("disabled", true);
 			$("#categoriaCapitolo").attr("disabled", true);
 			$("#classificatoreGenerico3").attr("disabled", true);
-			$("#classificatoreGenerico3Hidden").removeAttr("disabled");
-			$("#classificatoreGenerico3Hidden").val($("#classificatoreGenerico3 option:selected").val());
+            $("#classificatoreGenerico3Hidden").removeAttr("disabled");
+            //SIAC-7608 MR 28/04/2020
+            $("#tipoCapitoloHidden").removeAttr("disabled");
+            $("#flagImpegnabileHidden").removeAttr("disabled");
+            //END
+            $("#classificatoreGenerico3Hidden").val($("#classificatoreGenerico3 option:selected").val());
+            //SIAC-7608 MR 28/04/2020
+            $("#tipoCapitoloHidden").val($("#categoriaCapitolo option:selected").val());
+            $("#flagImpegnabileHidden").val($("#flagImpegnabile").val());
+            //END
 
 			
 		}else{
             if($("#flagImpegnabile").is(':disabled')) {
                 $("#flagImpegnabile").removeAttr("disabled");
             }
-			$("#classificatoreGenerico3Hidden").attr("disabled", true);
+            $("#classificatoreGenerico3Hidden").attr("disabled", true);
+            //SIAC-7608 MR 28/04/2020
+            $("#tipoCapitoloHidden").attr("disabled", true);
+            $("#flagImpegnabileHidden").attr("disabled", true);
+            //END
         }
         
         if(!fondino && diversiDaFresco){
@@ -69,31 +81,49 @@
 			$("#categoriaCapitolo").attr("disabled", true);
 			$("#classificatoreGenerico3").attr("disabled", true);
 			$("#classificatoreGenerico3Hidden").removeAttr("disabled");
-			$("#classificatoreGenerico3Hidden").val($("#classificatoreGenerico3 option:selected").val());
+            $("#classificatoreGenerico3Hidden").val($("#classificatoreGenerico3 option:selected").val());
+            //SIAC-7608 MR 28/04/2020
+            $("#tipoCapitoloHidden").removeAttr("disabled");
+            $("#flagImpegnabileHidden").removeAttr("disabled");
+            //END
+            //SIAC-7608 MR 28/04/2020
+            $("#tipoCapitoloHidden").val($("#categoriaCapitolo option:selected").val());
+            $("#flagImpegnabileHidden").val($("#flagImpegnabile").val());
+            //END
 
         } 
 	}
 
 
-	/**
-	 * CARICAMENTO TABELLA
-	 */
-	function caricaTabella (seFondino){
-		var overlay = $('#tabellaStanziamentiTotaliComponenti').overlay({usePosition: true});
-		overlay.overlay('show');
-		var oggettoDaInviare = {};
-		oggettoDaInviare.uidCapitolo = $('#uidCapitoloDaAggiornare').val();
-		//ALLA LOAD
-		//IS FONDINO RICARICA LE COMPONENTI
-		if(seFondino==true){
-			oggettoDaInviare.isCapitoloFondino = true;
-		}else if(seFondino==false){
-			oggettoDaInviare.isCapitoloFondino = false;
-		}else{
-			oggettoDaInviare.isCapitoloFondino = ($('#fondinoHiddenValue').val()==='true' ? true : false);
+	function caricaTabellaImportiComponenti(){
+			var overlay = $('#tabellaStanziamentiPerComponenti').overlay({usePosition: true});
+			overlay.overlay('show');
+			$("#flagImpegnabile").parent().overlay('show');
+			var uidCapitolo = $('#uidCapitoloDaAggiornare').val();
+			var capitoloUscitaGestione={uid: uidCapitolo};
+			$.postJSON(
+				"aggiornaCapUscitaGestione_caricaImporti.do",
+				qualify({'capitoloUscitaGestione' : capitoloUscitaGestione}),
+				function(data) {
+					var righeComp;
+					var righeImporti;
+					// Controllo gli eventuali errori, messaggi, informazioni
+					if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))) {return;	}
+					if(impostaDatiNegliAlert( data.messaggi, $('#MEAASGGI'))) {return;	}
+					if(impostaDatiNegliAlert(data.informazioni, $('#INFORMAZIONI'))) {return;	}
+					righeComp = data.righeComponentiTabellaImportiCapitolo;
+					righeImporti = data.righeImportiTabellaImportiCapitolo;
+					
+					TabellaImportiComponenteCapitolo.creaEPosizionaRigheImporti(righeImporti, false);
+					$('#competenzaCella').substituteHandler('click', TabellaImportiComponenteCapitolo.creaEPosizionaRigheComponenti.bind(undefined, righeComp, false, false));
+				
+				}
+			).always(function(){
+				overlay.overlay('hide');
+				//SIAC-8347	
+				$("#flagImpegnabile").parent().overlay('hide');
+			});
 		}
-		 
-}
 
     $(function () {
         var macroaggregato = $("#macroaggregato");
@@ -183,7 +213,7 @@
         }
 
         // Lego le azioni
-        $("#missione").on("change", CapitoloUscita.caricaProgramma.bind(null, false));
+        $("#missione").on("change", CapitoloUscita.gestisciChangeMissione.bind(null, false));
         $("#programma").on("change", CapitoloUscita.caricaCofogTitolo.bind(null, false));
         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
         $("#macroaggregato").on("change", function() {
@@ -243,7 +273,7 @@
         //alert($("#stanziamentiNegativiPresentiHidden").val());
         
     	//SIAC-6884 Validazione con stanziamenti negativi e altre funzioni
-		$("#classificatoreGenerico3").change(function(){
+		/*$("#classificatoreGenerico3").change(function(){
 			var capitoloFondinoValue = $.trim($.trim($("#classificatoreGenerico3 option:selected").text()).split("-")[0]) === "01";
 			var uidCapitolo = $("#uidCapitoloDaAggiornare").val();
 			if(capitoloFondinoValue){
@@ -252,13 +282,14 @@
 				caricaTabella(false);
 			}
 
-		});
+		});*/
 
+		caricaTabellaImportiComponenti();
 		validazioneWithFondino();
 		
 		$("#flagImpegnabile").change(function(){
 			if($(this).prop('checked')){
-				caricaTabella(false);
+				caricaTabellaImportiComponenti(false);
 				
 			}
 
@@ -267,7 +298,7 @@
 		$("#categoriaCapitolo").change(function(){
 			var categoriaSTD = $.trim($.trim($(this).find('option:selected').text()).split("-")[0]) === "STD";
 			if(!categoriaSTD){
-				caricaTabella(false);
+				caricaTabellaImportiComponenti(false);
 			}
         });	
         
@@ -282,7 +313,7 @@
 			$("#classificatoreGenerico3").attr("disabled", true);
 		}
 		
-        
+		cap.gestisciRisorsaAccantonata(true);
         
         
         

@@ -26,7 +26,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<td><s:property value="%{#nota.dataEmissione}"/></td>
 					<td>
 						<a data-content="<s:property value='%{#nota.statoOperativoDocumento.descrizione}'/>"
-								data-original-title="Stato" href="#" data-trigger="hover" rel="popover" >
+								data-original-title="Stato" href="#" data-trigger="hover" data-toggle="popover" >
 							<s:property value="%{#nota.statoOperativoDocumento.codice}"/>
 						</a>
 					</td>

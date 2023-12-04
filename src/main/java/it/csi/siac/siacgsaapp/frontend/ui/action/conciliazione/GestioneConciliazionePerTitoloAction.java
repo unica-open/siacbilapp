@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,7 +36,7 @@ import it.csi.siac.siacbilser.model.TipologiaTitolo;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacgenser.frontend.webservice.ConciliazioneService;
@@ -180,7 +180,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 			//si sono verificati degli errori: esco.
 			log.warn(methodName, "Errori nel caricamento del bilancio");
 			addErrori(response);
-			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(request, response));
+			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(RicercaDettaglioBilancio.class, response));
 		}
 		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
 		boolean faseDiBilancioNonCompatibile = 
@@ -210,7 +210,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String msg = createErrorInServiceInvocationString(request, response);
+				String msg = createErrorInServiceInvocationString(LeggiClassificatoriByTipoElementoBil.class, response);
 				log.info(methodName, msg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(msg);
@@ -239,7 +239,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String msg = createErrorInServiceInvocationString(request, response);
+				String msg = createErrorInServiceInvocationString(LeggiClassificatoriBilByIdPadre.class, response);
 				log.info(methodName, msg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(msg);
@@ -267,7 +267,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String msg = createErrorInServiceInvocationString(request, response);
+				String msg = createErrorInServiceInvocationString(LeggiClassificatoriByTipoElementoBil.class, response);
 				log.info(methodName, msg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(msg);
@@ -295,7 +295,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String msg = createErrorInServiceInvocationString(request, response);
+				String msg = createErrorInServiceInvocationString(LeggiClassificatoriBilByIdPadre.class, response);
 				log.info(methodName, msg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(msg);
@@ -323,7 +323,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String msg = createErrorInServiceInvocationString(request, response);
+				String msg = createErrorInServiceInvocationString(LeggiClassificatoriBilByIdPadre.class, response);
 				log.info(methodName, msg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(msg);
@@ -351,7 +351,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				log.info(methodName, errorMsg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -378,7 +378,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaConciliazionePerTitolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -423,7 +423,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 		
 		checkNotNullNorEmpty(model.getEntrataSpesaRicerca(), "Tipo");
 		checkCondition(model.getEntrataSpesaRicerca() == null || model.isEntrata(model.getEntrataSpesaRicerca()) || model.isSpesa(model.getEntrataSpesaRicerca()),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Tipo", ": sono accettati solo i valori ENTRATA o USCITA"), true);
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Tipo", ": sono accettati solo i valori ENTRATA o USCITA"), true);
 		
 		if(model.isEntrata(model.getEntrataSpesaRicerca())) {
 			// Controlli per l'entrata
@@ -450,7 +450,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaConciliazionePerTitolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -480,7 +480,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioConciliazionePerTitolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -511,7 +511,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceConciliazionePerTitolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -569,7 +569,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaConto.class, response));
 			addErrori(response);
 			return;
 		}
@@ -599,7 +599,7 @@ public class GestioneConciliazionePerTitoloAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaConciliazionePerTitolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}

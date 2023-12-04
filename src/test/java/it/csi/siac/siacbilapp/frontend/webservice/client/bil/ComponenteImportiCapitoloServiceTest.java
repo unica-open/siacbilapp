@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import it.csi.siac.siacbilapp.frontend.webservice.client.BaseProxyServiceTest;
-import it.csi.siac.siacbilser.business.utility.helper.ComponenteImportiCapitoloPerAnnoHelper;
+import it.csi.siac.siacbilser.business.utility.capitolo.ComponenteImportiCapitoloPerAnnoHelper;
 import it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceComponenteImportiCapitoloResponse;
@@ -38,7 +38,7 @@ public class ComponenteImportiCapitoloServiceTest extends BaseProxyServiceTest<C
 	@Override
 	protected String getEndpoint() {
 //		return "http://localhost:8080/siacbilser/ComponenteImportiCapitoloService";
-		return "http://10.136.6.151/siacbilser/ComponenteImportiCapitoloService";
+		return "http://tst-srv-consip.bilancio.csi.it/siacbilser/ComponenteImportiCapitoloService";
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class ComponenteImportiCapitoloServiceTest extends BaseProxyServiceTest<C
 		RicercaComponenteImportiCapitolo req = new RicercaComponenteImportiCapitolo();
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
 		req.setDataOra(new Date());
-		req.setCapitolo(create(CapitoloUscitaPrevisione.class, 87802));
+		req.setCapitolo(create(CapitoloUscitaPrevisione.class, 180589));
 		RicercaComponenteImportiCapitoloResponse response = service.ricercaComponenteImportiCapitolo(req);
 		assertNotNull(response);
 		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(response.getListaImportiCapitolo());

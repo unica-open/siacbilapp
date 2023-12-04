@@ -30,7 +30,6 @@ import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 
 /**
  * Classe di utilit&agrave; per le comparazioni.
@@ -483,6 +482,47 @@ public final class ComparatorUtils {
 		return result;
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	private static <T extends ClassificatoreGerarchico> T searchWithChildrenByCodice(List<T> list, T entita, Comparator<? super T> comparator, boolean first,
+			String reflectionMethod) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+		final String methodName = "searchWithChildren";
+		if (entita == null || StringUtils.isBlank(entita.getCodice())) {
+			LOG.debug(methodName, "Oggetto da cercare non valido");
+			return null;
+		}
+		if (list == null) {
+			LOG.debug(methodName, "Lista in cui cercare l'oggetto nulla");
+			return entita;
+		}
+
+		T result = null;
+		boolean found = false;
+		for (int i = 0; i < list.size() && !found; i++) {
+			if (comparator.compare(entita, list.get(i)) == 0) {
+				LOG.debug(methodName, "Oggetto trovato in posizione " + i);
+				result = list.get(i);
+			} else {
+				// Ricerca ricorsivamente sulla sottolista
+				result = searchWithChildrenByCodice((List<T>) list.get(i).getClass().getMethod(reflectionMethod).invoke(list.get(i)), entita, comparator, false,
+						reflectionMethod);
+			}
+			if (result != null) {
+				found = true;
+			}
+		}
+
+		// Effettuo un log per sapere il risultato dell'invocazione
+		if (first) {
+			if (!found) {
+				result = entita;
+			}
+			LOG.debug(methodName, "Oggetto trovato? " + found);
+		}
+		return result;
+	}
+
 	/**
 	 * Effettua una ricerca all'interno della lista di SAC. Tale metodo effettua una ricerca anche all'interno delle sottoliste degli elementi presenti nella lista.
 	 * <br/>
@@ -546,6 +586,21 @@ public final class ComparatorUtils {
 		}
 		return result;
 	}
+	 public static <T extends ClassificatoreGerarchico> T findByCodiceWithChildren(List<T> list, T entita) {
+			T result = null;
+			try {
+				if (entita instanceof ElementoPianoDeiConti) {
+					result = searchWithChildrenByCodice(list, entita, ComparatorCodifica.INSTANCE, true, "getElemPdc");
+				} else if (entita instanceof StrutturaAmministrativoContabile) {
+					result = searchWithChildrenByCodice(list, entita, ComparatorCodifica.INSTANCE, true, "getSubStrutture");
+				} else if (entita instanceof SiopeSpesa || entita instanceof SiopeEntrata) {
+					result = searchWithChildrenByCodice(list, entita, ComparatorCodifica.INSTANCE, true, "getFigli");
+				}
+			} catch (Exception e) {
+				LOG.error("searchByUidWithChildren", "Errore: " + e.getMessage(), e);
+			}
+			return result;
+		}
 
 	/**
 	 * Restituisce l'ImportoCapitolo avente anno pari a quanto passato in input.
@@ -765,7 +820,7 @@ public final class ComparatorUtils {
 		}
 		T result = null;
 		for(T mg : list) {
-			if(mg.getNumero().equals(movimento.getNumero())) {
+			if(mg.getNumeroBigDecimal().equals(movimento.getNumeroBigDecimal())) {
 				result = mg;
 				break;
 			}
@@ -799,27 +854,6 @@ public final class ComparatorUtils {
 		return result;
 	}
 	
-	/**
-	 * Ricerca la voce mutuo a partire dal numero del mutuo fornito.
-	 * 
-	 * @param list      la lista delle voci
-	 * @param voceMutuo la voce di muuto da cercare
-	 * 
-	 * @return il mutuo corrispondente al numero, se presente; <code>null</code> in caso contrario
-	 */
-	public static VoceMutuo findVoceMutuoByNumero(List<VoceMutuo> list, VoceMutuo voceMutuo) {
-		if(voceMutuo == null || StringUtils.isBlank(voceMutuo.getNumeroMutuo()) || list == null) {
-			return null;
-		}
-		
-		// Ciclo sulla lista
-		for(VoceMutuo vm : list) {
-			if(voceMutuo.getNumeroMutuo().equals(vm.getNumeroMutuo())) {
-				return vm;
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * Restituisce la lista degli indici corrispondenti aigli elementi presenti nella lista con dati numero capitolo, numero articolo e tipo di capitolo.

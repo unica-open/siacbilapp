@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -142,7 +142,7 @@ public class CassaEconomaleGestioneTabelleTipiGiustificativiAction extends Gener
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceTipoGiustificativo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -218,7 +218,7 @@ public class CassaEconomaleGestioneTabelleTipiGiustificativiAction extends Gener
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaTipoGiustificativo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -269,7 +269,7 @@ public class CassaEconomaleGestioneTabelleTipiGiustificativiAction extends Gener
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaTipoGiustificativo.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

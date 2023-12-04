@@ -23,7 +23,9 @@ var VariazioniImporti = (function (varImp) {
 	varImp.typeCassa= 4;
 	varImp.annoEsercizioInt=0;
 	varImp.tipiCompMap={};
-	
+	//SIAC-7349 - Start - MR - 22/04/2020 - Patch Nullpointer Exception per modifica stanziamenti anni precedenti
+	varImp.enabledInsertModifica = true;
+	//SIAC-7349
 	/**
 	 * CARICAMENTO TABELLA
 	 */
@@ -98,9 +100,15 @@ var VariazioniImporti = (function (varImp) {
 				}else{
 					htmlString = htmlString + '<tr  class="componentiRowOther" >';
 				}
-				
-				htmlString = htmlString + '<td class="text-center">'+data.competenzaComponenti[i].tipoDettaglioComponenteImportiCapitolo.descrizione+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnnoPrec.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioResidui.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno0.importo).formatMoney()+'</td>';
-				htmlString = htmlString + '<td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno1.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno2.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnniSucc.importo).formatMoney()+'</td>';
+				//SIAC-7349 - SR200 - Start - MR - 20/04/2020 celle vuote per anni prec e anni succ
+				if(i==2){
+					htmlString = htmlString + '<td class="text-center">'+data.competenzaComponenti[i].tipoDettaglioComponenteImportiCapitolo.descrizione+'</td><td class="text-right"></td><td class="text-right"></td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno0.importo).formatMoney()+'</td>';
+					htmlString = htmlString + '<td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno1.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno2.importo).formatMoney()+'</td><td class="text-right"></td>';
+				}else{
+					htmlString = htmlString + '<td class="text-center">'+data.competenzaComponenti[i].tipoDettaglioComponenteImportiCapitolo.descrizione+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnnoPrec.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioResidui.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno0.importo).formatMoney()+'</td>';
+					htmlString = htmlString + '<td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno1.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnno2.importo).formatMoney()+'</td><td class="text-right">'+(data.competenzaComponenti[i].dettaglioAnniSucc.importo).formatMoney()+'</td>';
+				}
+				//SIAC-7349 End
 				if(i==0){
 					htmlString = htmlString + '<td rowspan = "3" ></td>';
 				}
@@ -147,7 +155,7 @@ var VariazioniImporti = (function (varImp) {
 						htmlString = htmlString + '<td style="text-align:left;" rowspan="' + rowspan + '">';
 						htmlString = htmlString + '<a href="#editStanziamenti" title="modifica gli importi" role="button" onclick="VariazioniImporti.apriModaleComponenti('+i+','+anno0+', '+varImp.typeComponentiCapitolo+');" data-toggle="modal">';
 						htmlString = htmlString + '<i class="icon-pencil icon-2x"><span class="nascosto">modifica</span></i></a>';
-						if(data.importiComponentiCapitolo[i].propostaDefault!=true){
+						if(data.importiComponentiCapitolo[i].propostaDefault!=true && data.importiComponentiCapitolo[i].nonEliminabile!=true){
 
 							htmlString = htmlString + '<a href="#msgElimina" title="elimina" role="button" onclick="VariazioniImporti.eliminaComponentiImportiCapitolo('+i+');" data-toggle="modal" style="padding-left:15px;">';
 							htmlString = htmlString + '<i class="icon-trash icon-2x"><span class="nascosto">elimina</span></i></a>';
@@ -174,7 +182,9 @@ var VariazioniImporti = (function (varImp) {
 				}else{
 					htmlString = htmlString + '<tr  class="componentiRowOther" >';
 				}
-				htmlString = htmlString + '<td class="text-center">'+data.residuoComponenti[i].tipoDettaglioComponenteImportiCapitolo.descrizione+'</td><td class="text-right">'+(data.residuoComponenti[i].dettaglioAnnoPrec.importo).formatMoney()+'</td><td class="text-right">'+(data.residuoComponenti[i].dettaglioAnno0.importo).formatMoney()+'</td><td class="text-right">'+'0,00'+'</td>';
+				//SIAC-7349 - Start - SR200 - MR/GS - 07/04/2020 - Corretta valorizzazione residuo presunto 
+				htmlString = htmlString + '<td class="text-center">'+data.residuoComponenti[i].tipoDettaglioComponenteImportiCapitolo.descrizione+'</td><td class="text-right">'+(data.residuoComponenti[i].dettaglioAnnoPrec.importo).formatMoney()+'</td><td class="text-right">'+(data.residuoComponenti[i].dettaglioResidui.importo).formatMoney()+'</td><td class="text-right">'+'0,00'+'</td>';
+				//SIAC-7349 - End
 				htmlString = htmlString + '<td class="text-right">'+(data.residuoComponenti[i].dettaglioAnno1.importo).formatMoney()+'</td><td class="text-right">'+(data.residuoComponenti[i].dettaglioAnno2.importo).formatMoney()+'</td><td class="text-right">'+(data.residuoComponenti[i].dettaglioAnniSucc.importo).formatMoney()+'</td>';
 				if(i==0){
 					htmlString = htmlString + '<td rowspan = "2" >';
@@ -255,12 +265,41 @@ var VariazioniImporti = (function (varImp) {
 	 * Righe delle componenti importo del capitolo
 	 */
 	function buildBodyRow(htmlString,i, arr){
+		
 		var readonlyAnnoPrec = (arr[i].dettaglioAnnoPrec.editabile) ? '' : 'readonly';
 		var readonlyResidui = (arr[i].dettaglioResidui.editabile) ? '' : 'readonly';
 		var readonlyAnno0 = (arr[i].dettaglioAnno0.editabile) ? '' : 'readonly';
 		var readonlyAnno1 = (arr[i].dettaglioAnno1.editabile) ? '' : 'readonly';
 		var readonlyAnno2 = (arr[i].dettaglioAnno2.editabile) ? '' : 'readonly';
 		var readonlyAnniSucc = (arr[i].dettaglioAnniSucc.editabile) ? '' : 'readonly';
+		//SIAC-7349 - Start - MR - 22/04/2020 - Patch Nullpointer Exception per modifica stanziamenti anni precedenti
+		if(i%2==0 && readonlyAnnoPrec!='' && readonlyResidui !='' && readonlyAnno0!='' && readonlyAnno1!='' && readonlyAnno2!='' && readonlyAnniSucc!=''){			
+			varImp.enabledInsertModifica = false;	
+		}
+		//SIAC-7349 End
+
+		// SIAC-7131 + SIAC-7132
+		htmlString += '<td style="position:relative"><input id="detAnnoPrecImp'+i+'" type="text" '+readonlyAnnoPrec+' name="" value="'+formatMoney(arr[i].dettaglioAnnoPrec.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		htmlString += '<td style="position:relative;width: 30px;"><input id="detAnnoResImp'+i+'" type="text" '+readonlyResidui+' name="" value="'+formatMoney(arr[i].dettaglioResidui.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		htmlString += '<td style="position:relative"><input id="detAnno0Imp'+i+'" type="text" '+readonlyAnno0+' name="" value="'+formatMoney(arr[i].dettaglioAnno0.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		htmlString += '<td style="position:relative"><input id="detAnno1Imp'+i+'" type="text" '+readonlyAnno1+' name="" value="'+formatMoney(arr[i].dettaglioAnno1.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		htmlString += '<td style="position:relative"><input id="detAnno2Imp'+i+'" type="text" '+readonlyAnno2+' name="" value="'+formatMoney(arr[i].dettaglioAnno2.importo)+'" class="custom-new-component soloNumeri text-right" required/>/td>';
+		htmlString += '<td style="position:relative"><input id="detAnnoSuccImp'+i+'" type="text" '+readonlyAnniSucc+' name="" value="'+formatMoney(arr[i].dettaglioAnniSucc.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		return htmlString;
+	}
+
+	//SIAC-7349 - Start - MR - 22/04/2020 - Patch Nullpointer Exception per modifica stanziamenti anni precedenti
+	//Metodo per costruire il body della riga riferita alla cassa
+	//duplicato per introdurre regressioni
+	function buildBodyRowCassa(htmlString,i, arr){
+		
+		var readonlyAnnoPrec = (arr[i].dettaglioAnnoPrec.editabile) ? '' : 'readonly';
+		var readonlyResidui = (arr[i].dettaglioResidui.editabile) ? '' : 'readonly';
+		var readonlyAnno0 = (arr[i].dettaglioAnno0.editabile) ? '' : 'readonly';
+		var readonlyAnno1 = (arr[i].dettaglioAnno1.editabile) ? '' : 'readonly';
+		var readonlyAnno2 = (arr[i].dettaglioAnno2.editabile) ? '' : 'readonly';
+		var readonlyAnniSucc = (arr[i].dettaglioAnniSucc.editabile) ? '' : 'readonly';
+
 		// SIAC-7131 + SIAC-7132
 		htmlString += '<td style="position:relative"><input id="detAnnoPrecImp'+i+'" type="text" '+readonlyAnnoPrec+' name="" value="'+formatMoney(arr[i].dettaglioAnnoPrec.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
 		htmlString += '<td style="position:relative;width: 30px;"><input id="detAnnoResImp'+i+'" type="text" '+readonlyResidui+' name="" value="'+formatMoney(arr[i].dettaglioResidui.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
@@ -286,7 +325,13 @@ var VariazioniImporti = (function (varImp) {
 		var readonlyAnniSucc = (arr[i].dettaglioAnniSucc.editabile) ? '' : 'readonly';
 		// SIAC-7131 + SIAC-7132
 		htmlString += '<td style="position: relative;"><input id="detAnnoPrecImp'+i+'" type="text" '+readonlyAnnoPrec+' name="" value="'+formatMoney(arr[i].dettaglioAnnoPrec.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
-		htmlString += '<td style="position: relative;"><input id="detAnno0Imp'+i+'" type="text" '+readonlyAnno0+' name="" value="'+formatMoney(arr[i].dettaglioAnno0.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		//SIAC-7349 - Start - SR200 - MR - 15/04/2020 - Mappo il residuo effettivo finale, in quanto non presente nel primo item editabile
+		if(i==1){
+			htmlString += '<td style="position: relative;"><input id="detAnno0Imp'+i+'" type="text" readonly name="" value="'+formatMoney(arr[i].dettaglioResidui.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		}else{
+			htmlString += '<td style="position: relative;"><input id="detAnno0Imp'+i+'" type="text" '+readonlyAnno0+' name="" value="'+formatMoney(arr[i].dettaglioAnno0.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
+		}
+		//SIAC-7349 - End
 		htmlString += '<td style="position: relative;"><input id="'+i+'" type="text" readonly name="" value="'+formatMoney(0)+'" class="custom-new-component soloNumeri text-right" required/></td>';
 		htmlString += '<td style="position: relative;"><input id="detAnno1Imp'+i+'" type="text" '+readonlyAnno1+' name="" value="'+formatMoney(arr[i].dettaglioAnno1.importo)+'" class="custom-new-component soloNumeri text-right" required/></td>';
 		htmlString += '<td style="position: relative;"><input id="detAnno2Imp'+i+'" type="text" '+readonlyAnno2+' name="" value="'+formatMoney(arr[i].dettaglioAnno2.importo)+'" class="custom-new-component soloNumeri text-right" required/>/td>';
@@ -487,6 +532,7 @@ var VariazioniImporti = (function (varImp) {
 						htmlString = htmlString + iccArr[i].tipoComponenteImportiCapitolo.descrizione;
 						htmlString = htmlString + '</td>';
 					}
+					
 					htmlString = htmlString + '<td  style="text-align:center;">'+ iccArr[i].tipoDettaglioComponenteImportiCapitolo.descrizione+'</td>';
 					htmlString = buildBodyRow(htmlString, i, iccArr);
 					htmlString = htmlString + '</tr>';
@@ -521,7 +567,9 @@ var VariazioniImporti = (function (varImp) {
 						htmlString = htmlString + '</td>';
 					}
 					htmlString = htmlString + '<td  style="text-align:center;">'+ cassaArr[i].tipoDettaglioComponenteImportiCapitolo.descrizione+'</td>';
-					htmlString = buildBodyRow(htmlString, i, cassaArr);
+					//SIAC-7349 - Start - MR - 22/04/2020 - Patch Nullpointer Exception per modifica stanziamenti anni precedenti
+					//Chiamo metodo duplicato per retrocompatibilita
+					htmlString = buildBodyRowCassa(htmlString, i, cassaArr);
 					htmlString = htmlString + '</tr>';
 					rowspan++;
 			}
@@ -557,6 +605,13 @@ var VariazioniImporti = (function (varImp) {
 		
 		//AGGIORNA ELEMENTO
 		var pulsanteAggiorna = $("#INSERT_modifica");
+
+
+		if(!varImp.enabledInsertModifica){
+			pulsanteAggiorna.prop("disabled",true);
+			varImp.enabledInsertModifica=true;
+		}
+
 		pulsanteAggiorna.substituteHandler("click", function () {
 			if(!($('#detAnno0Imp'+index).val() && $('#detAnno1Imp'+index).val() && $('#detAnno2Imp'+index).val())){
 				$('#ERRORI_modaleInsertStanziamenti').show();

@@ -216,7 +216,7 @@ public class GenericDocumentoIvaSpesaModel extends GenericDocumentoIvaModel {
 		if(impegno != null) {
 			RicercaImpegnoK parametroRicercaImpegnoK = new RicercaImpegnoK();
 			parametroRicercaImpegnoK.setAnnoImpegno(impegno.getAnnoMovimento());
-			parametroRicercaImpegnoK.setNumeroImpegno(impegno.getNumero());
+			parametroRicercaImpegnoK.setNumeroImpegno(impegno.getNumeroBigDecimal());
 			parametroRicercaImpegnoK.setAnnoEsercizio(getAnnoEsercizioInt());
 			request.setpRicercaImpegnoK(parametroRicercaImpegnoK);
 		}

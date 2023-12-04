@@ -17,7 +17,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.model.attodilegge.AssociaAttoDiLeggeAlCapitoloModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.attodilegge.ElementoRelazioneAttoDiLeggeCapitolo;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.attodilegge.ElementoRelazioneAttoDiLeggeCapitoloFactory;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.WrapperAzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteWrapper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaRelazioneAttoDiLeggeCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaRelazioneAttoDiLeggeCapitoloResponse;
@@ -30,6 +30,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaRelazioneAttoDiLegg
 import it.csi.siac.siacbilser.model.AttoDiLeggeCapitolo;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.Entita.StatoEntita;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Informazione;
 
@@ -61,6 +62,24 @@ public class AssociaAttoDiLeggeAlCapitoloAction extends GenericBilancioAction<As
 	private static final String AZIONI_CONSENTITE_ANNULLA = "<li><a href=\"#\" data-annulla data-target=\"#divAnnullaRelazione\" data-toggle=\"modal\">annulla</a></li>";
 	private static final String AZIONI_CONSENTITE_END = "</ul></div>";
 	
+	//task-65
+	public boolean gerarchiPresente(String gerarchia) {
+		RicercaRelazioneAttoDiLeggeCapitoloResponse response = null;
+		RicercaRelazioneAttoDiLeggeCapitolo request = model.creaRequestRicercaRelazioneAttoDiLeggeCapitolo();
+		logServiceRequest(request);
+		response = capitoloService.ricercaRelazioneAttoDiLeggeCapitolo(request);
+		logServiceResponse(response);
+		
+		if(response.getElencoAttiLeggeCapitolo().size()>0) {
+			for(int i=0; i<response.getElencoAttiLeggeCapitolo().size();i++) {
+				if(response.getElencoAttiLeggeCapitolo().get(i).getGerarchia().equals(model.getGerarchia())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Inserisce la relazione tra Atto di Legge e Capitolo.
 	 * 
@@ -68,6 +87,8 @@ public class AssociaAttoDiLeggeAlCapitoloAction extends GenericBilancioAction<As
 	 */
 	public String inserisci() {
 		final String methodName = "inserisci";
+		boolean gerarchiaPresente = gerarchiPresente(model.getGerarchia());
+		
 		InserisceRelazioneAttoDiLeggeCapitoloResponse response = null;
 		List<Errore> listaErrori = new ArrayList<Errore>();
 		
@@ -86,16 +107,28 @@ public class AssociaAttoDiLeggeAlCapitoloAction extends GenericBilancioAction<As
 		// Invocazione del servizio
 		// Workaround per evitare problemi in caso di richiamo del servizio
 		try {
-			log.debug(methodName, "Richiamo il WebService di inserimento relazione atto di legge - capitolo");
-			response = capitoloService.inserisceRelazioneAttoDiLeggeCapitolo(request);
-			log.debug(methodName, "Richiamato il WebService di inserimento relazione atto di legge - capitolo");
-			logServiceResponse(response);
-		} catch(Exception e) {
-			log.error(methodName, e, e);
-			Errore err = new Errore();
+			//task-65
+			if(gerarchiaPresente == false) {
+				log.debug(methodName, "Richiamo il WebService di inserimento relazione atto di legge - capitolo");
+				response = capitoloService.inserisceRelazioneAttoDiLeggeCapitolo(request);
+				log.debug(methodName, "Richiamato il WebService di inserimento relazione atto di legge - capitolo");
+				logServiceResponse(response);
+			}else {
+				//task-65
+				response.addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Gerarchia gia' presente"));
+			}
 			
-			err.setCodice("");
-			err.setDescrizione("Si è verificato un errore nella chiamata del Servizio di inserimento relazione atto di legge - capitolo");
+		} catch(Exception e) {
+			Errore err = new Errore();
+			log.error(methodName, e, e);
+			//task-65
+			if(gerarchiaPresente == true) {
+				err.setCodice("");
+				err.setDescrizione("Si è verificato un errore nell'inserimento della relazione atto di legge - capito. Gerarchia gia' presente");
+			} else {
+				err.setCodice("");
+				err.setDescrizione("Si è verificato un errore nella chiamata del Servizio di inserimento relazione atto di legge - capitolo");
+			}
 			listaErrori.add(err);
 			addErrori(listaErrori);
 			return SUCCESS;
@@ -167,7 +200,7 @@ public class AssociaAttoDiLeggeAlCapitoloAction extends GenericBilancioAction<As
 		// Valuta la lista delle azioni consentite per
 		// costruire il pannello di operazioni utente sul capitolo 
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		WrapperAzioniConsentite wpAzioniConsentite = new WrapperAzioniConsentite("RelazioneAttoCapitolo", listaAzioniConsentite);
+		AzioniConsentiteWrapper wpAzioniConsentite = new AzioniConsentiteWrapper("RelazioneAttoCapitolo", listaAzioniConsentite);
 		
 		boolean isAggiornaAbilitato = wpAzioniConsentite.isAggiornaAbilitato();
 		boolean isAnnullaAbilitato = wpAzioniConsentite.isAnnullaAbilitato();
@@ -325,6 +358,8 @@ public class AssociaAttoDiLeggeAlCapitoloAction extends GenericBilancioAction<As
 	 */
 	public String aggiorna() {
 		final String methodName = "aggiorna";
+		boolean gerarchiaPresente = gerarchiPresente(model.getGerarchia());
+		
 		AggiornaRelazioneAttoDiLeggeCapitoloResponse response = null;
 		List<Errore> listaErrori = new ArrayList<Errore>();
 		
@@ -343,16 +378,27 @@ public class AssociaAttoDiLeggeAlCapitoloAction extends GenericBilancioAction<As
 		// Invocazione del servizio
 		// Workaround per evitare problemi in caso di richiamo del servizio
 		try {
-			log.debug(methodName, "Richiamo il WebService di aggiornamento relazione atto di legge - capitolo");
-			response = capitoloService.aggiornaRelazioneAttoDiLeggeCapitolo(request);
-			log.debug(methodName, "Richiamato il WebService di aggiornamento relazione atto di legge - capitolo");
-			logServiceResponse(response);
+			//task-65
+			if(gerarchiaPresente == false ) {
+				log.debug(methodName, "Richiamo il WebService di aggiornamento relazione atto di legge - capitolo");
+				response = capitoloService.aggiornaRelazioneAttoDiLeggeCapitolo(request);
+				log.debug(methodName, "Richiamato il WebService di aggiornamento relazione atto di legge - capitolo");
+				logServiceResponse(response);
+			}else {
+				//task-65
+				response.addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Gerarchia gia' presente"));
+			}
 		} catch(Exception e) {
-			log.error(methodName, e, e);
 			Errore err = new Errore();
-			
-			err.setCodice("");
-			err.setDescrizione("Si è verificato un errore nella chiamata del Servizio di aggiornamento relazione atto di legge - capitolo");
+			log.error(methodName, e, e);
+			//task-65
+			if(gerarchiaPresente == true) {
+				err.setCodice("");
+				err.setDescrizione("Si è verificato un errore nell'aggiornamento della relazione atto di legge - capito. Gerarchia gia' presente");
+			} else {
+				err.setCodice("");
+				err.setDescrizione("Si è verificato un errore nella chiamata del Servizio di aggiornamento relazione atto di legge - capitolo");
+			}
 			listaErrori.add(err);
 			addErrori(listaErrori);
 			return SUCCESS;

@@ -216,4 +216,130 @@ SPDX-License-Identifier: EUPL-1.2
 		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInDiminuzioneTotaleResiduo2"/></td>
 		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInDiminuzioneTotaleCassa2"/></td>
 	</tr>
+	
+	<!-- CONTABILIA-285 
+	
+	<tr>
+		<th rowspan="5" scope="rowgroup">
+			<a id="ancoraVariazioniNeutre" title="visualizza il dettaglio delle variazioni" href="dettaglioVariazioniCapitolo.do?capitolo.uid=<s:property value="uidCapitolo" />">Variazioni neutre</a>
+		</th>
+		<th scope="rowgroup">Bozza</th>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaNum0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaCompetenza0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaResiduo0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaCassa0"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaNum1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaCompetenza1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaResiduo1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaCassa1"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaNum2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaCompetenza2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaResiduo2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaCassa2"/></td>
+	</tr>
+	<tr>
+		<th scope="rowgroup"><s:property value="descrizioneGiuntaConsiglio"/></th>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioNum0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioCompetenza0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioResiduo0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioCassa0"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioNum1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioCompetenza1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioResiduo1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioCassa1"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioNum2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioCompetenza2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioResiduo2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaConsiglioCassa2"/></td>
+	</tr>
+	<tr>
+		<th scope="rowgroup">Pre-definitiva</th>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaNum0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaCompetenza0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaResiduo0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaCassa0"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaNum1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaCompetenza1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaResiduo1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaCassa1"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaNum2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaCompetenza2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaResiduo2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaCassa2"/></td>
+	</tr>
+	<tr>
+		<th scope="rowgroup">Definitive</th>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaNum0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaCompetenza0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaResiduo0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaCassa0"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaNum1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaCompetenza1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaResiduo1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaCassa1"/></td>
+		
+		<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaNum2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaCompetenza2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaResiduo2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaCassa2"/></td>
+	</tr>
+	<tr>
+		<th scope="rowgroup">Totali</th>
+		
+		<td class="text-right" scope="row" id="variazioniInNeutreTotaleNum0"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleNum0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleCompetenza0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleResiduo0"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleCassa0"/></td>
+		
+		<td class="text-right" scope="row" id="variazioniInNeutreTotaleNum1"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleNum1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleCompetenza1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleResiduo1"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleCassa1"/></td>
+		
+		<td class="text-right" scope="row" id="variazioniInNeutreTotaleNum2"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleNum2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleCompetenza2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleResiduo2"/></td>
+		<td class="text-right"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleCassa2"/></td>
+	</tr>
+	-->
+	
+	<br>
+	<s:if test="capitoloUscitaSaldoZero">
+		<table class="table table-hover table-bordered" id="tabellaMovimentiNeutro">
+			<tr>
+				<th>&nbsp;</th>
+				<th scope="col" class="text-center"><abbr title="numero">Bozza</abbr></th>
+				<th scope="col" class="text-center"><abbr title="importo">Giunta o Consiglio</abbr></th>
+				<th scope="col" class="text-center"><abbr title="importo">Pre-definitiva</abbr></th>
+				<th scope="col" class="text-center"><abbr title="importo">Definitiva</abbr></th>
+				<th scope="col" class="text-center"><abbr title="numero">Totali</abbr></th>
+			</tr>
+			<tr>
+				<th rowspan="5" scope="rowgroup">
+					<a id="ancoraVariazioniNeutre" title="visualizza il dettaglio delle variazioni" 
+					href="dettaglioVariazioniCapitolo.do?capitolo.uid=<s:property value="uidCapitolo" />">Variazioni a saldo zero</a>
+				</th>
+				
+				<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreBozzaComplessiva"/></td>
+				<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreGiuntaComplessiva"/></td>
+				<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutrePreDefinitivaComplessiva"/></td>
+				<td class="text-right" scope="row"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreDefinitivaComplessiva"/></td>
+				<td class="text-right" scope="row" id="variazioniInNeutreTotaleNum0"><s:property value="elementoVariazioneConsultazione.variazioniInNeutreTotaleComplessiva"/></td>
+				
+			</tr>
+		</table>
+	</s:if>
+	
+	
 </table>

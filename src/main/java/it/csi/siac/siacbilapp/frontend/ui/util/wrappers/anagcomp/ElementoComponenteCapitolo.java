@@ -114,6 +114,11 @@ public class ElementoComponenteCapitolo implements ModelWrapper, Serializable {
 		return componenteCapitolo != null && componenteCapitolo.getPropostaDefaultComponenteImportiCapitolo() != null ? componenteCapitolo.getPropostaDefaultComponenteImportiCapitolo().getDescrizione() : "";
 		
 	}
+	//SIAC-7349
+	public String getStringaImpegnabile() {
+		return componenteCapitolo != null && componenteCapitolo.getImpegnabileComponenteImportiCapitolo() != null ? componenteCapitolo.getImpegnabileComponenteImportiCapitolo().getDescrizione() : "";
+		
+	}
 	
 	public String getStringaDataInizioValidita() {
 		return componenteCapitolo != null ? FormatUtils.formatDate(componenteCapitolo.getDataInizioValidita()) : "";

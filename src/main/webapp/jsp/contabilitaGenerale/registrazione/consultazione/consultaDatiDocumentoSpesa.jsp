@@ -71,14 +71,14 @@ SPDX-License-Identifier: EUPL-1.2
 		<s:iterator value="consultazioneHelper.listaQuote" var="q">
 		<tr>
 			<td>
-				<a rel="popover" href="#" data-original-title="Descrizione" data-trigger="hover" data-content="<s:property value="#q.descrizione"/>">
+				<a data-toggle="popover" href="#" data-original-title="Descrizione" data-trigger="hover" data-content="<s:property value="#q.descrizione"/>">
 					<s:property value="#q.numero"/>
 				</a>
 			</td>
 			<td>
 				<s:if test="%{#q.attoAmministrativo != null}">
 					<s:property value="#q.attoAmministrativo.anno"/> / <s:property value="#q.attoAmministrativo.numero"/> -
-					<a rel="popover" href="#" data-original-title="Oggetto" data-trigger="hover" data-content="<s:property value="#q.attoAmministrativo.oggetto"/>">
+					<a data-toggle="popover" href="#" data-original-title="Oggetto" data-trigger="hover" data-content="<s:property value="#q.attoAmministrativo.oggetto"/>">
 						<s:property value="#q.attoAmministrativo.tipoAtto.codice"/>
 					</a>
 					<s:if test="%{#q.attoAmministrativo.strutturaAmmContabile != null}">
@@ -89,14 +89,9 @@ SPDX-License-Identifier: EUPL-1.2
 			</td>
 			<td>
 				<s:if test="#q.impegno != null">
-					<s:property value="#q.impegno.annoMovimento"/> / <si:plainstringproperty value="#q.impegno.numero"/>
+					<s:property value="#q.impegno.annoMovimento"/> / <s:property value="#q.impegno.numero"/>
 					<s:if test="%{#q.subImpegno != null}">
-						- <si:plainstringproperty value="#q.subImpegno.numero"/>
-					</s:if>
-					<s:if test="%{#q.voceMutuo != null}">
-						<a rel="popover" href="#" data-original-title="CIG/CUP" data-trigger="hover" data-content="<s:property value="#q.cig"/> + <s:property value="#q.cup"/>">
-							<s:property value="#q.voceMutuo.numeroMutuo"/>
-						</a>
+						- <s:property value="#q.subImpegno.numero"/>
 					</s:if>
 				</s:if>
 			</td>
@@ -175,7 +170,7 @@ SPDX-License-Identifier: EUPL-1.2
 								</td>
 								<td>
 									<s:if test="%{#mi.aliquota != null && #mi.aliquota.aliquotaIva != null}">
-										<a rel="popover" href="#" data-original-title="Percentuale aliquota" data-trigger="hover" data-content="<s:property value="#mi.aliquota.aliquotaIva.percentualeAliquota"/>">
+										<a data-toggle="popover" href="#" data-original-title="Percentuale aliquota" data-trigger="hover" data-content="<s:property value="#mi.aliquota.aliquotaIva.percentualeAliquota"/>">
 											<s:property value="#mi.aliquota.aliquotaIva.codice"/> - <s:property value="#mi.aliquota.aliquotaIva.descrizione"/>
 										</a>
 									</s:if>
@@ -312,12 +307,12 @@ SPDX-License-Identifier: EUPL-1.2
 										</td>
 										<td class="tab_Right"><s:property value="#o.importoImponibile"/></td>
 										<td class="tab_Right">
-											<a rel="popover" href="#" data-original-title="Aliquota" data-trigger="hover" data-placement="left" data-content="<s:property value="#o.tipoOnere.aliquotaCaricoEnteNotNull"/>">
+											<a data-toggle="popover" href="#" data-original-title="Aliquota" data-trigger="hover" data-placement="left" data-content="<s:property value="#o.tipoOnere.aliquotaCaricoEnteNotNull"/>">
 												<s:property value="#o.importoCaricoEnte"/>
 											</a>
 										</td>
 										<td class="tab_Right">
-											<a rel="popover" href="#" data-original-title="Aliquota" data-trigger="hover" data-placement="left" data-content="<s:property value="#o.tipoOnere.aliquotaCaricoSoggettoNotNull"/>">
+											<a data-toggle="popover" href="#" data-original-title="Aliquota" data-trigger="hover" data-placement="left" data-content="<s:property value="#o.tipoOnere.aliquotaCaricoSoggettoNotNull"/>">
 												<s:property value="#o.importoCaricoSoggetto"/>
 											</a>
 										</td>

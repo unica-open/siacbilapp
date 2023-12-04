@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -28,7 +28,7 @@ import it.csi.siac.siacfinser.model.SubImpegno;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaSubImpegniAjaxAction extends GenericRisultatiRicercaAjaxAction<SubImpegno, RisultatiRicercaSubImpegniAjaxModel, SubImpegno, RicercaImpegnoPerChiaveOttimizzato, RicercaImpegnoPerChiaveOttimizzatoResponse> {
+public class RisultatiRicercaSubImpegniAjaxAction extends PagedDataTableAjaxAction<SubImpegno, RisultatiRicercaSubImpegniAjaxModel, SubImpegno, RicercaImpegnoPerChiaveOttimizzato, RicercaImpegnoPerChiaveOttimizzatoResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -60,12 +60,12 @@ public class RisultatiRicercaSubImpegniAjaxAction extends GenericRisultatiRicerc
 	}
 
 	@Override
-	protected SubImpegno ottieniIstanza(SubImpegno e) throws FrontEndBusinessException {
+	protected SubImpegno getInstance(SubImpegno e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaImpegnoPerChiaveOttimizzatoResponse ottieniResponse(RicercaImpegnoPerChiaveOttimizzato request) {
+	protected RicercaImpegnoPerChiaveOttimizzatoResponse getResponse(RicercaImpegnoPerChiaveOttimizzato request) {
 		
 		return movimentoGestioneService.ricercaImpegnoPerChiaveOttimizzato(request);
 	}

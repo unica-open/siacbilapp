@@ -45,6 +45,9 @@ public class RicercaMovimentiCapitoloAjaxModel extends GenericBilancioModel {
 	private String etichettaGiunta = "Giunta";
 	private String etichettaConsiglio = "Consiglio";
 	
+	//SIAC-7735
+	private boolean capitoloUscitaSaldoZero;
+	
 	/** Costruttore vuoto di default */
 	public RicercaMovimentiCapitoloAjaxModel() {
 		setTitolo("Ricerca movimenti capitolo");
@@ -266,6 +269,14 @@ public class RicercaMovimentiCapitoloAjaxModel extends GenericBilancioModel {
 
 		request.setParametriPaginazione(creaParametriPaginazione());
 		return request;
+	}
+
+	public boolean isCapitoloUscitaSaldoZero() {
+		return capitoloUscitaSaldoZero;
+	}
+
+	public void setCapitoloUscitaSaldoZero(boolean capitoloUscitaSaldoZero) {
+		this.capitoloUscitaSaldoZero = capitoloUscitaSaldoZero;
 	}
 
 }

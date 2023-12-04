@@ -9,7 +9,7 @@ import java.util.List;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.AggiornaPrimaNotaLiberaBaseModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLibera;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLiberaFactory;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -48,7 +48,8 @@ public abstract class AggiornaPrimaNotaLiberaBaseAction<M extends AggiornaPrimaN
 			// Fallimento nell'invocazione del servizio: esco
 			return INPUT;
 		}
-		
+		//SIAC-8134
+		caricaAzionePerSAC();
 		return SUCCESS;
 	}
 	
@@ -121,7 +122,7 @@ public abstract class AggiornaPrimaNotaLiberaBaseAction<M extends AggiornaPrimaN
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioPrimaNota.class, response);
 			log.info(methodName, errorMsg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMsg);
@@ -155,6 +156,9 @@ public abstract class AggiornaPrimaNotaLiberaBaseAction<M extends AggiornaPrimaN
 		
 		// Ho tutti i dati nella lista inutile ricercare il dettaglio x avere i conti
 		CausaleEP causaleEP = ComparatorUtils.searchByUid(model.getListaCausaleEP(), causaleEPDAPNL);
+		
+		//SIAC-8134
+		model.setStrutturaCompetentePrimaNotaLibera(primaNotaDaServizio.getStrutturaCompetente());
 		
 		model.setCausaleEP(causaleEP);
 		impostaEvento(causaleEP, causaleEPDAPNL);
@@ -216,6 +220,8 @@ public abstract class AggiornaPrimaNotaLiberaBaseAction<M extends AggiornaPrimaN
 		log.debug(methodName, "aggiornata correttamente Prima Nota Libera con uid " + response.getPrimaNota().getUid());
 		// Imposto i dati della causale restituitimi dal servizio
 		model.setPrimaNotaLibera(response.getPrimaNota());
+		//SIAC-8134
+		model.setStrutturaCompetentePrimaNotaLibera(response.getPrimaNota().getStrutturaCompetente());
 		impostaInformazioneSuccessoAzioneInSessionePerRedirezione();
 		return SUCCESS;
 	}

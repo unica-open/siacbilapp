@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgsaapp.frontend.ui.action.primanotaintegrata;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -12,7 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.RicercaValidazionePrimaNotaIntegrataBaseAction;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgsaapp.frontend.ui.model.primanotaintegrata.RicercaValidazionePrimaNotaIntegrataGSAModel;
 
 /**

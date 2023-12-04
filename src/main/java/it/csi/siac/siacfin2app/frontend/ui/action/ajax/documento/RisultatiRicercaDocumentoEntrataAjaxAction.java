@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.ajax.documento;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +12,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siacbilser.frontend.webservice.TipoDocumentoFELService;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaTipoDocumentoFEL;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaTipoDocumentoFELResponse;
+import it.csi.siac.siacbilser.model.TipoDocFEL;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2app.frontend.ui.model.ajax.documento.RisultatiRicercaDocumentoAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocumento;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocumentoEntrata;
@@ -27,6 +32,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
+import it.csi.siac.siacfin2ser.model.TipoDocumento;
 
 /**
  * Action per i risultati di ricerca del documento.
@@ -37,7 +43,7 @@ import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDocumento, 
+public class RisultatiRicercaDocumentoEntrataAjaxAction extends PagedDataTableAjaxAction<ElementoDocumento, 
 	RisultatiRicercaDocumentoAjaxModel, DocumentoEntrata, RicercaSinteticaModulareDocumentoEntrata, RicercaSinteticaModulareDocumentoEntrataResponse> {
 	
 	/** Per la serializzazione */
@@ -58,7 +64,7 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 			"<li><a href='risultatiRicercaDocumentoEntrataConsulta.do?uidDaConsultare=%UID%'>consulta</a></li>";
 
 	private static final String AZIONI_CONSENTITE_CONSULTA_QUOTE = 
-			"<li><a class='dettaglioQuoteDocumento'>dettaglio quote</a></li>";
+			"<li><a href='#' class='dettaglioQuoteDocumento'>dettaglio quote</a></li>";
 	
 	private static final String AZIONI_CONSENTITE_ATTIVA_REGISTRAZIONI_CONTABILI= 
 			"<li><a class='attivaRegistrazioniContabili'>attiva registrazioni contabili</a></li>";
@@ -66,9 +72,17 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 	private static final String AZIONI_CONSENTITE_EMETTI_FATTURA_FEL = 
 			"<li><a href='risultatiRicercaDocumentoEntrataEmettiFatturaFel.do?uidVersoFel=%UID%'>emetti fattura</a></li>";
 	
+	private static final String AZIONI_CONSENTITE_GESTIONE_ORDINI= 
+			"<li><a href='#' class='gestioneOrdini'>gestione ordini</a></li>";
+	
 	private static final String AZIONI_CONSENTITE_END = "</ul></div>";
 	
 	@Autowired private transient DocumentoEntrataService documentoEntrataService;
+	
+	//SIAC-7557
+	@Autowired
+	private transient TipoDocumentoFELService tipoDocumentoServiceFEL;
+	
 	
 	/** Costruttore vuoto di default */
 	public RisultatiRicercaDocumentoEntrataAjaxAction() {
@@ -99,12 +113,12 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 	}
 	
 	@Override
-	protected ElementoDocumentoEntrata ottieniIstanza(DocumentoEntrata e) throws FrontEndBusinessException {
+	protected ElementoDocumentoEntrata getInstance(DocumentoEntrata e) throws FrontEndBusinessException {
 		return ElementoDocumentoFactory.getInstanceEntrata(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaModulareDocumentoEntrataResponse ottieniResponse(RicercaSinteticaModulareDocumentoEntrata request) {	
+	protected RicercaSinteticaModulareDocumentoEntrataResponse getResponse(RicercaSinteticaModulareDocumentoEntrata request) {	
 		return documentoEntrataService.ricercaSinteticaModulareDocumentoEntrata(request);
 	}
 	
@@ -114,7 +128,7 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isAggiornaConsentitoDocumentoEntrata(listaAzioniConsentite)
@@ -125,8 +139,12 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 		// lo facciamo vedere sempre
 		Boolean isConsultaQuoteConsentita = Boolean.TRUE;
 		//LOTTO M - Documenti Bozze
-		Boolean isAttivaRegistrazioniContabili = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_ENTRATA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
+		Boolean isAttivaRegistrazioniContabili = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_ENTRATA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
+		
+		//SIAC-7557
+		Boolean isAttivaGestioneOrdini = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_ENTRATA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
 		
 		boolean statoOperativoValido = instance.checkStatoOperativoValido();
 		boolean statoOperativoIncompleto = instance.checkStatoOperativoIncompleto();
@@ -140,10 +158,15 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 		
 		boolean isStatoSDIValido = instance.checkStatoSDIValido(); 
 		
+		//SIAC-6988 FL Verifico se lo stato SDI "Inviata a FEL,"Accettata/Consegnata","In decorrenza termini"
+		boolean isStatoSDIValidoFEL = instance.checkStatoSDIFEL(); 
+		
 		// Gestione delle azioni consentite
 		StringBuilder azioniBuilder = new StringBuilder();
 		azioniBuilder.append(AZIONI_CONSENTITE_BEGIN);
-		if(Boolean.TRUE.equals(isAggiornaConsentita) && !statoOperativoEmesso && !statoOperativoAnnullato && !isIntrastat && !tipoALG && isStatoSDIValido) {
+		//SIAC-6988 FL 
+		if( (Boolean.TRUE.equals(isAggiornaConsentita) && !statoOperativoEmesso && !statoOperativoAnnullato && !isIntrastat && !tipoALG && isStatoSDIValido ) || 
+		(Boolean.TRUE.equals(isAggiornaConsentita) &&   !statoOperativoAnnullato && !isIntrastat && !tipoALG && isStatoSDIValidoFEL   && "FTV".equalsIgnoreCase(instance.getTipoDocumentoCode()) ) ){
 			azioniBuilder.append(AZIONI_CONSENTITE_AGGIORNA);
 		}
 		if(Boolean.TRUE.equals(isAnnullaConsentita) &&  ((statoOperativoValido && !isNotaCredito) || statoOperativoIncompleto)  && !isIntrastat) {
@@ -161,9 +184,17 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 		}
 		// SIAC-6565
 		if( (Boolean.TRUE.equals(isStatoSDIValido)) 
-				&& ( ("FTV".equalsIgnoreCase(instance.getTipoDocumentoCode())) || ("NCV".equalsIgnoreCase(instance.getTipoDocumentoCode())) ) 
+				//SIAC-7557 Inzio
+				//&& ( ("FTV".equalsIgnoreCase(instance.getTipoDocumentoCode())) || ("NCV".equalsIgnoreCase(instance.getTipoDocumentoCode())) )
+				&& isEsisteMappingFEL(instance.getIdTipoDocumento()) 
+				//SIAC-7557 Fine
 				&& ("V".equalsIgnoreCase(instance.getStatoOperativoDocumentoCode())) ) {
 			azioniBuilder.append(AZIONI_CONSENTITE_EMETTI_FATTURA_FEL);
+		}
+		
+		//SIAC-7557
+		if(Boolean.TRUE.equals(isAttivaGestioneOrdini) && !statoOperativoAnnullato && !statoOperativoEmesso) {
+			azioniBuilder.append(AZIONI_CONSENTITE_GESTIONE_ORDINI);
 		}
 		
 		azioniBuilder.append(AZIONI_CONSENTITE_END);
@@ -173,11 +204,54 @@ public class RisultatiRicercaDocumentoEntrataAjaxAction extends GenericRisultati
 	
 	@Override
 	protected void eseguiOperazioniUlterioriSuResponse(RicercaSinteticaModulareDocumentoEntrataResponse response) {
-		sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA, response.getImportoTotale());
+			sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA, response.getImportoTotale());
 	}
 	
 	@Override
-	protected void eseguiOperazioniUlteriori() {
+	protected void executeEnd() {
 		model.addMoreData("importoTotale", sessionHandler.getParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA));
 	}
+	
+	//SIAC-7557
+	protected Boolean isEsisteMappingFEL(Integer idTipoDocumento) {
+		
+		RicercaSinteticaTipoDocumentoFEL request = creaRequest(idTipoDocumento);
+		
+		RicercaSinteticaTipoDocumentoFELResponse res = tipoDocumentoServiceFEL.ricercaSinteticaTipoDocumentoFEL(request);
+		
+		if(res.hasErrori() || res.getTotaleElementi() == 0 || res.getListaTipoDocFEL().isEmpty() ) {
+			 return false;
+		}		
+		 
+		return  res.getTotaleElementi()==1 ;
+	}
+	//SIAC-7557
+
+	private RicercaSinteticaTipoDocumentoFEL creaRequest(Integer idTipoDocumento)
+	{
+		RicercaSinteticaTipoDocumentoFEL request = new RicercaSinteticaTipoDocumentoFEL();
+		
+		request.setDataOra(new Date());
+		request.setRichiedente(model.getRichiedente());
+		request.setAnnoBilancio(model.getBilancio().getAnno());
+		
+		ParametriPaginazione parametriPaginazione = new ParametriPaginazione();
+		
+		parametriPaginazione.setElementiPerPagina(10);
+		parametriPaginazione.setNumeroPagina(0);
+		
+		request.setParametriPaginazione(parametriPaginazione);
+
+		TipoDocFEL tipoDocumentiFEL = new TipoDocFEL();
+		 
+		TipoDocumento tipoDocContabiliaEntrata = new  TipoDocumento();
+			
+		tipoDocContabiliaEntrata.setUid(idTipoDocumento);
+		tipoDocumentiFEL.setTipoDocContabiliaEntrata(tipoDocContabiliaEntrata);
+	
+		// Injezione della utility di ricerca
+		request.setTipoDocFEL(tipoDocumentiFEL);
+		return request;
+	}
+	
 }

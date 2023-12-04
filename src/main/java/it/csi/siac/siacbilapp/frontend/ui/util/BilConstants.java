@@ -203,7 +203,6 @@ public enum BilConstants {
 	// MovimentoGestione
 	IMPEGNO("Impegno"),
 	ACCERTAMENTO("Accertamento"),
-	IMPEGNO_FINANZIATO_DA_MUTUO("MUT"),
 	
 	// Azioni decentrate
 	GESTISCI_DOCUMENTO_SPESA_DECENTRATO("OP-SPE-gestisciDocDecentrato"),

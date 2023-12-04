@@ -31,7 +31,7 @@ SPDX-License-Identifier: EUPL-1.2
 										<td><s:property value="#cds.trasmesso"/></td>
 										<td><s:property value="#cds.dataInvio"/></td>
 										<td>											
-											<a href="#" data-trigger="hover" rel="popover" data-placement="left" data-content="<s:property value='#cds.descrizioneEsito'/>">
+											<a href="#" data-trigger="hover" data-toggle="popover" data-placement="left" data-content="<s:property value='#cds.descrizioneEsito'/>">
 												<s:property value='#cds.codiceEsito'/>
 											</a>											 
 										</td>
@@ -59,7 +59,7 @@ SPDX-License-Identifier: EUPL-1.2
 										<td><s:property value="#cds.trasmesso"/></td>
 										<td><s:property value="#cds.dataInvio"/></td>
 										<td>											
-											<a href="#" data-trigger="hover" data-placement="left" rel="popover" data-content="<s:property value='#cds.descrizioneEsito'/>">
+											<a href="#" data-trigger="hover" data-placement="left" data-toggle="popover" data-content="<s:property value='#cds.descrizioneEsito'/>">
 												<s:property value='#cds.codiceEsito'/>
 											</a>											 
 										</td>
@@ -95,7 +95,7 @@ SPDX-License-Identifier: EUPL-1.2
 										<td><s:property value="#cds.trasmesso"/></td>
 										<td><s:property value="#cds.dataInvio"/></td>
 										<td>											
-											<a href="#" data-trigger="hover" rel="popover" data-placement="left" data-content="<s:property value='#cds.descrizioneEsito'/>">
+											<a href="#" data-trigger="hover" data-toggle="popover" data-placement="left" data-content="<s:property value='#cds.descrizioneEsito'/>">
 												<s:property value='#cds.codiceEsito'/>
 											</a>											 
 										</td>

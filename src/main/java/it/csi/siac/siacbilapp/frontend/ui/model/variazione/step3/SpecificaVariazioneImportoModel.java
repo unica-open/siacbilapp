@@ -16,7 +16,6 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
-import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 
@@ -51,7 +50,6 @@ public class SpecificaVariazioneImportoModel extends SpecificaVariazioneImportoB
 	
 	//SIAC-6881
 	private int uidCapitoloComponenti;
-	private DettaglioVariazioneComponenteImportoCapitolo dettaglioVariazioneComponenteImportoCapitoloPerModifiche;
 	private ElementoComponenteVariazione elementoComponenteModificata;
 	private int uidCapitoloAssociatoComponenti;
 	//SIAC-7217

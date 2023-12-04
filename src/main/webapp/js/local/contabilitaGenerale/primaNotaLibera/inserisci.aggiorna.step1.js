@@ -20,9 +20,22 @@
             opts += "<option>" + (emptyOptionText || "") + "</option>";
         }
         options.forEach(function(el) {
-            opts += "<option value='" + el.uid + "'>" + el.codice + " - " + el.descrizione + "</option>";
+            //SIAC-8495 aggiungo l'attributo se già presente un vecchio valore
+            $('#uidCausaleEP').data('old-value') === el.uid ?
+                //  vecchio valore
+                opts += "<option value='" + el.uid + "' selected >" + el.codice + " - " + el.descrizione + "</option>" :
+                //  giro normale
+                opts += "<option value='" + el.uid + "' >" + el.codice + " - " + el.descrizione + "</option>";
         });
         select.html(opts);
+    }
+    
+    /**
+     * SIAC-8495
+     * @returns true se ci troviamo in inserimento o false se ci troviamo in aggiornamento
+     */
+    function determinaInserimentoAggiornamento(){
+        return $('form[id^="form"]').attr('action').indexOf('/siacbilapp/inserisci') >= 0;
     }
 
     /**
@@ -46,7 +59,7 @@
                 return;
             }
 
-            popolaSelect(selectCausaleEP, data.listaCausaleEP, true);
+            popolaSelect(selectCausaleEP, data.listaCausaleEP, determinaInserimentoAggiornamento());
             selectCausaleEP.val(oldValueSelectCausaleEP);
         }).always(overlayElements.overlay.bind(overlayElements, "hide"));
     }

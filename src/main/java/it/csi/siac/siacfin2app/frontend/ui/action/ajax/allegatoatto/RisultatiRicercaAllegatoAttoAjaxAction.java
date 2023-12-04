@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2app.frontend.ui.model.ajax.allegatoatto.RisultatiRicercaAllegatoAttoAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.allegatoatto.ElementoAllegatoAtto;
 import it.csi.siac.siacfin2ser.frontend.webservice.AllegatoAttoService;
@@ -33,7 +33,7 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoAllegatoAtto, 
+public class RisultatiRicercaAllegatoAttoAjaxAction extends PagedDataTableAjaxAction<ElementoAllegatoAtto, 
 		RisultatiRicercaAllegatoAttoAjaxModel, AllegatoAtto, RicercaAllegatoAtto, RicercaAllegatoAttoResponse> {
 	
 	/** Per la serializzazione*/
@@ -58,7 +58,7 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	private static final String AZIONI_CONSENTITE_STAMPA =
 			"<li><a href='risultatiRicercaAllegatoAtto_stampa.do?uidAllegatoAtto=%source.uid%'>stampa atto</a></li>";
 	private static final String AZIONI_CONSENTITE_INVIA =
-			"<li><a href='#' class='inviaAllegatoAtto'>invia per Firma</a></li>";
+			"<li><a href='#' class='inviaAllegatoAtto'>invia per firma</a></li>";
 	// SIAC-5170
 	private static final String AZIONI_CONSENTITE_CONVALIDA =
 			"<li><a href='risultatiRicercaAllegatoAtto_convalida.do?uidAllegatoAtto=%source.uid%' class='convalidaAllegatoAtto'>convalida</a></li>";
@@ -91,12 +91,12 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	}
 	
 	@Override
-	protected ElementoAllegatoAtto ottieniIstanza(AllegatoAtto e) throws FrontEndBusinessException {
+	protected ElementoAllegatoAtto getInstance(AllegatoAtto e) throws FrontEndBusinessException {
 		return new ElementoAllegatoAtto(e);
 	}
 	
 	@Override
-	protected RicercaAllegatoAttoResponse ottieniResponse(RicercaAllegatoAtto request) {
+	protected RicercaAllegatoAttoResponse getResponse(RicercaAllegatoAtto request) {
 		return allegatoAttoService.ricercaAllegatoAtto(request);
 	}
 	
@@ -106,11 +106,11 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoAllegatoAtto instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoAllegatoAtto instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		//SIAC-6775
-		boolean inibisciVerificheSulCompletamento = gestisciCompletamento(instance, AzioniConsentite.ALLEGATO_ATTO_COMPLETA_SENZA_CONTROLLI);
-		boolean gestioneCompletaStandard = gestisciCompletamento(instance, AzioniConsentite.ALLEGATO_ATTO_COMPLETA);
+		boolean inibisciVerificheSulCompletamento = gestisciCompletamento(instance, AzioneConsentitaEnum.ALLEGATO_ATTO_COMPLETA_SENZA_CONTROLLI);
+		boolean gestioneCompletaStandard = gestisciCompletamento(instance, AzioneConsentitaEnum.ALLEGATO_ATTO_COMPLETA);
 		boolean gestioneAggiorna = gestisciAggiornamento(instance);
 		boolean gestioneAnnulla = gestisciAnnullamento(instance);
 		boolean gestioneConsulta = gestisciConsultazione();
@@ -130,6 +130,7 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 		appendIfTrue(strAzioni, gestioneAggiorna, AZIONI_CONSENTITE_AGGIORNA);
 		appendIfTrue(strAzioni, gestioneAnnulla, AZIONI_CONSENTITE_ANNULLA);
 		appendIfTrue(strAzioni, gestioneConsulta, AZIONI_CONSENTITE_CONSULTA);
+		//SIAC-8804
 		appendIfTrue(strAzioni, gestioneStampa, AZIONI_CONSENTITE_STAMPA);
 		appendIfTrue(strAzioni, gestioneInvia, AZIONI_CONSENTITE_INVIA);
 		appendIfTrue(strAzioni, gestioneConvalida, AZIONI_CONSENTITE_CONVALIDA);
@@ -145,7 +146,7 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	 * 
 	 * @return <code>true</code> se l'allegato &eacute; completabile; <code>false</code> in caso contrario
 	 */
-	private boolean gestisciCompletamento(ElementoAllegatoAtto instance, AzioniConsentite azioneCompletamento) {
+	private boolean gestisciCompletamento(ElementoAllegatoAtto instance, AzioneConsentitaEnum azioneCompletamento) {
 		return AzioniConsentiteFactory.isConsentito(azioneCompletamento, sessionHandler.getAzioniConsentite())
 				&& (StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(instance.getStatoOperativoAllegatoAtto()))
 				&& instance.getIsAssociatoAdAlmenoUnDocumento();
@@ -160,10 +161,10 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	 */
 	private boolean gestisciAggiornamento(ElementoAllegatoAtto instance) {
 		// Abilitato per l’azione OP-COM-aggAttoAllegatoDec  e per allegati in stato 'DA COMPLETARE'
-		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_AGGIORNA_DECENTRATO, sessionHandler.getAzioniConsentite())
+		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_AGGIORNA_DECENTRATO, sessionHandler.getAzioniConsentite())
 				&& StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(instance.getStatoOperativoAllegatoAtto());
 		// Abilitato per l’azione OP-COM- aggAttoAllegatoCen e per allegati in stato diverso da 'ANNULLATO', 'RIFIUTATO', 'DA COMPLETARE', 
-		boolean centrale = AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_AGGIORNA_CENTRALE, sessionHandler.getAzioniConsentite())
+		boolean centrale = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_AGGIORNA_CENTRALE, sessionHandler.getAzioniConsentite())
 				&& !StatoOperativoAllegatoAtto.ANNULLATO.equals(instance.getStatoOperativoAllegatoAtto())
 				&& !StatoOperativoAllegatoAtto.RIFIUTATO.equals(instance.getStatoOperativoAllegatoAtto())
 				&& !StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(instance.getStatoOperativoAllegatoAtto());
@@ -179,7 +180,7 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	 * @return <code>true</code> se l'allegato &eacute; annullabile; <code>false</code> in caso contrario
 	 */
 	private boolean gestisciAnnullamento(ElementoAllegatoAtto instance) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_ANNULLA, sessionHandler.getAzioniConsentite())
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_ANNULLA, sessionHandler.getAzioniConsentite())
 			&& (StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(instance.getStatoOperativoAllegatoAtto()));
 	}
 
@@ -199,7 +200,7 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	 * @return <code>true</code> se l'allegato &eacute; stampabile; <code>false</code> in caso contrario
 	 */
 	private boolean gestisciStampa(ElementoAllegatoAtto instance) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_RICERCA, sessionHandler.getAzioniConsentite()) 
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_RICERCA, sessionHandler.getAzioniConsentite()) 
 				&& instance.getIsAssociatoAdAlmenoUnaQuotaSpesa();
 	}
 	
@@ -210,7 +211,7 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	 * @return <code>true</code> se l'allegato &eacute; stampabile; <code>false</code> in caso contrario
 	 */
 	private boolean gestisciInvia(ElementoAllegatoAtto instance) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_INVIA, sessionHandler.getAzioniConsentite())
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_INVIA, sessionHandler.getAzioniConsentite())
 			&& (StatoOperativoAllegatoAtto.COMPLETATO.equals(instance.getStatoOperativoAllegatoAtto()) || StatoOperativoAllegatoAtto.DA_COMPLETARE.equals(instance.getStatoOperativoAllegatoAtto()) || StatoOperativoAllegatoAtto.PARZIALMENTE_CONVALIDATO.equals(instance.getStatoOperativoAllegatoAtto()))
 			&& model.isIntegrazioneAttiLiquidazione() 
 			&& instance.getIsAssociatoAdAlmenoUnaQuotaSpesa();
@@ -230,7 +231,7 @@ public class RisultatiRicercaAllegatoAttoAjaxAction extends GenericRisultatiRice
 	 * @return <code>true</code> se l'allegato &eacute; convalidabile; <code>false</code> in caso contrario
 	 */
 	private boolean gestisciConvalida(ElementoAllegatoAtto instance) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_CONVALIDA, sessionHandler.getAzioniConsentite())
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_CONVALIDA, sessionHandler.getAzioniConsentite())
 				&& (StatoOperativoAllegatoAtto.COMPLETATO.equals(instance.getStatoOperativoAllegatoAtto()) || StatoOperativoAllegatoAtto.PARZIALMENTE_CONVALIDATO.equals(instance.getStatoOperativoAllegatoAtto()));
 	}
 	

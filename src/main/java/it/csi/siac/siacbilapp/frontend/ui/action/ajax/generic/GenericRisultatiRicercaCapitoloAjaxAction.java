@@ -9,7 +9,7 @@ import java.util.List;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaCapitoloAjaxModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.WrapperAzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteWrapper;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitoloFactory;
 import it.csi.siac.siacbilser.model.Capitolo;
@@ -28,13 +28,13 @@ import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
  * @param <RES> la parametrizzazione della Response
  * 
  */
-public abstract class GenericRisultatiRicercaCapitoloAjaxAction<CAP extends Capitolo<?, ?>, REQ extends ServiceRequest, RES extends ServiceResponse> extends GenericRisultatiRicercaAjaxAction<ElementoCapitolo, RisultatiRicercaCapitoloAjaxModel, CAP, REQ, RES> {	
+public abstract class GenericRisultatiRicercaCapitoloAjaxAction<CAP extends Capitolo<?, ?>, REQ extends ServiceRequest, RES extends ServiceResponse> extends PagedDataTableAjaxAction<ElementoCapitolo, RisultatiRicercaCapitoloAjaxModel, CAP, REQ, RES> {	
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1423646045701404359L;
 
 	/** Stringhe HTML per azioni consentite */
-	private static final String AZIONI_CONSENTITE_BEGIN = "<div class='btn-group'> "+
+	protected static final String AZIONI_CONSENTITE_BEGIN = "<div class='btn-group'> "+
 			"<button class='btn dropdown-toggle' data-placement='left' data-toggle='dropdown' href='#'>Azioni <span class='caret'></span></button>" +
 			"<ul class='dropdown-menu pull-right' >";
 
@@ -48,8 +48,8 @@ public abstract class GenericRisultatiRicercaCapitoloAjaxAction<CAP extends Capi
 			"<li><a href='#msgElimina' data-toggle='modal'>elimina</a></li>";
 	
 	private static final String AZIONI_CONSENTITE_CONSULTA = "<li><a href='risultatiRicerca%Massiva%Cap%actionName%Consulta.do?uidDaConsultare=%source.uid%%altriParametri%'>consulta</a></li>";
-
-	private static final String AZIONI_CONSENTITE_END = "</ul></div>";
+	
+	protected static final String AZIONI_CONSENTITE_END = "</ul></div>";
 
 	private String nomeAzione;
 	
@@ -89,7 +89,7 @@ public abstract class GenericRisultatiRicercaCapitoloAjaxAction<CAP extends Capi
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoCapitolo instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoCapitolo instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		boolean gestioneAggiorna = gestisciAggiornamento(isAggiornaAbilitato);
 		boolean gestioneAnnulla = gestisciAnnullamento(daRientro, isAnnullaAbilitato, instance);
@@ -126,12 +126,12 @@ public abstract class GenericRisultatiRicercaCapitoloAjaxAction<CAP extends Capi
 	 * @return il wrapper creato
 	 */
 	@Override
-	protected WrapperAzioniConsentite ottieniWrapperAzioniConsentite(List<AzioneConsentita> listaAzioniConsentite) {
-		return new WrapperAzioniConsentite(nomeAzione, listaAzioniConsentite);
+	protected AzioniConsentiteWrapper getAzioniConsentiteWrapperInstance(List<AzioneConsentita> listaAzioniConsentite) {
+		return new AzioniConsentiteWrapper(nomeAzione, listaAzioniConsentite);
 	}
 	
 	@Override
-	protected ElementoCapitolo ottieniIstanza(CAP cap) throws FrontEndBusinessException {
+	protected ElementoCapitolo getInstance(CAP cap) throws FrontEndBusinessException {
 		return ElementoCapitoloFactory.getInstance(cap, false, model.isGestioneUEB());
 	}
 	

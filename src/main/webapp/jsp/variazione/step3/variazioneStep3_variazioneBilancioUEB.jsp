@@ -298,8 +298,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<div id="iframeContainer"></div>
 	<s:include value="/jsp/include/footer.jsp"/>
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}variazioni/variazioni.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/variazioni.step3.importi.ueb.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioni.step3.importi.ueb.js"></script>
 
 </body>
 </html>

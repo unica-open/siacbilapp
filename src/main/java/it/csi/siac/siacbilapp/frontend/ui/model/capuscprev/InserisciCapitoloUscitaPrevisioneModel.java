@@ -29,7 +29,6 @@ import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloUGest;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloUPrev;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
-import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 
 /**
  * Classe di model per il Capitolo di Uscita Previsione. Contiene una mappatura dei form per l'inserimento del
@@ -457,6 +456,8 @@ public class InserisciCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevis
 		capitoloUscitaPrevisione.setTransazioneUnioneEuropeaSpesa(impostaEntitaFacoltativa(getTransazioneUnioneEuropeaSpesa()));
 		capitoloUscitaPrevisione.setPoliticheRegionaliUnitarie(impostaEntitaFacoltativa(getPoliticheRegionaliUnitarie()));
 		
+		capitoloUscitaPrevisione.setRisorsaAccantonata(impostaEntitaFacoltativa(getRisorsaAccantonata()));
+		
 		// Imposto il flag non presente sulla pagina di aggiornamento
 		capitoloUscitaPrevisione.setFlagPerMemoria(Boolean.FALSE);
 		
@@ -548,6 +549,8 @@ public class InserisciCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevis
 		
 		capitoloUscitaPrevisione.setCategoriaCapitolo(cap.getCategoriaCapitolo());
 		capitoloUscitaPrevisione.setFlagImpegnabile(cap.getFlagImpegnabile());
+		//task-55
+		capitoloUscitaPrevisione.setFlagNonInserireAllegatoA1(cap.getFlagNonInserireAllegatoA1());
 		
 		// SIAC-4878
 		setTipoFinanziamento(cap.getTipoFinanziamento());
@@ -586,6 +589,8 @@ public class InserisciCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevis
 		
 		capitoloUscitaPrevisione.setCategoriaCapitolo(cap.getCategoriaCapitolo());
 		capitoloUscitaPrevisione.setFlagImpegnabile(cap.getFlagImpegnabile());
+		//task-55
+		capitoloUscitaPrevisione.setFlagNonInserireAllegatoA1(cap.getFlagNonInserireAllegatoA1());
 		
 		// SIAC-4878
 		setTipoFinanziamento(cap.getTipoFinanziamento());

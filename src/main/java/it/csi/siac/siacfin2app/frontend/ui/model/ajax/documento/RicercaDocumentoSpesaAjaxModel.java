@@ -249,7 +249,7 @@ public class RicercaDocumentoSpesaAjaxModel extends RicercaDocumentoModel {
 		
 		RicercaImpegnoK parametroRicercaImpegnoK = new RicercaImpegnoK();
 		parametroRicercaImpegnoK.setAnnoImpegno(impegno.getAnnoMovimento());
-		parametroRicercaImpegnoK.setNumeroImpegno(impegno.getNumero());
+		parametroRicercaImpegnoK.setNumeroImpegno(impegno.getNumeroBigDecimal());
 		parametroRicercaImpegnoK.setAnnoEsercizio(getAnnoEsercizioInt());
 		
 		
@@ -282,8 +282,8 @@ public class RicercaDocumentoSpesaAjaxModel extends RicercaDocumentoModel {
 		if(getImpegno().getAnnoMovimento() != 0) {
 			subComponents.add(getImpegno().getAnnoMovimento() + "");
 		}
-		if(getImpegno().getNumero() != null) {
-			subComponents.add(getImpegno().getNumero().toPlainString());
+		if(getImpegno().getNumeroBigDecimal() != null) {
+			subComponents.add(getImpegno().getNumeroBigDecimal().toPlainString());
 		}
 		
 		components.add("Movimento: " + StringUtils.join(subComponents, "/"));

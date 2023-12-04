@@ -7,7 +7,7 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ taglib uri="/struts-tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<s:set name="suffix"><c:out value="${param.suffix}" default="" /></s:set>
+<s:set var="suffix"><c:out value="${param.suffix}" default="" /></s:set>
 
 <%-- <div id="collapseComponenti<s:property value="#suffix"/>" class="hide"> --%>
 	<div class="control-group">

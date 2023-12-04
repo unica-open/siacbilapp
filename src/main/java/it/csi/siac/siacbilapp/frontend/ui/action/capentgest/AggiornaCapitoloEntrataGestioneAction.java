@@ -4,9 +4,14 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.capentgest;
 
+import xyz.timedrain.arianna.plugin.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumbTrail;
+import xyz.timedrain.arianna.plugin.Crumb;
+/*
 import org.softwareforge.struts2.breadcrumb.BreadCrumb;
 import org.softwareforge.struts2.breadcrumb.BreadCrumbTrail;
 import org.softwareforge.struts2.breadcrumb.Crumb;
+*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,10 +35,11 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloEn
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioniCapitoloPerAggiornamentoCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioniCapitoloPerAggiornamentoCapitoloResponse;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonapp.handler.session.CommonSessionParameter;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
@@ -111,6 +117,7 @@ public class AggiornaCapitoloEntrataGestioneAction extends CapitoloEntrataAction
 		log.debug(methodName, "Impostazione dei dati nel model");
 		model.impostaDatiDaResponse(response);
 		log.debug(methodName, "Caricamento delle ulteriori liste");
+		
 		caricaListaCodificheAggiornamento();
 		
 		//siac-5003
@@ -128,7 +135,7 @@ public class AggiornaCapitoloEntrataGestioneAction extends CapitoloEntrataAction
 			logServiceResponse(responseRicercaVariazioni);
 			
 			if(responseRicercaVariazioni.hasErrori()) {
-				log.debug(methodName, createErrorInServiceInvocationString(requestRicercaVariazioni, responseRicercaVariazioni));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaVariazioniCapitoloPerAggiornamentoCapitolo.class, responseRicercaVariazioni));
 				addErrori(responseRicercaVariazioni);
 				return INPUT;
 			}
@@ -176,6 +183,16 @@ public class AggiornaCapitoloEntrataGestioneAction extends CapitoloEntrataAction
 		// SIAC-5582: Forzo il flag accertato per cassa a false nel caso in cui NON sia gestibile
 		if(!model.isFlagAccertatoPerCassaVisibile()) {
 			model.getCapitoloEntrataGestione().setFlagAccertatoPerCassa(Boolean.FALSE);
+		}
+		
+		//task-244
+		if(model.getCapitoloEntrataGestione().getCategoriaCapitolo().getUid() >0)
+			model.getCapitoloEntrataGestione().setCategoriaCapitolo(caricaCategoriaCapitolo(model.getCapitoloEntrataGestione().getCategoriaCapitolo().getUid()));
+				
+		//task-244
+		if(CategoriaCapitoloEnum.categoriaIsFPV(model.getCapitoloEntrataGestione().getCategoriaCapitolo().getCodice()) || 
+				model.getCapitoloEntrataGestione().getCategoriaCapitolo().getCodice().equals(CategoriaCapitoloEnum.AAM.getCodice()) ) {
+			model.getCapitoloEntrataGestione().setFlagImpegnabile(null);
 		}
 		
 		log.debug(methodName, "Creazione della request");
@@ -292,5 +309,6 @@ public class AggiornaCapitoloEntrataGestioneAction extends CapitoloEntrataAction
 			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
 		}
 	}
+	
 		
 }

@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologia
 
 import java.util.List;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologiarichiesta.TipologiaRichiestaCassaEconomale;
 import it.csi.siac.siaccecser.model.TipoRichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
@@ -35,9 +35,9 @@ public class TipologiaRichiestaCassaEconomalePagamentoFatture extends TipologiaR
 		setTipoRichiestaEconomale(tipoRichiestaEconomale);
 		
 		addAbilitazioneRichiestaCassaEconomale("inserisci", "inserisciPagamentoFattureCassaEconomale.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_FATTURE_INSERISCI, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_FATTURE_ABILITA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_FATTURE_INSERISCI, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_FATTURE_ABILITA);
 		addAbilitazioneRichiestaCassaEconomale("ricerca", "ricercaPagamentoFattureCassaEconomale.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_FATTURE_RICERCA, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_FATTURE_ABILITA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_FATTURE_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_FATTURE_ABILITA);
 	}
 	
 }

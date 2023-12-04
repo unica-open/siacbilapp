@@ -83,7 +83,7 @@ public class AssociaQuoteEntrataAProvvisorioDiCassaAction extends AssociaQuoteAP
 		
 		if(res.hasErrori()) {
 			// Errori nell'invocazione
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaQuotePerProvvisorioEntrata.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -170,7 +170,7 @@ public class AssociaQuoteEntrataAProvvisorioDiCassaAction extends AssociaQuoteAP
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorString = createErrorInServiceInvocationString(req, res);
+			String errorString = createErrorInServiceInvocationString(RicercaQuotePerProvvisorioEntrata.class, res);
 			log.info(methodName, errorString);
 			addErrori(res);
 			throw new WebServiceInvocationFailureException(errorString);

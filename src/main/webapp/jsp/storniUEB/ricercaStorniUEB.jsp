@@ -28,7 +28,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<div class="control-group">
 										<label class="control-label" for="numeroStorno">Storno</label>
 										<div class="controls">
-											<s:textfield id="numeroStorno" cssClass="lbTextSmall span2 soloNumeri" name="numeroStorno" maxLength="4" placeholder="storno" />
+											<s:textfield id="numeroStorno" cssClass="lbTextSmall span2 soloNumeri" name="numeroStorno" maxlength="4" placeholder="storno" />
 										</div>
 									</div>
 									<div class="control-group">
@@ -230,9 +230,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}storniUEB/storni.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_collapse.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}storniUEB/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/storniUEB/storni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_collapse.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/storniUEB/ricerca.js"></script>
 </body>
 </html>

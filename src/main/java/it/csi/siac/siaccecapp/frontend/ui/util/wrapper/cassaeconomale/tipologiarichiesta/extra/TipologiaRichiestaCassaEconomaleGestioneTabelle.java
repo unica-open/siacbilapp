@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologia
 
 import java.util.List;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 
 /**
@@ -31,9 +31,9 @@ public class TipologiaRichiestaCassaEconomaleGestioneTabelle extends TipologiaRi
 		
 		populateTipoRichiestaEconomale("Gestione tabelle");
 		addAbilitazioneRichiestaCassaEconomale("tabella tipi giustificativi", "cassaEconomaleGestioneTabelleTipiGiustificativi.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_GESTIONE_TABELLA_TIPI_GIUSTIFICATIVI);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_GESTIONE_TABELLA_TIPI_GIUSTIFICATIVI);
 		addAbilitazioneRichiestaCassaEconomale("tabella operazioni di cassa", "cassaEconomaleGestioneTabelleTipiOperazioniDiCassa.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_GESTIONE_TABELLA_OPERAZIONI_CASSA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_GESTIONE_TABELLA_OPERAZIONI_CASSA);
 	}
 	
 }

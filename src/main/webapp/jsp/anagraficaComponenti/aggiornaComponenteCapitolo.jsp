@@ -47,7 +47,11 @@ SPDX-License-Identifier: EUPL-1.2
 								<s:hidden name="componenteCapitolo.fonteFinanziariaComponenteImportiCapitolo" />
 								<s:hidden name="componenteCapitolo.anno" />
 								<s:hidden name="componenteCapitolo.propostaDefaultComponenteImportiCapitolo" />
+								<%--	SIAC-7349
 								<s:hidden name="componenteCapitolo.tipoGestioneComponenteImportiCapitolo" />
+								 --%>
+								
+								<s:hidden name="componenteCapitolo.impegnabileComponenteImportiCapitolo" />
 								<s:hidden name="componenteCapitolo.dataInizioValidita" />
 
 								<div class="fieldset-body">
@@ -112,12 +116,21 @@ SPDX-License-Identifier: EUPL-1.2
 													id="previsione" cssClass="lbTextSmall span4" required="true" headerKey="" headerValue="" />
 											</div>
 										</div>
-	
+										<!-- SIAC-7349 -->
+										<%--  
 										<div class="control-group">
 											<label for="gestione" class="control-label">Tipo Gestione *</label>
 											<div class="controls">
 												<s:select list="listaGestione" listValue="descrizione" name="componenteCapitolo.tipoGestioneComponenteImportiCapitolo"
 													id="gestione" cssClass="lbTextSmall span10" required="true" headerKey="" headerValue="" />
+											</div>
+										</div>
+										--%>
+										<div class="control-group">
+											<label for="impegnabile" class="control-label">Impegnabile *</label>
+											<div class="controls">
+												<s:select list="listaImpegnabile" listValue="descrizione" name="componenteCapitolo.impegnabileComponenteImportiCapitolo"
+													id="impegnabile" cssClass="lbTextSmall span10" required="true" headerKey="" headerValue="" />
 											</div>
 										</div>
 	
@@ -153,7 +166,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}anagraficaComponenti/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/anagraficaComponenti/aggiorna.js"></script>
  
 </body>
 </html>

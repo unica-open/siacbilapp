@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -35,7 +35,7 @@ import it.csi.siac.siacfin2ser.model.TipoOnere;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaTipoOnereAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoTipoOnere, RisultatiRicercaTipoOnereAjaxModel,
+public class RisultatiRicercaTipoOnereAjaxAction extends PagedDataTableAjaxAction<ElementoTipoOnere, RisultatiRicercaTipoOnereAjaxModel,
 	TipoOnere, RicercaSinteticaTipoOnere, RicercaSinteticaTipoOnereResponse> {
 	
 	/** Per la serializzazione */
@@ -74,12 +74,12 @@ public class RisultatiRicercaTipoOnereAjaxAction extends GenericRisultatiRicerca
 	}
 
 	@Override
-	protected ElementoTipoOnere ottieniIstanza(TipoOnere e) throws FrontEndBusinessException {
+	protected ElementoTipoOnere getInstance(TipoOnere e) throws FrontEndBusinessException {
 		return new ElementoTipoOnere(e);
 	}
 
 	@Override
-	protected RicercaSinteticaTipoOnereResponse ottieniResponse(RicercaSinteticaTipoOnere request) {
+	protected RicercaSinteticaTipoOnereResponse getResponse(RicercaSinteticaTipoOnere request) {
 		return tipoOnereService.ricercaSinteticaTipoOnere(request);
 	}
 
@@ -99,11 +99,11 @@ public class RisultatiRicercaTipoOnereAjaxAction extends GenericRisultatiRicerca
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoTipoOnere instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato,
+	protected void handleAzioniConsentite(ElementoTipoOnere instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato,
 			boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.TIPO_ONERE_AGGIORNA, listaAzioniConsentite);
-		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.TIPO_ONERE_CONSULTA, listaAzioniConsentite);
+		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.TIPO_ONERE_AGGIORNA, listaAzioniConsentite);
+		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.TIPO_ONERE_CONSULTA, listaAzioniConsentite);
 		
 		// Gestione delle azioni consentite
 		StringBuilder azioniBuilder = new StringBuilder();

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgsaapp.frontend.ui.action.causali;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -15,6 +15,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgenser.model.ContoTipoOperazione;
 import it.csi.siac.siacgenser.model.OperazioneSegnoConto;
 import it.csi.siac.siacgenser.model.errore.ErroreGEN;
@@ -79,6 +80,14 @@ public class AggiornaCausaleEPGSAAction extends AggiornaCausaleEPBaseAction<Aggi
 		log.debug(methodName, "Numero conti: " + numContiTotale + " -- Numero conti con segno DARE: " + numContiSegnoDare + " -- Numero conti con segno AVERE: " + numContiSegnoAvere);
 		checkCondition(numContiSegnoDare >= 1 && numContiSegnoAvere >= 1, ErroreGEN.ASSENZA_CONTI_OBBLIGATORI_CAUSALI_DI_RACCORDO.getErrore());
 	}
+	
+	//SIAC-8323 e SIAC-8324
+	@Override
+	protected boolean getFaseDiBilancioNonCompatibile(FaseBilancio faseBilancio) {
+	    return 
+		FaseBilancio.PLURIENNALE.equals(faseBilancio) ||
+		FaseBilancio.PREVISIONE.equals(faseBilancio);
+	}	
 	
 	
 

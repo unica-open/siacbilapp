@@ -130,7 +130,7 @@ public abstract class InserisciFiglioPianoDeiContiAction<M extends InserisciFigl
 		logServiceResponse(resRDC);
 		
 		if(resRDC.hasErrori()){
-			log.info(methodName, createErrorInServiceInvocationString(reqRDC, resRDC));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioConto.class, resRDC));
 			addErrori(resRDC);
 			return;
 		}

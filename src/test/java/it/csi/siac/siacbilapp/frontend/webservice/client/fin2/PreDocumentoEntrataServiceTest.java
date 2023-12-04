@@ -122,7 +122,7 @@ public class PreDocumentoEntrataServiceTest extends BaseProxyServiceTest<PreDocu
 		//ACCERTAMENTO SENZA DISPONIBILITA'
 		acc.setUid(95637);
 		acc.setAnnoMovimento(2015);
-		acc.setNumero( new BigDecimal("185"));
+		acc.setNumeroBigDecimal( new BigDecimal("185"));
 		
 		SubAccertamento subacc = new SubAccertamento();
 		subacc.setUid(0);

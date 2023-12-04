@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -277,7 +277,7 @@ public class ConsultaCespiteAction extends GenericCespiteAction<ConsultaCespiteM
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(OttieniEntitaCollegatePrimaNota.class, res));
 			addErrori(res);
 			return INPUT;
 		}

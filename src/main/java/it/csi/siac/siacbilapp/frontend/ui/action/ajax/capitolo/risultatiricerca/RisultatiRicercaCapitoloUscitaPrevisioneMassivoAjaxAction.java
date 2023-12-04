@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaCapitoloMassivoAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.WrapperAzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteWrapper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaMassivaCapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaMassivaCapitoloUscitaPrevisioneResponse;
@@ -41,7 +41,7 @@ public class RisultatiRicercaCapitoloUscitaPrevisioneMassivoAjaxAction extends G
 		super();
 		setParametroSessioneLista(BilSessionParameter.RISULTATI_RICERCA_SINTETICA_CAPITOLO_USCITA_PREVISIONE);
 		setParametroSessioneRequest(BilSessionParameter.REQUEST_RICERCA_SINTETICA_MASSIVA_CAPITOLO);
-		setNomeAzione(WrapperAzioniConsentite.ACTION_NAME_USCITA_PREVISIONE);
+		setNomeAzione(AzioniConsentiteWrapper.ACTION_NAME_USCITA_PREVISIONE);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class RisultatiRicercaCapitoloUscitaPrevisioneMassivoAjaxAction extends G
 	}
 
 	@Override
-	protected RicercaSinteticaMassivaCapitoloUscitaPrevisioneResponse ottieniResponse(RicercaSinteticaMassivaCapitoloUscitaPrevisione request) {
+	protected RicercaSinteticaMassivaCapitoloUscitaPrevisioneResponse getResponse(RicercaSinteticaMassivaCapitoloUscitaPrevisione request) {
 		return capitoloUscitaPrevisioneService.ricercaSinteticaMassivaCapitoloUscitaPrevisione(request);
 	}
 

@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.ajax.documento;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2app.frontend.ui.model.ajax.documento.RisultatiRicercaSinteticaQuoteDocumentoSpesaBaseAjaxModel;
@@ -24,7 +24,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
  */
 public abstract class RisultatiRicercaSinteticaQuoteDocumentoSpesaCollegatoBaseAjaxAction<M extends RisultatiRicercaSinteticaQuoteDocumentoSpesaBaseAjaxModel>
 		extends
-		GenericRisultatiRicercaAjaxAction<ElementoSubdocumentoSpesa, M, SubdocumentoSpesa, RicercaSinteticaModulareQuoteByDocumentoSpesa, RicercaSinteticaModulareQuoteByDocumentoSpesaResponse> {
+		PagedDataTableAjaxAction<ElementoSubdocumentoSpesa, M, SubdocumentoSpesa, RicercaSinteticaModulareQuoteByDocumentoSpesa, RicercaSinteticaModulareQuoteByDocumentoSpesaResponse> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -2521846964745106821L;
@@ -43,12 +43,12 @@ public abstract class RisultatiRicercaSinteticaQuoteDocumentoSpesaCollegatoBaseA
 	}
 	
 	@Override
-	protected ElementoSubdocumentoSpesa ottieniIstanza(SubdocumentoSpesa e) {
+	protected ElementoSubdocumentoSpesa getInstance(SubdocumentoSpesa e) {
 		return new ElementoSubdocumentoSpesa(e, model.isGestioneUEB());
 	}
 	
 	@Override
-	protected RicercaSinteticaModulareQuoteByDocumentoSpesaResponse ottieniResponse(RicercaSinteticaModulareQuoteByDocumentoSpesa request) {
+	protected RicercaSinteticaModulareQuoteByDocumentoSpesaResponse getResponse(RicercaSinteticaModulareQuoteByDocumentoSpesa request) {
 		return documentoSpesaService.ricercaSinteticaModulareQuoteByDocumentoSpesa(request);
 	}
 	

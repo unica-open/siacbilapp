@@ -145,7 +145,7 @@ public class AggiornaDocumentoSpesaNotaCreditoAction extends AggiornaDocumentoSp
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceNotaCreditoSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -194,7 +194,7 @@ public class AggiornaDocumentoSpesaNotaCreditoAction extends AggiornaDocumentoSp
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaNotaCreditoSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -244,7 +244,7 @@ public class AggiornaDocumentoSpesaNotaCreditoAction extends AggiornaDocumentoSp
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaNotaCreditoSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -351,7 +351,7 @@ public class AggiornaDocumentoSpesaNotaCreditoAction extends AggiornaDocumentoSp
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaImportiQuoteDocumentoSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -624,7 +624,7 @@ public class AggiornaDocumentoSpesaNotaCreditoAction extends AggiornaDocumentoSp
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaRelazioneDocumenti.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -658,7 +658,7 @@ public class AggiornaDocumentoSpesaNotaCreditoAction extends AggiornaDocumentoSp
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaRelazioneDocumenti.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -691,7 +691,7 @@ public class AggiornaDocumentoSpesaNotaCreditoAction extends AggiornaDocumentoSp
 		
 		if(responseCollegati.hasErrori()) {
 			//si sono verificati errori, non posso continuare
-			log.info(methodName, createErrorInServiceInvocationString(requestCollegati, responseCollegati));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDocumentiCollegatiByDocumentoSpesa.class, responseCollegati));
 			addErrori(responseCollegati);
 			return SUCCESS;
 		}

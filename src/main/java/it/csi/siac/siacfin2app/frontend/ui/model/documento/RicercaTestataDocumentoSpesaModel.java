@@ -120,8 +120,8 @@ public class RicercaTestataDocumentoSpesaModel extends RicercaDocumentoModel {
 		if(getImpegno().getAnnoMovimento() != 0) {
 			subComponents.add(getImpegno().getAnnoMovimento() + "");
 		}
-		if(getImpegno().getNumero() != null) {
-			subComponents.add(getImpegno().getNumero().toPlainString());
+		if(getImpegno().getNumeroBigDecimal() != null) {
+			subComponents.add(getImpegno().getNumeroBigDecimal().toPlainString());
 		}
 		
 		components.add("Movimento: " + StringUtils.join(subComponents, "/"));

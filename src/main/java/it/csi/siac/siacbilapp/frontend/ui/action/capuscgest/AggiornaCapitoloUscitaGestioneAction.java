@@ -8,9 +8,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumbTrail;
+import xyz.timedrain.arianna.plugin.Crumb;
+
+/*
 import org.softwareforge.struts2.breadcrumb.BreadCrumb;
 import org.softwareforge.struts2.breadcrumb.BreadCrumbTrail;
 import org.softwareforge.struts2.breadcrumb.Crumb;
+*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,9 +27,11 @@ import it.csi.siac.siacbilapp.frontend.ui.action.commons.CapitoloUscitaAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscgest.AggiornaCapitoloUscitaGestioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.ClassificatoreAggiornamentoCapitoloUscita;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.ClassificatoreAggiornamentoFactory;
-import it.csi.siac.siacbilser.business.utility.helper.ComponenteImportiCapitoloPerAnnoHelper;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.TabellaImportiConComponentiCapitoloFactory;
+import it.csi.siac.siacbilser.business.utility.capitolo.ComponenteImportiCapitoloPerAnnoHelper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaCapitoloDiUscitaGestione;
@@ -41,22 +50,21 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioniCapitoloP
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioniCapitoloPerAggiornamentoCapitoloResponse;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
+import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 import it.csi.siac.siaccommonapp.handler.session.CommonSessionParameter;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSinteticaImpegniSubImpegni;
-import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSinteticaImpegniSubimpegniResponse;
-import it.csi.siac.siacfinser.model.ric.ParametroRicercaImpSub;
-
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSinteticaImpegniSubImpegni;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSinteticaImpegniSubimpegniResponse;
-import it.csi.siac.siacfinser.model.ric.ParametroRicercaImpSub;
 
 /**
  * Classe di Action per la gestione dell'aggiornamento del Capitolo di Uscita
@@ -144,92 +152,49 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 		log.debug(methodName, "Capitolo da aggiornare - uid: " + model.getUidDaAggiornare());
 
 		/* Ricerca del capitolo */
-		log.debug(methodName, "Creazione della request");
 		RicercaDettaglioCapitoloUscitaGestione request = model.creaRequestRicercaDettaglioCapitoloUscitaGestione();
-		logServiceRequest(request);
-
 		log.debug(methodName, "Richiamo il WebService di ricerca dettaglio");
-		RicercaDettaglioCapitoloUscitaGestioneResponse response = capitoloUscitaGestioneService
-				.ricercaDettaglioCapitoloUscitaGestione(request);
-		log.debug(methodName, "Richiamato il WebService di ricerca dettaglio");
-		logServiceResponse(response);
-
-		// GESC012
-		log.debug(methodName, "Creazione della request");
-		RicercaComponenteImportiCapitolo req = model.creaRequestRicercaComponenteImportiCapitolo();
-		logServiceRequest(req);
-		log.debug(methodName, "Richiamo il WebService di ricerca dettaglio componenti");
-		RicercaComponenteImportiCapitoloResponse res = componenteImportiCapitoloService
-				.ricercaComponenteImportiCapitolo(req);
-		// Controllo gli errori
-		if (res.hasErrori()) {
-			// si sono verificati degli errori: esco.
-			log.debug("Componente Importi Capitolo ricercaComponenteImportiCapitolo()",
-					"Errore nella risposta del servizio");
-			addErrori("Componente Importi Capitolo ricercaComponenteImportiCapitolo()", res);
-			return INPUT;
-		}
-		model.setImportiAnniSucc(res.getImportiCapitoloAnniSuccessivi());
-		model.setImportiResidui(res.getImportiCapitoloResiduo());
-
-		// FIXME aggiungere i controlli di errore exception call w
-
-		// NUOVA GESTIONE - TODO MIGLIORARE IL CODICE
-		// COMPETENZA
-		List<ImportiCapitoloPerComponente> competenzaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
-		ComponenteImportiCapitoloPerAnnoHelper.buildCompetenzaRowUG(res.getListaImportiCapitolo(),
-				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), competenzaComponenti);
-
-		model.setCompetenzaStanziamento((competenzaComponenti.get(0) != null) ? competenzaComponenti.get(0) : null);
-		model.setCompetenzaImpegnato((competenzaComponenti.get(1) != null) ? competenzaComponenti.get(1) : null);
-		model.setDisponibilita((competenzaComponenti.get(2) != null) ? competenzaComponenti.get(2) : null);
-
-		/// model.setCompetenza
-		// RESIDUI
-		List<ImportiCapitoloPerComponente> residuiComponenti = new ArrayList<ImportiCapitoloPerComponente>();
-		ComponenteImportiCapitoloPerAnnoHelper.buildResiduiRow(res.getListaImportiCapitolo(),
-				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), residuiComponenti);
-
-		model.setResiduiPresunti((residuiComponenti.get(0) != null) ? residuiComponenti.get(0) : null);
-		model.setResiduiEffettivi((residuiComponenti.get(1) != null) ? residuiComponenti.get(1) : null);
-
-		// CASSA
-		List<ImportiCapitoloPerComponente> cassaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
-		ComponenteImportiCapitoloPerAnnoHelper.buildCassaRow(res.getListaImportiCapitolo(),
-				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), cassaComponenti);
-
-		model.setCassaStanziato((cassaComponenti.get(0) != null) ? cassaComponenti.get(0) : null);
-		model.setCassaPagato((cassaComponenti.get(1) != null) ? cassaComponenti.get(1) : null);
+		RicercaDettaglioCapitoloUscitaGestioneResponse response = capitoloUscitaGestioneService.ricercaDettaglioCapitoloUscitaGestione(request);
 		
-		ricercaDisponibilitaCapitolo();
-
 		// Controllo gli errori
 		if (response.hasErrori()) {
 			// si sono verificati degli errori: esco.
-			log.debug(methodName, "Errore nella risposta del servizio");
+			log.debug(methodName, "Errore nella risposta del servizio di ricerca dettaglio del capitolo.");
 			addErrori(methodName, response);
 			return INPUT;
 		}
 
-		log.debug(methodName, "Impostazione dei dati nel model");
-		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = new ArrayList<ImportiCapitoloPerComponente>();
-//		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
-//				.toComponentiImportiCapitoloPerAnno(res.getListaImportiCapitolo());
-		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(res.getListaImportiCapitolo(),
-				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi());
-
-
-		//SIAC-7227
-		if(res.getListaImportiCapitolo().get(0) != null) {
-			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, res.getListaImportiCapitolo().get(0));
+		// GESC012
+		RicercaComponenteImportiCapitolo req = model.creaRequestRicercaComponenteImportiCapitolo();
+		logServiceRequest(req);
+		//SIAC-7349 - MR - SR210 - 12.05.2020 Abilito esecuzione nuovo servizio per le componenti
+		req.setAbilitaCalcoloDisponibilita(true);
+		RicercaComponenteImportiCapitoloResponse responseComponentiImportiCapitolo = componenteImportiCapitoloService.ricercaComponenteImportiCapitolo(req);
+		// Controllo gli errori
+		if (responseComponentiImportiCapitolo.hasErrori()) {
+			// si sono verificati degli errori: esco.
+			log.debug(methodName, "Errore nella risposta del servizio di ricercaComponenteImportiCapitol");
+			addErrori("Componente Importi Capitolo ricercaComponenteImportiCapitolo()", responseComponentiImportiCapitolo);
+			return INPUT;
 		}
+		
+		
+		
+		impostaDatiComponentiNelModel(responseComponentiImportiCapitolo);
+		
+		ricercaDisponibilitaCapitolo();
+
+        List<ImportiCapitoloPerComponente> importiComponentiCapitolo = getListaImporticomponente(responseComponentiImportiCapitolo);
 		//
 		
-		model.impostaDatiDaResponse(response, importiComponentiCapitolo);
+		log.debug(methodName, "Impostazione dei dati nel model");
+		model.impostaDatiDaResponse(response, importiComponentiCapitolo);		
+		
 		boolean stanziamentiNegativiPresenti = checkStanziamentiNegativi(importiComponentiCapitolo);
 		boolean freschiNonPresenti = checkComponentiNonFresco(importiComponentiCapitolo);
 		model.setStanziamentiNegativiPresenti(stanziamentiNegativiPresenti);
 		model.setComponentiDiversiDaFresco(freschiNonPresenti);
+		
 		log.debug(methodName, "Caricamento delle ulteriori liste");
 		caricaListaCodificheAggiornamento();
 
@@ -251,7 +216,7 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 
 			if (responseRicercaVariazioni.hasErrori()) {
 				log.debug(methodName,
-						createErrorInServiceInvocationString(requestRicercaVariazioni, responseRicercaVariazioni));
+						createErrorInServiceInvocationString(RicercaVariazioniCapitoloPerAggiornamentoCapitolo.class, responseRicercaVariazioni));
 				addErrori(responseRicercaVariazioni);
 				return INPUT;
 			}
@@ -288,6 +253,100 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 				responseClassificatoriModificabili);
 
 		return SUCCESS;
+	}
+
+	/**
+	 * @param responseComponentiImportiCapitolo
+	 * @return
+	 */
+	private List<ImportiCapitoloPerComponente> getListaImporticomponente(RicercaComponenteImportiCapitoloResponse responseComponentiImportiCapitolo) {
+		
+		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = new ArrayList<ImportiCapitoloPerComponente>();
+//		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(responseComponentiImportiCapitolo.getListaImportiCapitolo(),
+//		responseComponentiImportiCapitolo.getImportiCapitoloResiduo(), responseComponentiImportiCapitolo.getImportiCapitoloAnniSuccessivi());
+		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
+				.toComponentiImportiCapitoloPerAnno(responseComponentiImportiCapitolo.getListaImportiCapitolo(), responseComponentiImportiCapitolo.getImportiCapitoloAnniSuccessivi());
+
+
+		//SIAC-7227
+		if(responseComponentiImportiCapitolo.getListaImportiCapitolo().get(0) != null) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedenteNew(importiComponentiCapitolo, responseComponentiImportiCapitolo.getListaImportiCapitolo().get(0));
+		}
+		
+		//SIAC-7349 - SR210 - MR - 12.05.2020 Mostro anche la componente senza stanziamento
+		//SIAC-7349 - SR210 - MR - Start - 12/05/2020 - Nuovo metodo per mostrare componenti negli anni successivi senza stanziamento
+		if(responseComponentiImportiCapitolo.getListaImportiCapitoloAnniSuccessiviNoStanz() != null &&  !responseComponentiImportiCapitolo.getListaImportiCapitoloAnniSuccessiviNoStanz().isEmpty()) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitolo, responseComponentiImportiCapitolo.getListaImportiCapitoloAnniSuccessiviNoStanz());
+		}
+
+		//SIAC-7349 - GS- Start - 21/07/2020 - Nuovo metodo per mostrare componenti nel triennio senza stanziamento
+		if(responseComponentiImportiCapitolo.getListaImportiCapitoloTriennioNoStanz() != null &&  !responseComponentiImportiCapitolo.getListaImportiCapitoloTriennioNoStanz().isEmpty()) {
+			int countDefault = 0;
+			for (ImportiCapitoloPerComponente i : importiComponentiCapitolo) {
+				if (i.isPropostaDefault()) 
+					countDefault++;
+			}  
+			int addIndex = importiComponentiCapitolo.size() - countDefault;
+			Integer annoEsercizio = Integer.valueOf(sessionHandler.getAnnoEsercizio());
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitolo, responseComponentiImportiCapitolo.getListaImportiCapitoloTriennioNoStanz(), annoEsercizio, addIndex);
+		}
+		
+		//SIAC-7349 - Start - SR210 - MR - 16/04/2020 
+				//Per non introdurre regressione, viene fatta una deepCopy dell'array, e successivamente
+				//vengono aggiunte le Disponibilita in un nuovo array, e rimosso la disponibilita dall'arrey master.
+		int sizeImporti = importiComponentiCapitolo.size();				
+		List<Integer> indiciDettagliDispImpVar= new ArrayList<Integer>();
+		for(int i=0; i<sizeImporti; i++){
+			TipoDettaglioComponenteImportiCapitolo dettaglioComponente = importiComponentiCapitolo.get(i).getTipoDettaglioComponenteImportiCapitolo();
+			if(dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE)
+							||dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAVARIARE)){
+				indiciDettagliDispImpVar.add(i);							
+			}
+		}
+		int j=indiciDettagliDispImpVar.size()-1;
+		while (j>=0) {
+			importiComponentiCapitolo.remove(importiComponentiCapitolo.get(indiciDettagliDispImpVar.get(j)));
+			j--;			
+		}	
+		return importiComponentiCapitolo;
+	}
+
+	/**
+	 * @param res
+	 */
+	private void impostaDatiComponentiNelModel(RicercaComponenteImportiCapitoloResponse res) {
+		model.setImportiAnniSucc(res.getImportiCapitoloAnniSuccessivi());
+		model.setImportiResidui(res.getImportiCapitoloResiduo());
+				
+
+		// FIXME aggiungere i controlli di errore exception call w
+
+		// NUOVA GESTIONE - TODO MIGLIORARE IL CODICE
+		// COMPETENZA
+		List<ImportiCapitoloPerComponente> competenzaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
+		ComponenteImportiCapitoloPerAnnoHelper.buildCompetenzaRowUG(res.getListaImportiCapitolo(),
+				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), competenzaComponenti);
+
+		model.setCompetenzaStanziamento((competenzaComponenti.get(0) != null) ? competenzaComponenti.get(0) : null);
+		model.setCompetenzaImpegnato((competenzaComponenti.get(1) != null) ? competenzaComponenti.get(1) : null);
+		model.setDisponibilita((competenzaComponenti.get(2) != null) ? competenzaComponenti.get(2) : null);
+
+		/// model.setCompetenza
+		// RESIDUI
+		List<ImportiCapitoloPerComponente> residuiComponenti = new ArrayList<ImportiCapitoloPerComponente>();
+		ComponenteImportiCapitoloPerAnnoHelper.buildResiduiRow(res.getListaImportiCapitolo(),
+				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), residuiComponenti);
+
+		model.setResiduiPresunti((residuiComponenti.get(0) != null) ? residuiComponenti.get(0) : null);
+		model.setResiduiEffettivi((residuiComponenti.get(1) != null) ? residuiComponenti.get(1) : null);
+
+		// CASSA
+		List<ImportiCapitoloPerComponente> cassaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
+		ComponenteImportiCapitoloPerAnnoHelper.buildCassaRow(res.getListaImportiCapitolo(),
+				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), cassaComponenti);
+
+		model.setCassaStanziato((cassaComponenti.get(0) != null) ? cassaComponenti.get(0) : null);
+		model.setCassaPagato((cassaComponenti.get(1) != null) ? cassaComponenti.get(1) : null);
 	}
 	
 	//SIAC-7290
@@ -345,27 +404,6 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 		log.debug(methodName, "Richiamato il WebService di aggiornamento");
 		logServiceResponse(response);
 
-		
-		
-		
-//		//RICERCA SE IL CAPITOLO HA IMPEGNI SIAC-6884 PROVA. DA TOGLIERE DALLA ACTION LA COSTRUZIONE DELLA REQUEST FIXME e TODO
-		RicercaSinteticaImpegniSubImpegni request1 = new RicercaSinteticaImpegniSubImpegni();
-		request1.setAnnoBilancio(request.getAnnoBilancio());
-		request1.setEnte(sessionHandler.getEnte());
-		request1.setRichiedente(sessionHandler.getRichiedente());		
-		ParametroRicercaImpSub parametroRicercaImpSub = new ParametroRicercaImpSub();
-		parametroRicercaImpSub.setUidCapitolo(request.getCapitoloUscitaGestione().getUid());
-		parametroRicercaImpSub.setAnnoEsercizio(request.getCapitoloUscitaGestione().getAnnoCapitolo());
-		request1.setParametroRicercaImpSub(parametroRicercaImpSub);
-		request1.setNumPagina(1);
-		request1.setNumRisultatiPerPagina(1);
-		RicercaSinteticaImpegniSubimpegniResponse responseTotaleImpegniCapitolo = movimentoGestioneService.ricercaSinteticaImpegniSubimpegni(request1);
-		//qui bisognerebbe reindirizzare all'input in quanto non è possibile validare la JSP se il servizio fallisce.
-		
-		
-		
-		
-		
 		// Controllo gli errori
 		if (response.hasErrori()) {
 			// si sono verificati degli errori: esco.
@@ -404,83 +442,51 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 		// chiamata
 		log.debug("Ricerca Lista Componenti", "Ricerca Lista componenti del capitolo");
 		//
-		// if (!listImportiCompCap.equals(null) ||
-		// !listImportiCompCap.isEmpty()) {
-		// model.setImportiComponentiCapitolo(listImportiCompCap);
-
-		// } else {
 		RicercaComponenteImportiCapitolo req = model.creaRequestRicercaComponenteImportiCapitolo();
+		//SIAC-7349 - MR - SR210 - 12.05.2020 Dopo aver aggiornato, richiama il servizio nuovo
+		req.setAbilitaCalcoloDisponibilita(true);
 		RicercaComponenteImportiCapitoloResponse res = componenteImportiCapitoloService
 				.ricercaComponenteImportiCapitolo(req);
 		// Controllo gli errori
 		if (res.hasErrori()) {
 			// si sono verificati degli errori: esco.
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaComponenteImportiCapitolo.class, res));
 		}
-		log.debug("Ricerca Lista Componenti", "Impostazione dei dati nel model");
-		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = new ArrayList<ImportiCapitoloPerComponente>();
-//		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(res.getListaImportiCapitolo());
-		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(res.getListaImportiCapitolo(),
-						res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi());
+		log.debug(methodName, "Impostazione dei dati nel model da ricerca componenti");
 		
-		
-		//SIAC-7227
-		if(res.getListaImportiCapitolo().get(0) != null) {
-			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, res.getListaImportiCapitolo().get(0));
-		}
-		//
+		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = getListaImporticomponente(res);
 		
 		model.setImportiComponentiCapitolo(importiComponentiCapitolo);
-		model.setImportiAnniSucc(res.getImportiCapitoloAnniSuccessivi());
-		model.setImportiResidui(res.getImportiCapitoloResiduo());
+		impostaDatiComponentiNelModel(res);
 
-		// NUOVA GESTIONE - TODO MIGLIORARE IL CODICE
-		// COMPETENZA
-		List<ImportiCapitoloPerComponente> competenzaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
-		ComponenteImportiCapitoloPerAnnoHelper.buildCompetenzaRowUG(res.getListaImportiCapitolo(),
-				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), competenzaComponenti);
-
-		model.setCompetenzaStanziamento((competenzaComponenti.get(0) != null) ? competenzaComponenti.get(0) : null);
-		model.setCompetenzaImpegnato((competenzaComponenti.get(1) != null) ? competenzaComponenti.get(1) : null);
-		model.setDisponibilita((competenzaComponenti.get(2) != null) ? competenzaComponenti.get(2) : null);
-
-		/// model.setCompetenza
-		// RESIDUI
-		List<ImportiCapitoloPerComponente> residuiComponenti = new ArrayList<ImportiCapitoloPerComponente>();
-		ComponenteImportiCapitoloPerAnnoHelper.buildResiduiRow(res.getListaImportiCapitolo(),
-				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), residuiComponenti);
-
-		model.setResiduiPresunti((residuiComponenti.get(0) != null) ? residuiComponenti.get(0) : null);
-		model.setResiduiEffettivi((residuiComponenti.get(1) != null) ? residuiComponenti.get(1) : null);
-
-		// CASSA
-		List<ImportiCapitoloPerComponente> cassaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
-		ComponenteImportiCapitoloPerAnnoHelper.buildCassaRow(res.getListaImportiCapitolo(),
-				res.getImportiCapitoloResiduo(), res.getImportiCapitoloAnniSuccessivi(), cassaComponenti);
-
-		model.setCassaStanziato((cassaComponenti.get(0) != null) ? cassaComponenti.get(0) : null);
-		model.setCassaPagato((cassaComponenti.get(1) != null) ? cassaComponenti.get(1) : null);
-
-		log.debug("Ricerca Lista Componenti", "Dati nel model impostati");
-		// }
 		ricercaDisponibilitaCapitolo();
 		
+		//SIAC-7600 mi assicuro che il controllo venga effettuato solo per il fondino
+		ClassificatoreGenerico classGen3 =  model.getClassificatoreGenerico3();
 		
-		//SIAC-684 controllo se ci sono impegni. Per ultimo in quanto altrimenti non viene popolata la tabella al redirect sull'INPUT
-		if (responseTotaleImpegniCapitolo.getListaImpegni() !=null && responseTotaleImpegniCapitolo.getListaImpegni().size()>0) {
+		if((classGen3 != null && "SI".equals(classGen3.getDescrizione())) 
+				&& (classGen3.getTipoClassificatore() != null && "Capitolo Budget".equals(classGen3.getTipoClassificatore().getDescrizione()))) {
+		
+			RicercaSinteticaImpegniSubImpegni request1 = model.creaRequestRicercaImpegniSubImpegni();
+			RicercaSinteticaImpegniSubimpegniResponse responseTotaleImpegniCapitolo = movimentoGestioneService.ricercaSinteticaImpegniSubimpegni(request1);
+			//qui bisognerebbe reindirizzare all'input in quanto non è possibile validare la JSP se il servizio fallisce.
 			
-			String str = 	"collegati: " +responseTotaleImpegniCapitolo.getListaImpegni().size();
-			//TODO 28/11/2019 MODIFICARE MESSAGGIO DI ERRORE
-			addMessaggio(ErroreBil.CAPITOLO_CON_VARIAZIONI_NON_DEFINITIVE_COLLEGATE.getErrore(str));
-			caricaListaCodificheAggiornamento();
-			return INPUT;
+			//SIAC-6884 controllo se ci sono impegni. Per ultimo in quanto altrimenti non viene popolata la tabella al redirect sull'INPUT
+			if (responseTotaleImpegniCapitolo.getListaImpegni() != null && responseTotaleImpegniCapitolo.getListaImpegni().size() > 0) {
+				
+				String str = "" + responseTotaleImpegniCapitolo.getListaImpegni().size();
+				//SIAC-7600 cambio l'errore
+				addMessaggio(ErroreBil.CAPITOLO_BUDGET_CON_IMPEGNI_COLLEGATI.getErrore(str));
+				caricaListaCodificheAggiornamento();
+				return INPUT;
+			}
+			
 		}
 		addInformazione(new Informazione("CRU_CON_2001", "L'operazione e' stata completata con successo"));
 		return SUCCESS;
 	}
 
-	@Override
-	public void validate() {
+	public void validateAggiornaCDU() {
 		CapitoloUscitaGestione cug = model.getCapitoloUscitaGestione();
 		if (cug != null && !model.isGestioneUEB()) {
 			cug.setNumeroUEB(Integer.valueOf(1));
@@ -492,6 +498,15 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 		checkNotNull(cug.getNumeroArticolo(), "Articolo");
 		checkNotNull(cug.getNumeroUEB(), "UEB");
 		checkNotNullNorEmpty(cug.getDescrizione(), "Descrizione");
+		
+		//task-55
+		Missione missioneConDati = ComparatorUtils.searchByUid(model.getListaMissione(), model.getMissione());
+		if("20".equals(missioneConDati.getCodice())) {
+			checkNotNull(cug.getFlagNonInserireAllegatoA1(), "Capitolo da non inserire nell'allegato A1");
+		}else {
+			model.getCapitoloUscitaGestione().setFlagNonInserireAllegatoA1(null);
+		}
+				
 		checkCondition(
 				!model.isCategoriaCapitoloEditabile()
 						|| (cug.getCategoriaCapitolo() != null && cug.getCategoriaCapitolo().getUid() != 0),
@@ -518,6 +533,10 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 			checkCondition(!model.isElementoPianoDeiContiEditabile()
 					|| (model.getElementoPianoDeiConti() != null && model.getElementoPianoDeiConti().getUid() != 0),
 					ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Elemento del Piano dei Conti"));
+			//task-9
+			checkCondition(!model.isClassificazioneCofogEditabile()
+					|| (model.getClassificazioneCofog() != null && model.getClassificazioneCofog().getUid() != 0),
+					ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Cofog"));
 		}
 
 		checkCondition(
@@ -525,6 +544,10 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 						|| (model.getStrutturaAmministrativoContabile() != null
 								&& model.getStrutturaAmministrativoContabile().getUid() != 0),
 				ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Struttura Amministrativa Responsabile"));
+		
+		checkCondition(!isMissioneWithCodice(CODICE_MISSIONE_20) || model.idEntitaPresente(model.getRisorsaAccantonata()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("risorsa accantonata"));
+	
+		
 	}
 
 	/**
@@ -574,7 +597,7 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 		if (res.hasErrori()) {
 			// si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDisponibilitaCapitoloUscitaGestione.class, res));
 		}
 
 		log.debug(methodName, "Impostazione delle disponibilita");
@@ -596,6 +619,31 @@ public class AggiornaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<A
 		if (!faseDiBilancioCompatibile) {
 			throwOperazioneIncompatibileFaseBilancio(faseBilancio);
 		}
+	}
+	
+	public void validateCaricaImporti() {
+		checkNotNullNorInvalidUid(model.getCapitoloUscitaGestione(), "identificativo univoco del capitolo per caricamento degli importi");
+	}
+	
+	public String caricaImporti() {
+		RicercaComponenteImportiCapitolo reqComponenti = model.creaRequestRicercaComponenteImportiCapitolo();
+		RicercaComponenteImportiCapitoloResponse resComponenti = componenteImportiCapitoloService
+				.ricercaComponenteImportiCapitolo(reqComponenti);
+
+		// Controllo gli errori
+		if (resComponenti.hasErrori()) {
+			addErrori(resComponenti);
+			return INPUT;
+		}
+		TabellaImportiConComponentiCapitoloFactory factory = new TabellaImportiConComponentiCapitoloFactory();
+		factory.init(model.getAnnoEsercizioInt(), TipoCapitolo.CAPITOLO_USCITA_GESTIONE, resComponenti);
+		factory.elaboraRigheConImportoIniziale();
+
+		model.setRigheImportiTabellaImportiCapitolo(factory.getRigheImportoTabellaElaborate());
+		model.setRigheComponentiTabellaImportiCapitolo(factory.getRigheComponentiElaborate());
+
+		return SUCCESS;
+
 	}
 
 }

@@ -105,6 +105,21 @@ SPDX-License-Identifier: EUPL-1.2
 													headerKey="" headerValue="" />
 											</div>
 										</div>
+										<%-- SIAC-7192 --%>
+										<div class="control-group">
+											<span class="al">
+												<label for="risorsaVincolata" class="control-label">Elenco Risorse Vincolate
+													<a id="risorsaVincolataSpan" class="tooltip-test" title="Elenco Risorse Vincolate per Risultato di Amministrazione – All a2 e All a3" >
+														<i class="icon-info-sign">&nbsp;<span class="nascosto">Elenco Risorse Vincolate per Risultato di Amministrazione – All a2 e All a3</span></i>
+													</a>
+												</label>
+											</span>
+											<div class="controls">
+												<s:select list="listaRisorsaVincolata" id="risorsaVincolata" name="vincolo.risorsaVincolata.uid" cssClass="span10" listKey="uid" listValue="%{codice + ' - ' + descrizione}"
+													headerKey="" headerValue="" />
+											</div>
+										</div>
+										<%-- SIAC-7192 --%>
 									</fieldset>
 									<p>
 										<s:include value="/jsp/include/indietro.jsp" />

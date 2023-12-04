@@ -38,7 +38,7 @@ import it.csi.siac.siaccecser.frontend.webservice.msg.RicercaClassificatoriEPRes
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
@@ -199,7 +199,7 @@ public abstract class BaseInserisciAggiornaCausaleEPBaseAction<M extends BaseIns
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaClassificatoriEP.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			
@@ -271,7 +271,7 @@ public abstract class BaseInserisciAggiornaCausaleEPBaseAction<M extends BaseIns
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				log.warn(methodName, errorMsg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -325,7 +325,7 @@ public abstract class BaseInserisciAggiornaCausaleEPBaseAction<M extends BaseIns
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				log.warn(methodName, errorMsg);
 				addErrori(response);
 				return INPUT;
@@ -388,7 +388,7 @@ public abstract class BaseInserisciAggiornaCausaleEPBaseAction<M extends BaseIns
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaEventiPerTipo.class, response);
 				log.warn(methodName, errorMsg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -431,7 +431,7 @@ public abstract class BaseInserisciAggiornaCausaleEPBaseAction<M extends BaseIns
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				log.warn(methodName, errorMsg);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -599,7 +599,7 @@ public abstract class BaseInserisciAggiornaCausaleEPBaseAction<M extends BaseIns
 		if(response.hasErrori()) {
 			// Se ho errori esco
 			addErrori(response);
-			throw new ParamValidationException(createErrorInServiceInvocationString(request, response));
+			throw new ParamValidationException(createErrorInServiceInvocationString(LeggiElementoPianoDeiContiByCodiceAndAnno.class, response));
 		}
 		
 		// 1. Il conto deve esistere
@@ -639,7 +639,7 @@ public abstract class BaseInserisciAggiornaCausaleEPBaseAction<M extends BaseIns
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response);
 				log.debug(methodName, errorMsg);
 				addErrori(response);
 				throw new ParamValidationException(errorMsg);

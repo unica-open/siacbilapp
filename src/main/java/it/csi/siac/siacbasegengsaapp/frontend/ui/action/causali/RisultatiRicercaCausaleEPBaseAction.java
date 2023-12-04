@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.action.causali;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.causali.RisultatiRicercaCausaleEPBaseModel;
@@ -85,7 +85,7 @@ public class RisultatiRicercaCausaleEPBaseAction <M extends RisultatiRicercaCaus
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(AnnullaCausale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -132,7 +132,7 @@ public class RisultatiRicercaCausaleEPBaseAction <M extends RisultatiRicercaCaus
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(EliminaCausale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -168,7 +168,7 @@ public class RisultatiRicercaCausaleEPBaseAction <M extends RisultatiRicercaCaus
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(ValidaCausale.class, response));
 			addErrori(response);
 			return INPUT;
 		}

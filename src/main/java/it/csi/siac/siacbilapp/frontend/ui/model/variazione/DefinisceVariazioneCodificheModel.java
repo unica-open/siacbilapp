@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
@@ -22,7 +24,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.DefinisceVariazioneCodific
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneCodificheResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancioResponse;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
@@ -54,7 +56,7 @@ public class DefinisceVariazioneCodificheModel extends GenericBilancioModel {
 	private TipoVariazione tipoVariazione;
 	private String applicazioneVariazione;
 	private String descrizioneVariazione;
-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+	private StatoOperativoVariazioneBilancio statoVariazione;
 	private String noteVariazione;
 	
 	private Integer uidProvvedimento;
@@ -259,7 +261,7 @@ public class DefinisceVariazioneCodificheModel extends GenericBilancioModel {
 	/**
 	 * @return the statoVariazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
 		return statoVariazione;
 	}
 
@@ -271,7 +273,7 @@ public class DefinisceVariazioneCodificheModel extends GenericBilancioModel {
 	 * @param statoVariazione the statoVariazione to set
 	 */
 	public void setStatoVariazione(
-			StatoOperativoVariazioneDiBilancio statoVariazione) {
+			StatoOperativoVariazioneBilancio statoVariazione) {
 		this.statoVariazione = statoVariazione;
 	}
 
@@ -553,6 +555,15 @@ public class DefinisceVariazioneCodificheModel extends GenericBilancioModel {
 		return request;
 	}
 
+	//SIAC-8332
+	public void impostaDatiNelModel(AzioneRichiesta azioneRichiesta) {
+		if(azioneRichiesta.getIdAttivita()!= null){
+			String[] splitted = StringUtils.split(azioneRichiesta.getIdAttivita(), "%&");
+			if(splitted.length > 0) {
+				uidVariazione = Integer.valueOf(splitted[0]);
+			}
+		}
+	}
 	/**
 	 * Injetta le variabili del processo.
 	 * 

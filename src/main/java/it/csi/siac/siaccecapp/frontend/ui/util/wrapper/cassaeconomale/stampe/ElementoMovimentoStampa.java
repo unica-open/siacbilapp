@@ -70,10 +70,10 @@ public abstract class ElementoMovimentoStampa implements ModelWrapper, Serializa
 		StringBuilder sb = new StringBuilder()
 			.append(impegno.getAnnoMovimento())
 			.append("/")
-			.append(impegno.getNumero().toPlainString());
+			.append(impegno.getNumeroBigDecimal().toPlainString());
 		if(subImpegno != null) {
 			sb.append("/")
-				.append(subImpegno.getNumero().toPlainString());
+				.append(subImpegno.getNumeroBigDecimal().toPlainString());
 		}
 		return sb.toString();
 	}

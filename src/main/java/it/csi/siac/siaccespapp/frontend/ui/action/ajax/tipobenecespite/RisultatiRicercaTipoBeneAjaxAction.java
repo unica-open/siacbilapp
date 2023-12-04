@@ -11,11 +11,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.tipobenecespite.RisultatiRicercaTipoBeneAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.tipobenecespite.ElementoTipoBeneCespite;
 import it.csi.siac.siaccespser.frontend.webservice.ClassificazioneCespiteService;
@@ -25,6 +24,7 @@ import it.csi.siac.siaccespser.model.TipoBeneCespite;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * The Class RisultatiRicercaTipoBeneAjaxAction.
@@ -33,7 +33,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaTipoBeneAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoTipoBeneCespite, RisultatiRicercaTipoBeneAjaxModel, TipoBeneCespite, RicercaSinteticaTipoBeneCespite, RicercaSinteticaTipoBeneCespiteResponse> {
+public class RisultatiRicercaTipoBeneAjaxAction extends PagedDataTableAjaxAction<ElementoTipoBeneCespite, RisultatiRicercaTipoBeneAjaxModel, TipoBeneCespite, RicercaSinteticaTipoBeneCespite, RicercaSinteticaTipoBeneCespiteResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -84,12 +84,12 @@ public class RisultatiRicercaTipoBeneAjaxAction extends GenericRisultatiRicercaA
 	}
 
 	@Override
-	protected ElementoTipoBeneCespite ottieniIstanza(TipoBeneCespite e) throws FrontEndBusinessException {
+	protected ElementoTipoBeneCespite getInstance(TipoBeneCespite e) throws FrontEndBusinessException {
 		return new ElementoTipoBeneCespite(e);
 	}
 
 	@Override
-	protected RicercaSinteticaTipoBeneCespiteResponse ottieniResponse(RicercaSinteticaTipoBeneCespite req) {
+	protected RicercaSinteticaTipoBeneCespiteResponse getResponse(RicercaSinteticaTipoBeneCespite req) {
 		return classificazioneCespiteService.ricercaSinteticaTipoBeneCespite(req);
 	}
 
@@ -99,9 +99,9 @@ public class RisultatiRicercaTipoBeneAjaxAction extends GenericRisultatiRicercaA
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoTipoBeneCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoTipoBeneCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioniConsentite.TIPO_BENE_CESPITE_AGGIORNA, listaAzioniConsentite);
+		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.TIPO_BENE_CESPITE_AGGIORNA, listaAzioniConsentite);
 		StringBuilder azioniBuilder = new StringBuilder()
 		    .append(AZIONI_CONSENTITE_BEGIN)
 		    .append(aggiornaConsentito ? AZIONI_CONSENTITE_AGGIORNA : "")

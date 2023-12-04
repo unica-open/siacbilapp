@@ -12,7 +12,7 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
@@ -542,13 +542,13 @@ public class RisultatiRicercaPreDocumentoGenericModel extends GenericBilancioMod
 			.append("<strong>")
 			.append(intestazione)
 			.append("</strong>: ");
-		if(movimentoGestione.getNumero() != null) {
+		if(movimentoGestione.getNumeroBigDecimal() != null) {
 			sb.append("/")
-				.append(movimentoGestione.getNumero().toPlainString());
+				.append(movimentoGestione.getNumeroBigDecimal().toPlainString());
 		}
-		if(submovimentoGestione != null && submovimentoGestione.getNumero() != null) {
+		if(submovimentoGestione != null && submovimentoGestione.getNumeroBigDecimal() != null) {
 			sb.append("-")
-				.append(submovimentoGestione.getNumero().toPlainString());
+				.append(submovimentoGestione.getNumeroBigDecimal().toPlainString());
 		}
 		return sb.append("<br/>")
 			.toString();

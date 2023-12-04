@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.tabelle.RisultatiRicercaTipoOperazioneCassaAjaxModel;
@@ -29,7 +29,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaTipoOperazioneCassaAjaxAction extends GenericRisultatiRicercaAjaxAction<TipoOperazioneCassa, 
+public class RisultatiRicercaTipoOperazioneCassaAjaxAction extends PagedDataTableAjaxAction<TipoOperazioneCassa, 
 	RisultatiRicercaTipoOperazioneCassaAjaxModel, TipoOperazioneCassa, RicercaSinteticaTipoOperazioneDiCassa, RicercaSinteticaTipoOperazioneDiCassaResponse> {
 
 	/** Per la serializzazione */
@@ -55,12 +55,12 @@ public class RisultatiRicercaTipoOperazioneCassaAjaxAction extends GenericRisult
 	}
 
 	@Override
-	protected TipoOperazioneCassa ottieniIstanza(TipoOperazioneCassa e) throws FrontEndBusinessException {
+	protected TipoOperazioneCassa getInstance(TipoOperazioneCassa e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaSinteticaTipoOperazioneDiCassaResponse ottieniResponse(RicercaSinteticaTipoOperazioneDiCassa request) {
+	protected RicercaSinteticaTipoOperazioneDiCassaResponse getResponse(RicercaSinteticaTipoOperazioneDiCassa request) {
 		return cassaEconomaleService.ricercaSinteticaTipoOperazioneDiCassa(request);
 	}
 

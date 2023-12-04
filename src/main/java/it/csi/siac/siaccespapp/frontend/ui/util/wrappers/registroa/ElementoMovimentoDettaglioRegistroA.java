@@ -145,11 +145,24 @@ public class ElementoMovimentoDettaglioRegistroA implements Serializable, ModelW
 		if(movimentoEP.getPrimaNota() == null || movimentoEP.getPrimaNota().getTipoCausale() == null) {
 			return "";
 		}
-		return TipoCausale.Integrata.equals(movimentoEP.getPrimaNota().getTipoCausale()) && movimentoEP.getRegistrazioneMovFin() != null ? getNumeroMovimentoFinanziarioIntegrato() : getNumeroMovimentoFinanziarioLibero();
+		return isIntegrataConRegistrazione() ? getNumeroMovimentoFinanziarioIntegrato() : getNumeroMovimentoFinanziarioLibero();
+	}
+
+
+	protected boolean isIntegrataConRegistrazione() {
+		return TipoCausale.Integrata.equals(movimentoEP.getPrimaNota().getTipoCausale()) && movimentoEP.getRegistrazioneMovFin() != null;
 	}
 	
 	private String getNumeroMovimentoFinanziarioIntegrato() {
 		return RegistrazioneMovFinMovimentoCollegatoHelper.getNumeroMovimentoFromRegistrazione(movimentoEP.getRegistrazioneMovFin());
+	}
+	
+	public String getAtto() {
+		return isIntegrataConRegistrazione()? getAttoFinanziarioIntegrato()  : "";
+	}
+	
+	private String getAttoFinanziarioIntegrato() {
+		return RegistrazioneMovFinMovimentoCollegatoHelper.getNumeroAttoFromRegistrazione(movimentoEP.getRegistrazioneMovFin());
 	}
 
 	private String  getNumeroMovimentoFinanziarioLibero() {

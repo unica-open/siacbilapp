@@ -122,14 +122,42 @@ SPDX-License-Identifier: EUPL-1.2
 										<div class="control-group">
 											<label for="missione" class="control-label">Missione *</label>
 											<div class="controls">
-												<s:select list="listaMissione" id="missione" name="missione.uid"
-													required="true" cssClass="span10" headerKey="" headerValue=""
-													listKey="uid" listValue="%{codice + '-' + descrizione}"
-													disabled="%{!missioneEditabile}"
-													data-original-uid="%{missione.uid}" />
+											
+												<select id="missione" name="missione.uid" data-original-uid="<s:property value="missione.uid"/>" required class="span10" <s:if test="%{!missioneEditabile}">disabled</s:if>>
+													<option value="0"></option>
+													<s:iterator value="listaMissione" var="mm">
+														<option data-codice="<s:property value="#mm.codice" />" value="<s:property value="#mm.uid"/>" <s:if test="%{missione.uid == #mm.uid}">selected</s:if>>
+															<s:property value="%{#mm.codice + ' - ' + #mm.descrizione}"/>
+														</option>
+													</s:iterator>
+												</select>
 												<s:if test="!missioneEditabile">
 													<s:hidden name="missione.uid" />
+													<s:hidden name="missione.codice"/>
 												</s:if>
+											</div>
+										</div>
+										
+												
+										<!-- task-55 -->
+										<div id="containerFlagCapitoloDaNonInserireA1" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+											<div class="control-group">
+												<label for="flagCapitoloDaNonInserireA1" class="control-label">Capitolo da non inserire nell'allegato A1 *
+													<!-- task-55 -->
+													<a class="tooltip-test" title="Risorse Accantonate per Risultato di Amministrazione - Allegato a1" href="#">
+														<i class="icon-info-sign">&nbsp;
+															<span class="nascosto">Risorse Accantonate per Risultato di Amministrazione - Allegato a1</span>
+														</i>
+													</a>
+												</label>
+												<div class="controls">
+													<label class="radio inline">
+														<s:radio theme="simple" name="capitoloUscitaGestione.flagNonInserireAllegatoA1" list="#{true:'Sì'}"/>
+													</label>
+													<label class="radio inline">
+														<s:radio theme="simple" name="capitoloUscitaGestione.flagNonInserireAllegatoA1" list="#{false:'No'}"/>
+													</label>
+												</div>
 											</div>
 										</div>
 										<div class="control-group">
@@ -151,7 +179,8 @@ SPDX-License-Identifier: EUPL-1.2
 											</div>
 										</div>
 										<div class="control-group">
-											<label for="classificazioneCofog" class="control-label">Cofog
+										<!-- task-9 obbligatorio cofog -->
+											<label for="classificazioneCofog" class="control-label">Cofog *
 												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
 													<i class="icon-info-sign">&nbsp; <span class="nascosto">selezionare
 															prima il Programma</span></i>
@@ -335,7 +364,7 @@ SPDX-License-Identifier: EUPL-1.2
 											<div class="controls">
 												<select id="categoriaCapitolo"
 													name="capitoloUscitaGestione.categoriaCapitolo.uid" class="span10"
-													<s:if test="!categoriaCapitoloEditabile">disabled</s:if>>
+													<s:if test="!categoriaCapitoloEditabile">readonly</s:if>>
 													<option></option>
 													<s:iterator value="listaCategoriaCapitolo" var="cc">
 														<option data-codice="<s:property value=" #cc.codice" />" value="
@@ -345,6 +374,9 @@ SPDX-License-Identifier: EUPL-1.2
 														<s:property value="%{#cc.codice + ' - ' + #cc.descrizione}"/>
 														</option>
 													</s:iterator>
+													<!-- SIAC-7608 MR 28/04/2020 Fix-->
+													<input type="hidden" id="tipoCapitoloHidden" name="capitoloUscitaGestione.categoriaCapitolo.uid" value="" disabled>
+													<!-- End SIAC-7608-->
 												</select>
 												<!-- SIAC 6884- condizione per passare il valore quando viene disabilitata la categoria-->
 												<s:if test="stanziamentiNegativiPresenti || !categoriaCapitoloEditabile">
@@ -352,13 +384,32 @@ SPDX-License-Identifier: EUPL-1.2
 												</s:if>
 											</div>
 										</div>
+										<%-- SIAC-7192--%>
+										<div id="containerRisorsaAccantonata" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+											<div class="control-group">
+												<label for="risorsaAccantonata" class="control-label">Risorsa accantonata * </label>
+												<div class="controls">
+													<select id="risorsaAccantonata" name="risorsaAccantonata.uid"  <s:if test='%{!missioneFondi}'>disabled</s:if> class="span10">
+														<option value="0" <s:if test="%{risorsaAccantonata == null || risorsaAccantonata.uid == 0}">selected</s:if> ></option>
+														<s:iterator value="listaRisorsaAccantonata" var="dd">
+															<option data-codice="<s:property value="#dd.codice" />" value="<s:property value="#dd.uid"/>" <s:if test="%{risorsaAccantonata != null && risorsaAccantonata.uid == #dd.uid}">selected</s:if>>
+																<s:property value="%{#dd.codice + ' - ' + #dd.descrizione}"/>
+															</option>
+														</s:iterator>
+													</select>
+												</div>
+											</div>
+										</div>
 										<div class="control-group">
 											<label for="flagImpegnabile" class="control-label">Impegnabile</label>
 											<div class="controls">
 												<s:checkbox id="flagImpegnabile" name="capitoloUscitaGestione.flagImpegnabile" disabled="%{!flagImpegnabileEditabile}" />
 											</div>
+											<!-- SIAC-7608 MR 28/04/2020 Fix-->
+											<input type="hidden" id="flagImpegnabileHidden" name="capitoloUscitaGestione.flagImpegnabile" value="" disabled>
+											<!-- End SIAC-7608-->
 											<s:if test="stanziamentiNegativiPresenti || !flagImpegnabileEditabile">
-												<s:hidden name="capitoloUscitaGestione.flagImpegnabile" />
+												<s:hidden id="HIDDEN_flagImpegnabile" name="capitoloUscitaGestione.flagImpegnabile" />
 											</s:if>
 										</div>
 									</fieldset>
@@ -524,310 +575,9 @@ SPDX-License-Identifier: EUPL-1.2
 									</div>
 
 									<h4>Stanziamenti</h4>
-									<table summary="riepilogo incarichi" class="table table-bordered" id="tabellaAggiornaVariazioni">
-	
-										<tr>
-											<th width="12%">&nbsp;</th>
-											<th width="12%">&nbsp;</th>
-											<th  class="text-center" width="11%">${annoEsercizioInt - 1}</th>
-											<th  class="text-center" width="11%">Residui ${annoEsercizioInt + 0}</th>
-											<th  class="text-center" width="11%">${annoEsercizioInt + 0}</th>
-											<th  class="text-center" width="11%">${annoEsercizioInt + 1}</th>
-											<th  class="text-center" width="11%">${annoEsercizioInt + 2}</th>
-											<th  class="text-center" width="11%">>${annoEsercizioInt + 2}</th>
-										</tr>
-										
-										<!-- SIAC-6881 scope="rowgroup"-->
-										<tr  class="componentiRowFirst">
-											<th rowspan = "3" class="stanziamenti-titoli">
-												<a id="competenzaTotale" href="#tabellaAggiornaVariazioni"  class="disabled" >Competenza</a>
-											</th>
-											<td class="text-center">
-												Stanziamento
-											</td>
-											<td class="text-right">
-												<label for="stanziamentoM1" class="nascosto">inserisci importo</label>
-												<span id="stanziamentoM1" ><s:property value="competenzaStanziamento.dettaglioAnnoPrec.importo"/></span>
-												<s:hidden id="HIDDEN_StanziamentoM1" value="%{competenzaStanziamento.dettaglioAnnoPrec.importo}" name="competenzaStanziamento.dettaglioAnnoPrec.importo" />
-												
-											</td>
-											<td class="text-right"> <!--Residuo -->
-												<label for="stanziamentoR" class="nascosto">inserisci importo</label>
-												<span id="stanziamentoR" ><s:property value="competenzaStanziamento.dettaglioResidui.importo"/></span>
-												<s:hidden id="HIDDEN_StanziamentoR" value="%{competenzaStanziamento.dettaglioResidui.importo}" name="competenzaStanziamento.dettaglioResidui.importo" />
-													
-											</td>
-											<td class="text-right">
-												<label for="stanziamento0" class="nascosto">inserisci importo</label>
-												<s:property value="competenzaStanziamento.dettaglioAnno0.importo"/> 
-												<s:hidden value="%{competenzaStanziamento.dettaglioAnno0.importo}" name="competenzaStanziamento.dettaglioAnno0.importo" />
-											</td>
-											<td class="text-right">
-												<label for="stanziamento1" class="nascosto">inserisci importo</label>
-												<s:property value="competenzaStanziamento.dettaglioAnno1.importo"/> 
-												<s:hidden value="%{competenzaStanziamento.dettaglioAnno1.importo}" name="competenzaStanziamento.dettaglioAnno1.importo" />
-												
-											</td>
-											<td class="text-right">
-												<label for="stanziamento2" class="nascosto">inserisci importo</label>
-												<s:property value="competenzaStanziamento.dettaglioAnno2.importo"/>
-												<s:hidden value="%{competenzaStanziamento.dettaglioAnno2.importo}" name="competenzaStanziamento.dettaglioAnno2importo" />
-											</td>
-											<td class="text-right">
-													<label for="stanziamentoSucc" class="nascosto">inserisci importo</label>
-													<s:property value="competenzaStanziamento.dettaglioAnniSucc.importo"/>
-													<s:hidden value="%{competenzaStanziamento.dettaglioAnniSucc.importo}" name="competenzaStanziamento.dettaglioAnniSucc.importo" />
-					
-											</td>
-										</tr>
-										<tr class="componentiRowOther"> <!--  in aggiorna, l'impegnato corrisponde con la disponibilità. FIX -->
-											<td class="text-center">Impegnato</td>
-											<td class="text-right">
-												<s:property value="disponibilita.dettaglioAnnoPrec.importo"/>
-												<!-- <s:hidden value="%{disponibilita.dettaglioAnnoPrec.importo}" name="disponibilita.dettaglioAnnoPrec.importo" /> -->
-	
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilita.dettaglioResidui.importo"/>
-												<!-- <s:hidden value="%{disponibilita.dettaglioResidui.importo}" name="disponibilita.dettaglioResidui.importo" /> -->
-												
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilitaCapitoloUscitaGestioneAnno0.impegnato"/>
-												<s:hidden value="%{disponibilitaCapitoloUscitaGestioneAnno0.impegnato}" name="disponibilitaCapitoloUscitaGestioneAnno0.impegnato" />
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilitaCapitoloUscitaGestioneAnno1.impegnato"/>
-												<s:hidden value="%{disponibilitaCapitoloUscitaGestioneAnno1.impegnato}" name="disponibilitaCapitoloUscitaGestioneAnno1.impegnato" />
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilitaCapitoloUscitaGestioneAnno2.impegnato"/>
-												<s:hidden value="%{disponibilitaCapitoloUscitaGestioneAnno2.impegnato}" name="disponibilitaCapitoloUscitaGestioneAnno2.impegnato" />
-											</td>
-											<td class="text-right">
-													<s:property value="disponibilita.dettaglioAnniSucc.importo"/>
-													<!-- <s:hidden value="%{disponibilita.dettaglioAnniSucc.importo}" name="disponibilita.dettaglioAnniSucc.importo" /> -->
-											</td>											
-										</tr>
-										<tr class="componentiRowOther">
-											<td class="text-center">Disponibilit&agrave; ad impegnare</td>
-											<td class="text-right">
-												<s:property value="disponibilita.dettaglioAnnoPrec.importo"/>
-												<!-- <s:hidden value="%{disponibilita.dettaglioAnnoPrec.importo}" name="disponibilita.dettaglioAnnoPrec.importo" /> -->
-
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilita.dettaglioResidui.importo"/>
-												<!-- <s:hidden value="%{disponibilita.dettaglioResidui.importo}" name="disponibilita.dettaglioResidui.importo" />							 -->
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilita.dettaglioAnno0.importo"/>
-												<s:hidden value="%{disponibilita.dettaglioAnno0.importo}" name="disponibilita.dettaglioAnno0.importo" />
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilita.dettaglioAnno1.importo"/>
-												<s:hidden value="%{disponibilita.dettaglioAnno0.importo}" name="disponibilita.dettaglioAnno1.importo" />
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilita.dettaglioAnno2.importo"/>
-												<s:hidden value="%{disponibilita.dettaglioAnno0.importo}" name="disponibilita.dettaglioAnno2.importo" />
-											</td>
-											<td class="text-right">
-													<s:property value="disponibilita.dettaglioAnniSucc.importo"/>
-													<!-- <s:hidden value="%{disponibilita.dettaglioAnniSucc.importo}" name="disponibilita.dettaglioAnniSucc.importo" /> -->
-											</td>											
-										</tr>
-										<tbody id="componentiCompetenzaAgg"> <!--residui e anno >n+2-->
-											<s:iterator value="importiComponentiCapitolo" var="cc">												
-												
-												
-												<s:if test="#cc.tipoComponenteImportiCapitolo.descrizione=='Stanziamento'">
-													<tr  class="componentiCompetenzaRow" >
-												</s:if>
-												<s:else>
-													<tr  class="componentiRowOther" >
-												</s:else>
-												
-																									
-													<td id="description-component" class="componenti-competenza" rowspan="1">
-														<s:property value="#cc.tipoComponenteImportiCapitolo.descrizione"/>
-													</td>
-													
-													<td class="text-center" id="type-component">
-															<s:property value="#cc.tipoDettaglioComponenteImportiCapitolo.descrizione"/>
-													</td>
-														
-													<td class="text-right" id="type-component">
-														<s:property value="#cc.dettaglioAnnoPrec.importo"/>
-													</td>
-													
-													 <td class="text-right"> 
-														<s:property value="#cc.dettaglioResidui.importo"/>
-													</td>
-													
-													<td class="text-right">
-														<s:property value="#cc.dettaglioAnno0.importo"/>
-													</td>
-													
-													<td class="text-right">
-														<s:property value="#cc.dettaglioAnno1.importo"/>
-													</td>
-													<td class="text-right">
-														<s:property value="#cc.dettaglioAnno2.importo"/>
-													</td>
-													<td class="text-right">
-														<s:property value="#cc.dettaglioAnniSucc.importo"/>
-													</td>
-												</tr>
-											</s:iterator>
-										</tbody>
-									
-										<tr class="componentiRowFirst">
-											<th rowspan="2" class="stanziamenti-titoli">Residuo</th>
-											<td class="text-center">
-												Presunti
-											</td>
-											<td class="text-right">
-												<label for="residuoPrM1" class="nascosto">inserisci importo</label>
-												<span id="residuoPrM1"><s:property value="residuiPresunti.dettaglioAnnoPrec.importo"/></span>
-												<s:hidden id="HIDDEN_StanziamentoResiduoM1" value="%{residuiPresunti.dettaglioAnnoPrec.importo}" name="residuiPresunti.dettaglioAnnoPrec.importo" />
-												
-											</td>
-											<td class="text-right">
-													<s:property value="residuiPresunti.dettaglioResidui.importo"/>
-													<s:hidden value="%{residuiPresunti.dettaglioResidui.importo}" name="residuiPresunti.dettaglioResidui.importo" />
-											</td>
-											<td class="text-right">
-												<label for="residuo0" class="nascosto">inserisci importo</label>
-												<s:property value="residuiPresunti.dettaglioAnno0.importo"/>
-												<s:hidden value="%{residuiPresunti.dettaglioAnno0.importo}" name="residuiPresunti.dettaglioAnno0.importo" />
-													
-											</td>
-											<td class="text-right">
-												<label for="residuo1" class="nascosto">inserisci importo</label>
-												<s:property value="residuiPresunti.dettaglioAnno1.importo"/>
-												<s:hidden value="%{residuiPresunti.dettaglioAnno1.importo}" name="residuiPresunti.dettaglioAnno1.importo" />
-												
-											</td>
-											<td class="text-right">
-												<label for="residuo2" class="nascosto">inserisci importo</label>
-												<s:property value="residuiPresunti.dettaglioAnno2.importo"/>
-												<s:hidden value="%{residuiPresunti.dettaglioAnno2.importo}" name="residuiPresunti.dettaglioAnno2.importo" />
-												
-											</td>
-											<td class="text-right">
-													<label for="residuoSucc" class="nascosto">inserisci importo</label>
-													<s:property value="residuiPresunti.dettaglioAnniSucc.importo"/>
-													<s:hidden value="%{residuiPresunti.dettaglioAnniSucc.importo}" name="residuiPresunti.dettaglioAnniSucc.importo" />
-													
-											</td>
-										</tr>
-										
-										<tr class="componentiRowOther">
-											<td class="text-center">Effettivi</td>
-											<td class="text-right">
-												<span id="residuoEffM1"><s:property value="residuiEffettivi.dettaglioAnnoPrec.importo"/></span>
-												<s:hidden value="%{residuiEffettivi.dettaglioAnnoPrec.importo}" name="residuiEffettivi.dettaglioAnnoPrec.importo" />
-																									
-											</td>
-											<td class="text-right">
-													<s:property value="residuiEffettivi.dettaglioResidui.importo"/>
-													<s:hidden value="%{residuiEffettivi.dettaglioResidui.importo}" name="residuiEffettivi.dettaglioResidui.importo" />
-											
-											</td>
-											<td class="text-right">
-												<s:property value="residuiEffettivi.dettaglioAnno0.importo"/>
-												<s:hidden value="%{residuiEffettivi.dettaglioAnno0.importo}" name="residuiEffettivi.dettaglioAnno0.importo" />
-													
-											</td>
-											<td class="text-right">
-												<s:property value="residuiEffettivi.dettaglioAnno1.importo"/>
-												<s:hidden value="%{residuiEffettivi.dettaglioAnno1.importo}" name="residuiEffettivi.dettaglioAnno1.importo" />
-												
-											</td>
-											<td class="text-right">
-												<s:property value="residuiEffettivi.dettaglioAnno2.importo"/>
-												<s:hidden value="%{residuiEffettivi.dettaglioAnno2.importo}" name="residuiEffettivi.dettaglioAnno2.importo" />
-												
-											</td>
-											<td class="text-right">
-													<s:property value="residuiEffettivi.dettaglioAnniSucc.importo"/>
-													<s:hidden value="%{residuiEffettivi.dettaglioAnniSucc.importo}" name="residuiEffettivi.dettaglioAnniSucc.importo" />
-											</td>
-											
-										</tr>										
-										<tr class="componentiRowFirst">
-											<th rowspan="2" class="stanziamenti-titoli">Cassa</th>
-											<td class="text-center">
-												Stanziamento
-											</td>
-											<td class="text-right">
-												<label for="cassaM1" class="nascosto">inserisci importo</label>
-												<span id="impCasM1" ><s:property value="cassaStanziato.dettaglioAnnoPrec.importo"/></span>
-												<s:hidden id="HIDDEN_StanziamentoCassaM1" value="%{cassaStanziato.dettaglioAnnoPrec.importo}" name="cassaStanziato.dettaglioAnnoPrec.importo" />
-												
-											</td>
-											<td class="text-right">
-													<s:property value="cassaStanziato.dettaglioResidui.importo"/>
-													<s:hidden value="%{cassaStanziato.dettaglioResidui.importo}" name="cassaStanziato.dettaglioResidui.importo" />
-											</td>
-											<td class="text-right">
-												<label for="cassa0" class="nascosto">inserisci importo</label>
-												<s:property value="cassaStanziato.dettaglioAnno0.importo"/>
-												<s:hidden value="%{cassaStanziato.dettaglioAnno0.importo}" name="cassaStanziato.dettaglioAnno0.importo" />
-												
-											</td>
-											<td class="text-right">
-												<label for="cassa1" class="nascosto">inserisci importo</label>
-												<s:property value="cassaStanziato.dettaglioAnno1.importo"/>
-												<s:hidden value="%{cassaStanziato.dettaglioAnno1.importo}" name="cassaStanziato.dettaglioAnno1.importo" />
-												
-											</td>
-											<td class="text-right">
-												<label for="cassa2" class="nascosto">inserisci importo</label>
-												&nbsp;
-												<s:hidden value="%{cassaStanziato.dettaglioAnno2.importo}" name="cassaStanziato.dettaglioAnno2.importo" />
-												
-											</td>
-											<td class="text-right">
-													&nbsp;
-													<s:hidden value="%{cassaStanziato.dettaglioAnniSucc.importo}" name="cassaStanziato.dettaglioAnniSucc.importo" />
-											</td>
-											
-										</tr>
-										
-										<tr class="componentiRowOther">											
-											<td class="text-center">Pagato</td>
-											<td class="text-right">
-												<span id="impCasM1" ><s:property value="cassaPagato.dettaglioAnnoPrec.importo"/></span>
-												<s:hidden  value="%{cassaPagato.dettaglioAnnoPrec.importo}" name="cassaPagato.dettaglioAnnoPrec.importo" />
-												
-											</td>
-											<td class="text-right">
-												<s:property value="disponibilitaCapitoloUscitaGestioneResiduo.pagato"/>
-												<s:hidden value="%{disponibilitaCapitoloUscitaGestioneResiduo.pagato}" name="disponibilitaCapitoloUscitaGestioneResiduo.pagato" />
-											
-											</td>
-											<td class="text-right">
-													<s:property value="disponibilitaCapitoloUscitaGestioneAnno0.pagato"/>
-													<s:hidden  value="%{disponibilitaCapitoloUscitaGestioneAnno0.pagato}" name="disponibilitaCapitoloUscitaGestioneAnno0.pagato" />
-													
-												</td>
-											<td class="text-right">
-												<s:property value="disponibilitaCapitoloUscitaGestioneAnno1.pagato"/>
-												<s:hidden  value="%{disponibilitaCapitoloUscitaGestioneAnno1.pagato}" name="disponibilitaCapitoloUscitaGestioneAnno1.pagato" />
-												
-											</td>
-											<td class="text-right">
-												<%--<s:property value="cassaPagato.dettaglioAnno2.importo"/>--%>
-												<s:hidden  value="%{disponibilitaCapitoloUscitaGestioneAnno2.pagato}" name="disponibilitaCapitoloUscitaGestioneAnno2.pagato" />
-											</td>
-											<td class="text-right">
-													<%--<s:property value="cassaPagato.dettaglioAnniSucc.importo"/>--%>
-													<s:hidden  value="%{cassaPagato.dettaglioAnniSucc.importo}" name="cassaPagato.dettaglioAnniSucc.importo" />
-											</td>
-										</tr>
-									</table>
+									<s:include value="/jsp/cap/include/tabella_stanziamenti_con_componenti_spesa.jsp">
+										<s:param name="visualizzaImportoIniziale">false</s:param>
+									</s:include>
 									<s:hidden name="importiCapitoloUscitaGestione0.massimoImpegnabile" data-maintain="" />
 									<s:hidden name="importiCapitoloUscitaGestione1.massimoImpegnabile" data-maintain="" />
 									<s:hidden name="importiCapitoloUscitaGestione2.massimoImpegnabile" data-maintain="" />
@@ -932,10 +682,11 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloUscita.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloUscitaGestione/aggiorna.js"></script>
-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/tabellaComponenteImportiCapitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloUscita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloUscitaGestione/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attoDiLegge/attoDiLegge.js"></script>
 </body>
 </html>

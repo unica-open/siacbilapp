@@ -106,7 +106,8 @@ SPDX-License-Identifier: EUPL-1.2
 										</div>
 										<%-- Primo gruppo collegato --%>
 										<div class="control-group">
-											<label for="titoloEntrata" class="control-label">Titolo 2*</label>
+										<!-- task-230 -->
+											<label for="titoloEntrata" class="control-label">Titolo *</label>
 											<div class="controls">
 												<s:hidden id="HIDDEN_codiceTitolo" name="codiceTitolo" />
 												<s:select list="listaTitoloEntrata" id="titoloEntrata" name="titoloEntrata.uid" required="true" cssClass="span10"
@@ -279,6 +280,23 @@ SPDX-License-Identifier: EUPL-1.2
 												<s:hidden name="capitoloEntrataGestione.flagImpegnabile" />
 											</s:if>
 										</div>
+										<!-- SIAC-7858 CM 19/05/2021 Inizio -->
+										<div class="control-group">
+											<label for="flagEntrataDubbiaEsigFCDE" class="control-label">Capitolo pertinente per il calcolo FCDE</label>
+											<div class="controls">
+												<span class="al">
+													<label class="radio inline" >
+														<input type="radio" value="true" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==true}'>checked="checked"</s:if>>Si
+													</label>
+												</span>
+												<span class="al">
+													<label class="radio inline" style="margin-left: 15px;">
+														<input type="radio" value="false" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{(capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==null)||(capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==false)}'>checked="checked"</s:if>>No
+													</label>
+												</span>
+											</div>
+										</div>
+										<!-- SIAC-7858 CM 19/05/2021 Fine -->
 										<div class="control-group <s:if test="!flagAccertatoPerCassaVisibile">hide</s:if>">
 											<label for="flagAccertatoPerCassa" class="control-label">Accertato per cassa</label>
 											<div class="controls">
@@ -395,7 +413,7 @@ SPDX-License-Identifier: EUPL-1.2
 															</div>
 														</div>
 														<%-- Classificatori Generici --%>
-														<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+														<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 															<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
 																<div class="control-group">
 																	<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
@@ -502,28 +520,28 @@ SPDX-License-Identifier: EUPL-1.2
 										<tr>
 											<th>Cassa</th>
 											<td class="text-right">
-												<label for="cassaM1" class="nascosto">inserisci importo</label>
-												<s:hidden id="cassaM1" name="importiCapitoloEntrataGestioneM1.stanziamentoCassa" />
-												<s:property value="importiCapitoloEntrataGestioneM1.stanziamentoCassa"/>
-												<s:hidden value="importiCapitoloEntrataGestioneM1.stanziamentoCassaIniziale"/>
+													<label for="cassaM1" class="nascosto">inserisci importo</label>
+													<s:hidden id="cassaM1" name="importiCapitoloEntrataGestioneM1.stanziamentoCassa" />
+													<s:property value="importiCapitoloEntrataGestioneM1.stanziamentoCassa"/>
+													<s:hidden value="importiCapitoloEntrataGestioneM1.stanziamentoCassaIniziale"/>
 											</td>
 											<td class="text-right">
-												<label for="cassa0" class="nascosto">inserisci importo</label>
-												<s:hidden id="cassa0" name="importiCapitoloEntrataGestione0.stanziamentoCassa" />
-												<s:property value="importiCapitoloEntrataGestione0.stanziamentoCassa"/>
-												<s:hidden value="importiCapitoloEntrataGestione0.stanziamentoCassaIniziale"/>
+													<label for="cassa0" class="nascosto">inserisci importo</label>
+													<s:hidden id="cassa0" name="importiCapitoloEntrataGestione0.stanziamentoCassa" />
+													<s:property value="importiCapitoloEntrataGestione0.stanziamentoCassa"/>
+													<s:hidden value="importiCapitoloEntrataGestione0.stanziamentoCassaIniziale"/>
 											</td>
 											<td class="text-right">
-												<label for="cassa1" class="nascosto">inserisci importo</label>
-												<s:hidden id="cassa1" name="importiCapitoloEntrataGestione1.stanziamentoCassa" />
-												<s:property value="importiCapitoloEntrataGestione1.stanziamentoCassa"/>
-												<s:hidden value="importiCapitoloEntrataGestione1.stanziamentoCassaIniziale"/>
+													<label for="cassa1" class="nascosto">inserisci importo</label>
+													<s:hidden id="cassa1" name="importiCapitoloEntrataGestione1.stanziamentoCassa" />
+													<s:property value="importiCapitoloEntrataGestione1.stanziamentoCassa"/>
+													<s:hidden value="importiCapitoloEntrataGestione1.stanziamentoCassaIniziale"/>
 											</td>
 											<td class="text-right">
-												<label for="cassa2" class="nascosto">inserisci importo</label>
-												<s:hidden id="cassa2" name="importiCapitoloEntrataGestione2.stanziamentoCassa" />
-												<s:property value="importiCapitoloEntrataGestione2.stanziamentoCassa"/>
-												<s:hidden value="importiCapitoloEntrataGestione2.stanziamentoCassaIniziale"/>
+													<label for="cassa2" class="nascosto">inserisci importo</label>
+													<s:hidden id="cassa2" name="importiCapitoloEntrataGestione2.stanziamentoCassa" />
+													<s:property value="importiCapitoloEntrataGestione2.stanziamentoCassa"/>
+													<s:hidden value="importiCapitoloEntrataGestione2.stanziamentoCassaIniziale"/>
 											</td>
 										</tr>
 									</table>
@@ -615,11 +633,11 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataGestione/aggiorna.js"></script>
-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataGestione/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attoDiLegge/attoDiLegge.js"></script>
 
 </body>
 </html>

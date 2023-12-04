@@ -51,10 +51,10 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}documentoIva/documentoIva.js"></script>
-	<script type="text/javascript" src="${jspath}documentoIva/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documentoIva/documentoIva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documentoIva/aggiorna.js"></script>
 	<s:if test="flagNotaCreditoIvaDisponibile">
-		<script type="text/javascript" src="${jspath}documentoIva/aggiornaNota.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documentoIva/aggiornaNota.js"></script>
 	</s:if>
 </body>
 </html>

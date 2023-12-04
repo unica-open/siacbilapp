@@ -11,11 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step2.DefinisciVariazioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoComponenteVariazione;
@@ -35,10 +32,10 @@ import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siacfin2ser.model.TipoComponenteImportiCapitoloModelDetail;
 
@@ -63,7 +60,7 @@ public class ConsultaVariazioneImportiModel extends GenericBilancioModel {
 	private String descrizioneVariazione;
 	private TipoVariazione tipoVariazione;
 	private Integer annoCompetenza;
-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+	private StatoOperativoVariazioneBilancio statoVariazione;
 	private String noteVariazione;
 	
 	//SIAC-6884
@@ -281,7 +278,7 @@ public class ConsultaVariazioneImportiModel extends GenericBilancioModel {
 	/**
 	 * @return the statoVariazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
 		return statoVariazione;
 	}
 
@@ -289,7 +286,7 @@ public class ConsultaVariazioneImportiModel extends GenericBilancioModel {
 	 * @param statoVariazione the statoVariazione to set
 	 */
 	public void setStatoVariazione(
-			StatoOperativoVariazioneDiBilancio statoVariazione) {
+			StatoOperativoVariazioneBilancio statoVariazione) {
 		this.statoVariazione = statoVariazione;
 	}
 
@@ -899,7 +896,7 @@ public class ConsultaVariazioneImportiModel extends GenericBilancioModel {
 	 * @return the data inizio definizione variazione
 	 */
 	public String getDataDefinizioneVariazione(){
-		return StatoOperativoVariazioneDiBilancio.DEFINITIVA.equals(statoVariazione)? FormatUtils.formatDate(getDataInizioValiditaStatoVariazione()) : "";
+		return StatoOperativoVariazioneBilancio.DEFINITIVA.equals(statoVariazione)? FormatUtils.formatDate(getDataInizioValiditaStatoVariazione()) : "";
 	}
 	
 	/** 
@@ -1041,11 +1038,11 @@ public class ConsultaVariazioneImportiModel extends GenericBilancioModel {
 	}
 
 	/**
-	 * Crea una request per il servizio {@link StampaExcelVariazioneDiBilancio}.
+	 * Crea una request per il servizio {@link VariazioneBilancioExcelReport}.
 	 * @return la request creata
 	 */
-	public StampaExcelVariazioneDiBilancio creaRequestStampaExcelVariazioneDiBilancio() {
-		StampaExcelVariazioneDiBilancio req = creaRequest(StampaExcelVariazioneDiBilancio.class);
+	public VariazioneBilancioExcelReport creaRequestStampaExcelVariazioneDiBilancio() {
+		VariazioneBilancioExcelReport req = creaRequest(VariazioneBilancioExcelReport.class);
 		
 		req.setEnte(getEnte());
 		req.setXlsx(getIsXlsx());

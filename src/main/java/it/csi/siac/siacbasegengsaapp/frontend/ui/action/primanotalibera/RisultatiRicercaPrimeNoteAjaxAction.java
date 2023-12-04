@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.RisultatiRicercaPrimeNoteAjaxModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoPrimaNotaIntegrata;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -29,7 +29,7 @@ import it.csi.siac.siacgenser.model.PrimaNota;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaPrimeNoteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoPrimaNotaIntegrata,
+public class RisultatiRicercaPrimeNoteAjaxAction extends PagedDataTableAjaxAction<ElementoPrimaNotaIntegrata,
 RisultatiRicercaPrimeNoteAjaxModel, PrimaNota, RicercaPrimeNote, RicercaPrimeNoteResponse> {
 	
 	
@@ -58,13 +58,13 @@ RisultatiRicercaPrimeNoteAjaxModel, PrimaNota, RicercaPrimeNote, RicercaPrimeNot
 
 
 	@Override
-	protected ElementoPrimaNotaIntegrata ottieniIstanza(PrimaNota e) throws FrontEndBusinessException {
+	protected ElementoPrimaNotaIntegrata getInstance(PrimaNota e) throws FrontEndBusinessException {
 		return new ElementoPrimaNotaIntegrata(e);
 	}
 
 
 	@Override
-	protected RicercaPrimeNoteResponse ottieniResponse(RicercaPrimeNote request) {
+	protected RicercaPrimeNoteResponse getResponse(RicercaPrimeNote request) {
 		return primaNotaService.ricercaPrimeNote(request);
 	}
 

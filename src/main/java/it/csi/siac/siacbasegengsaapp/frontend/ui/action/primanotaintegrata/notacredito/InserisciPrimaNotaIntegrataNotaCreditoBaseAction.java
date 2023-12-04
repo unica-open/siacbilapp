@@ -126,7 +126,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoBaseAction<D extends
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSinteticaRegistrazioneMovFin.class, response));
 		}
 		
 		// Di per se', mi andrebbe bene anche avere una sola registrazione
@@ -577,7 +577,7 @@ public abstract class InserisciPrimaNotaIntegrataNotaCreditoBaseAction<D extends
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RegistraPrimaNotaIntegrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}

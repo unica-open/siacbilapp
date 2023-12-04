@@ -14,11 +14,11 @@ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siaccommon.util.log.LogUtil;
 
 /**
- * Classe di conversione per i {@link BigDecimal} da e verso {@link String}.
- * 
- * @author Marchino Alessandro
+ * @deprecated
+ * @see it.csi.siac.siaccommon.util.number.NumberUtil
  *
  */
+@Deprecated
 @SuppressWarnings("rawtypes")
 public class BigDecimalConverter extends StrutsTypeConverter {
 

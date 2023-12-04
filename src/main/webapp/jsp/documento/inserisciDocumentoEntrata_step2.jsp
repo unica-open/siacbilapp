@@ -30,7 +30,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 					<div class="step-content">
 						<div id="step2" class="step-pane active">
-							<fieldset>
+							<fieldset id="fieldset_InserisciDocumentoStep2">
 								<h4>Dati importi</h4>
 								<div class="control-group">
 									<label class="control-label" for="importoDocumento">Importo *</label>
@@ -87,7 +87,7 @@ SPDX-License-Identifier: EUPL-1.2
 										<s:textfield id="dataRepertorioDocumento" name="documento.dataRepertorio" cssClass="lbTextSmall span2 datepicker" placeholder="data" />
 									</div>
 								</div>
-								<!-- SIAC 6677 -->
+								<%-- SIAC 6677 --%>
 								<div class="control-group">
 									<label class="control-label" for="codAvvisoPagoPA">Codice Avviso Pago PA</label>
 									<div class="controls">
@@ -98,20 +98,35 @@ SPDX-License-Identifier: EUPL-1.2
 										<s:textfield id="iuv" name="documento.iuv" readonly="true" cssClass="lbTextSmall span2" placeholder="IUV" />
 									</div>
 								</div>
-							</fieldset>
+								<%-- SIAC-7567 --%>
+								<div class="control-group">
+									<label class="control-label" for="cig">CIG</label>
+									<div class="controls">
+										<s:textfield id="cig" name="documento.cig" cssClass="lbTextSmall span3 cig" maxlength="10" placeholder="CIG" />
+										<span class="alRight">
+											<label class="radio inline" for="cup">CUP</label>
+										</span>
+										<s:textfield id="cup" name="documento.cup" cssClass="lbTextSmall span3 cup" maxlength="15" placeholder="CUP" />
+									</div>
+								</div>
+								<%-- metto il campo solo se é una PA --%>
+								<s:if test="checkCanale != null && checkCanale == true">
+									<s:hidden id="HIDDEN_checkCanale" name="checkCanale" />
+								</s:if>
+								<s:hidden id="HIDDEN_proseguireConElaborazioneCheckPA" name="proseguireConElaborazioneCheckPA" value="false"/>
+								<%-- SIAC-7567 --%>
 							
-							<%-- Accordion --%>
-							<div class="step-pane active" id="datiIncassoPadre">
-								<div class="accordion" >
-									<div class="accordion-group">
-										<div class="accordion-heading">
-											<a class="accordion-toggle" data-toggle="collapse" data-parent="#datiIncassoPadre" href="#datiIncassoTab">
-												Dati incasso<span class="icon">&nbsp;</span>
-											</a>
-										</div>
-										<div id="datiIncassoTab" class="accordion-body collapse in">
-											<div class="accordion-inner">
-												<fieldset class="form-horizontal">
+								<%-- Accordion --%>
+								<div class="step-pane active" id="datiIncassoPadre">
+									<div class="accordion" >
+										<div class="accordion-group">
+											<div class="accordion-heading">
+												<a class="accordion-toggle" data-toggle="collapse" data-parent="#datiIncassoPadre" href="#datiIncassoTab">
+													Dati incasso<span class="icon">&nbsp;</span>
+												</a>
+											</div>
+											<div id="datiIncassoTab" class="accordion-body collapse in">
+												<div class="accordion-inner">
 													<div class="control-group">
 														<label for="codiceBolloDocumento" class="control-label">Codice bollo *</label>
 														<div class="controls input-append">
@@ -127,19 +142,22 @@ SPDX-License-Identifier: EUPL-1.2
 															<s:textarea id="noteDocumento" name="documento.note" rows="3" cols="15" cssClass="span10"></s:textarea>
 														</div>
 													</div>
-												</fieldset>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
+							</fieldset>
 						</div>
 					</div>
+					
+					<%-- SIAC-7567 --%>
+					<s:include value="/jsp/include/modaleConfermaProsecuzioneSuAzione.jsp" />
 
 					<p class="margin-medium">
 						<s:a cssClass="btn" action="inserisciDocumentoEntrataReturnToStep1" id="pulsanteRedirezioneIndietro">indietro</s:a>
 						<s:reset cssClass="btn" value="annulla" />
-						<s:submit cssClass="btn btn-primary pull-right" value="salva" />
+						<s:submit id="salvaDocumento" cssClass="btn btn-primary pull-right" value="salva" />
 					</p>
 				</s:form>
 			</div>
@@ -148,9 +166,10 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisciEntrata.js"></script>
+	
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisciEntrata.js"></script>
 	
 </body>
 </html>

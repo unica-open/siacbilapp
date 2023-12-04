@@ -50,7 +50,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaValidaOrdinativoIncassoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaValidaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -98,7 +98,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaOrdinativoIncassoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaOrdinativoIncassoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaOrdinativoIncassoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -147,7 +147,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaValidaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaValidaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -195,7 +195,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaOrdinativoPagamentoInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaOrdinativoPagamentoInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>

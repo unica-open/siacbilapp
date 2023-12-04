@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.BaseInserisciAggiornaPrimaNotaLiberaBaseModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLibera;
-import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
@@ -35,7 +34,7 @@ import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.CausaleService;
 import it.csi.siac.siacgenser.frontend.webservice.PrimaNotaService;
@@ -69,7 +68,7 @@ import it.csi.siac.siacgenser.model.errore.ErroreGEN;
  * @param <M> la tipizzazione del model
  */
 
-public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends BaseInserisciAggiornaPrimaNotaLiberaBaseModel> extends GenericBilancioAction<M> {
+public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends BaseInserisciAggiornaPrimaNotaLiberaBaseModel> extends BasePrimaNotaLiberaAction<M> {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 431625867487855560L;
@@ -88,6 +87,9 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 	public static final String MODEL_SESSION_NAME_INTEGRATA_MANUALE_INSERIMENTO_GSA = "InserisciPrimaNotaIntegrataManualeGSAModel";
 	/** Nome del model dell'aggiornamento per l'integrata manuale per la sessione, modulo GSA */
 	public static final String MODEL_SESSION_NAME_INTEGRATA_MANUALE_AGGIORNAMENTO_GSA = "AggiornaPrimaNotaIntegrataManualeGSAModel";
+	
+	//SIAC-8466
+	protected static final Integer MAX_LIVELLO_CONTO = 8;
 	
 	/** Serviz&icirc; della causale */
 	@Autowired protected transient CausaleService causaleService;
@@ -245,7 +247,6 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 		// Eventuale implementazione nelle sotto-classi
 	}
 
-
 	/**
 	 * Caricamento delle liste del tipo relazione.
 	 * 
@@ -266,7 +267,7 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(res);
-				String msgErrore = createErrorInServiceInvocationString(req, res);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, res);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 			listaTipoRelazione = new ArrayList<TipoRelazionePrimaNota>();
@@ -301,7 +302,7 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(res);
-				String msgErrore = createErrorInServiceInvocationString(req, res);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, res);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 			listaTipiEvento = res.getCodifiche(TipoEvento.class);
@@ -332,7 +333,7 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(res);
-				String msgErrore = createErrorInServiceInvocationString(req, res);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, res);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 			
@@ -427,7 +428,7 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 			// Controllo gli errori
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaModulareCausale.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -603,7 +604,7 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioModulareCausale.class, res));
 		}
 		return res.getCausaleEP();
 	}
@@ -736,6 +737,11 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 			if (elementoScrittura != null && elementoScrittura.getMovimentoDettaglio() != null){
 				BigDecimal importo = elementoScrittura.getMovimentoDettaglio().getImporto();
 				
+				//SIAC-8466
+				if(importo == null && MAX_LIVELLO_CONTO.compareTo(elementoScrittura.getContoTipoOperazione().getConto().getLivello()) == 0) {
+					importo = BigDecimal.ZERO;
+				}
+				
 				if(importo != null && importo.signum() != 0) {
 					// Aggiungo i dati al segno dare o avere
 					if(elementoScrittura.isSegnoDare()) {
@@ -748,7 +754,8 @@ public abstract class BaseInserisciAggiornaPrimaNotaLiberaBaseAction <M extends 
 					
 					listaMovimentiDettaglioFinal.add(elementoScrittura.getMovimentoDettaglio());
 				} else {
-					checkCondition(false,
+					//SIAC-8466
+					checkCondition(MAX_LIVELLO_CONTO.compareTo(elementoScrittura.getContoTipoOperazione().getConto().getLivello()) == 0,
 						ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Importo Conto " + elementoScrittura.getMovimentoDettaglio().getConto().getCodice()
 							+ " " + elementoScrittura.getMovimentoDettaglio().getSegno()));
 				}

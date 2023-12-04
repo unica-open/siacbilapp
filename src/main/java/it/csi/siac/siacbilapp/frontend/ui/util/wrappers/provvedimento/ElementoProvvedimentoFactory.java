@@ -5,7 +5,7 @@
 package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.provvedimento;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 
 /**
  * Factory per il wrapping dei provvedimenti.

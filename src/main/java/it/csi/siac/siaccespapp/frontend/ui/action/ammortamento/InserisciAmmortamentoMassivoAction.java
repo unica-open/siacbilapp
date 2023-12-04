@@ -7,7 +7,7 @@ package it.csi.siac.siaccespapp.frontend.ui.action.ammortamento;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,6 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipoElementoBil;
@@ -40,6 +39,7 @@ import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgenser.model.ClassePiano;
 
 /**
@@ -209,7 +209,7 @@ public class InserisciAmmortamentoMassivoAction extends GenericBilancioAction<In
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 			}
 			listaClassePiano = response.getCodifiche(ClassePiano.class);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSE_PIANO_GEN, listaClassePiano);
@@ -234,7 +234,7 @@ public class InserisciAmmortamentoMassivoAction extends GenericBilancioAction<In
 		InserisciAmmortamentoMassivoCespite req = model.creaRequestInserisciAmmortamentoMassivoCespiteSelezionati();
 		
 		// Devo modificare l'azione richiesta (JIRA SIAC-1944)
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.AMMORTAMENTO_MASSIVO_INSERISCI.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.AMMORTAMENTO_MASSIVO_INSERISCI.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		// Invoco il servizio asincrono
 		AsyncServiceResponse response = cespiteService.inserisciAmmortamentoMassivoCespiteAsync(wrapRequestToAsync(req, azioneRichiesta));
 		if(response.hasErrori()) {
@@ -266,7 +266,7 @@ public class InserisciAmmortamentoMassivoAction extends GenericBilancioAction<In
 		InserisciAmmortamentoMassivoCespite req = model.creaRequestInserisciAmmortamentoMassivoCespiteTutti(requestRicerca);
 		
 		// Devo modificare l'azione richiesta (JIRA SIAC-1944)
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.AMMORTAMENTO_MASSIVO_INSERISCI.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.AMMORTAMENTO_MASSIVO_INSERISCI.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		// Invoco il servizio asincrono
 		AsyncServiceResponse response = cespiteService.inserisciAmmortamentoMassivoCespiteAsync(wrapRequestToAsync(req, azioneRichiesta));
 		if(response.hasErrori()) {

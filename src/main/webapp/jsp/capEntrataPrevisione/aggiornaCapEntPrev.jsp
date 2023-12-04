@@ -243,6 +243,23 @@ SPDX-License-Identifier: EUPL-1.2
 												<s:hidden name="capitoloEntrataPrevisione.flagImpegnabile" />
 											</s:if>
 										</div>
+										<!-- SIAC-7858 CM 13/05/2021 Inizio -->
+										<div class="control-group">
+											<label for="flagEntrataDubbiaEsigFCDE" class="control-label">Capitolo pertinente per il calcolo FCDE</label>
+											<div class="controls">
+												<span class="al">
+													<label class="radio inline" >
+														<input type="radio" value="true" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{capitoloEntrataPrevisione.flagEntrataDubbiaEsigFCDE==true}'>checked="checked"</s:if>>Si
+													</label>
+												</span>
+												<span class="al">
+													<label class="radio inline" style="margin-left: 15px;">
+														<input type="radio" value="false" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{(capitoloEntrataPrevisione.flagEntrataDubbiaEsigFCDE==null)||(capitoloEntrataPrevisione.flagEntrataDubbiaEsigFCDE==false)}'>checked="checked"</s:if>>No
+													</label>
+												</span>
+											</div>
+										</div>
+										<!-- SIAC-7858 CM 13/05/2021 Fine -->
 										<div class="control-group <s:if test="!flagAccertatoPerCassaVisibile">hide</s:if>">
 											<label for="flagAccertatoPerCassa" class="control-label">Accertato per cassa</label>
 											<div class="controls">
@@ -372,7 +389,7 @@ SPDX-License-Identifier: EUPL-1.2
 															</div>
 														</div>
 														<%-- Classificatori Generici --%>
-														<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+														<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 															<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
 																<div class="control-group">
 																	<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
@@ -412,11 +429,11 @@ SPDX-License-Identifier: EUPL-1.2
 									<table summary="riepilogo incarichi" class="table table-hover table-bordered">
 	
 										<tr>
-											<th width="25%">&nbsp;</th>
-											<th width="15%" class="text-right">${annoEsercizioInt - 1}</th>
-											<th width="25%" class="text-right">${annoEsercizioInt + 0}</th>
-											<th width="25%" class="text-right">${annoEsercizioInt + 1}</th>
-											<th width="25%" class="text-right">${annoEsercizioInt + 2}</th>
+											<th width="20%">&nbsp;</th>
+											<th width="20%" class="text-right">${annoEsercizioInt - 1}</th>
+											<th width="20%" class="text-right">${annoEsercizioInt + 0}</th>
+											<th width="20%" class="text-right">${annoEsercizioInt + 1}</th>
+											<th width="20%" class="text-right">${annoEsercizioInt + 2}</th>
 										</tr>
 										<tr>
 											<th>Competenza</th>
@@ -424,20 +441,24 @@ SPDX-License-Identifier: EUPL-1.2
 												<label for="stanziamentoM1" class="nascosto">inserisci importo</label>
 												<span id="stanziamentoM1"><s:property value="importiEx.stanziamento"/></span>
 												<s:hidden  name="importiEx.stanziamentoIniziale" />
+												<s:hidden  name="importiEx.stanziamento" />
 											</td>
 											<td class="text-right">
 												<label for="stanziamento0" class="nascosto">inserisci importo</label>
-												<s:textfield id="stanziamento0" cssClass="input-small soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione0.stanziamento" />
+												<%-- SIAC-8556 --%>
+												<s:textfield id="stanziamento0" cssClass="w-95 no-mb soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione0.stanziamento" />
 												<s:hidden  name="importiCapitoloEntrataPrevisione0.stanziamentoIniziale" />
 											</td>
 											<td class="text-right">
 												<label for="stanziamento1" class="nascosto">inserisci importo</label>
-												<s:textfield id="stanziamento1" cssClass="input-small soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione1.stanziamento" />
+												<%-- SIAC-8556 --%>
+												<s:textfield id="stanziamento1" cssClass="w-95 no-mb soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione1.stanziamento" />
 												<s:hidden  name="importiCapitoloEntrataPrevisione1.stanziamentoIniziale" />
 											</td>
 											<td class="text-right">
 												<label for="stanziamento2" class="nascosto">inserisci importo</label>
-												<s:textfield id="stanziamento2" cssClass="input-small soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione2.stanziamento" />
+												<%-- SIAC-8556 --%>
+												<s:textfield id="stanziamento2" cssClass="w-95 no-mb soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione2.stanziamento" />
 												<s:hidden  name="importiCapitoloEntrataPrevisione2.stanziamentoIniziale" />
 											</td>
 										</tr>
@@ -466,10 +487,12 @@ SPDX-License-Identifier: EUPL-1.2
 												<label for="residuoM1" class="nascosto">inserisci importo</label>
 												<span id="residuoM1"><s:property value="importiEx.stanziamentoResiduo"/></span>
 												<s:hidden  name="importiEx.stanziamentoResiduoIniziale" />
+												<s:hidden  name="importiEx.stanziamentoResiduo" />
 											</td>
 											<td class="text-right">
 												<label for="residuo0" class="nascosto">inserisci importo</label>
-												<s:textfield id="residuo0" cssClass="input-small soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione0.stanziamentoResiduo" />
+												<%-- SIAC-8556 --%>
+												<s:textfield id="residuo0" cssClass="w-95 no-mb soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione0.stanziamentoResiduo" />
 												<s:hidden  name="importiCapitoloEntrataPrevisione0.stanziamentoResiduoIniziale" />
 											</td>
 											<td class="text-right">
@@ -491,11 +514,21 @@ SPDX-License-Identifier: EUPL-1.2
 												<label for="cassaM1" class="nascosto">inserisci importo</label>
 												<span id="cassaM1"><s:property value="importiEx.stanziamentoCassa"/></span>
 												<s:hidden  name="importiEx.stanziamentoCassaIniziale" />
+												<s:hidden  name="importiEx.stanziamentoCassa" />
 											</td>
 											<td class="text-right">
 												<label for="cassa0" class="nascosto">inserisci importo</label>
-												<s:textfield id="cassa0" cssClass="input-small soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione0.stanziamentoCassa" />
-												<s:hidden  name="importiCapitoloEntrataPrevisione0.stanziamentoCassaIniziale" />
+												<%-- SIAC-8556 --%>
+												<!-- SIAC-8003 -->
+												<s:if test="checkCapitoloCategoria()">
+													<s:hidden id="cassa1" name="importiCapitoloEntrataPrevisione0.stanziamentoCassa" />
+													<span id="cassa1"><s:property value="importiCapitoloEntrataPrevisione0.stanziamentoCassa"/></span>
+													<s:hidden  name="importiCapitoloEntrataPrevisione0.stanziamentoCassaIniziale" />
+												</s:if>
+												<s:else>
+													<s:textfield id="cassa0" cssClass="w-95 no-mb soloNumeri decimale text-right" required="true" name="importiCapitoloEntrataPrevisione0.stanziamentoCassa" />
+													<s:hidden  name="importiCapitoloEntrataPrevisione0.stanziamentoCassaIniziale" />
+												</s:else>
 											</td>
 											<td class="text-right">
 												<label for="cassa1" class="nascosto">inserisci importo</label>
@@ -603,10 +636,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataPrevisione/aggiorna.js"></script>
-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataPrevisione/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attoDiLegge/attoDiLegge.js"></script>
 </body>
 </html>

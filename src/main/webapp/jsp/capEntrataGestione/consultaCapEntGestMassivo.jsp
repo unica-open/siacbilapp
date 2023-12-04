@@ -126,7 +126,7 @@ SPDX-License-Identifier: EUPL-1.2
 													<dl><s:property value="transazioneUnioneEuropeaEntrata.codice"/> <s:property value="transazioneUnioneEuropeaEntrata.descrizione"/></dl>
 												</li>
 											</s:if>
-											<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+											<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 												<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null && #attr['classificatoreGenerico' + #idx + 'Editabile']}">
 													<li>
 														<dfn><s:property value="%{#attr['labelClassificatoreGenerico' + #idx]}"/></dfn>
@@ -266,8 +266,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/risultatiRicerca.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/consultaMassiva.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataGestione/consultaMassiva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/consultaMassiva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataGestione/consultaMassiva.js"></script>
 </body>
 </html>

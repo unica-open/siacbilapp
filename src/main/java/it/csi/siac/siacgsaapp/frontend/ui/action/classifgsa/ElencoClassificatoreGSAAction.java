@@ -65,7 +65,7 @@ public class ElencoClassificatoreGSAAction extends GenericBilancioAction <Elenco
 			// Se ho errori esco subito
 			if(res.hasErrori()) {
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaClassificatoreGSAValido.class, res));
 			}
 			listaClassificatoreGSA = res.getClassificatoriGSA();
 			log.debug(methodName, "Impostazione della lista dei risultati in sessione");

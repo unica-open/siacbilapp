@@ -7,7 +7,7 @@ package it.csi.siac.siacgenapp.frontend.ui.action.primanotaintegrata;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -90,7 +90,7 @@ public class RicercaPrimaNotaIntegrataFINAction extends RicercaPrimaNotaIntegrat
 		
 		if(res.hasErrori()) {
 			// Se ho errori esco
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(LeggiElementoPianoDeiContiByCodiceAndAnno.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -207,7 +207,7 @@ public class RicercaPrimaNotaIntegrataFINAction extends RicercaPrimaNotaIntegrat
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoriByTipoElementoBil.class, response));
 		}
 		return response;
 	}

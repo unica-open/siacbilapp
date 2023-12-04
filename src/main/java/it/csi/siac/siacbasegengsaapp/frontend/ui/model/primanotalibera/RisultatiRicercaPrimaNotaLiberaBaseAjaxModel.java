@@ -5,7 +5,7 @@
 package it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoPrimaNotaLibera;
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 
 /**
  * Classe di model per i risultati della ricerca delle Prime note libera, gestione dell'AJAX.
@@ -15,7 +15,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjax
  * @version 1.0.1 -08/10/2015
  *
  */
-public class RisultatiRicercaPrimaNotaLiberaBaseAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoPrimaNotaLibera> {
+public class RisultatiRicercaPrimaNotaLiberaBaseAjaxModel extends PagedDataTableAjaxModel<ElementoPrimaNotaLibera> {
 		
 		/** Per la serializzazione */
 

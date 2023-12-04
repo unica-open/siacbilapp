@@ -228,7 +228,7 @@ public class RicercaDocumentoEntrataAjaxModel extends RicercaDocumentoModel {
 		RicercaAccertamentoK parametroRicercaAccertamentoK = new RicercaAccertamentoK();
 		if(accertamento != null) {
 			parametroRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-			parametroRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+			parametroRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 			parametroRicercaAccertamentoK.setAnnoEsercizio(getAnnoEsercizioInt());
 		}
 		
@@ -260,8 +260,8 @@ public class RicercaDocumentoEntrataAjaxModel extends RicercaDocumentoModel {
 		if(getAccertamento().getAnnoMovimento() != 0) {
 			subComponents.add(getAccertamento().getAnnoMovimento() + "");
 		}
-		if(getAccertamento().getNumero() != null) {
-			subComponents.add(getAccertamento().getNumero().toPlainString());
+		if(getAccertamento().getNumeroBigDecimal() != null) {
+			subComponents.add(getAccertamento().getNumeroBigDecimal().toPlainString());
 		}
 		
 		components.add("Movimento: " + StringUtils.join(subComponents, "/"));

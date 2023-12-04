@@ -39,4 +39,12 @@ public class InserisciPrimaNotaLiberaGSAModel extends InserisciPrimaNotaLiberaBa
 	public boolean isValidazione() {
 		return StatoOperativoPrimaNota.PROVVISORIO.equals(getPrimaNotaLibera().getStatoOperativoPrimaNota());
 	}
+	
+	/*
+	 * SIAC-8134 per ora non si utilizza la parte di GSA
+	 */
+	@Override
+	protected void popolaStrutturaCompetente() {
+		// nothing to do
+	}
 }

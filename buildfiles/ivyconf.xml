@@ -1,11 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
 SPDX-License-Identifier: EUPL-1.2
 -->
 <ivysettings>
-	<settings defaultCache="${basedir}/target/ivycache" defaultResolver="chain" />
+	<settings defaultCache="${basedir}/../ivycache" defaultResolver="chain" />
 	<property name="ivy.shared.default.root" value="http://repart.csi.it/java" override="false"/>
-	<property name="ivy.shared.workaround.default.root" value="${basedir}/../contabilia/lib" override="false"/>
+	<property name="ivy.shared.workaround.default.root" value="${basedir}/../lib" override="false"/>
+
 	<caches>
 		<cache name="localCache" useOrigin="true" />
 	</caches>
@@ -14,15 +16,15 @@ SPDX-License-Identifier: EUPL-1.2
 		<chain name="chain" returnFirst="true">
 			<filesystem cache="localCache" name="localResolver" checkmodified="true">
 				<ivy pattern="${ivy.local}/ivy-[module].xml" />
-				<artifact pattern="${ivy.local}/[artifact]-LOCAL.[ext]" />
+				<artifact pattern="${ivy.local}/[artifact].[ext]" />
 			</filesystem>
-			<url name="repartCSIResolver">
+			<url name="sharedUrlResolver">
 				<ivy pattern="${ivy.shared.default.root}/[organisation]/[module]/[revision]/ivy-[module].xml" />
 				<ivy pattern="${ivy.shared.default.root}/[organisation]/[module]/ivy-[module].xml" />
 				<artifact pattern="${ivy.shared.default.root}/[organisation]/[module]/[revision]/lib/[artifact].[type]" />
 				<artifact pattern="${ivy.shared.default.root}/[organisation]/[module]/[revision]/lib/[artifact].[ext]" />
 			</url>
-			<filesystem name="sharedWorkroundResolver" cache="noCache">
+			<filesystem name="sharedWorkroundResolver" cache="localCache">
 				<ivy pattern="${ivy.shared.workaround.default.root}/[organization]/[module]/ivy-[revision].xml" />
 				<artifact pattern="${ivy.shared.workaround.default.root}/[organization]/[module]/jars/[artifact]-[revision].[ext]"/>
 				<artifact pattern="${ivy.shared.workaround.default.root}/[organization]/[module]/sources/[artifact]-[revision].[ext]"/>

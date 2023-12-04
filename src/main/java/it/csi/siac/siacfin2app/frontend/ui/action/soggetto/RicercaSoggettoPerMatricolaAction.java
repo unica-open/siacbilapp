@@ -17,7 +17,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.util.comparator.ComparatorUtil;
 import it.csi.siac.siacfin2app.frontend.ui.model.soggetto.RicercaSoggettoPerMatricolaModel;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
@@ -128,7 +128,7 @@ public class RicercaSoggettoPerMatricolaAction extends GenericBilancioAction<Ric
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response);
 			log.debug(methodName, errorMsg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMsg);
@@ -161,7 +161,7 @@ public class RicercaSoggettoPerMatricolaAction extends GenericBilancioAction<Ric
 		log.debug(methodName, "Uid della sede da cercare: " + sss.getUid());
 		List<SedeSecondariaSoggetto> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_SEDE_SECONDARIA_SOGGETTO);
 		
-		sss = ComparatorUtils.searchByUid(listaInSessione, sss);
+		sss = ComparatorUtil.searchByUid(listaInSessione, sss);
 		log.debug(methodName, "Denominazione della sede per cui filtrare: " + sss.getDenominazione());
 		
 		// Filtro sulla base della sede

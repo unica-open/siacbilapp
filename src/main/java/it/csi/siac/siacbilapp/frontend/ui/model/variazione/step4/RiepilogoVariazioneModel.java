@@ -5,7 +5,7 @@
 package it.csi.siac.siacbilapp.frontend.ui.model.variazione.step4;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 
 /**
@@ -21,7 +21,7 @@ public class RiepilogoVariazioneModel extends GenericBilancioModel {
 	private static final long serialVersionUID = -7524801026683580575L;
 	
 	private Integer numeroVariazione;
-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+	private StatoOperativoVariazioneBilancio statoVariazione;
 	private String applicazioneVariazione;
 	private String descrizioneVariazione;
 	private TipoVariazione tipoVariazione;
@@ -50,15 +50,14 @@ public class RiepilogoVariazioneModel extends GenericBilancioModel {
 	/**
 	 * @return the statoVariazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
 		return statoVariazione;
 	}
 
 	/**
 	 * @param statoVariazione the statoVariazione to set
 	 */
-	public void setStatoVariazione(
-			StatoOperativoVariazioneDiBilancio statoVariazione) {
+	public void setStatoVariazione(StatoOperativoVariazioneBilancio statoVariazione) {
 		this.statoVariazione = statoVariazione;
 	}
 

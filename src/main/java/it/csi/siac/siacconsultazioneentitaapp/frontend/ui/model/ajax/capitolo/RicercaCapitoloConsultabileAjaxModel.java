@@ -5,7 +5,7 @@
 package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.model.ajax.capitolo;
 
 import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.model.ajax.RicercaEntitaConsultabileBaseAjaxModel;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 
 /**Classe di model base per la ricerca del capitolo Consultabile (campi comuni Entrata/Spesa)

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -16,13 +16,13 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
@@ -51,7 +51,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipo;
@@ -171,7 +171,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaDocumentoDiSpesa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -216,7 +216,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		Boolean azioneIvaGestibile = AzioniConsentiteFactory.isGestioneIvaConsentito(azioniConsentite);
 		// SIAC-5072:GESTIONE PERMESSI PER I MOTIVI DI SOSPENSIONE
 		Boolean datiSospensioneEditabili = Boolean.valueOf(isDatiSospensioneEditabili());
-		boolean datiFatturaPagataEditabili = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_DATI_FATTURA_PAGATA, azioniConsentite);
+		boolean datiFatturaPagataEditabili = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_DATI_FATTURA_PAGATA, azioniConsentite);
 		model.impostaFlags(azioneIvaGestibile, datiSospensioneEditabili, datiFatturaPagataEditabili);
 		
 		// Caricamento liste
@@ -247,10 +247,10 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		
 		//setto i dati relativi alle abilitazioni utente
 		// SIAC-5072
-		model.setFlagNoDatiSospensioneDecentrato(AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_NO_DATI_SOSPENSIONE_DECENTRATO, azioniConsentite));
+		model.setFlagNoDatiSospensioneDecentrato(AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_NO_DATI_SOSPENSIONE_DECENTRATO, azioniConsentite));
 		
-		model.setAbilitatoGestioneAcquisti(AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_GESTIONE_ACQUISTI, azioniConsentite));
-		model.setNoDatiSospensioneDec(AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_NO_DATI_SOSPENSIONE_DECENTRATO, azioniConsentite));
+		model.setAbilitatoGestioneAcquisti(AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_GESTIONE_ACQUISTI, azioniConsentite));
+		model.setNoDatiSospensioneDec(AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_NO_DATI_SOSPENSIONE_DECENTRATO, azioniConsentite));
 		
 		// Leggo i dati della precedente azione
 		leggiEventualiErroriAzionePrecedente();
@@ -260,7 +260,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		checkAttivazioneRegContabili();
 		
 		//SIAC-5346
-		model.setInibisciModificaDatiImportatiFEL(AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL, azioniConsentite));
+		model.setInibisciModificaDatiImportatiFEL(AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL, azioniConsentite));
 		return SUCCESS;
 	}
 	
@@ -310,7 +310,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		
 		if(response.hasErrori()) {
 			//Errore nel caricamento dei dati del documento: esco
-			log.error(methodName, createErrorInServiceInvocationString(request, response));
+			log.error(methodName, createErrorInServiceInvocationString(RicercaDettaglioDocumentoSpesa.class, response));
 			addErrori(response);
 			throw new WebServiceInvocationFailureException("Errore nell'invocazione del servizio RicercaDettaglioDocumentoSpesa");
 		}
@@ -337,7 +337,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.error(methodName, createErrorInServiceInvocationString(request, response));
+			log.error(methodName, createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			addErrori(response);
 			throw new WebServiceInvocationFailureException("Errore nell'invocazione del servizio RicercaSoggettoPerChiave");
 		}
@@ -367,7 +367,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaOnereByDocumentoSpesa.class, response));
 			addErrori(response);
 			throw new WebServiceInvocationFailureException("Errore nell'invocazione del servizio RicercaOnereByDocumentoSpesa");
 		}
@@ -488,7 +488,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		checkCondition(doc.getDatiFatturaPagataIncassata() == null
 				|| hasAllDataFatturaPagata(doc.getDatiFatturaPagataIncassata())
 				|| hasNoDataFatturaPagata(doc.getDatiFatturaPagataIncassata()),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("documento pagato, note, data pagamento", ": nel caso almeno uno sia valorizzato devono essere tutti valorizzati"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("documento pagato, note, data pagamento", ": nel caso almeno uno sia valorizzato devono essere tutti valorizzati"));
 		// TODO: aggiungere i controlli sulle quote via chiamata al servizio
 	}
 
@@ -517,7 +517,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		StrutturaAmministrativoContabile sac = model.getDocumento().getStrutturaAmministrativoContabile();
 		if(sac == null || sac.getUid() == 0) {
 			//SIAC-5346: la SAC e' obbligatoria per utenti con azione limita dati fel
-			checkCondition(!AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("struttura amministrativa"));
+			checkCondition(!AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("struttura amministrativa"));
 			return;
 		}
 		//ho impostato la sac: controllo che esista e la metto nel model
@@ -707,7 +707,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AttivaRegistrazioniContabiliSpesa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -777,7 +777,7 @@ public class AggiornaDocumentoSpesaAnagraficaAction extends AggiornaDocumentoSpe
 				isNumeric(documento.getCodAvvisoPagoPA()),
 				ErroreFin.COD_AVVISO_PAGO_PA_NUMERICO.getErrore());
 		
-		int maxLength = Constanti.CODICE_AVVISO_PAGO_PA_LENGTH;
+		int maxLength = CostantiFin.CODICE_AVVISO_PAGO_PA_LENGTH;
 		checkCondition(documento.getCodAvvisoPagoPA() == null || documento.getCodAvvisoPagoPA().length() <= maxLength,
 				ErroreFin.COD_AVVISO_PAGO_PA_MAXLENGTH.getErrore());
 		

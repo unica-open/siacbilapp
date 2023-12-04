@@ -82,7 +82,7 @@ public class AssociaQuoteSpesaAProvvisorioDiCassaAction extends AssociaQuoteAPro
 		
 		if(res.hasErrori()) {
 			// Errori nell'invocazione
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AssociaProvvisorioQuoteSpesa.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -168,7 +168,7 @@ public class AssociaQuoteSpesaAProvvisorioDiCassaAction extends AssociaQuoteAPro
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorString = createErrorInServiceInvocationString(req, res);
+			String errorString = createErrorInServiceInvocationString(RicercaQuotePerProvvisorioSpesa.class, res);
 			log.info(methodName, errorString);
 			addErrori(res);
 			throw new WebServiceInvocationFailureException(errorString);

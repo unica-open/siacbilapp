@@ -29,7 +29,7 @@ import it.csi.siac.siaccespser.frontend.webservice.CespiteService;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaDettaglioDismissioneCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaDettaglioDismissioneCespiteResponse;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.CausaleService;
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaSinteticaModulareCausale;
@@ -95,7 +95,7 @@ public class GenericDismissioneCespiteAction<M extends GenericDismissioneCespite
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 			}
 			listaEvento = filtraEventi(response.getCodifiche(Evento.class));
 			sessionHandler.setParametro(BilSessionParameter.LISTA_EVENTO, listaEvento);
@@ -121,7 +121,7 @@ public class GenericDismissioneCespiteAction<M extends GenericDismissioneCespite
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(TipiProvvedimento.class, response));
 			}
 			
 			listaInSessione = response.getElencoTipi();
@@ -148,7 +148,7 @@ public class GenericDismissioneCespiteAction<M extends GenericDismissioneCespite
 			RicercaSinteticaModulareCausaleResponse res = causaleService.ricercaSinteticaModulareCausale(req);
 
 			if (res.hasErrori()) {
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaModulareCausale.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -217,7 +217,7 @@ public class GenericDismissioneCespiteAction<M extends GenericDismissioneCespite
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, response));
 			addErrori(response);
 			return;
 		}

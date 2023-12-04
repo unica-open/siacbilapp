@@ -14,9 +14,9 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.BaseI
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.accertamento.GestioneAccertamentoPrimaNotaIntegrataBaseModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.consultazione.ConsultaRegistrazioneMovFinAccertamentoHelper;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
+import it.csi.siac.siaccommonapp.util.paginazione.PaginazioneUtil;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzatoResponse;
@@ -143,7 +143,7 @@ public abstract class GestioneAccertamentoInsPrimaNotaIntegrataBaseAction<M exte
 		// Imposto la request e la response in sessione
 		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, req);
 		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI,
-				CollectionUtil.toListaPaginata(accertamentoServizio.getElencoSubAccertamenti(), res.getNumPagina(), res.getNumeroTotaleSub()));
+				PaginazioneUtil.toListaPaginata(accertamentoServizio.getElencoSubAccertamenti(), res.getNumPagina(), res.getNumeroTotaleSub()));
 		
 		model.setConsultazioneHelper(new ConsultaRegistrazioneMovFinAccertamentoHelper(accertamentoServizio, model.isGestioneUEB()));
 	}
@@ -173,7 +173,7 @@ public abstract class GestioneAccertamentoInsPrimaNotaIntegrataBaseAction<M exte
 		descrizione.append("Acc ")
 			.append(accertamento.getAnnoMovimento())
 			.append("/")
-			.append(accertamento.getNumero().toPlainString());
+			.append(accertamento.getNumeroBigDecimal().toPlainString());
 		if(StringUtils.isNotBlank(accertamento.getDescrizione())) {
 			// Descrizione se presente
 			descrizione.append(" ")
@@ -182,7 +182,7 @@ public abstract class GestioneAccertamentoInsPrimaNotaIntegrataBaseAction<M exte
 		// Anno e numero (e stringa acc per riconoscerlo)
 		movimento.append(accertamento.getAnnoMovimento())
 			.append("/")
-			.append(accertamento.getNumero().toPlainString())
+			.append(accertamento.getNumeroBigDecimal().toPlainString())
 			.append(" (acc)");
 
 		// Imposto i dati del movimento nel model

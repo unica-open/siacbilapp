@@ -280,7 +280,7 @@ public abstract class GestioneModificaMovimentoGestioneSpesaInsPrimaNotaIntegrat
 		if(modificaMovimentoGestioneSpesa.getSubImpegno() != null) {
 			return modificaMovimentoGestioneSpesa.getSubImpegno().getNumeroImpegnoPadre();
 		} else if (modificaMovimentoGestioneSpesa.getImpegno() != null) {
-			return modificaMovimentoGestioneSpesa.getImpegno().getNumero();
+			return modificaMovimentoGestioneSpesa.getImpegno().getNumeroBigDecimal();
 		}
 		throw new FrontEndUncheckedException("Modifica del movimento di gestione senza impegno ne' subimpegno associato");
 	}
@@ -293,7 +293,7 @@ public abstract class GestioneModificaMovimentoGestioneSpesaInsPrimaNotaIntegrat
 	 */
 	private BigDecimal ottieniNumeroSub(ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesa) {
 		if(modificaMovimentoGestioneSpesa.getSubImpegno() != null) {
-			return modificaMovimentoGestioneSpesa.getSubImpegno().getNumero();
+			return modificaMovimentoGestioneSpesa.getSubImpegno().getNumeroBigDecimal();
 		}
 		return null;
 	}

@@ -99,8 +99,12 @@ SPDX-License-Identifier: EUPL-1.2
 														<span class="al span3">
 															<label class="radio inline" for="contoTesoreria"> Conto Tesoriere</label>
 														</span>
-														<s:select list="listaContoTesoreria" name="contoTesoreria.uid" id="contoTesoreria" cssClass="lbTextSmall span9"
-															listKey="uid" listValue="%{codice + ' - ' + descrizione}" headerKey="0" headerValue="" />
+														<select name="contoTesoreria.uid" id="contoTesoreria" class="lbTextSmall span9">
+															<option value="0"></option>
+															<s:iterator value="listaContoTesoreria" var="ct">
+																<option value="<s:property value="%{#ct.uid}"/>" data-vincolato="<s:property value="%{#ct.vincolato}"/>"><s:property value="%{codice + ' - ' + descrizione}"/></option>
+															</s:iterator>
+														</select>
 													</div>
 												</div>
 												<div class="span12 margin-medium no-margin-left">
@@ -115,8 +119,9 @@ SPDX-License-Identifier: EUPL-1.2
 														<span class="al span3">
 															<label class="radio inline" for="listaCommissioni">Commis<wbr/>sioni</label>
 														</span>
-														<s:select list="listaCommissioni" name="commissioneDocumento" id="commissioneDocumento" cssClass="lbTextSmall span9"
-															listValue="%{descrizione}" headerKey="" headerValue="" />
+														<!-- task-291 -->
+														<s:select list="listaCommissioniDocumento" name="commissioneDocumento.descrizione" listKey="descrizione" listValue="%{codice + ' - ' + descrizione}"
+															headerKey="" headerValue="" cssClass="lbTextSmall span9" id="commissioneDocumento" />
 													</div>
 												</div>
 												<div class="span12 margin-medium no-margin-left">
@@ -163,6 +168,12 @@ SPDX-License-Identifier: EUPL-1.2
 						<button type="button" class="btn btn-secondary pull-right hide" id="pulsanteControlloDisponibilitaCassa">
 							controlla disponibilit&agrave; cassa
 						</button>
+						<s:if test="gestioneContiVincolati">
+							<input type="hidden" value="true" id ="enteGestioneContiVincolati" name="enteGestioneContiVincolati"/>
+							<button type="button" class="btn btn-secondary pull-right hide" id="pulsanteControlloDisponibilitaConto">
+								controlla disponibilit&agrave; sottoconto vincolato
+							</button>
+						</s:if>
 					</p>
 					<s:include value="/jsp/ordinativi/modaleConferma.jsp" />
 				</s:form>
@@ -173,7 +184,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ordinativo/emissionePagamentoStep2Quota.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ordinativo/emissionePagamentoStep2Quota.js"></script>
 
 </body>
 </html>

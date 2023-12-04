@@ -50,7 +50,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaValidaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaValidaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaValidaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaValidaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
@@ -98,7 +98,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="completaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConti" class="completaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConti">
+		<action name="completaModificaMovimentoGestioneSpesaInsPrimaNotaIntegrataGSA_aggiornaContoDaClasseDiConciliazioneConDigitazione" class="completaModificaMovimentoGestioneSpesaInsContoPrimaNotaIntegrataGSAAction" method="aggiornaContoDaClasseDiConciliazioneConDigitazione">
 			<result name="success" type="contoPrimaNotaIntegrata" />
 			<result name="input" type="customMessagesJSON" />
 		</action>

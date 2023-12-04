@@ -215,12 +215,12 @@ SPDX-License-Identifier: EUPL-1.2
 										<span class="alRight">
 											<label for="numeroMovimentoGestione" class="radio inline">Numero</label>
 										</span>
-										<si:plainstringtextfield id="numeroMovimentoGestione" name="impegno.numero" cssClass="lbTextSmall soloNumeri span2" maxlength="7" placeholder="%{'numero'}" />
+										<s:textfield id="numeroMovimentoGestione" name="impegno.numero" cssClass="lbTextSmall soloNumeri span2" maxlength="7" placeholder="%{'numero'}" />
 										
 										<span class="alRight">
 											<label for="numeroSubMovimentoGestione" class="radio inline">Subimpegno</label>
 										</span>
-										<si:plainstringtextfield id="numeroSubMovimentoGestione" name="subImpegno.numero" cssClass="lbTextSmall soloNumeri span2" maxlength="7" placeholder="%{'numero subimpegno'}" />
+										<s:textfield id="numeroSubMovimentoGestione" name="subImpegno.numero" cssClass="lbTextSmall soloNumeri span2" maxlength="7" placeholder="%{'numero subimpegno'}" />
 										<span class="radio guidata">
 											<button type="button" class="btn btn-primary" id="pulsanteCompilazioneGuidataMovimentoGestione">compilazione guidata</button>
 										</span>
@@ -255,12 +255,12 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>	
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.new2.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/gestioneElenco.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>	
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.new2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/gestioneElenco.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/ricerca.js"></script>
 </body>
 </html>

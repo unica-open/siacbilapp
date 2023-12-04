@@ -24,16 +24,20 @@ public class NumeroProvvedimentoDataInfo extends PopoverDataInfo {
 	 * @param descrizioneDirezioneKey la descrizione della direzione
 	 * @param statoKey lo stato
 	 */
-	public NumeroProvvedimentoDataInfo(String name, String dataPlacement, String annoProvvKey, String numProvvKey, String codiceTipoProvvKey, String descrizioneTipoProvvKey, String codiceDirezioneKey, String descrizioneDirezioneKey, String statoKey) {
+	public NumeroProvvedimentoDataInfo(String name, String dataPlacement, String annoProvvKey, String numProvvKey, String codiceTipoProvvKey, String descrizioneTipoProvvKey, String codiceDirezioneKey, String descrizioneDirezioneKey, String statoKey,
+			//SIAC-8188
+			String descrizioneProvvedimento, String allegatoAttoDescrizione) {
 		super(name,"<strong>Tipo: </strong> {2} - {3}<br/> "
 				+ "<strong>Direzione: </strong> {4} - {5}<br/> "
 				+ "<strong>Stato: </strong> {6}<br/> "
 				+ "<strong>Desc prov: </strong> {7}<br/> "
-				+ "<strong>Desc allegato: </strong> {7}<br/> ",
+				+ "<strong>Desc allegato: </strong> {8}<br/> ",
 				dataPlacement,
 				"Provvedimento",
 				"{0}/{1,number,#}/{2}",
-				annoProvvKey, numProvvKey, codiceTipoProvvKey, descrizioneTipoProvvKey, codiceDirezioneKey, descrizioneDirezioneKey,statoKey);
+				annoProvvKey, numProvvKey, codiceTipoProvvKey, descrizioneTipoProvvKey, codiceDirezioneKey, descrizioneDirezioneKey,statoKey, 
+				//SIAC-8188
+				descrizioneProvvedimento, allegatoAttoDescrizione);
 	}
 
 }

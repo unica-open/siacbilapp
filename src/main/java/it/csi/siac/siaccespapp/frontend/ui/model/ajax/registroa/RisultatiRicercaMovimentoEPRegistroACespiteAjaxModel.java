@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccespapp.frontend.ui.model.ajax.registroa;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.registroa.ElementoMovimentoEPRegistroA;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.registroa.ElementoMovim
  * @deprecated da rimuovere
  */
 @Deprecated
-public class RisultatiRicercaMovimentoEPRegistroACespiteAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoMovimentoEPRegistroA> {
+public class RisultatiRicercaMovimentoEPRegistroACespiteAjaxModel extends PagedDataTableAjaxModel<ElementoMovimentoEPRegistroA> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 649412662932709388L;

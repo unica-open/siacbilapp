@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.ammortamento.RisultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoCespiteAjaxModel;
@@ -28,7 +28,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDettaglioAnteprimaAmmortamentoAnnuoCespite, RisultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoCespiteAjaxModel, DettaglioAnteprimaAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespiteResponse> {
+public class RisultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoAjaxAction extends PagedDataTableAjaxAction<ElementoDettaglioAnteprimaAmmortamentoAnnuoCespite, RisultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoCespiteAjaxModel, DettaglioAnteprimaAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite, RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespiteResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -65,12 +65,12 @@ public class RisultatiRicercaDettaglioAnteprimaAmmortamentoAnnuoAjaxAction exten
 	}
 
 	@Override
-	protected ElementoDettaglioAnteprimaAmmortamentoAnnuoCespite ottieniIstanza(DettaglioAnteprimaAmmortamentoAnnuoCespite e) throws FrontEndBusinessException {
+	protected ElementoDettaglioAnteprimaAmmortamentoAnnuoCespite getInstance(DettaglioAnteprimaAmmortamentoAnnuoCespite e) throws FrontEndBusinessException {
 		return new ElementoDettaglioAnteprimaAmmortamentoAnnuoCespite(e);
 	}
 
 	@Override
-	protected RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespiteResponse ottieniResponse(RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite req) {
+	protected RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespiteResponse getResponse(RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite req) {
 		return cespiteService.ricercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespite(req);
 	}
 

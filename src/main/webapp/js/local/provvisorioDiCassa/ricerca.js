@@ -195,7 +195,7 @@
         var dt;
         var provvisorio;
         if(!$.fn.DataTable.fnIsDataTable(this.$tabella[0])) {
-            // Non no nemmeno inizializzato la tabella. Esco
+            // Non ho nemmeno inizializzato la tabella. Esco
             return;
         }
         dt = this.$tabella.dataTable();
@@ -213,6 +213,16 @@
         this.$annoProvvisorio.val(provvisorio.anno);
         this.$numeroProvvisorio.val(provvisorio.numero);
         this.$spanCausale.html(provvisorio.causale);
+        
+        // SIAC-6780
+        var riepilogo = $('#HIDDEN_provvisorioCompletaDefinisci').val();
+        if(riepilogo !== undefined && riepilogo === "true"){
+            var $importoDaRegolaizzareProvvisorio = $('#importoDaRegolarizzareProvvisorioCassa');
+            var $importoProvvisorio = $('#importoProvvisorioCassa');
+            $importoDaRegolaizzareProvvisorio.val(formatMoney(provvisorio.importoDaRegolarizzare));
+            $importoProvvisorio.val(formatMoney(provvisorio.importo));
+        }
+        
         // Chiudo il modale
         this.$modale.modal('hide');
     };
@@ -228,7 +238,11 @@
      * @return (number) l'id dell'elemento
      */
     exports.inizializzazione = function(pulsanteApertura, fieldTipoProvvisorio, fieldAnnoProvvisorio, fieldNumeroProvvisorio, spanCausale) {
-        var pdc = new ProvvisorioDiCassa(pulsanteApertura || '', fieldTipoProvvisorio || '', fieldAnnoProvvisorio || '', fieldNumeroProvvisorio || '', spanCausale || '');
+        var pdc = new ProvvisorioDiCassa(pulsanteApertura || '#pulsanteCompilazioneGuidataProvvisorioCassa', 
+            fieldTipoProvvisorio || '', 
+            fieldAnnoProvvisorio || '', 
+            fieldNumeroProvvisorio || '', 
+            spanCausale || '');
         var index = idx++;
         pdc.inizializza();
         

@@ -56,7 +56,7 @@ public class DettaglioElencoDocumentiAllegatoAction extends GenericBilancioActio
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaQuoteElenco.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -144,7 +144,7 @@ public class DettaglioElencoDocumentiAllegatoAction extends GenericBilancioActio
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaQuoteElenco.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

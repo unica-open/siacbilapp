@@ -7,7 +7,7 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ taglib uri="/struts-tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<s:set name="suffix"><c:out value="${param.suffix}" default="" /></s:set>
+<s:set var="suffix"><c:out value="${param.suffix}" default="" /></s:set>
 
 <div class="clear"></div>
 <h5>Stanziamenti</h5>
@@ -24,6 +24,18 @@ SPDX-License-Identifier: EUPL-1.2
 				<label class="radio inline" for="cassaVariazione<s:property value="#suffix"/>">Cassa ${annoEsercizioInt}</label>
 			</span>
 			<s:textfield id="cassaVariazione%{#suffix}" cssClass="lbTextSmall span3 text-right decimale soloNumeri" name="cassaVariazione" />
+			<%-- SIAC-8262 --%>
+			<span class="al">
+				<a class="tooltip-test" style="padding-left: 1%" data-original-title="Calcolo automatico cassa">
+					<i class="icon-info-sign">&nbsp;
+						<span class="nascosto">Calcolo automatico cassa</span>
+					</i>
+				</a>
+				<a href="#" class="btn btn-primary" id="applicaQuoadraturaCassaStanzRes<s:property value="#suffix"/>">
+					<i class="icon-backward" aria-hidden="true"></i>
+				</a>
+			</span>
+			<%-- SIAC-8262 --%>
 		</div>
 	</div>
 	<div class="control-group">

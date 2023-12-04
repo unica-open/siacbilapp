@@ -49,7 +49,8 @@ public class ReversaleDataAdapter extends EntitaConsultabileDataAdapter {
 						new DateDataInfo("Data quietanza", "ord_quietanza_data"),
 						new CurrencyDataInfo("Importo", "importo", true),
 						new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno","capitolo_numero", "capitolo_articolo"),
-						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc")
+						//SIAC-8188 "attoamm_oggetto", "attoal_causale"
+						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc", "attoamm_oggetto", "attoal_causale")
 						),
 	
 				asList(

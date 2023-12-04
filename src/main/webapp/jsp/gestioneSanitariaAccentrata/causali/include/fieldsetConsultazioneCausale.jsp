@@ -137,7 +137,7 @@ SPDX-License-Identifier: EUPL-1.2
 						</s:if>
 					</td>
 					<td>
-						<a data-original-title="Descrizione" data-trigger="hover" rel="popover" data-content="<s:property value="#cto.conto.descrizione"/>" data-html="true"><s:property value="#cto.conto.codice"/></a>
+						<a data-original-title="Descrizione" data-trigger="hover" data-toggle="popover" data-content="<s:property value="#cto.conto.descrizione"/>" data-html="true"><s:property value="#cto.conto.codice"/></a>
 					</td>
 					<td><s:property value="#cto.operazioneSegnoConto.descrizione"/></td>
 					<td><s:property value="#cto.operazioneUtilizzoConto.descrizione"/></td>

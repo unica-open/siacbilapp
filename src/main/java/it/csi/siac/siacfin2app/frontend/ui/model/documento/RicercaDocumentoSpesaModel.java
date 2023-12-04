@@ -19,6 +19,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareD
 import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesaModelDetail;
+import it.csi.siac.siacfin2ser.model.PreDocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
@@ -48,6 +49,9 @@ public class RicercaDocumentoSpesaModel extends RicercaDocumentoModel {
 	private List<SubdocumentoSpesa> listaSubDocRicerca = new ArrayList<SubdocumentoSpesa>();
 	
 	private String flagAttivaScrittureContabili;
+	
+	//SIAC-6780
+	private PreDocumentoSpesa predocumento;
 
 	
 	/** Costruttore vuoto di default */
@@ -139,6 +143,21 @@ public class RicercaDocumentoSpesaModel extends RicercaDocumentoModel {
 	public void setFlagAttivaScrittureContabili(String flagAttivaScrittureContabili) {
 		this.flagAttivaScrittureContabili = flagAttivaScrittureContabili;
 	}
+	
+	/**
+	 * @return the predocumento
+	 */
+	public PreDocumentoSpesa getPredocumento() {
+		return predocumento;
+	}
+
+
+	/**
+	 * @param predocumento the predocumento to set
+	 */
+	public void setPredocumento(PreDocumentoSpesa predocumento) {
+		this.predocumento = predocumento;
+	}
 
 
 	/**
@@ -158,7 +177,7 @@ public class RicercaDocumentoSpesaModel extends RicercaDocumentoModel {
 		request.setCollegatoCEC(FormatUtils.parseBooleanSN(getFlagCollegatoCEC()));
 		request.setContabilizzaGenPcc(FormatUtils.parseBooleanSN(getFlagAttivaScrittureContabili()));
 		//if(checkPresenzaIdEntita(getAttoAmministrativo())) {
-			request.setAttoAmministrativo(getAttoAmministrativo());
+		request.setAttoAmministrativo(getAttoAmministrativo());
 		//}
 		if(checkPresenzaIdEntita(getImpegno())) {
 			request.setImpegno(getImpegno());
@@ -166,6 +185,11 @@ public class RicercaDocumentoSpesaModel extends RicercaDocumentoModel {
 		if(Boolean.TRUE.equals(getElencoPresente())) {
 			request.setElencoDocumenti(getElencoDocumenti());
 		}
+		
+		if(getPredocumento() != null && StringUtils.isNotBlank(getPredocumento().getNumero())) {
+			request.setPredocumentoSpesa(predocumento);
+		}
+		
 		
 		request.setParametriPaginazione(creaParametriPaginazione());
 		
@@ -191,7 +215,7 @@ public class RicercaDocumentoSpesaModel extends RicercaDocumentoModel {
 		if(impegno != null) {
 			RicercaImpegnoK parametroRicercaImpegnoK = new RicercaImpegnoK();
 			parametroRicercaImpegnoK.setAnnoImpegno(impegno.getAnnoMovimento());
-			parametroRicercaImpegnoK.setNumeroImpegno(impegno.getNumero());
+			parametroRicercaImpegnoK.setNumeroImpegno(impegno.getNumeroBigDecimal());
 			parametroRicercaImpegnoK.setAnnoEsercizio(getAnnoEsercizioInt());
 			request.setpRicercaImpegnoK(parametroRicercaImpegnoK);
 		}
@@ -240,8 +264,8 @@ public class RicercaDocumentoSpesaModel extends RicercaDocumentoModel {
 		if(getImpegno().getAnnoMovimento() != 0) {
 			subComponents.add(getImpegno().getAnnoMovimento() + "");
 		}
-		if(getImpegno().getNumero() != null) {
-			subComponents.add(getImpegno().getNumero().toPlainString());
+		if(getImpegno().getNumeroBigDecimal() != null) {
+			subComponents.add(getImpegno().getNumeroBigDecimal().toPlainString());
 		}
 		
 		components.add("Movimento: " + StringUtils.join(subComponents, "/"));

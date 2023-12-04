@@ -87,7 +87,7 @@ public class RicercaClassificatoreGerarchicoAction extends GenericBilancioAction
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaClassificatore.class, response));
 			return INPUT;
 		}
 		if(response.getCodifiche().isEmpty()) {

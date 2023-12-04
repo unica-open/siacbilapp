@@ -40,8 +40,8 @@ SPDX-License-Identifier: EUPL-1.2
 				</s:include>
 			</div>
 			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">chiudi</button>
-				<button  type = "button" class="btn btn-primary" id="button_registraVariazioneModale">aggiorna modifica</button>
+				<button type = "button" class="btn" id="button_chiudiRegistraVariazioneModale">chiudi</button>
+				<button type = "button" class="btn btn-primary" id="button_registraVariazioneModale">aggiorna modifica</button>
 			</div>
 		</div>
 	</div>

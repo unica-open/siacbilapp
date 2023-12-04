@@ -111,10 +111,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaContoFIN.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/causali/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaContoFIN.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/causali/ricerca.js"></script>
 	
 </body>
 </html>

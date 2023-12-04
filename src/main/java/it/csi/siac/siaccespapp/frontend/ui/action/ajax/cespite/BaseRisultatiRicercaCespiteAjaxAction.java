@@ -6,7 +6,7 @@ package it.csi.siac.siaccespapp.frontend.ui.action.ajax.cespite;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.cespite.RisultatiRicercaCespiteAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.cespite.ElementoCespite;
@@ -22,7 +22,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  * @author elisa
  * @version 1.0.0 - 01-06-2018
  */
-public abstract class BaseRisultatiRicercaCespiteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoCespite, RisultatiRicercaCespiteAjaxModel, Cespite, RicercaSinteticaCespite, RicercaSinteticaCespiteResponse> {
+public abstract class BaseRisultatiRicercaCespiteAjaxAction extends PagedDataTableAjaxAction<ElementoCespite, RisultatiRicercaCespiteAjaxModel, Cespite, RicercaSinteticaCespite, RicercaSinteticaCespiteResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -42,12 +42,12 @@ public abstract class BaseRisultatiRicercaCespiteAjaxAction extends GenericRisul
 	}
 
 	@Override
-	protected ElementoCespite ottieniIstanza(Cespite e) throws FrontEndBusinessException {
+	protected ElementoCespite getInstance(Cespite e) throws FrontEndBusinessException {
 		return new ElementoCespite(e);
 	}
 
 	@Override
-	protected RicercaSinteticaCespiteResponse ottieniResponse(RicercaSinteticaCespite req) {
+	protected RicercaSinteticaCespiteResponse getResponse(RicercaSinteticaCespite req) {
 		return cespiteService.ricercaSinteticaCespite(req);
 	}
 

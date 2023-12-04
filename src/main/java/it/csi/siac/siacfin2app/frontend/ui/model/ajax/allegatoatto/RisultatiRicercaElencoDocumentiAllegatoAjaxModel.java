@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.allegatoatto;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
  * @version 1.0.0 10/09/2014
  *
  */
-public class RisultatiRicercaElencoDocumentiAllegatoAjaxModel extends GenericRisultatiRicercaAjaxModel<ElencoDocumentiAllegato> {
+public class RisultatiRicercaElencoDocumentiAllegatoAjaxModel extends PagedDataTableAjaxModel<ElencoDocumentiAllegato> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -3341073866091955070L;

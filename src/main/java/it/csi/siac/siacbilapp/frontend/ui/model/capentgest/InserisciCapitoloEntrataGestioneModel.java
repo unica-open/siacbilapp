@@ -57,6 +57,25 @@ public class InserisciCapitoloEntrataGestioneModel extends CapitoloEntrataModel 
 	// SIAC-4724
 	private TipoCapitolo tipoCapitoloCopia;
 	
+	//SIAC-7858 CM 19/05/2021 Inizio
+	private boolean flagEntrataDubbiaEsigFCDE;
+	
+	/**
+	 * @return the flagEntrataDubbiaEsigFCDE
+	 */
+	public boolean isFlagEntrataDubbiaEsigFCDE() {
+		return flagEntrataDubbiaEsigFCDE;
+	}
+
+	/**
+	 * @param flagEntrataDubbiaEsigFCDE the flagEntrataDubbiaEsigFCDE to set
+	 */
+	public void setFlagEntrataDubbiaEsigFCDE(boolean flagEntrataDubbiaEsigFCDE) {
+		this.flagEntrataDubbiaEsigFCDE = flagEntrataDubbiaEsigFCDE;
+	}
+	//SIAC-7858 CM 19/05/2021 Fine
+
+	
 	/** Costruttore vuoto di default */
 	public InserisciCapitoloEntrataGestioneModel() {
 		super();
@@ -233,10 +252,15 @@ public class InserisciCapitoloEntrataGestioneModel extends CapitoloEntrataModel 
 		capitoloEntrataGestione.setListaImportiCapitoloEG(getListaImportiCapitoloEG());
 		capitoloEntrataGestione.setClassificatoriGenerici(getListaClassificatoriGenerici());
 		
+		//SIAC-7858 CM 19/05/2021 Inizio
+		capitoloEntrataGestione.setFlagEntrataDubbiaEsigFCDE(isFlagEntrataDubbiaEsigFCDE());
+		//SIAC-7858 CM 19/05/2021 Fine
+		
 		request.setCapitoloEntrataGestione(capitoloEntrataGestione);
 		
 		return request;
 	}
+	
 	
 	/**
 	 * Restituisce una Request di tipo {@link RicercaPuntualeCapitoloEntrataGestione} a partire dal Model.
@@ -328,6 +352,10 @@ public class InserisciCapitoloEntrataGestioneModel extends CapitoloEntrataModel 
 		// SIAC-5820
 		capitoloEntrataGestione.setFlagAccertatoPerCassa(cap.getFlagAccertatoPerCassa());
 		
+		//SIAC-7858 CM 19/05/2021 Inizio
+		capitoloEntrataGestione.setFlagEntrataDubbiaEsigFCDE(cap.getFlagEntrataDubbiaEsigFCDE());
+		//SIAC-7858 CM 19/05/2021 Fine
+		
 		// Caricamento delle stringhe di utilita'
 		valorizzaStringheUtilita();
 	}
@@ -364,6 +392,10 @@ public class InserisciCapitoloEntrataGestioneModel extends CapitoloEntrataModel 
 		
 		// SIAC-5820
 		capitoloEntrataGestione.setFlagAccertatoPerCassa(cap.getFlagAccertatoPerCassa());
+		
+		//SIAC-7858 CM 19/05/2021 Inizio
+		capitoloEntrataGestione.setFlagEntrataDubbiaEsigFCDE(cap.getFlagEntrataDubbiaEsigFCDE());
+		//SIAC-7858 CM 19/05/2021 Fine
 		
 		// Caricamento delle stringhe di utilita'
 		valorizzaStringheUtilita();
@@ -454,21 +486,21 @@ public class InserisciCapitoloEntrataGestioneModel extends CapitoloEntrataModel 
 		capitoloEntrataGestione.setBilancio(getBilancio());
 		
 		List<ClassificatoreGenerico> listaClassificatoriGenerici = new ArrayList<ClassificatoreGenerico>();
-		listaClassificatoriGenerici.add(getClassificatoreGenerico1());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico2());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico3());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico4());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico5());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico6());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico7());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico8());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico9());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico10());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico11());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico12());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico13());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico14());
-		listaClassificatoriGenerici.add(getClassificatoreGenerico15());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico36());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico37());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico38());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico39());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico40());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico41());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico42());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico43());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico44());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico45());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico46());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico47());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico48());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico49());
+		listaClassificatoriGenerici.add(getClassificatoreGenerico50());
 		
 		// Impostazione dei classificatori
 		capitoloEntrataGestione.setTitoloEntrata(getTitoloEntrata());
@@ -488,6 +520,10 @@ public class InserisciCapitoloEntrataGestioneModel extends CapitoloEntrataModel 
 		// Impostazione degli importi
 		capitoloEntrataGestione.setImportiCapitoloEG(importiCapitoloEntrataGestione0);
 		capitoloEntrataGestione.setListaImportiCapitolo(getListaImportiCapitoloEG());
+		
+		//SIAC-7858 CM 19/05/2021 Inizio
+		capitoloEntrataGestione.setFlagEntrataDubbiaEsigFCDE(isFlagEntrataDubbiaEsigFCDE());
+		//SIAC-7858 CM 19/05/2021 Fine
 	}
 	
 }

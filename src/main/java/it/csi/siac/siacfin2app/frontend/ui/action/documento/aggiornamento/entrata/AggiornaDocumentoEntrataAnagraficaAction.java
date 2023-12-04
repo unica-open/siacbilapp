@@ -4,14 +4,10 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.documento.aggiornamento.entrata;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,7 +17,6 @@ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
@@ -39,8 +34,6 @@ import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
-import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
 import it.csi.siac.siacfinser.model.Accertamento;
@@ -94,9 +87,46 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 		// Ottengo i dati del documento
 		ottieniTipoDocumentoNotaCredito();
 		
+		//SIAC-7567
+		model.setProseguireConElaborazioneCheckPA(Boolean.FALSE);
+		
 		return ottieniDocumento();
 	}
 
+	/**
+	 * SIAC-7567
+	 * Aggiornamento dell'anagrafica del Documento di Entrata tramite chiamata asincrona
+	 * questo metodo cappello richiama la validazione dei campi e ne esegue i controlli
+	 * se superati si eseguono i controlli per il warning in caso di soggetto PA
+	 * se presenti messaggi, a seguito del warning, verranno resituti all'utente
+	 * in caso di validazione da parte dell'utente si prosegue con il giro solito
+	 * 
+	 * @return  una stringa corrispondente al risultato dell'invocazione
+	 */
+	public String aggiornamentoAnagraficaAsincrono() {
+		final String methodName = "aggiornamentoAnagraficaAsincrono";
+		
+		log.debug(methodName, "INIZIO validazione asincrona");
+		
+		//controllo se il debitore e' una PA
+		//se ci sono messaggi e non ho la conferma li devo resituire all'utente
+		if(checkWarningCigCupPA(model.getDocumento(), model.getSoggetto()) && Boolean.FALSE.equals(model.isProseguireConElaborazioneCheckPA())) {
+			return "validationError";
+		}
+		
+		//richiamo la validazione
+		validaCampi();
+		//non vado avanti se ho errori
+		if(model.getErrori().size() > 0 && !model.getErrori().isEmpty()) {
+			log.debug(methodName, "trovati " + model.getErrori().size() + " errori in validazione");
+			return "validationError";
+		}
+		
+		log.debug(methodName, "FINE validazione asincrona");
+		
+		return "validationSuccess";
+	}
+	
 	/**
 	 * Aggiornamento dell'anagrafica del Documento di Entrata.
 	 * 
@@ -104,20 +134,24 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 	 */
 	public String aggiornamentoAnagrafica() {
 		final String methodName = "aggiornamentoAnagrafica";
+		
 		AggiornaDocumentoDiEntrata request = model.creaRequestAggiornaDocumentoDiEntrata();
 		logServiceRequest(request);
 
 		AggiornaDocumentoDiEntrataResponse response = documentoEntrataService.aggiornaDocumentoDiEntrata(request);
 		logServiceResponse(response);
 
-		if (response.hasErrori()) {
+		if(response.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaDocumentoDiEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}
 
 		impostaInformazioneSuccesso();
+		//SIAC-7567
+		setInformazioniInSessionePerActionSuccessiva();		
+		//
 		DocumentoEntrata documento = response.getDocumentoEntrata();
 		log.debug(methodName, "Aggiornamento effettuato per Documento Entrata con uid: " + documento.getUid());
 
@@ -143,72 +177,6 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 		}
 	}
 
-	/**
-	 * Validazione dei campi.
-	 */
-	private void validaCampi() {
-		final String methodName = "validaCampi";
-
-		DocumentoEntrata documento = model.getDocumento();
-
-		// Validazione campi obbligatori
-		checkCondition(documento.getDataEmissione() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Data"), true);
-		checkCondition(documento.getImporto() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Importo"), true);
-		checkCondition(StringUtils.trimToNull(documento.getDescrizione()) != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Descrizione"));
-		checkCondition(documento.getCodiceBollo() != null && documento.getCodiceBollo().getUid() != 0,
-				ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Imposta di bollo"));
-
-		if (model.getDocumentoIncompleto()) {
-			// Se lo stato operativo e' INCOMPLETO, controllo il soggetto. Altrimenti posso evitarlo
-			checkNotNullNorEmpty(model.getSoggetto().getCodiceSoggetto(), "Codice");
-			validaSoggetto(true);
-		}
-
-		log.debug(methodName, "Campi obbligatorii: errori rilevati? " + hasErrori());
-
-		// La data di emissione del documento deve essere coerente con l'anno
-		// dello stesso
-		if (documento.getDataEmissione() != null) {
-			Integer annoEmissione = Integer.decode(FormatUtils.formatDateYear(documento.getDataEmissione()));
-			checkCondition(documento.getAnno().compareTo(annoEmissione) == 0, ErroreFin.LA_DATA_DEVE_ESSERE_COERENTE_CON_L_ANNO_DEL_DOCUMENTO.getErrore());
-		}
-
-		//SIAC-7193 e SIAC-7208
-		checkCondition(documento.getImporto().signum() > 0, ErroreCore.FORMATO_NON_VALIDO.getErrore("Importo", ": deve essere maggiore di zero"));
-		// Validazione degli importi
-		validazioneImporti(documento, BigDecimal.ZERO);
-		// Se la data di scadenza è presente, deve essere maggiore o uguale la
-		// data del documento
-		checkCondition(
-				documento.getDataEmissione() == null || documento.getDataScadenza() == null
-						|| documento.getDataScadenza().compareTo(documento.getDataEmissione()) >= 0,
-				ErroreFin.DATA_SCADENZA_ANTECEDENTE_ALLA_DATA_DEL_DOCUMENTO.getErrore());
-
-		checkCondition(!(documento.getDataRepertorio() != null ^ StringUtils.isNotEmpty(documento.getNumeroRepertorio())),
-				ErroreCore.FORMATO_NON_VALIDO.getErrore("Repertorio", "data e numero devono essere entrambi presenti o assenti"));
-		
-		// SIAC-5257
-		checkProtocollo(documento);
-		
-		// SIAC 6677
-				Date today = new Date();
-				Calendar todayCal = Calendar.getInstance();
-				todayCal.setTime(today);
-				todayCal.set(Calendar.HOUR_OF_DAY, 0);
-				todayCal.set(Calendar.MINUTE, 0);
-				todayCal.set(Calendar.SECOND, 0);
-				checkCondition(
-						documento.getDataOperazione() == null ||  documento.getDataOperazione().compareTo(todayCal.getTime()) <= 0,
-								ErroreFin.DATA_OPERAZIONE_SUCCESSIVA_ALLA_DATA_ODIERNA.getErrore());
-				
-				
-				//SIAC 6677 
-				 checkAndFillCodAvviso( documento);
-				
-				
-
-		log.debug(methodName, "Validazione logica: errori rilevati? " + hasErrori());
-	}
 
 	/**
 	 * Ottiene il documento dal servizio, e ne ricalcola i dati.
@@ -264,7 +232,7 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			String errorMessage = createErrorInServiceInvocationString(request, response);
+			String errorMessage = createErrorInServiceInvocationString(RicercaDettaglioDocumentoEntrata.class, response);
 			log.error(methodName, errorMessage);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMessage);
@@ -291,7 +259,7 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 			logServiceResponse(response);
 
 			if (response.hasErrori()) {
-				String errorMessage = createErrorInServiceInvocationString(request, response);
+				String errorMessage = createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response);
 				log.error(methodName, errorMessage);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(errorMessage);
@@ -301,6 +269,10 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 			listaModalitaPagamentoSoggetto = impostaListaModalitaPagamentoSoggetto(listaModalitaPagamentoSoggetto);
 			
 			model.impostaDatiSoggetto(response.getSoggetto(), listaSedeSecondariaSoggetto, listaModalitaPagamentoSoggetto);
+			
+			//SIAC-7567
+			//controllo che il soggetto sia o meno una PA
+			model.setCheckCanale(response.getSoggetto().isSoggettoPA());
 		}
 	}
 	
@@ -337,7 +309,7 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AttivaRegistrazioniContabiliEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -423,13 +395,13 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 		final String methodName = "ottieniRegistrazioniCollegateAlMovimentoGestione";
 		List<RegistrazioneMovFin> registrazioni = new ArrayList<RegistrazioneMovFin>();
 		Accertamento accertamento = subdocumentoEntrata.getAccertamento();
-		if(accertamento == null || accertamento.getAnnoMovimento() == 0 || accertamento.getNumero() == null) {
+		if(accertamento == null || accertamento.getAnnoMovimento() == 0 || accertamento.getNumeroBigDecimal() == null) {
 			//la quota, per motivi ignoti (potrebbe essere una NCD) non ha l'accertamento: non puo' esistere una registrazione collegata all'accertamento della quota. Passo alla prossima quota.
 			return registrazioni;
 		}
 		
 		//chiamo il servizio di ricerca registrazioni contabili
-		RicercaSinteticaRegistrazioneMovFin req = model.creaRequestRicercaSinteticaRegistrazioneMovFin(accertamento.getAnnoMovimento(), accertamento.getNumero(), subdocumentoEntrata.getSubAccertamento() != null? subdocumentoEntrata.getSubAccertamento().getNumero() : null, ottieniTipoEventoAccertamento());
+		RicercaSinteticaRegistrazioneMovFin req = model.creaRequestRicercaSinteticaRegistrazioneMovFin(accertamento.getAnnoMovimento(), accertamento.getNumeroBigDecimal(), subdocumentoEntrata.getSubAccertamento() != null? subdocumentoEntrata.getSubAccertamento().getNumeroBigDecimal() : null, ottieniTipoEventoAccertamento());
 		RicercaSinteticaRegistrazioneMovFinResponse res = registrazioneMovFinService.ricercaSinteticaRegistrazioneMovFin(req);
 		registrazioni = res.getRegistrazioniMovFin();
 		
@@ -439,7 +411,7 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 					.append("Impossibile reperire la registrazione associata all'accertamento ")
 					.append( accertamento.getAnnoMovimento())
 					.append("/")
-					.append(accertamento.getNumero())
+					.append(accertamento.getNumeroBigDecimal())
 					.append(". La ricerca si e' conclusa")
 					.append(res.hasErrori() ? " con " : " senza ")
 					.append("errori.");
@@ -469,7 +441,7 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				log.info(methodName, createErrorInServiceInvocationString(request, response));
+				log.info(methodName, createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 				return null;
 			}
 			listaTipoEvento = response.getCodifiche(TipoEvento.class);
@@ -483,33 +455,6 @@ public class AggiornaDocumentoEntrataAnagraficaAction extends AggiornaDocumentoE
 		}
 		
 		return null;
-	}
-	
-	
-	/**
-	 * Controlla che se presente il codice Avviso pago PA non superi le 18 cifre
-	 * Nel caso le cifre fossero minori di 18 applica un fill left
-	 * @param documento
-	 */
-	private void checkAndFillCodAvviso(DocumentoEntrata documento){
-		
-		checkCondition(documento.getCodAvvisoPagoPA() == null || documento.getCodAvvisoPagoPA().length()==0 ||
-		isNumeric(documento.getCodAvvisoPagoPA()),
-		ErroreFin.COD_AVVISO_PAGO_PA_NUMERICO.getErrore());
-		
-		
-		int maxLength = Constanti.CODICE_AVVISO_PAGO_PA_LENGTH;
-		checkCondition(documento.getCodAvvisoPagoPA() == null || documento.getCodAvvisoPagoPA().length() <= maxLength,
-				ErroreFin.COD_AVVISO_PAGO_PA_MAXLENGTH.getErrore());
-		if(documento.getCodAvvisoPagoPA()!= null && documento.getCodAvvisoPagoPA().length()>0 && documento.getCodAvvisoPagoPA().length()< maxLength){
-			int diff = maxLength -documento.getCodAvvisoPagoPA().length();
-			StringBuilder codAvviso = new StringBuilder();
-			for(int i=0; i<diff; i++){
-				codAvviso.append("0");
-			}
-			codAvviso.append(documento.getCodAvvisoPagoPA());
-			documento.setCodAvvisoPagoPA(codAvviso.toString());
-		}	
 	}
 	
 }

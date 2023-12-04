@@ -12,20 +12,20 @@ import java.util.List;
 
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
-import it.csi.siac.siaccorser.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.util.comparator.ComparatorUtil;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoElencoDocumenti;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
+import it.csi.siac.siacfinser.frontend.webservice.msg.AccreditoTipoOilIsPagoPA;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisorioDiCassaPerChiave;
 import it.csi.siac.siacfinser.model.Impegno;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.ric.RicercaAccertamentoK;
 import it.csi.siac.siacfinser.model.ric.RicercaImpegnoK;
@@ -52,7 +52,6 @@ public class AssociaMovimentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
 	private SubdocumentoEntrata subdocumentoEntrata;
 	private ContoTesoreria contoTesoreria;
 
-	private VoceMutuo voceMutuo;
 	
 	private Integer row;
 	
@@ -97,16 +96,12 @@ public class AssociaMovimentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
 		this.listaSubdocumentoEntrata = listaSubdocumentoEntrata;
 	}
 	
-	/**
-	 * @return listaContoTesoreria the listaContoTesoreria to set
-	 */
+	@Override
 	public List<ContoTesoreria> getListaContoTesoreria() {
 		return listaContoTesoreria != null ? listaContoTesoreria: new ArrayList<ContoTesoreria>();
 	}
 	
-	/**
-	 * @param listaContoTesoreria the listaContoTesoreria to set
-	 */
+	@Override
 	public void setListaContoTesoreria(List<ContoTesoreria> listaContoTesoreria) {
 		this.listaContoTesoreria = listaContoTesoreria;
 	}
@@ -151,20 +146,6 @@ public class AssociaMovimentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
 	 */
 	public void setContoTesoreria(ContoTesoreria contoTesoreria) {
 		this.contoTesoreria = contoTesoreria;
-	}
-
-	/**
-	 * @return the voceMutuo
-	 */
-	public VoceMutuo getVoceMutuo() {
-		return voceMutuo;
-	}
-
-	/**
-	 * @param voceMutuo the voceMutuo to set
-	 */
-	public void setVoceMutuo(VoceMutuo voceMutuo) {
-		this.voceMutuo = voceMutuo;
 	}
 
 	/**
@@ -276,9 +257,9 @@ public class AssociaMovimentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
 	 * Aggiungi il subdocumento spesa presente nelmode alla lista dei subdocumenti spesa del model.s
 	 */
 	public void aggiungiSubdocumentoSpesaAllaLista() {
-		Impegno movimentoGestione = getSubdocumentoSpesa().getSubImpegno() != null && getSubdocumentoSpesa().getSubImpegno().getNumero() != null ? getSubdocumentoSpesa().getSubImpegno() : getSubdocumentoSpesa().getImpegno();
+		Impegno movimentoGestione = getSubdocumentoSpesa().getSubImpegno() != null && getSubdocumentoSpesa().getSubImpegno().getNumeroBigDecimal() != null ? getSubdocumentoSpesa().getSubImpegno() : getSubdocumentoSpesa().getImpegno();
 		getSubdocumentoSpesa().setSiopeTipoDebito(movimentoGestione.getSiopeTipoDebito());
-		SiopeAssenzaMotivazione sam = ComparatorUtils.searchByUid(getListaSiopeAssenzaMotivazione(), getSubdocumentoSpesa().getSiopeAssenzaMotivazione());
+		SiopeAssenzaMotivazione sam = ComparatorUtil.searchByUid(getListaSiopeAssenzaMotivazione(), getSubdocumentoSpesa().getSiopeAssenzaMotivazione());
 		getSubdocumentoSpesa().setSiopeAssenzaMotivazione(sam);
 		getListaSubdocumentoSpesa().add(0, getSubdocumentoSpesa());
 	}
@@ -326,15 +307,15 @@ public class AssociaMovimentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
 		RicercaAccertamentoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaAccertamentoPerChiaveOttimizzato.class, 1);
 		request.setEnte(getEnte());
 		//carico i sub solo se ho il numero del sub valorizzato
-		request.setCaricaSub(getSubdocumentoEntrata() != null && getSubdocumentoEntrata().getSubAccertamento() != null && getSubdocumentoEntrata().getSubAccertamento().getNumero() != null);
+		request.setCaricaSub(getSubdocumentoEntrata() != null && getSubdocumentoEntrata().getSubAccertamento() != null && getSubdocumentoEntrata().getSubAccertamento().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		if(getSubdocumentoEntrata() != null && getSubdocumentoEntrata().getAccertamento() != null) {
 			RicercaAccertamentoK prak = new RicercaAccertamentoK();
 			prak.setAnnoEsercizio(getAnnoEsercizioInt());
 			prak.setAnnoAccertamento(Integer.valueOf(getSubdocumentoEntrata().getAccertamento().getAnnoMovimento()));
-			prak.setNumeroAccertamento(getSubdocumentoEntrata().getAccertamento().getNumero());
-			prak.setNumeroSubDaCercare(getSubdocumentoEntrata().getSubAccertamento() != null ? getSubdocumentoEntrata().getSubAccertamento().getNumero() : null);
+			prak.setNumeroAccertamento(getSubdocumentoEntrata().getAccertamento().getNumeroBigDecimal());
+			prak.setNumeroSubDaCercare(getSubdocumentoEntrata().getSubAccertamento() != null ? getSubdocumentoEntrata().getSubAccertamento().getNumeroBigDecimal() : null);
 			request.setpRicercaAccertamentoK(prak);
 		}
 		
@@ -360,15 +341,15 @@ public class AssociaMovimentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
 		RicercaImpegnoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaImpegnoPerChiaveOttimizzato.class, 1);
 		request.setEnte(getEnte());
 		//carico i sub solo se ho il numero del sub valorizzato
-		request.setCaricaSub(getSubdocumentoSpesa() != null && getSubdocumentoSpesa().getSubImpegno() != null && getSubdocumentoSpesa().getSubImpegno().getNumero() != null);
+		request.setCaricaSub(getSubdocumentoSpesa() != null && getSubdocumentoSpesa().getSubImpegno() != null && getSubdocumentoSpesa().getSubImpegno().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		if(getSubdocumentoSpesa() != null && getSubdocumentoSpesa().getImpegno() != null) {
 			RicercaImpegnoK prik = new RicercaImpegnoK();
 			prik.setAnnoEsercizio(getAnnoEsercizioInt());
 			prik.setAnnoImpegno(Integer.valueOf(getSubdocumentoSpesa().getImpegno().getAnnoMovimento()));
-			prik.setNumeroImpegno(getSubdocumentoSpesa().getImpegno().getNumero());
-			prik.setNumeroSubDaCercare(getSubdocumentoSpesa().getSubImpegno() != null ? getSubdocumentoSpesa().getSubImpegno().getNumero() : null);
+			prik.setNumeroImpegno(getSubdocumentoSpesa().getImpegno().getNumeroBigDecimal());
+			prik.setNumeroSubDaCercare(getSubdocumentoSpesa().getSubImpegno() != null ? getSubdocumentoSpesa().getSubImpegno().getNumeroBigDecimal() : null);
 			request.setpRicercaImpegnoK(prik);
 		}
 		
@@ -417,6 +398,11 @@ public class AssociaMovimentoAllegatoAttoModel extends GenericAssociaAllegatoAtt
 		request.setEnte(getEnte());
 		request.setRichiedente(getRichiedente());
 		return request;
+	}
+
+	//SIAC-8853
+	public AccreditoTipoOilIsPagoPA creaRequestAccreditoTipoOilIsPagoPA() {
+		return creaRequest(AccreditoTipoOilIsPagoPA.class);
 	}
 
 }

@@ -13,6 +13,7 @@ var Variazioni = Variazioni || {};
 var DefinisciVariazioni = (function(varImp) {
     "use strict";
 	var exports = {};
+	var $divOverlay = $('.overlay-on-submit');
 
     exports.leggiCapitoliNellaVariazione = leggiCapitoliNellaVariazione;
     exports.definisciVariazione = definisciVariazione;
@@ -350,7 +351,7 @@ var DefinisciVariazioni = (function(varImp) {
                    "label" : "Rimani sulla pagina"
                    , "class" : "btn"
                    , "callback" : function() {
-                	   $(document.body).overlay('hide'); 
+                	   $divOverlay.overlay('hide'); 
                 	   setTimeout(ottieniResponse,30000,operazione, 50, 30000);
                    }
                }]);
@@ -366,35 +367,36 @@ var DefinisciVariazioni = (function(varImp) {
 
             alertErrori.slideUp();
             if (impostaDatiNegliAlert(data.errori,alertErrori)) {
-            	$(document.body).overlay('hide');
+            	$divOverlay.overlay('hide');
                 $('#bottoni').find('button').removeAttr('disabled');
                 $("#spanPulsanteDefinisciVariazione").removeClass("hide");
                 return;
             }
 
             if(data.isAsyncResponsePresent === undefined){
-            	$(document.body).overlay('hide');
+            	$divOverlay.overlay('hide');
                 impostaDatiNegliAlert(['COR_ERR_0001 - Errore di sistema: impossibile ottenere la risposta asincrona.'], alertErrori);
                 $("#spanPulsanteDefinisciVariazione").removeClass("hide");
                 return;
             }
 
             if(!data.isAsyncResponsePresent){
-                if(tentativiRimanenti<=0){
-                	$(document.body).overlay('hide');
+               /* SIAC-8261 
+				if(tentativiRimanenti<=0){
+                	$divOverlay.overlay('hide');
                     showDialogAbbandonoPaginaSuServizioAsincrono(operazione);
                     return;
-                }
+                }*/
 
-                setTimeout(ottieniResponse, timeout, operazione, --tentativiRimanenti, timeout);
+                setTimeout(ottieniResponse, timeout, operazione, /*--*/tentativiRimanenti, timeout);
                 return;
             }
            
-            $(document.body).overlay('hide');
+            $divOverlay.overlay('hide');
             $('#bottoni').find('button').removeAttr('disabled');
 
             impostaDatiNegliAlert(data.messaggi, alertMessaggi);
-            impostaDatiNegliAlert(data.informazioni, alertInformazioni,undefined, false);
+            impostaDatiNegliAlert(data.informazioni, alertInformazioni);
 
         });
     }
@@ -402,20 +404,18 @@ var DefinisciVariazioni = (function(varImp) {
     function definisciVariazione(){
     
         $("#spanPulsanteDefinisciVariazione").addClass("hide");
-        impostaDatiNegliAlert(["COR_INF_0019 - L'elaborazione e' stata attivata."], $("#INFORMAZIONI"));
-        $(document.body).overlay('show');
+       //impostaDatiNegliAlert(["COR_INF_0019 - L'elaborazione e' stata attivata."], $("#INFORMAZIONI"));
+        $divOverlay.overlay('show');
         
         return $.postJSON('effettuaDefinisciVariazioneImporti.do', qualify($('form').serializeObject()), function(data) {
             var alertErrori = $('#ERRORI');
             alertErrori.slideUp();
             if (impostaDatiNegliAlert(data.errori,alertErrori)) {
-            	var alertInformazioni = $('#INFORMAZIONI');
-            	$(document.body).overlay('hide');
+            	$divOverlay.overlay('hide');
             	$("#spanPulsanteDefinisciVariazione").removeClass("hide");
-            	alertInformazioni.slideUp();
-            	alertInformazioni.find("ul").find("li").remove();
                 return;
             }
+			impostaDatiNegliAlert(data.informazioni,$('#INFORMAZIONI'));
             ottieniResponse("definisci", 10, 10000);
         });
     }

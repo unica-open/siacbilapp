@@ -34,7 +34,7 @@ import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.causale.GenericCausaleModel;
@@ -444,7 +444,7 @@ public abstract class GenericCausaleAction<M extends GenericCausaleModel> extend
 	 * @return <code>true</code> se il movimento &eacute; presente; <code>false</code> in caso contrario
 	 */
 	protected boolean checkMovimentoGestioneEsistente(MovimentoGestione movimentoGestione) {
-		return movimentoGestione != null && (movimentoGestione.getAnnoMovimento() != 0 || movimentoGestione.getNumero() != null);
+		return movimentoGestione != null && (movimentoGestione.getAnnoMovimento() != 0 || movimentoGestione.getNumeroBigDecimal() != null);
 	}
 	
 	/**

@@ -216,7 +216,7 @@ SPDX-License-Identifier: EUPL-1.2
 			</li>
 			<li>
 				<dfn>Documento pagato</dfn>
-				<dl><s:property value="isDocumentoPagatoIncassato" escape="false"/>&nbsp;</dl>
+				<dl><s:property value="isDocumentoPagatoIncassato" escapeHtml="false"/>&nbsp;</dl>
 			</li>
 			<li>
 				<dfn>Note pagamento</dfn>

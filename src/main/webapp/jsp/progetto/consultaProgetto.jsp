@@ -65,6 +65,62 @@ SPDX-License-Identifier: EUPL-1.2
 							</dl>
 						</div>
 					</fieldset>
+					
+					<s:if test="not progetto.elencoMutuiAssociati.empty">
+							<div class="accordion-group">
+								<div class="" id="accordionPadre">
+								<div class="accordion-heading">
+									<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordionPadre" href="#elencoMutui">
+									Mutui&nbsp;<span class="icon">&nbsp;</span>
+									</a>
+								</div>
+								
+								
+								<div id="elencoMutui" class="accordion-body collapse">
+									<div class="accordion-inner">
+										<fieldset class="form-horizontal">
+											<h4 class="step-pane">Elenco Mutui Associati al progetto</h4>
+											<table id="tabellaMutuiAssociatiAlProgetto" class="table table-hover tab_left dataTable" summary="....">
+												<thead>
+													<tr>
+														<th scope="col">Numero Mutuo</th>
+														<th scope="col">Tipo Tasso</th>
+														<th scope="col">Stato</th>
+														<th scope="col">Periodo</th>
+														<th scope="col">Tasso Interesse</th>
+														<th scope="col">Euribor</th>
+														<th scope="col">Spread</th>
+														<th scope="col">Istituto di credito</th>
+														<th scope="col">Importo Mutuo</th>
+													</tr>
+												</thead>
+												<tbody>
+													<s:iterator value="progetto.elencoMutuiAssociati" var="mutuo">
+														<tr>
+															<td class=""><s:property value="mutuo.numero"/></td>
+															<td class=""><s:property value="mutuo.tipoTasso.descrizione"/></td>
+															<td class=""><s:property value="mutuo.statoMutuo.descrizione"/></td>
+															<td class=""><s:property value="mutuo.periodoRimborso.codice"/> - <s:property value="mutuo.periodoRimborso.descrizione"/></td>
+															<td class=""><s:property value="mutuo.tassoInteresse"/></td>
+															<td class=""><s:property value="mutuo.tassoInteresseEuribor"/></td>
+															<td class=""><s:property value="mutuo.tassoInteresseSpread"/></td>
+															<td class=""><s:property value="mutuo.soggetto.codiceDenominazione"/></td>
+															<td class=""><s:property value="mutuo.sommaMutuataIniziale"/></td>
+														</tr>
+													</s:iterator>
+												</tbody>
+											</table>
+											
+										</fieldset>
+									</div>
+								</div>
+							</div>
+					</div>
+					
+					</s:if>
+					
+					<br>
+					
 					<s:include value="/jsp/progetto/include/consultaCronoprogrammaDiGestioneAccordion.jsp" />
 					
 					<div class="accordion" id="accordionPadre">
@@ -220,7 +276,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}progetto/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/progetto/consulta.js"></script>
 
 </body>
 </html>

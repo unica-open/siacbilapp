@@ -134,7 +134,7 @@ public abstract class BaseInserisciAggiornaPrimaNotaIntegrataBaseAction <E exten
 		
 		if(res.hasErrori() && !res.verificatoErrore(ErroreCore.ENTITA_INESISTENTE)) {
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioPrimaNotaIntegrata.class, res));
 		}
 		
 		// Non ho errori. Controllo di avere la prima nota
@@ -263,7 +263,7 @@ public abstract class BaseInserisciAggiornaPrimaNotaIntegrataBaseAction <E exten
 			// Controllo gli errori
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaModulareCausale.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);

@@ -39,4 +39,11 @@ public class AggiornaPrimaNotaLiberaGSAModel extends AggiornaPrimaNotaLiberaBase
 	public boolean isValidazione() {
 		return StatoOperativoPrimaNota.PROVVISORIO.equals(getPrimaNotaLibera().getStatoOperativoPrimaNota());
 	}
+	
+	//SIAC-8134 per ora la GSA non può inserire e aggiornare prime note con le strutture
+	@Override
+	protected void popolaStrutturaCompetente() {
+		// nothing to do
+	}
+	
 }

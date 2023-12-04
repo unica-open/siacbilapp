@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.stampe.RisultatiRicercaRendicontoCassaDaStampareAjaxModel;
@@ -30,7 +30,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaRendicontoCassaDaStampareAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoMovimentoStampa,
+public class RisultatiRicercaRendicontoCassaDaStampareAjaxAction extends PagedDataTableAjaxAction<ElementoMovimentoStampa,
 		RisultatiRicercaRendicontoCassaDaStampareAjaxModel, Movimento, RicercaSinteticaRendicontoCassaDaStampare, RicercaSinteticaRendicontoCassaDaStampareResponse> {
 
 	/** Per la serializzazione */
@@ -55,7 +55,7 @@ public class RisultatiRicercaRendicontoCassaDaStampareAjaxAction extends Generic
 	}
 
 	@Override
-	protected ElementoMovimentoStampa ottieniIstanza(Movimento e) throws FrontEndBusinessException {
+	protected ElementoMovimentoStampa getInstance(Movimento e) throws FrontEndBusinessException {
 		return e == null
 			? null
 			: e.getRendicontoRichiesta() != null
@@ -64,7 +64,7 @@ public class RisultatiRicercaRendicontoCassaDaStampareAjaxAction extends Generic
 	}
 
 	@Override
-	protected RicercaSinteticaRendicontoCassaDaStampareResponse ottieniResponse(RicercaSinteticaRendicontoCassaDaStampare req) {
+	protected RicercaSinteticaRendicontoCassaDaStampareResponse getResponse(RicercaSinteticaRendicontoCassaDaStampare req) {
 		return stampaCassaEconomaleService.ricercaSinteticaRendicontoCassaDaStampare(req);
 	}
 

@@ -13,12 +13,12 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaTipoComponenteImpo
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.AmbitoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.FonteFinanziariaComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ImpegnabileComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MomentoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.SottotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
-import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
 
 public class AggiornaComponenteCapitoloModel extends ComponenteCapitoloModel{
 
@@ -36,7 +36,9 @@ public class AggiornaComponenteCapitoloModel extends ComponenteCapitoloModel{
 	private List<FonteFinanziariaComponenteImportiCapitolo> listaFonteFinanziamento = new ArrayList<FonteFinanziariaComponenteImportiCapitolo>();
 	private List<MomentoComponenteImportiCapitolo> listaMomento = new ArrayList<MomentoComponenteImportiCapitolo>();
 	private List<PropostaDefaultComponenteImportiCapitolo> listaPrevisione = new ArrayList<PropostaDefaultComponenteImportiCapitolo>();
-	private List<TipoGestioneComponenteImportiCapitolo> listaGestione = new ArrayList<TipoGestioneComponenteImportiCapitolo>();
+	//SIAC-7349
+	//private List<TipoGestioneComponenteImportiCapitolo> listaGestione = new ArrayList<TipoGestioneComponenteImportiCapitolo>();
+	private List<ImpegnabileComponenteImportiCapitolo> listaImpegnabile = new ArrayList<ImpegnabileComponenteImportiCapitolo>();
 	
 	/** Costruttore vuoto di default */
 	public AggiornaComponenteCapitoloModel() {
@@ -130,12 +132,28 @@ public class AggiornaComponenteCapitoloModel extends ComponenteCapitoloModel{
 		this.listaPrevisione = listaPrevisione;
 	}
 
-	public List<TipoGestioneComponenteImportiCapitolo> getListaGestione() {
-		return listaGestione;
+//	public List<TipoGestioneComponenteImportiCapitolo> getListaGestione() {
+//		return listaGestione;
+//	}
+//
+//	public void setListaGestione(List<TipoGestioneComponenteImportiCapitolo> listaGestione) {
+//		this.listaGestione = listaGestione;
+//	}
+	
+	
+
+	/**
+	 * @return the listaImpegnabile
+	 */
+	public List<ImpegnabileComponenteImportiCapitolo> getListaImpegnabile() {
+		return listaImpegnabile;
 	}
 
-	public void setListaGestione(List<TipoGestioneComponenteImportiCapitolo> listaGestione) {
-		this.listaGestione = listaGestione;
+	/**
+	 * @param listaImpegnabile the listaImpegnabile to set
+	 */
+	public void setListaImpegnabile(List<ImpegnabileComponenteImportiCapitolo> listaImpegnabile) {
+		this.listaImpegnabile = listaImpegnabile;
 	}
 
 	// FIXME 

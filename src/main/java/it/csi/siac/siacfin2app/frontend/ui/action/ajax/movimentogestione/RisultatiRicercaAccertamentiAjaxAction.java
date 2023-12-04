@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -31,7 +31,7 @@ import it.csi.siac.siacfinser.model.Accertamento;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaAccertamentiAjaxAction extends GenericRisultatiRicercaAjaxAction<Accertamento, 
+public class RisultatiRicercaAccertamentiAjaxAction extends PagedDataTableAjaxAction<Accertamento, 
 	RisultatiRicercaAccertamentoAjaxModel, Accertamento, RicercaSinteticaAccertamentiSubAccertamenti, RicercaSinteticaAccertamentiSubAccertamentiResponse> {
 	
 	/** Per la serializzazione */
@@ -59,12 +59,12 @@ public class RisultatiRicercaAccertamentiAjaxAction extends GenericRisultatiRice
 	
 	
 	@Override
-	protected Accertamento ottieniIstanza(Accertamento e) throws FrontEndBusinessException {
+	protected Accertamento getInstance(Accertamento e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaSinteticaAccertamentiSubAccertamentiResponse ottieniResponse(RicercaSinteticaAccertamentiSubAccertamenti request) {
+	protected RicercaSinteticaAccertamentiSubAccertamentiResponse getResponse(RicercaSinteticaAccertamentiSubAccertamenti request) {
 		return movimentoGestioneService.ricercaSinteticaAccertamentiSubAccertamenti(request);
 	}
 

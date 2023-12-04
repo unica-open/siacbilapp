@@ -78,7 +78,15 @@ public class DettaglioVariazioniCapitoloModel extends GenericBilancioModel {
 		req.setBilancio(getBilancio());
 		req.setCapitolo(getCapitolo());
 		req.setEnte(getEnte());
-		req.setSegnoImportiVariazione(Boolean.TRUE.equals(getVariazioneInAumento()) ? SegnoImporti.POSITIVO : SegnoImporti.NEGATIVO);
+		//CONTABILIA-285
+		if(getVariazioneInAumento()== null){
+			req.setSegnoImportiVariazione(SegnoImporti.NULLO);
+		}else{
+			req.setSegnoImportiVariazione(Boolean.TRUE.equals(getVariazioneInAumento()) ? SegnoImporti.POSITIVO : SegnoImporti.NEGATIVO);
+		}
+		
+		
+		
 		
 		req.setParametriPaginazione(creaParametriPaginazione(5));
 		

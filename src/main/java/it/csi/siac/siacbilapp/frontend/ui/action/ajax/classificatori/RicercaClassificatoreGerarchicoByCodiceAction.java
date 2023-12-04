@@ -89,7 +89,7 @@ public class RicercaClassificatoreGerarchicoByCodiceAction extends GenericBilanc
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				log.debug(methodName, createErrorInServiceInvocationString(request, response));
+				log.debug(methodName, createErrorInServiceInvocationString(LeggiClassificatoreGerarchicoByCodiceAndTipoAndAnno.class, response));
 				return INPUT;
 			}
 			if(response.getClassificatore() == null) {

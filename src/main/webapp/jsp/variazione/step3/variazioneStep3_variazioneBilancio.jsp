@@ -34,7 +34,7 @@ SPDX-License-Identifier: EUPL-1.2
 						</ul>
 					</div>
 					<div class="step-content">
-						<div class="step-pane active" id="step3">
+						<div class="step-pane active overlay-on-submit" id="step3">
 							
 							<s:include value="/jsp/variazione/include/associaCapitoliAggiornamentoVariazione.jsp" />
 						 <p id="bottoniInserimento" class="margin-large">
@@ -56,12 +56,12 @@ SPDX-License-Identifier: EUPL-1.2
 	<div id="iframeContainer"></div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}variazioni/stampaVariazioni.js"></script>
-	<script type="text/javascript" src="${jspath}ztree/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricercaProvvedimento_collapse.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/variazioni.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/capitolo.variazione.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/aggiorna.importi.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/stampaVariazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricercaProvvedimento_collapse.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/capitolo.variazione.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/aggiorna.importi.js"></script>
 
 </body>
 

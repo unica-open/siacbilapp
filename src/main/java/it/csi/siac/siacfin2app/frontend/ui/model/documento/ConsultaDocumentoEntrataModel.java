@@ -15,11 +15,13 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocum
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioQuotaEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioSubdocumentoIvaEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaModulareDocumentoEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOrdiniDocumento;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrataModelDetail;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
+import it.csi.siac.siacfin2ser.model.Ordine;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrataModelDetail;
 import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
@@ -73,6 +75,11 @@ public class ConsultaDocumentoEntrataModel extends GenericDocumentoModel{
 	private boolean listaQuoteIvaCaricata;
 	private boolean listaOnereCaricata;
 	private boolean listaDocumentiCollegatiCaricata;
+	//SIAC-7562 - 25/06/2020 - CM e GM
+	private String statoSDIdescrizione;
+	//SIAC-7557
+	private List<Ordine> listaOrdine = new ArrayList<Ordine>();
+	
 
 	/** Costruttore vuoto di default */
 	public ConsultaDocumentoEntrataModel(){
@@ -427,7 +434,6 @@ public class ConsultaDocumentoEntrataModel extends GenericDocumentoModel{
 		}
 		return listaQuoteConDatiIva;
 	}
-	
 
 	/**
 	 * @return the uidDocumentoIvaSuInteroDocumento
@@ -489,7 +495,8 @@ public class ConsultaDocumentoEntrataModel extends GenericDocumentoModel{
 			SubdocumentoEntrataModelDetail.AccertamentoSubaccertamento,
 			SubdocumentoEntrataModelDetail.AttoAmm,
 			SubdocumentoEntrataModelDetail.Ordinativo,
-			SubdocumentoEntrataModelDetail.ProvvisorioDiCassa);
+			SubdocumentoEntrataModelDetail.ProvvisorioDiCassa,
+			SubdocumentoEntrataModelDetail.Predocumento);
 		
 		return request;
 	}
@@ -554,6 +561,18 @@ public class ConsultaDocumentoEntrataModel extends GenericDocumentoModel{
 		
 		return request;
 	}
+	
+	//SIAC-7557
+	/**
+	 * Crea una request per il servizio di {@link RicercaOrdiniDocumento}.
+	 * 
+	 * @return la request creata
+	 */
+	public RicercaOrdiniDocumento creaRequestRicercaOrdiniDocumento() {
+		RicercaOrdiniDocumento request = creaRequest(RicercaOrdiniDocumento.class);
+		request.setDocumentoEntrata(getDocumento());
+		return request;
+	}
 
 	/**
 	 * Crea una request per il servizio di {@link RicercaAccertamentoPerChiaveOttimizzato}.
@@ -566,7 +585,7 @@ public class ConsultaDocumentoEntrataModel extends GenericDocumentoModel{
 		RicercaAccertamentoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaAccertamentoPerChiaveOttimizzato.class);
 		
 		request.setEnte(getEnte());
-		request.setCaricaSub(subAccertamento != null && subAccertamento.getNumero() != null);
+		request.setCaricaSub(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -580,8 +599,8 @@ public class ConsultaDocumentoEntrataModel extends GenericDocumentoModel{
 		Bilancio bilancio = accertamento.getCapitoloEntrataGestione() != null && accertamento.getCapitoloEntrataGestione().getBilancio() != null? accertamento.getCapitoloEntrataGestione().getBilancio() : getBilancio();
 		pRicercaAccertamentoK.setAnnoEsercizio(Integer.valueOf(bilancio.getAnno()));
 
-		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
-		pRicercaAccertamentoK.setNumeroSubDaCercare(subAccertamento != null ? subAccertamento.getNumero() : null);
+		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
+		pRicercaAccertamentoK.setNumeroSubDaCercare(subAccertamento != null ? subAccertamento.getNumeroBigDecimal() : null);
 		request.setpRicercaAccertamentoK(pRicercaAccertamentoK);
 		
 		// Non richiedo NESSUN importo derivato.
@@ -664,5 +683,27 @@ public class ConsultaDocumentoEntrataModel extends GenericDocumentoModel{
 		request.setSubdocumentoIvaEntrata(subdocumentoIvaEntrata);
 		return request;
 	}
+
+	//SIAC-7562 - 25/06/2020 - CM e GM
+	public String getStatoSDIdescrizione() {
+		return statoSDIdescrizione;
+	}
+
+	public void setStatoSDIdescrizione(String statoSDIdescrizione) {
+		this.statoSDIdescrizione = statoSDIdescrizione;
+	}
 		
+	/**
+	 * @return the listaOrdine
+	 */
+	public List<Ordine> getListaOrdine() {
+		return listaOrdine;
+	}
+
+	/**
+	 * @param listaOrdine the listaOrdine to set
+	 */
+	public void setListaOrdine(List<Ordine> listaOrdine) {
+		this.listaOrdine = listaOrdine != null ? listaOrdine : new ArrayList<Ordine>();
+	}
 }

@@ -20,9 +20,9 @@ import org.springframework.core.GenericTypeResolver;
 
 import it.csi.siac.siacbilapp.BaseJUnit4TestCase;
 import it.csi.siac.siacbilapp.frontend.ui.util.advice.TimingAdvice;
-import it.csi.siac.siacbilapp.frontend.ui.util.proxy.LoggingHandler;
-import it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacHandlerResolver;
-import it.csi.siac.siacbilapp.frontend.ui.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean;
+import it.csi.siac.siaccommonapp.util.proxy.LoggingHandler;
+import it.csi.siac.siaccommonapp.util.proxy.SiacHandlerResolver;
+import it.csi.siac.siaccommonapp.util.proxy.SiacJaxWsPortAdvisedProxyFactoryBean;
 
 /**
  * Classe base di test per i serviz&icirc;.

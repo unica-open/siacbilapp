@@ -35,7 +35,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<div class="control-group" data-registro="" data-liquidazione="" data-riepilogo="">
 										<label for="annoEsercizioStampaIva" class="control-label">Anno esercizio *</label>
 										<div class="controls">
-											<s:textfield id="annoEsercizioStampaIva" name="annoEsercizioInt" cssClass="lbTextSmall span1 soloNumeri" maxLength="4" required="true" disabled="true" data-maintain="" />
+											<s:textfield id="annoEsercizioStampaIva" name="annoEsercizioInt" cssClass="lbTextSmall span1 soloNumeri" maxlength="4" required="true" disabled="true" data-maintain="" />
 											<s:hidden name="stampaIva.annoEsercizio" value="%{annoEsercizioInt}" />
 										</div>
 									</div>
@@ -113,8 +113,8 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}attivitaIva/stampe/stampeIva.js"></script>
-	<script type="text/javascript" src="${jspath}attivitaIva/stampe/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attivitaIva/stampe/stampeIva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attivitaIva/stampe/ricerca.js"></script>
 
 </body>
 </html>

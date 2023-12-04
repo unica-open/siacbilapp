@@ -9,7 +9,14 @@ SPDX-License-Identifier: EUPL-1.2
 	<h4>
 		Inserimento: <s:property value="documento.dataCreazioneDocumento"/> (<s:property value="documento.loginCreazione"/>) 
 		<br>
-		Stato: <s:property value="documento.statoOperativoDocumento.descrizione"/> dal <s:property value="documento.dataInizioValiditaStato"/>
+		Stato: <s:property value="documento.statoOperativoDocumento.descrizione"/> dal <s:property value="documento.dataInizioValiditaStato"/><br>
+		<!-- SIAC-7562 - 25/06/2020 - CM e GM -->
+		<s:if test="documento.tipoDocumento.codice == 'FTV'  && model.statoSDIdescrizione != null">
+			Stato SDI: &nbsp;<s:property value="model.statoSDIdescrizione"/>&nbsp;
+			<s:if test="documento.dataCambioStatoFel != null">
+				dal&nbsp;<s:property value="documento.dataCambioStatoFel"/>
+			</s:if>
+		</s:if>
 	</h4>
 	<div class="boxOrInLeft">
 		<p>Documenti entrata</p>
@@ -30,7 +37,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<dfn>Data</dfn>
 				<dl><s:property value="documento.dataEmissione"/>&nbsp;</dl>
 			</li>
-			<!-- SIAC 6677 -->
+			<%-- SIAC 6677 --%>
 			<li>
 				<dfn>Data Operazione</dfn>
 				<dl><s:property value="documento.dataOperazione"/>&nbsp;</dl>
@@ -51,7 +58,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<dfn>Partita IVA</dfn>
 				<dl><s:property value="documento.soggetto.partitaIva"/>&nbsp;</dl>
 			</li>
-			<!-- SIAC-6565-CR1215 -->
+			<%-- SIAC-6565-CR1215 --%>
 			<li>
 				<dfn>E-mail PEC</dfn>
 				<dl><s:property value="documento.soggetto.emailPec" />&nbsp;</dl>
@@ -111,6 +118,16 @@ SPDX-License-Identifier: EUPL-1.2
 				<dfn>IUV</dfn>
 				<dl><s:property value="documento.iuv"/>&nbsp;</dl>
 			</li>
+			<%-- SIAC-7567 --%>
+			<li>
+				<dfn>CIG</dfn>
+				<dl><s:property value="documento.cig"/>&nbsp;</dl>
+			</li>
+			<li>
+				<dfn>CUP</dfn>
+				<dl><s:property value="documento.cup"/>&nbsp;</dl>
+			</li>
+			<%-- SIAC-7567 --%>
 			<li>
 				<dfn>Importi</dfn>
 				<dl>
@@ -134,5 +151,17 @@ SPDX-License-Identifier: EUPL-1.2
 				<dl><s:property value="documento.note"/>&nbsp;</dl>
 			</li>
 		</ul>
+	</div>
+	<!-- SIAC-7557 -->
+	<div class="clear"></div>
+	<div id="accordionOrdini" class="accordion">
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a href="#collapseOrdini" data-parent="#accordionOrdini" data-toggle="collapse" class="accordion-toggle collapsed">
+					Ordini<span class="icon"></span>
+				</a>
+			</div>
+			<div class="accordion-body collapse" id="collapseOrdini"></div>
+		</div>
 	</div>
 </fieldset>

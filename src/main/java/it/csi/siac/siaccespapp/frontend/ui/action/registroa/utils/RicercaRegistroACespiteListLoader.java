@@ -116,7 +116,7 @@ public class RicercaRegistroACespiteListLoader {
 			// recuperare da servizio la lista causali
 			RicercaSinteticaModulareCausale req = model.creaRequestRicercaSinteticaModulareCausale();
 			RicercaSinteticaModulareCausaleResponse res = causaleService.ricercaSinteticaModulareCausale(req);
-			handleError(methodName, req, res);
+			handleError(methodName, RicercaSinteticaModulareCausale.class, res);
 
 			listaCausaliEp = res.getCausali();
 			// Aggiungo il risultato in sessione
@@ -154,7 +154,7 @@ public class RicercaRegistroACespiteListLoader {
 			log.debug(methodName, "Lista di Evento non presente in sessione. Caricamento da servizio");
 			RicercaCodifiche req = model.creaRequestRicercaCodifiche(Evento.class);
 			RicercaCodificheResponse res = codificheService.ricercaCodifiche(req);
-			handleError(methodName, req, res);
+			handleError(methodName, RicercaCodifiche.class, res);
 			
 			listaEvento = res.getCodifiche(Evento.class);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_EVENTO_FULL, listaEvento);
@@ -189,7 +189,7 @@ public class RicercaRegistroACespiteListLoader {
 		if (listaClassePiano == null) {
 			RicercaCodifiche req = model.creaRequestRicercaCodifiche("ClassePiano_" + Ambito.AMBITO_FIN.getSuffix());
 			RicercaCodificheResponse res = codificheService.ricercaCodifiche(req);
-			handleError(methodName, req, res);
+			handleError(methodName, RicercaCodifiche.class, res);
 			
 			listaClassePiano = res.getCodifiche(ClassePiano.class);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSE_PIANO_GEN, listaClassePiano);
@@ -240,7 +240,7 @@ public class RicercaRegistroACespiteListLoader {
 		if(listaTipoAtto == null) {
 			TipiProvvedimento req = model.creaRequestTipiProvvedimento();
 			TipiProvvedimentoResponse res = provvedimentoService.getTipiProvvedimento(req);
-			handleError(methodName, req, res);
+			handleError(methodName, TipiProvvedimento.class, res);
 			
 			listaTipoAtto = res.getElencoTipi();
 			sessionHandler.setParametro(BilSessionParameter.LISTA_TIPO_ATTO_AMMINISTRATIVO, listaTipoAtto);
@@ -259,7 +259,7 @@ public class RicercaRegistroACespiteListLoader {
 		if(listaClasseSoggetto == null) {
 			ListeGestioneSoggetto req = model.creaRequestListeGestioneSoggetto();
 			ListeGestioneSoggettoResponse res = soggettoService.listeGestioneSoggetto(req);
-			handleError(methodName, req, res);			
+			handleError(methodName, ListeGestioneSoggetto.class, res);			
 			listaClasseSoggetto = res.getListaClasseSoggetto();
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSI_SOGGETTO, listaClasseSoggetto);
 		}
@@ -276,7 +276,7 @@ public class RicercaRegistroACespiteListLoader {
 		if(listaTipiFinanziamento == null) {
 			LeggiClassificatoriGenericiByTipoElementoBil req = model.creaRequestLeggiClassificatoriGenericiByTipoElementoBil(BilConstants.CODICE_CAPITOLO_USCITA_GESTIONE.getConstant());
 			LeggiClassificatoriGenericiByTipoElementoBilResponse res = classificatoreBilService.leggiClassificatoriGenericiByTipoElementoBil(req);
-			handleError(methodName, req, res);
+			handleError(methodName, LeggiClassificatoriGenericiByTipoElementoBil.class, res);
 			
 			listaTipiFinanziamento = res.getClassificatoriTipoFinanziamento();
 			sessionHandler.setParametro(BilSessionParameter.LISTA_TIPO_FINANZIAMENTO, listaTipiFinanziamento);
@@ -292,11 +292,11 @@ public class RicercaRegistroACespiteListLoader {
 	 * @param res la response
 	 * @throws WebServiceInvocationFailureException in caso di errore nella response
 	 */
-	private void handleError(final String callingMethodName, ServiceRequest req, ServiceResponse res) throws WebServiceInvocationFailureException {
+	private void handleError(final String callingMethodName, Class<? extends ServiceRequest> reqClass, ServiceResponse res) throws WebServiceInvocationFailureException {
 		if(!res.hasErrori()) {
 			return;
 		}
-		String errorMsg = action.createErrorInServiceInvocationString(req, res);
+		String errorMsg = action.createErrorInServiceInvocationString(reqClass, res);
 		log.warn(callingMethodName, errorMsg);
 		// Set errors
 		model.addErrori(res.getErrori());
@@ -317,7 +317,7 @@ public class RicercaRegistroACespiteListLoader {
 		final String methodName = "ottieniResponseLeggiClassificatoriByTipoElementoBil";
 		LeggiClassificatoriByTipoElementoBil req = model.creaRequestLeggiClassificatoriByTipoElementoBil(codice);
 		LeggiClassificatoriByTipoElementoBilResponse res = classificatoreBilService.leggiClassificatoriByTipoElementoBil(req);
-		handleError(methodName, req, res);
+		handleError(methodName, LeggiClassificatoriByTipoElementoBil.class, res);
 		return res;
 	}
 

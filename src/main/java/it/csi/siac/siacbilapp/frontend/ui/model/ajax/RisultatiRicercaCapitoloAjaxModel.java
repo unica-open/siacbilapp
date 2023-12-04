@@ -13,7 +13,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.Element
  * @version 1.0.0 05/08/2013
  *
  */
-public class RisultatiRicercaCapitoloAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoCapitolo> {
+public class RisultatiRicercaCapitoloAjaxModel extends PagedDataTableAjaxModel<ElementoCapitolo> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -4156581885644595296L;

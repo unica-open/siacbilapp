@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.ElementoSubAccertamentoRegistrazioneMovFin;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -29,7 +29,7 @@ import it.csi.siac.siacfinser.model.SubAccertamento;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoSubAccertamentoRegistrazioneMovFin, RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxModel, SubAccertamento, RicercaAccertamentoPerChiaveOttimizzato, RicercaAccertamentoPerChiaveOttimizzatoResponse> {
+public class RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxAction extends PagedDataTableAjaxAction<ElementoSubAccertamentoRegistrazioneMovFin, RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxModel, SubAccertamento, RicercaAccertamentoPerChiaveOttimizzato, RicercaAccertamentoPerChiaveOttimizzatoResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -61,7 +61,7 @@ public class RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxAction extends 
 	}
 
 	@Override
-	protected RicercaAccertamentoPerChiaveOttimizzatoResponse ottieniResponse(RicercaAccertamentoPerChiaveOttimizzato request) {
+	protected RicercaAccertamentoPerChiaveOttimizzatoResponse getResponse(RicercaAccertamentoPerChiaveOttimizzato request) {
 		
 		return movimentoGestioneService.ricercaAccertamentoPerChiaveOttimizzato(request);
 	}
@@ -82,7 +82,7 @@ public class RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxAction extends 
 	}
 
 	@Override
-	protected ElementoSubAccertamentoRegistrazioneMovFin ottieniIstanza(SubAccertamento subAccertamento) throws FrontEndBusinessException {
+	protected ElementoSubAccertamentoRegistrazioneMovFin getInstance(SubAccertamento subAccertamento) throws FrontEndBusinessException {
 		return new ElementoSubAccertamentoRegistrazioneMovFin(subAccertamento);
 	}
 

@@ -13,13 +13,20 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.list.SortedSetList;
+import it.csi.siac.siaccommon.util.collections.list.SortedSetList;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorElencoDocumentiAllegato;
+import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceAllegatoAtto;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaQuoteElenco;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
+import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiave;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
+import it.csi.siac.siacfinser.model.Impegno;
+import it.csi.siac.siacfinser.model.ric.RicercaImpegnoK;
 
 /**
  * Classe di model per l'inserimento dell'allegato atto.
@@ -234,5 +241,50 @@ public class InserisciAllegatoAttoModel extends GenericAllegatoAttoModel {
 		return request;
 	}
 
+	//SIAC-7470
+	/**
+	 * Crea una request per il servizio {@link RicercaSinteticaQuoteElenco}.
+	 * 
+	 * @return la request creata
+	 */
+	public RicercaSinteticaQuoteElenco creaRequestRicercaSinteticaQuoteElenco() {
+		RicercaSinteticaQuoteElenco request = creaRequest(RicercaSinteticaQuoteElenco.class);
+		request.setElencoDocumentiAllegato(getElencoDocumentiAllegato());
+		request.setParametriPaginazione(new ParametriPaginazione(0,10));
+		return request;
+	}
 	
+	/**
+	 * Crea una request per il servizio di {@link RicercaImpegnoPerChiave}.
+	 * 
+	 * @return la request creata
+	 */
+	//SIAC-7470
+	public RicercaImpegnoPerChiaveOttimizzato creaRequestRicercaImpegnoPerChiaveOttimizzato(Impegno impegno) {
+		RicercaImpegnoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaImpegnoPerChiaveOttimizzato.class);
+		request.setEnte(getEnte());
+		request.setpRicercaImpegnoK(creaPRicercaImpegnoK(impegno));
+		//carico i sub solo se ho il numero del sub valorizzato
+		request.setCaricaSub(false);
+		request.setSubPaginati(true);
+		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
+		datiOpzionaliElencoSubTuttiConSoloGliIds.setEscludiAnnullati(true);
+		request.setDatiOpzionaliElencoSubTuttiConSoloGliIds(datiOpzionaliElencoSubTuttiConSoloGliIds);
+		return request;
+	}
+	
+	/**
+	 * Crea un'utilit&agrave; per la ricerca impegno.
+	 * 
+	 * @return l'utility creata
+	 */
+	private RicercaImpegnoK creaPRicercaImpegnoK(Impegno impegno) {
+		RicercaImpegnoK utility = new RicercaImpegnoK();
+		utility.setAnnoEsercizio(getAnnoEsercizioInt());
+		utility.setAnnoImpegno(impegno.getAnnoMovimento());
+		utility.setNumeroImpegno(impegno.getNumeroBigDecimal());
+		//SubImpegno
+		utility.setNumeroSubDaCercare(null);
+		return utility;
+	}
 }

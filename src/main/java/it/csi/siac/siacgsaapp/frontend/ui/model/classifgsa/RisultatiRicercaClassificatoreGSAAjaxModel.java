@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgsaapp.frontend.ui.model.classifgsa;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.classifgsa.ElementoClassificatoreGSA;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.classifgsa.ElementoClass
  * @version 1.0.0 04/01/2018
  *
  */
-public class RisultatiRicercaClassificatoreGSAAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoClassificatoreGSA> {
+public class RisultatiRicercaClassificatoreGSAAjaxModel extends PagedDataTableAjaxModel<ElementoClassificatoreGSA> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 8080704160199932886L;

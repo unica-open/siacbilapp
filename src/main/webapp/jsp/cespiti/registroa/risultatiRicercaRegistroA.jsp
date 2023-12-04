@@ -42,6 +42,6 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
 	<s:include value="/jsp/cespiti/primaNotaLibera/include/modaleDettaglioCespiti.jsp" />
-	<script type="text/javascript" src="${jspath}cespiti/registroa/risultatiRicercaRegistroA.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/registroa/risultatiRicercaRegistroA.js"></script>
 </body>
 </html>

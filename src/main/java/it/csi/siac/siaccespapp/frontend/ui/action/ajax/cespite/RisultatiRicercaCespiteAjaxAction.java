@@ -15,10 +15,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.cespite.ElementoCespite;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * The Class RisultatiRicercaCespiteAjaxAction.
@@ -73,11 +73,11 @@ public class RisultatiRicercaCespiteAjaxAction extends BaseRisultatiRicercaCespi
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioniConsentite.TIPO_BENE_CESPITE_AGGIORNA, listaAzioniConsentite);
-		boolean variazioneConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.VARIAZIONE_CESPITI_AGGIORNA, listaAzioniConsentite);
-		boolean dismissioneConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DISMISSIONE_CESPITE_AGGIORNA, listaAzioniConsentite);
+		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.TIPO_BENE_CESPITE_AGGIORNA, listaAzioniConsentite);
+		boolean variazioneConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.VARIAZIONE_CESPITI_AGGIORNA, listaAzioniConsentite);
+		boolean dismissioneConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DISMISSIONE_CESPITE_AGGIORNA, listaAzioniConsentite);
 		StringBuilder azioniBuilder = new StringBuilder()
 		    .append(AZIONI_CONSENTITE_BEGIN)
 		    .append(aggiornaConsentito ? AZIONI_CONSENTITE_AGGIORNA : "")

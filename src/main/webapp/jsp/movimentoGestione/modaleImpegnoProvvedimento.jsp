@@ -25,7 +25,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<span class="al">
 						<label for="numeroImpegnoModale" class="radio inline">Numero </label>
 					</span>
-					<input type="text" name="modaleImpegno.impegno.numero" value="" class="lbTextSmall span2 soloNumeri" id="numeroImpegnoModale" >
+					<input type="text" name="modaleImpegno.impegno.numero" value="" class="lbTextSmall span2 soloNumeri trim" id="numeroImpegnoModale" >
 				</div>
 			</div>
 			<%--************************************* Parte Aggiunta in data 14/01/2015 CR-2816 BEGIN ********************* --%>
@@ -136,35 +136,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<tbody>
 					</tbody>
 				</table>
-			<div class="Border_line"></div>
-			<div id="divMutui" class="accordion" data-overlay>
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						<a href="#collapseMutui" data-parent="#divMutui" data-toggle="collapse" class="accordion-toggle collapsed">
-							Mutuo<span class="icon">&nbsp;</span>
-						</a>
-					</div>
-					<div class="accordion-body collapse" id="collapseMutui">
-						<div class="accordion-inner">
-							<table class="table table-hover tab_left" id="tabellaMutuiModale">
-								<thead>
-									<tr>
-										<th scope="col"></th>
-										<th scope="col">Numero Mutuo</th>
-										<th scope="col">Descrizione</th>
-										<th scope="col">Istituto Mutuante</th>
-										<th class="tab_Right" scope="col">Importo Voce</th>
-										<th class="tab_Right" scope="col">Disponibilit&agrave; a liquidare</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-					</div>
 				</div>
-			</div>
-		</div>
 	</div>
 	<input type="hidden" id="hidden_ricercaEffettuataConSuccessoModaleImpegno" value="" />
 	<input type="hidden" id="hidden_disponibileImpegno" value="" />

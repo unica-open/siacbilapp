@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +19,12 @@ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step1.Scelta;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.model.ApplicazioneVariazione;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
+import it.csi.siac.siacbilser.model.VariazioneDiBilancio;
 import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
 import it.csi.siac.siaccorser.model.Azione;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -92,6 +94,27 @@ public abstract class AggiornaVariazioneBaseAction extends VariazioneBaseAction<
 	 */
 	public abstract String concludi() throws ApplicationException;
 	
+	//SIAC-7530
+	protected void controllaStatoOperativoVariazione(VariazioneDiBilancio variazione) {
+		String methodName = "controllaStatoOperativoVariazione";
+		List<String> listaStatiOperativiAmmessi = new ArrayList<String>();
+		listaStatiOperativiAmmessi.add(StatoOperativoVariazioneBilancio.BOZZA.getDescrizione());
+		listaStatiOperativiAmmessi.add(StatoOperativoVariazioneBilancio.GIUNTA.getDescrizione());
+		listaStatiOperativiAmmessi.add(StatoOperativoVariazioneBilancio.CONSIGLIO.getDescrizione());
+		listaStatiOperativiAmmessi.add(StatoOperativoVariazioneBilancio.PRE_BOZZA.getDescrizione());
+		
+		//SIAC-7584
+		if(variazione == null) {
+			log.debug(methodName, "Entita' non trovata: [null]");
+			throw new GenericFrontEndMessagesException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Variazione").getTesto(), Level.ERROR);
+		}
+		
+		if(!listaStatiOperativiAmmessi.contains(variazione.getStatoOperativoVariazioneDiBilancio().getDescrizione())) {
+			log.debug(methodName, "operazione non ammessa : l'operazione e' valida solo per le variazioni in stato di: BOZZA, GIUNTA e CONSIGLIO.");
+			throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("operazione valida solo per le variazioni in stato di: BOZZA, GIUNTA e CONSIGLIO.").getTesto(), Level.ERROR);					
+		}
+		
+	}
 	
 	/**
 	 * Metodo per il caricamento della lista dei tipi di atto.
@@ -140,17 +163,17 @@ public abstract class AggiornaVariazioneBaseAction extends VariazioneBaseAction<
 	protected void controllaAbilitazioneOperazioni() {
 		FaseBilancio faseBilancio = model.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
 		ApplicazioneVariazione applicazioneVariazione = model.getApplicazione();
-		StatoOperativoVariazioneDiBilancio statoDellaVariazione = model.getStatoOperativoVariazioneDiBilancio();
+		StatoOperativoVariazioneBilancio statoDellaVariazione = model.getStatoOperativoVariazioneDiBilancio();
 		if(!coerente(faseBilancio, applicazioneVariazione)) {
 			model.setSalvaAbilitato(Boolean.FALSE);
 			model.setAnnullaAbilitato(Boolean.FALSE);
 			model.setCampiNonModificabili(Boolean.TRUE);
 		}
 		
-		if(StatoOperativoVariazioneDiBilancio.BOZZA.equals(statoDellaVariazione)) {
+		if(StatoOperativoVariazioneBilancio.BOZZA.equals(statoDellaVariazione)) {
 			// Se la variazione è in bozza, allora è possibile annullarla
 			model.setAnnullaAbilitato(Boolean.TRUE);
-		} else if(statoDellaVariazione == StatoOperativoVariazioneDiBilancio.DEFINITIVA) {
+		} else if(statoDellaVariazione == StatoOperativoVariazioneBilancio.DEFINITIVA) {
 			// Se la variazione è definitiva, allora non è modificabile
 			model.setSalvaAbilitato(Boolean.FALSE);
 			model.setAnnullaAbilitato(Boolean.FALSE);

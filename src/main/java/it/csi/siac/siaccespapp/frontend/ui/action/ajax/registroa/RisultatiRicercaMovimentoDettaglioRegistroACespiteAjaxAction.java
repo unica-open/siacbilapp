@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
@@ -34,7 +34,7 @@ import it.csi.siac.siacgenser.model.MovimentoDettaglio;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaMovimentoDettaglioRegistroACespiteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoMovimentoDettaglioRegistroA, RisultatiRicercaMovimentoDettaglioRegistroACespiteAjaxModel,
+public class RisultatiRicercaMovimentoDettaglioRegistroACespiteAjaxAction extends PagedDataTableAjaxAction<ElementoMovimentoDettaglioRegistroA, RisultatiRicercaMovimentoDettaglioRegistroACespiteAjaxModel,
 MovimentoDettaglio, RicercaSinteticaMovimentoDettaglioRegistroACespite, RicercaSinteticaMovimentoDettaglioRegistroACespiteResponse> {
 
 	/** Per la serializzazione */
@@ -62,12 +62,12 @@ MovimentoDettaglio, RicercaSinteticaMovimentoDettaglioRegistroACespite, RicercaS
 	}
 
 	@Override
-	protected ElementoMovimentoDettaglioRegistroA ottieniIstanza(MovimentoDettaglio e) throws FrontEndBusinessException {
+	protected ElementoMovimentoDettaglioRegistroA getInstance(MovimentoDettaglio e) throws FrontEndBusinessException {
 		return ElementoMovimentoDettaglioRegistroAFactory.getInstance(e);
 	}
 
 	@Override
-	protected RicercaSinteticaMovimentoDettaglioRegistroACespiteResponse ottieniResponse(RicercaSinteticaMovimentoDettaglioRegistroACespite req) {
+	protected RicercaSinteticaMovimentoDettaglioRegistroACespiteResponse getResponse(RicercaSinteticaMovimentoDettaglioRegistroACespite req) {
 		return primaNotaCespiteService.ricercaSinteticaMovimentoDettaglioRegistroACespite(req);
 	}
 
@@ -83,7 +83,7 @@ MovimentoDettaglio, RicercaSinteticaMovimentoDettaglioRegistroACespite, RicercaS
 		return result;
 	}
 	@Override
-	protected void gestisciAzioniConsentite(ElementoMovimentoDettaglioRegistroA instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoMovimentoDettaglioRegistroA instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		if(Boolean.TRUE.equals(instance.getHasContoCespite())) {
 			
 			Map<String, String> map = new HashMap<String, String>();

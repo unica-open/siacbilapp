@@ -7,7 +7,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.ordinativo.incasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -66,7 +66,7 @@ public class EmissioneOrdinativiIncassoAction extends GenericEmissioneOrdinativi
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(Liste.class, response));
 			}
 			listaDistinta = new ArrayList<CodificaFin>(response.getDistintaEntrata());
 			ComparatorUtils.sortByCodiceFin(listaDistinta);

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.ConsultaPrimaNotaLiberaBaseModel;
@@ -12,7 +12,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.PrimaNotaService;
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaDettaglioPrimaNota;
@@ -29,7 +29,7 @@ import it.csi.siac.siacgenser.model.PrimaNota;
  * @version 1.0.0 - 07/10/2015
  * @param <M> la tipizzazione del model
  */
-public class ConsultaPrimaNotaLiberaBaseAction<M extends ConsultaPrimaNotaLiberaBaseModel> extends GenericBilancioAction<M>{
+public class ConsultaPrimaNotaLiberaBaseAction<M extends ConsultaPrimaNotaLiberaBaseModel> extends BasePrimaNotaLiberaAction<M>{
 
 	/**
 	 * Per la serializzazione
@@ -74,6 +74,8 @@ public class ConsultaPrimaNotaLiberaBaseAction<M extends ConsultaPrimaNotaLibera
 		log.debug(methodName, "Trovata primaNotaLibera corrispondente all'uid " + primaNotaLibera.getUid());
 		
 		model.setPrimaNotaLibera(primaNotaLibera);
+		//SIAC-8134
+		model.setStrutturaCompetentePrimaNotaLibera(primaNotaLibera.getStrutturaCompetente());
 		model.setDataRegistrazioneDefinitivaVisibile(primaNotaLibera.getDataRegistrazioneLibroGiornale() != null);
 		calcolaTotali();
 		return SUCCESS;
@@ -95,7 +97,7 @@ public class ConsultaPrimaNotaLiberaBaseAction<M extends ConsultaPrimaNotaLibera
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioPrimaNota.class, response);
 			log.info(methodName, errorMsg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMsg);

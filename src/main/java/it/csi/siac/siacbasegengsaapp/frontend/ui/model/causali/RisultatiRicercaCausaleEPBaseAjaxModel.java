@@ -5,7 +5,7 @@
 package it.csi.siac.siacbasegengsaapp.frontend.ui.model.causali;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.causali.ElementoCausaleEP;
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 
 /**
  * Classe di model per i risultati della ricerca delle causali EP, gestione dell'AJAX.
@@ -16,7 +16,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjax
  * @version 1.1.0 - 06/10/2015 - adattato per GEN/GSA
  *
  */
-public class RisultatiRicercaCausaleEPBaseAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoCausaleEP> {
+public class RisultatiRicercaCausaleEPBaseAjaxModel extends PagedDataTableAjaxModel<ElementoCausaleEP> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 3909218711844686533L;

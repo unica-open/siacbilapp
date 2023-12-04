@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
@@ -63,7 +65,7 @@ import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.StatoTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
@@ -71,7 +73,7 @@ import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
 import it.csi.siac.siaccommon.util.JAXBUtility;
 import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
@@ -79,7 +81,7 @@ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.VariabileProcesso;
 import it.csi.siac.siaccorser.util.Costanti;
 import it.csi.siac.siacfin2ser.model.TipoComponenteImportiCapitoloModelDetail;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 
 /**
  * Classe di model per l'aggiornamento della variazione. Contiene una mappatura dei tre possibili form considerati.
@@ -111,7 +113,7 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	private SpecificaVariazioneCodifiche specificaCodifiche;
 	
 	private Integer numeroVariazione;
-	private StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio;
+	private StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio;
 	private TipoVariazione tipoVariazione;
 	private ApplicazioneVariazione applicazione;
 	private Integer annoCompetenza;
@@ -136,7 +138,9 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	private String stringaProvvedimentoAggiuntivo;
 
 	// Dati per Bonita
+	@Deprecated 
 	private Boolean invioAdOrganoLegislativo;
+	@Deprecated
 	private Boolean invioAdOrganoAmministrativo;
 	private Date dataVariazione;
 	private Integer uidVariazione;
@@ -151,7 +155,15 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	
 	//dati per la visualizzazione di conferma quadratura di cassa
 	private Boolean richiediConfermaQuadratura = Boolean.FALSE;
+	
+	//SIAC-7629 inizio FL
+	private Boolean richiediConfermaQuadraturaCP = Boolean.FALSE;
+	//SIAC-7629 fine FL
+	
 	private String saltaCheckStanziamentoCassa = "";
+	
+	//SIAC-8332-REGP sanato errore introdotto da SIAC-7629
+	private String saltaCheckStanziamento = "";
 	
 	// Per cachare le responses
 	private Map<String, String> cache = new HashMap<String, String>();
@@ -199,24 +211,11 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	//SIAC-6884
 	private Date dataApertura;
 	private StrutturaAmministrativoContabile direzioneProponente;
-	private boolean variazioneDecentrataAperta;
+	//SIAC-8332-REGP eliminato campo variazioneDecentrataAperta
+//	private boolean variazioneDecentrataAperta;
 	private Date dataChiusuraProposta;	
 	private Boolean flagGiunta;
 	private Boolean flagConsiglio;
-
-	/**
-	 * @return the variazioneDecentrataAperta
-	 */
-	public boolean isVariazioneDecentrataAperta() {
-		return variazioneDecentrataAperta;
-	}
-
-	/**
-	 * @param variazioneDecentrataAperta the variazioneDecentrataAperta to set
-	 */
-	public void setVariazioneDecentrataAperta(boolean variazioneDecentrataAperta) {
-		this.variazioneDecentrataAperta = variazioneDecentrataAperta;
-	}
 
 	public Date getDataApertura() {
 		return dataApertura;
@@ -322,15 +321,15 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	/**
 	 * @return the statoOperativoAggiuntivo
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoOperativoVariazioneDiBilancio() {
-		return statoOperativoVariazioneDiBilancio;
+	public StatoOperativoVariazioneBilancio getStatoOperativoVariazioneDiBilancio() {
+		return statoOperativoVariazioneBilancio;
 	}
 
 	/**
 	 * @param statoOperativoAggiuntivo the statoOperativoAggiuntivo to set
 	 */
-	public void setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio statoOperativoAggiuntivo) {
-		this.statoOperativoVariazioneDiBilancio = statoOperativoAggiuntivo;
+	public void setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio statoOperativoAggiuntivo) {
+		this.statoOperativoVariazioneBilancio = statoOperativoAggiuntivo;
 	}
 
 	/**
@@ -499,35 +498,6 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	public void setListaCategoriaCapitolo(List<CategoriaCapitolo> listaCategoriaCapitolo) {
 		this.listaCategoriaCapitolo = listaCategoriaCapitolo;
 	}
-	
-	/**
-	 * @return the invioAdOrganoLegislativo
-	 */
-	public Boolean getInvioAdOrganoLegislativo() {
-		return invioAdOrganoLegislativo;
-	}
-
-	/**
-	 * @param invioAdOrganoLegislativo the invioAdOrganoLegislativo to set
-	 */
-	public void setInvioAdOrganoLegislativo(Boolean invioAdOrganoLegislativo) {
-		this.invioAdOrganoLegislativo = invioAdOrganoLegislativo;
-	}
-
-	/**
-	 * @return the invioAdOrganoAmministrativo
-	 */
-	public Boolean getInvioAdOrganoAmministrativo() {
-		return invioAdOrganoAmministrativo;
-	}
-
-	/**
-	 * @param invioAdOrganoAmministrativo the invioAdOrganoAmministrativo to set
-	 */
-	public void setInvioAdOrganoAmministrativo(Boolean invioAdOrganoAmministrativo) {
-		this.invioAdOrganoAmministrativo = invioAdOrganoAmministrativo;
-	}
-	
 	/**
 	 * @return the dataVariazione
 	 */
@@ -854,6 +824,14 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	 */
 	public void setSaltaCheckStanziamentoCassa(String saltaCheckStanziamentoCassa) {
 		this.saltaCheckStanziamentoCassa = saltaCheckStanziamentoCassa;
+	}
+	
+	public String getSaltaCheckStanziamento() {
+		return saltaCheckStanziamento;
+	}
+
+	public void setSaltaCheckStanziamento(String saltaCheckStanziamento) {
+		this.saltaCheckStanziamento = saltaCheckStanziamento;
 	}
 
 	/**
@@ -1191,7 +1169,13 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		this.decentrato = decentrato;
 	}
 	
+	public boolean isChiudiProposta() {
+		return isDecentrato() && StatoOperativoVariazioneBilancio.PRE_BOZZA.equals(getStatoOperativoVariazioneDiBilancio());
+	}
 	
+	public boolean isConcludiAttivita() {
+		return !isDecentrato();
+	}
 
 	
 //	/**
@@ -1346,6 +1330,10 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		
 		request.setVariazioneImportoCapitolo(creaUtilityAnagraficaVariazioneImportoCapitolo());
 		request.setRegionePiemonte(this.regionePiemonte);
+		
+		// task-225
+		request.setStatoCorrente(this.statoOperativoVariazioneBilancio.getVariableName());
+		
 		return request;
 	}
 
@@ -1484,8 +1472,9 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		request.setDataOra(new Date());
 		request.setEvolviProcesso(injezioneDaEvolvere);
 		request.setIdAttivita(idAttivita);
-		request.setInvioOrganoAmministrativo(invioAdOrganoAmministrativo);
-		request.setInvioOrganoLegislativo(invioAdOrganoLegislativo);
+		//SIAC-8332-REGP
+		//request.setInvioOrganoAmministrativo(invioAdOrganoAmministrativo);
+		//request.setInvioOrganoLegislativo(invioAdOrganoLegislativo);
 		request.setRichiedente(getRichiedente());
 		
 		request.setVariazioneCodificaCapitolo(creaUtilityVariazioneCodificaCapitolo());
@@ -1523,7 +1512,7 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		utility.setEnte(getEnte());
 		utility.setNote(note);
 		utility.setNumero(numeroVariazione);
-		utility.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneDiBilancio);
+		utility.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneBilancio);
 		utility.setTipoVariazione(tipoVariazione);
 		utility.setUid(uidVariazioneImportoCapitolo);
 		//SIAC 6884
@@ -1554,7 +1543,7 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		utility.setEnte(getEnte());
 		utility.setNote(note);
 		utility.setNumero(numeroVariazione);
-		utility.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneDiBilancio);
+		utility.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneBilancio);
 		utility.setTipoVariazione(tipoVariazione);
 		utility.setUid(uidVariazioneImportoCapitolo);
 		
@@ -1570,12 +1559,23 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		
 		return utility;
 	}
+	//SIAC-8332
+	public void impostaDatiNelModel(AzioneRichiesta azioneRichiesta) {
+		if(azioneRichiesta.getIdAttivita()!= null){
+			String[] splitted = StringUtils.split(azioneRichiesta.getIdAttivita(), "%&");
+			if(splitted.length > 0) {
+				uidVariazione = Integer.valueOf(splitted[0]);
+			}
+		}
+	}
 	
 	/**
 	 * Injetta le variabili del processo.
 	 * 
 	 * @param azioneRichiesta l'azione richiesta da cui ottenere le variabili di processo
+	 * @deprecated by SIAC-8332
 	 */
+	@Deprecated
 	public void injettaVariabiliProcesso(AzioneRichiesta azioneRichiesta) {
 		/*
 		 * SIAC 6884 
@@ -1588,7 +1588,7 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 				uidVariazione = Integer.valueOf(azioneRichiesta.getIdAttivita());
 			}
 			idAttivita = azioneRichiesta.getIdAttivita();
-			this.setVariazioneDecentrataAperta(true);
+//			this.setVariazioneDecentrataAperta(true);
 			
 		}else{
 			VariabileProcesso numeroVariazioneVP = getVariabileProcesso(azioneRichiesta, BilConstants.VARIABILE_PROCESSO_NUMERO_VARIAZIONE);
@@ -1622,9 +1622,9 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		//TODO:ma questo viene mai utilizzato? perche e' qui?
 		dataVariazione = variazioneDiBilancio.getData();		
 
-		statoOperativoVariazioneDiBilancio = variazioneDiBilancio.getStatoOperativoVariazioneDiBilancio();
+		statoOperativoVariazioneBilancio = variazioneDiBilancio.getStatoOperativoVariazioneDiBilancio();
 		
-		elementoStatoOperativoVariazione = ElementoStatoOperativoVariazioneFactory.getInstance(getEnte().getGestioneLivelli(), statoOperativoVariazioneDiBilancio);
+		elementoStatoOperativoVariazione = ElementoStatoOperativoVariazioneFactory.getInstance(getEnte().getGestioneLivelli(), statoOperativoVariazioneBilancio);
 		
 		note = variazioneDiBilancio.getNote();
 		attoAmministrativo = variazioneDiBilancio.getAttoAmministrativo();
@@ -1645,11 +1645,14 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		dataChiusuraProposta = variazioneDiBilancio.getDataChiusuraProposta();
 		flagConsiglio = variazioneDiBilancio.getFlagConsiglio();
 		flagGiunta = variazioneDiBilancio.getFlagGiunta();
+		//SIAC-8332
+		invioAdOrganoAmministrativo = variazioneDiBilancio.getFlagGiunta();
+		invioAdOrganoLegislativo = variazioneDiBilancio.getFlagGiunta();
 	}
 	
 	//SIAC-6884 - nella pagina mi serve sapere se la variazione è decentrata
 	public boolean getIsDecentrata(){
-		return dataApertura != null;
+		return StatoOperativoVariazioneBilancio.PRE_BOZZA.equals(statoOperativoVariazioneBilancio);
 	}
 	
 	/**
@@ -1679,8 +1682,8 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		setBilancio(variazioneCodifica.getBilancio());
 		annoCompetenza = getBilancio().getAnno();
 		
-		statoOperativoVariazioneDiBilancio = variazioneCodifica.getStatoOperativoVariazioneDiBilancio();
-		elementoStatoOperativoVariazione = ElementoStatoOperativoVariazioneFactory.getInstance(getEnte().getGestioneLivelli(), statoOperativoVariazioneDiBilancio);
+		statoOperativoVariazioneBilancio = variazioneCodifica.getStatoOperativoVariazioneDiBilancio();
+		elementoStatoOperativoVariazione = ElementoStatoOperativoVariazioneFactory.getInstance(getEnte().getGestioneLivelli(), statoOperativoVariazioneBilancio);
 		
 		note = variazioneCodifica.getNote();
 		
@@ -2107,11 +2110,11 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	}
 
 	/**
-	 * Crea una request per il servizio {@link StampaExcelVariazioneDiBilancio}.
+	 * Crea una request per il servizio {@link VariazioneBilancioExcelReport}.
 	 * @return la request creata
 	 */
-	public StampaExcelVariazioneDiBilancio creaRequestStampaExcelVariazioneDiBilancio() {
-		StampaExcelVariazioneDiBilancio req = creaRequest(StampaExcelVariazioneDiBilancio.class);
+	public VariazioneBilancioExcelReport creaRequestStampaExcelVariazioneDiBilancio() {
+		VariazioneBilancioExcelReport req = creaRequest(VariazioneBilancioExcelReport.class);
 		
 		req.setEnte(getEnte());
 		req.setXlsx(getIsXlsx());
@@ -2156,15 +2159,17 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 	 * @param detts0 the detts 0
 	 * @param detts1 the detts 1
 	 * @param detts2 the detts 2
+	 * @param isInserimento 
 	 * @return the gestisci dettaglio variazione componente importo capitolo
 	 */
-	public GestisciDettaglioVariazioneComponenteImportoCapitolo creaRequestGestisciDettaglioVariazioneComponenteImportoCapitolo(List<DettaglioVariazioneComponenteImportoCapitolo> detts0, List<DettaglioVariazioneComponenteImportoCapitolo> detts1, List<DettaglioVariazioneComponenteImportoCapitolo> detts2) {
+	public GestisciDettaglioVariazioneComponenteImportoCapitolo creaRequestGestisciDettaglioVariazioneComponenteImportoCapitolo(List<DettaglioVariazioneComponenteImportoCapitolo> detts0, List<DettaglioVariazioneComponenteImportoCapitolo> detts1, List<DettaglioVariazioneComponenteImportoCapitolo> detts2, Boolean isInserimento) {
 		GestisciDettaglioVariazioneComponenteImportoCapitolo req = creaRequest(GestisciDettaglioVariazioneComponenteImportoCapitolo.class);
 		req.setBilancio(getBilancio());
 		req.setDettaglioVariazioneImportoCapitolo(popolaDettaglioVariazioneImportoCapitoloByElementoCapitolo(getSpecificaImporti().getElementoCapitoloVariazione()));
 		req.getDettaglioVariazioneImportoCapitolo().setListaDettaglioVariazioneComponenteImportoCapitolo(detts0);
 		req.getDettaglioVariazioneImportoCapitolo().setListaDettaglioVariazioneComponenteImportoCapitolo1(detts1);
 		req.getDettaglioVariazioneImportoCapitolo().setListaDettaglioVariazioneComponenteImportoCapitolo2(detts2);
+		req.setDettaglioInInserimento(isInserimento);
 		return req;
 	}
 
@@ -2198,13 +2203,14 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 			request.setIdAttivita(idAttivita);
 			request.setRichiedente(getRichiedente());
 			request.setSaltaCheckStanziamentoCassa(Boolean.parseBoolean(saltaCheckStanziamentoCassa));
+			request.setSaltaCheckStanziamento(Boolean.parseBoolean(saltaCheckStanziamento));
 			request.setSaltaCheckNecessarioAttoAmministrativoVariazioneDiBilancio(isSaltaCheckProvvedimentoVariazioneBilancio());
 			request.setVariazioneImportoCapitolo(creaUtilityAnagraficaVariazioneImportoCapitolo());
 			request.setEvolviProcesso(Boolean.TRUE);
 			request.setAggiornamentoDaVariazioneDecentrata(true);
 			request.setInvioOrganoAmministrativo(flagGiunta);
 			request.setInvioOrganoLegislativo(flagConsiglio);
-			request.setAggiornamentoVariazionieDecentrataFromAction(Constanti.AGG_VAR_FROM_CHIUDI_PROPOSTA);
+			request.setAggiornamentoVariazionieDecentrataFromAction(CostantiFin.AGG_VAR_FROM_CHIUDI_PROPOSTA);
 			return request;
 	}
 
@@ -2282,5 +2288,24 @@ public class AggiornaVariazioneModel extends GenericBilancioModel {
 		public void setFlagConsiglio(Boolean flagConsiglio) {
 			this.flagConsiglio = flagConsiglio;
 		}
+
+		/**
+		 * @return the richiediConfermaQuadraturaCP
+		 */
+		public Boolean getRichiediConfermaQuadraturaCP()
+		{
+			return richiediConfermaQuadraturaCP;
+		}
+
+		/**
+		 * @param richiediConfermaQuadraturaCP the richiediConfermaQuadraturaCP to set
+		 */
+		public void setRichiediConfermaQuadraturaCP(Boolean richiediConfermaQuadraturaCP)
+		{
+			this.richiediConfermaQuadraturaCP = richiediConfermaQuadraturaCP;
+		}
+		
+		
+		
 
 }

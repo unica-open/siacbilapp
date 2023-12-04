@@ -47,11 +47,11 @@ SPDX-License-Identifier: EUPL-1.2
 												</li>
 												<li>
 													<dfn>Attivo</dfn>
-													<dl><s:property value="attivo" escape="false"/></dl>
+													<dl><s:property value="attivo" escapeHtml="false"/></dl>
 												</li>
 												<li>
 													<dfn>Soggetto beni culturali</dfn>
-													<dl><s:property value="beniCulturali" escape="false"/></dl>
+													<dl><s:property value="beniCulturali" escapeHtml="false"/></dl>
 												</li>
 												<li>
 													<dfn>Ubicazione</dfn>
@@ -309,6 +309,6 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}cespiti/cespite/consultaCespite.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/cespite/consultaCespite.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.tabelle;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccecser.model.TipoGiustificativo;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siaccecser.model.TipoGiustificativo;
  * @version 1.0.0 - 10/12/2014
  *
  */
-public class RisultatiRicercaTipoGiustificativoAjaxModel extends GenericRisultatiRicercaAjaxModel<TipoGiustificativo> {
+public class RisultatiRicercaTipoGiustificativoAjaxModel extends PagedDataTableAjaxModel<TipoGiustificativo> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -6957989232504880200L;

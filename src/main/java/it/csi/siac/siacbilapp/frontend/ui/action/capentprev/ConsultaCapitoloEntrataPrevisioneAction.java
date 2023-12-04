@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.capentprev;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -70,7 +70,7 @@ public class ConsultaCapitoloEntrataPrevisioneAction extends CapitoloEntrataActi
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioCapitoloEntrataPrevisione.class, res));
 		}
 		
 		log.debug(methodName, "Impostazione dei dati nel model");

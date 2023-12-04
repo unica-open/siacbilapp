@@ -5,7 +5,6 @@
 package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.associa.movimento;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -23,6 +22,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
 import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siacfin2app.frontend.ui.util.helper.VerificaBloccoRORHelper;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiave;
@@ -30,7 +30,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOtt
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzatoResponse;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
@@ -58,7 +57,6 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 	public void prepareAddImpegno() {
 		model.setSubdocumentoSpesa(null);
 		model.setProseguireConElaborazione(Boolean.FALSE);
-		model.setVoceMutuo(null);
 	}
 	
 	/**
@@ -90,9 +88,9 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		int uidMovimento = model.getUidMovimento() != null ? model.getUidMovimento().intValue() : 0;
 		for(SubdocumentoSpesa s : model.getListaSubdocumentoSpesa()){
 			if(uidMovimento == s.getImpegno().getUid() && 
-				( (model.getNumeroSubmovimento() == null && (s.getSubImpegno() == null || s.getSubImpegno().getNumero() == null))
+				( (model.getNumeroSubmovimento() == null && (s.getSubImpegno() == null || s.getSubImpegno().getNumeroBigDecimal() == null))
 							 || 
-				 (model.getNumeroSubmovimento() != null && s.getSubImpegno() != null && model.getNumeroSubmovimento().equals(s.getSubImpegno().getNumero()))
+				 (model.getNumeroSubmovimento() != null && s.getSubImpegno() != null && model.getNumeroSubmovimento().equals(s.getSubImpegno().getNumeroBigDecimal()))
 				)
 			 ){
 				totaleSuImpegno = totaleSuImpegno.add(s.getImporto());
@@ -116,6 +114,9 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		SubdocumentoSpesa ss = model.getSubdocumentoSpesa();
 		Impegno impegno = ss.getImpegno();
 		checkCondition(impegno.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno"));
+		//SIAC-7470: rimosso il seguente controllo al fine di effettuare i controlli su bloccoROR che prevedono l'inserimento di un  movimento
+		//di annualità antecedente all'esercizio
+		//01/04/2020: il controllo è stato ripristinato, verrà gestito tramite le azioni (ne è stata creata una nuova "...noResImp") per evitare il conflitto 
 		//CR-4440
 		if(impegno.getAnnoMovimento() != 0 && !isMovgestAssociabileDaUtente( impegno)){
 			addErrore(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Account utente non abilitato alla gestione dei Residui negli Elenchi."));
@@ -126,7 +127,7 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'anno del movimento deve essere minore o uguale all'anno di esercizio"));
 		
 		
-		checkNotNull(impegno.getNumero(), "Numero");
+		checkNotNull(impegno.getNumeroBigDecimal(), "Numero");
 		checkNotNull(ss.getImporto(), "Importo in atto");
 		checkCondition(ss.getImporto() == null || ss.getImporto().signum() > 0,
 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'importo in atto deve essere positivo"));
@@ -181,13 +182,7 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		checkCondition(hasErrori() || importoDaVerificare.compareTo(disponibilita) <= 0,
 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'importo in atto deve essere minore o uguale all'importo disponibile"));
 		
-		// Questo dato diventa obbligatorio se tipoImpegno = 'finanziato con mutuo'
-		if(impegno.getTipoImpegno() != null && BilConstants.IMPEGNO_FINANZIATO_DA_MUTUO.getConstant().equals(impegno.getTipoImpegno().getCodice())) {
-			log.debug(methodName, "Necessario validare mutuo");
-			validationMutuo(impegno.getListaVociMutuo());
-		} else {
-			impegno.setListaVociMutuo(new ArrayList<VoceMutuo>());
-		}
+
 		if(controlloCigCupDaEffettuare) {
 			validazioneCigCup(cig, cup, impegno);
 		}
@@ -197,6 +192,22 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		} catch (ParamValidationException pve) {
 			log.info(methodName, "Fallita validazione sul provvisorio di cassa");
 		}
+		
+		//SIAC-7470 bloccoROR: devo controllare l'impegno prima di associarlo
+		boolean result = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno, model.getAnnoEsercizioInt());
+		if(result){
+			checkCondition(!result, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile"));
+		}else if(impegno.getElencoSubImpegni() != null && !impegno.getElencoSubImpegni().isEmpty()){
+			for(int k = 0; k < impegno.getElencoSubImpegni().size(); k++){
+				result = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno.getElencoSubImpegni().get(k), model.getAnnoEsercizioInt());
+				if(result)
+					break;
+			}
+			if(result){
+				checkCondition(!result, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile"));
+			}
+		}
+		
 		
 		// Se ho errori, esco
 		if(hasErrori() || hasMessaggi()) {
@@ -249,13 +260,13 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, response));
 			addErrori(response);
 			return response;
 		}
 		if(response.isFallimento()) {
 			log.info(methodName, "Fallimento nell'invocazione del servizio " + RicercaImpegnoPerChiave.class.getSimpleName());
-			addErrore(ErroreCore.ERRORE_DI_SISTEMA.getErrore(createErrorInServiceInvocationString(request, response)));
+			addErrore(ErroreCore.ERRORE_DI_SISTEMA.getErrore(createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, response)));
 		}
 		
 		return response;
@@ -273,15 +284,15 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 	private BigDecimal validationSubImpegno(List<SubImpegno> subimpegni, String cig, String cup) {
 		final String methodName = "validationSubImpegno";
 		// Se un movimento ha dei sub si deve necessariamente indicarne uno
-		checkCondition(model.getSubdocumentoSpesa().getSubImpegno() != null && model.getSubdocumentoSpesa().getSubImpegno().getNumero() != null,
+		checkCondition(model.getSubdocumentoSpesa().getSubImpegno() != null && model.getSubdocumentoSpesa().getSubImpegno().getNumeroBigDecimal() != null,
 				ErroreFin.IMPEGNO_CON_SUBIMPEGNI.getErrore());
 		BigDecimal disponibilita = BigDecimal.ZERO;
 		// Se ho errori, esco subito. In caso contrario, continuo con i controlli
 		if(!hasErrori()) {
 			SubImpegno subImpegno = null;
-			BigDecimal numeroSubImpegno = model.getSubdocumentoSpesa().getSubImpegno().getNumero();
+			BigDecimal numeroSubImpegno = model.getSubdocumentoSpesa().getSubImpegno().getNumeroBigDecimal();
 			for(SubImpegno si : subimpegni) {
-				if(si.getNumero().compareTo(numeroSubImpegno) == 0) {
+				if(si.getNumeroBigDecimal().compareTo(numeroSubImpegno) == 0) {
 					subImpegno = si;
 					break;
 				}
@@ -373,39 +384,14 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		//SIAC-5526	
 		String siopeAssenzaDaDefinire = BilConstants.CODICE_SIOPE_ASSENZA_MOTIVAZIONE_DA_DEFINIRE_IN_LIQUIDAZIONE.getConstant();
 		checkCondition(!siopeAssenzaDaDefinire.equals(assenzaMotivazioneWithCodice.getCodice()), 
-				ErroreCore.VALORE_NON_VALIDO.getErrore("motivo assenza cig :"  + siopeAssenzaDaDefinire,"selezionare una motivazione valida"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("motivo assenza cig :"  + siopeAssenzaDaDefinire,"selezionare una motivazione valida"));
 		//SIAC-5565
 		String siopeAssenzaInCorsoDiDefinizione = BilConstants.CODICE_SIOPE_ASSENZA_MOTIVAZIONE_IN_CORSO_DEFINIZIONE.getConstant();
 		checkCondition(!siopeAssenzaInCorsoDiDefinizione.equals(assenzaMotivazioneWithCodice.getCodice()), 
-				ErroreCore.VALORE_NON_VALIDO.getErrore("motivo assenza cig " + siopeAssenzaInCorsoDiDefinizione,"selezionare una motivazione valida"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("motivo assenza cig " + siopeAssenzaInCorsoDiDefinizione,"selezionare una motivazione valida"));
 	}
 	
-	/**
-	 * Validazione del mutuo.
-	 * 
-	 * @param listaVoceMutuo la lista dei mutui dell'impegno
-	 */
-	private void validationMutuo(List<VoceMutuo> listaVoceMutuo) {
-		final String methodName = "validationMutuo";
-		VoceMutuo voceMutuo = model.getVoceMutuo();
-		boolean mutuoFornitoInInput = voceMutuo != null && StringUtils.isNotBlank(voceMutuo.getNumeroMutuo());
-		checkCondition(mutuoFornitoInInput, ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore());
-		if(mutuoFornitoInInput) {
-			// Controllo ancora che il mutuo sia effettivamenteo presente
-			VoceMutuo mutuoDellImpegno = null;
-			if(listaVoceMutuo != null) {
-				mutuoDellImpegno = ComparatorUtils.findVoceMutuoByNumero(listaVoceMutuo, voceMutuo);
-			}
-			if(log.isDebugEnabled()) {
-				log.debug(methodName, "Mutuo ricercato nell'elenco tramite numero " + voceMutuo.getNumeroMutuo() + ": "
-						+ (mutuoDellImpegno == null ? "null" : mutuoDellImpegno.getUid()));
-			}
-			
-			checkCondition(mutuoDellImpegno != null, ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore());
-			// Imposto i dati nel model
-			model.getSubdocumentoSpesa().setVoceMutuo(mutuoDellImpegno);
-		}
-	}
+
 	
 	
 	/**
@@ -445,7 +431,7 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		List<SubdocumentoSpesa> list = model.getListaSubdocumentoSpesa();
 		if(row < 0 || row >= list.size()) {
 			log.debug(methodName, "Riga non valida: " + row + " non e' compreso tra 0 e " + list.size());
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Riga da eliminare", "deve essere compreso tra 0 e " + list.size()));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Riga da eliminare", "deve essere compreso tra 0 e " + list.size()));
 		}
 	}
 	
@@ -492,7 +478,7 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		List<SubdocumentoSpesa> list = model.getListaSubdocumentoSpesa();
 		if(row < 0 || row >= list.size()) {
 			log.debug(methodName, "Riga non valida: " + row + " non e' compreso tra 0 e " + list.size());
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Riga da aggiornare", "deve essere compreso tra 0 e " + list.size()));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Riga da aggiornare", "deve essere compreso tra 0 e " + list.size()));
 			return;
 		}
 		
@@ -589,7 +575,7 @@ public class AssociaImpegnoAllegatoAttoAction extends AssociaMovimentoAllegatoAt
 		}
 		
 		checkCondition(provvisorioDiCassa != null , ErroreCore.ENTITA_NON_TROVATA.getErrore("provvisorio di cassa", pdc.getAnno()
-				 +  "/" + pdc.getNumero(), true));
+				 +  "/" + pdc.getNumero()), true);
 		
 		BigDecimal importoDaVerificare = calcolaImportoSubdocumentiSuProvvisorioDiCassa(provvisorioDiCassa, row);
 		checkCondition(importoDaVerificare.compareTo(provvisorioDiCassa.getImportoDaRegolarizzare()) <= 0,

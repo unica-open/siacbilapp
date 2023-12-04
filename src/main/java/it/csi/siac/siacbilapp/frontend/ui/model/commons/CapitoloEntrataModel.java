@@ -47,8 +47,6 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -1393414257243302252L;
 	
-	/** Il numero dei classificatori generici */
-	private static final int NUMERO_CLASSIFICATORI_GENERICI = 15;
 	
 	/* Prima maschera: dati di base */
 	private TitoloEntrata            titoloEntrata;
@@ -88,6 +86,70 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	private boolean transazioneUnioneEuropeaEntrataEditabile;
 	
 	private boolean flagEntrateRicorrenti;
+	
+	//SIAC-8517
+	private ClassificatoreGenerico classificatoreGenerico36;
+	private ClassificatoreGenerico classificatoreGenerico37;
+	private ClassificatoreGenerico classificatoreGenerico38;
+	private ClassificatoreGenerico classificatoreGenerico39;
+	private ClassificatoreGenerico classificatoreGenerico40;
+	private ClassificatoreGenerico classificatoreGenerico41;
+	private ClassificatoreGenerico classificatoreGenerico42;
+	private ClassificatoreGenerico classificatoreGenerico43;
+	private ClassificatoreGenerico classificatoreGenerico44;
+	private ClassificatoreGenerico classificatoreGenerico45;
+	private ClassificatoreGenerico classificatoreGenerico46;
+	private ClassificatoreGenerico classificatoreGenerico47;
+	private ClassificatoreGenerico classificatoreGenerico48;
+	private ClassificatoreGenerico classificatoreGenerico49;
+	private ClassificatoreGenerico classificatoreGenerico50;
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico36 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico37 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico38 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico39 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico40 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico41 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico42 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico43 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico44 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico45 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico46 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico47 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico48 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico49 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico50 = new ArrayList<ClassificatoreGenerico>();
+	private String labelClassificatoreGenerico36;
+	private String labelClassificatoreGenerico37;
+	private String labelClassificatoreGenerico38;
+	private String labelClassificatoreGenerico39;
+	private String labelClassificatoreGenerico40;
+	private String labelClassificatoreGenerico41;
+	private String labelClassificatoreGenerico42;
+	private String labelClassificatoreGenerico43;
+	private String labelClassificatoreGenerico44;
+	private String labelClassificatoreGenerico45;
+	private String labelClassificatoreGenerico46;
+	private String labelClassificatoreGenerico47;
+	private String labelClassificatoreGenerico48;
+	private String labelClassificatoreGenerico49;
+	private String labelClassificatoreGenerico50;
+	private boolean classificatoreGenerico36Editabile;
+	private boolean classificatoreGenerico37Editabile;
+	private boolean classificatoreGenerico38Editabile;
+	private boolean classificatoreGenerico39Editabile;
+	private boolean classificatoreGenerico40Editabile;
+	private boolean classificatoreGenerico41Editabile;
+	private boolean classificatoreGenerico42Editabile;
+	private boolean classificatoreGenerico43Editabile;
+	private boolean classificatoreGenerico44Editabile;
+	private boolean classificatoreGenerico45Editabile;
+	private boolean classificatoreGenerico46Editabile;
+	private boolean classificatoreGenerico47Editabile;
+	private boolean classificatoreGenerico48Editabile;
+	private boolean classificatoreGenerico49Editabile;
+	private boolean classificatoreGenerico50Editabile;
+	
+	
 	
 	/**
 	 * @return the titoloEntrata
@@ -256,8 +318,7 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	/**
 	 * @param transazioneUnioneEuropeaEntrata the transazioneUnioneEuropeaEntrata to set
 	 */
-	public void setTransazioneUnioneEuropeaEntrata(
-			TransazioneUnioneEuropeaEntrata transazioneUnioneEuropeaEntrata) {
+	public void setTransazioneUnioneEuropeaEntrata(TransazioneUnioneEuropeaEntrata transazioneUnioneEuropeaEntrata) {
 		this.transazioneUnioneEuropeaEntrata = transazioneUnioneEuropeaEntrata;
 	}
 	/**
@@ -382,11 +443,383 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	public void setFlagEntrateRicorrenti(boolean flagEntrateRicorrenti) {
 		this.flagEntrateRicorrenti = flagEntrateRicorrenti;
 	}
+	
+	
+	public ClassificatoreGenerico getClassificatoreGenerico36() {
+		return classificatoreGenerico36;
+	}
+	public void setClassificatoreGenerico36(ClassificatoreGenerico classificatoreGenerico36) {
+		this.classificatoreGenerico36 = classificatoreGenerico36;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico37() {
+		return classificatoreGenerico37;
+	}
+	public void setClassificatoreGenerico37(ClassificatoreGenerico classificatoreGenerico37) {
+		this.classificatoreGenerico37 = classificatoreGenerico37;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico38() {
+		return classificatoreGenerico38;
+	}
+	public void setClassificatoreGenerico38(ClassificatoreGenerico classificatoreGenerico38) {
+		this.classificatoreGenerico38 = classificatoreGenerico38;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico39() {
+		return classificatoreGenerico39;
+	}
+	public void setClassificatoreGenerico39(ClassificatoreGenerico classificatoreGenerico39) {
+		this.classificatoreGenerico39 = classificatoreGenerico39;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico40() {
+		return classificatoreGenerico40;
+	}
+	public void setClassificatoreGenerico40(ClassificatoreGenerico classificatoreGenerico40) {
+		this.classificatoreGenerico40 = classificatoreGenerico40;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico41() {
+		return classificatoreGenerico41;
+	}
+	public void setClassificatoreGenerico41(ClassificatoreGenerico classificatoreGenerico41) {
+		this.classificatoreGenerico41 = classificatoreGenerico41;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico42() {
+		return classificatoreGenerico42;
+	}
+	public void setClassificatoreGenerico42(ClassificatoreGenerico classificatoreGenerico42) {
+		this.classificatoreGenerico42 = classificatoreGenerico42;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico43() {
+		return classificatoreGenerico43;
+	}
+	public void setClassificatoreGenerico43(ClassificatoreGenerico classificatoreGenerico43) {
+		this.classificatoreGenerico43 = classificatoreGenerico43;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico44() {
+		return classificatoreGenerico44;
+	}
+	public void setClassificatoreGenerico44(ClassificatoreGenerico classificatoreGenerico44) {
+		this.classificatoreGenerico44 = classificatoreGenerico44;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico45() {
+		return classificatoreGenerico45;
+	}
+	public void setClassificatoreGenerico45(ClassificatoreGenerico classificatoreGenerico45) {
+		this.classificatoreGenerico45 = classificatoreGenerico45;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico46() {
+		return classificatoreGenerico46;
+	}
+	public void setClassificatoreGenerico46(ClassificatoreGenerico classificatoreGenerico46) {
+		this.classificatoreGenerico46 = classificatoreGenerico46;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico47() {
+		return classificatoreGenerico47;
+	}
+	public void setClassificatoreGenerico47(ClassificatoreGenerico classificatoreGenerico47) {
+		this.classificatoreGenerico47 = classificatoreGenerico47;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico48() {
+		return classificatoreGenerico48;
+	}
+	public void setClassificatoreGenerico48(ClassificatoreGenerico classificatoreGenerico48) {
+		this.classificatoreGenerico48 = classificatoreGenerico48;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico49() {
+		return classificatoreGenerico49;
+	}
+	public void setClassificatoreGenerico49(ClassificatoreGenerico classificatoreGenerico49) {
+		this.classificatoreGenerico49 = classificatoreGenerico49;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico50() {
+		return classificatoreGenerico50;
+	}
+	public void setClassificatoreGenerico50(ClassificatoreGenerico classificatoreGenerico50) {
+		this.classificatoreGenerico50 = classificatoreGenerico50;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico36() {
+		return listaClassificatoreGenerico36;
+	}
+	public void setListaClassificatoreGenerico36(List<ClassificatoreGenerico> listaClassificatoreGenerico36) {
+		this.listaClassificatoreGenerico36 = listaClassificatoreGenerico36;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico37() {
+		return listaClassificatoreGenerico37;
+	}
+	public void setListaClassificatoreGenerico37(List<ClassificatoreGenerico> listaClassificatoreGenerico37) {
+		this.listaClassificatoreGenerico37 = listaClassificatoreGenerico37;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico38() {
+		return listaClassificatoreGenerico38;
+	}
+	public void setListaClassificatoreGenerico38(List<ClassificatoreGenerico> listaClassificatoreGenerico38) {
+		this.listaClassificatoreGenerico38 = listaClassificatoreGenerico38;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico39() {
+		return listaClassificatoreGenerico39;
+	}
+	public void setListaClassificatoreGenerico39(List<ClassificatoreGenerico> listaClassificatoreGenerico39) {
+		this.listaClassificatoreGenerico39 = listaClassificatoreGenerico39;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico40() {
+		return listaClassificatoreGenerico40;
+	}
+	public void setListaClassificatoreGenerico40(List<ClassificatoreGenerico> listaClassificatoreGenerico40) {
+		this.listaClassificatoreGenerico40 = listaClassificatoreGenerico40;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico41() {
+		return listaClassificatoreGenerico41;
+	}
+	public void setListaClassificatoreGenerico41(List<ClassificatoreGenerico> listaClassificatoreGenerico41) {
+		this.listaClassificatoreGenerico41 = listaClassificatoreGenerico41;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico42() {
+		return listaClassificatoreGenerico42;
+	}
+	public void setListaClassificatoreGenerico42(List<ClassificatoreGenerico> listaClassificatoreGenerico42) {
+		this.listaClassificatoreGenerico42 = listaClassificatoreGenerico42;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico43() {
+		return listaClassificatoreGenerico43;
+	}
+	public void setListaClassificatoreGenerico43(List<ClassificatoreGenerico> listaClassificatoreGenerico43) {
+		this.listaClassificatoreGenerico43 = listaClassificatoreGenerico43;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico44() {
+		return listaClassificatoreGenerico44;
+	}
+	public void setListaClassificatoreGenerico44(List<ClassificatoreGenerico> listaClassificatoreGenerico44) {
+		this.listaClassificatoreGenerico44 = listaClassificatoreGenerico44;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico45() {
+		return listaClassificatoreGenerico45;
+	}
+	public void setListaClassificatoreGenerico45(List<ClassificatoreGenerico> listaClassificatoreGenerico45) {
+		this.listaClassificatoreGenerico45 = listaClassificatoreGenerico45;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico46() {
+		return listaClassificatoreGenerico46;
+	}
+	public void setListaClassificatoreGenerico46(List<ClassificatoreGenerico> listaClassificatoreGenerico46) {
+		this.listaClassificatoreGenerico46 = listaClassificatoreGenerico46;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico47() {
+		return listaClassificatoreGenerico47;
+	}
+	public void setListaClassificatoreGenerico47(List<ClassificatoreGenerico> listaClassificatoreGenerico47) {
+		this.listaClassificatoreGenerico47 = listaClassificatoreGenerico47;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico48() {
+		return listaClassificatoreGenerico48;
+	}
+	public void setListaClassificatoreGenerico48(List<ClassificatoreGenerico> listaClassificatoreGenerico48) {
+		this.listaClassificatoreGenerico48 = listaClassificatoreGenerico48;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico49() {
+		return listaClassificatoreGenerico49;
+	}
+	public void setListaClassificatoreGenerico49(List<ClassificatoreGenerico> listaClassificatoreGenerico49) {
+		this.listaClassificatoreGenerico49 = listaClassificatoreGenerico49;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico50() {
+		return listaClassificatoreGenerico50;
+	}
+	public void setListaClassificatoreGenerico50(List<ClassificatoreGenerico> listaClassificatoreGenerico50) {
+		this.listaClassificatoreGenerico50 = listaClassificatoreGenerico50;
+	}
+	public String getLabelClassificatoreGenerico36() {
+		return labelClassificatoreGenerico36;
+	}
+	public void setLabelClassificatoreGenerico36(String labelClassificatoreGenerico36) {
+		this.labelClassificatoreGenerico36 = labelClassificatoreGenerico36;
+	}
+	public String getLabelClassificatoreGenerico37() {
+		return labelClassificatoreGenerico37;
+	}
+	public void setLabelClassificatoreGenerico37(String labelClassificatoreGenerico37) {
+		this.labelClassificatoreGenerico37 = labelClassificatoreGenerico37;
+	}
+	public String getLabelClassificatoreGenerico38() {
+		return labelClassificatoreGenerico38;
+	}
+	public void setLabelClassificatoreGenerico38(String labelClassificatoreGenerico38) {
+		this.labelClassificatoreGenerico38 = labelClassificatoreGenerico38;
+	}
+	public String getLabelClassificatoreGenerico39() {
+		return labelClassificatoreGenerico39;
+	}
+	public void setLabelClassificatoreGenerico39(String labelClassificatoreGenerico39) {
+		this.labelClassificatoreGenerico39 = labelClassificatoreGenerico39;
+	}
+	public String getLabelClassificatoreGenerico40() {
+		return labelClassificatoreGenerico40;
+	}
+	public void setLabelClassificatoreGenerico40(String labelClassificatoreGenerico40) {
+		this.labelClassificatoreGenerico40 = labelClassificatoreGenerico40;
+	}
+	public String getLabelClassificatoreGenerico41() {
+		return labelClassificatoreGenerico41;
+	}
+	public void setLabelClassificatoreGenerico41(String labelClassificatoreGenerico41) {
+		this.labelClassificatoreGenerico41 = labelClassificatoreGenerico41;
+	}
+	public String getLabelClassificatoreGenerico42() {
+		return labelClassificatoreGenerico42;
+	}
+	public void setLabelClassificatoreGenerico42(String labelClassificatoreGenerico42) {
+		this.labelClassificatoreGenerico42 = labelClassificatoreGenerico42;
+	}
+	public String getLabelClassificatoreGenerico43() {
+		return labelClassificatoreGenerico43;
+	}
+	public void setLabelClassificatoreGenerico43(String labelClassificatoreGenerico43) {
+		this.labelClassificatoreGenerico43 = labelClassificatoreGenerico43;
+	}
+	public String getLabelClassificatoreGenerico44() {
+		return labelClassificatoreGenerico44;
+	}
+	public void setLabelClassificatoreGenerico44(String labelClassificatoreGenerico44) {
+		this.labelClassificatoreGenerico44 = labelClassificatoreGenerico44;
+	}
+	public String getLabelClassificatoreGenerico45() {
+		return labelClassificatoreGenerico45;
+	}
+	public void setLabelClassificatoreGenerico45(String labelClassificatoreGenerico45) {
+		this.labelClassificatoreGenerico45 = labelClassificatoreGenerico45;
+	}
+	public String getLabelClassificatoreGenerico46() {
+		return labelClassificatoreGenerico46;
+	}
+	public void setLabelClassificatoreGenerico46(String labelClassificatoreGenerico46) {
+		this.labelClassificatoreGenerico46 = labelClassificatoreGenerico46;
+	}
+	public String getLabelClassificatoreGenerico47() {
+		return labelClassificatoreGenerico47;
+	}
+	public void setLabelClassificatoreGenerico47(String labelClassificatoreGenerico47) {
+		this.labelClassificatoreGenerico47 = labelClassificatoreGenerico47;
+	}
+	public String getLabelClassificatoreGenerico48() {
+		return labelClassificatoreGenerico48;
+	}
+	public void setLabelClassificatoreGenerico48(String labelClassificatoreGenerico48) {
+		this.labelClassificatoreGenerico48 = labelClassificatoreGenerico48;
+	}
+	public String getLabelClassificatoreGenerico49() {
+		return labelClassificatoreGenerico49;
+	}
+	public void setLabelClassificatoreGenerico49(String labelClassificatoreGenerico49) {
+		this.labelClassificatoreGenerico49 = labelClassificatoreGenerico49;
+	}
+	public String getLabelClassificatoreGenerico50() {
+		return labelClassificatoreGenerico50;
+	}
+	public void setLabelClassificatoreGenerico50(String labelClassificatoreGenerico50) {
+		this.labelClassificatoreGenerico50 = labelClassificatoreGenerico50;
+	}
+	
+	
+	
+	public boolean isClassificatoreGenerico36Editabile() {
+		return classificatoreGenerico36Editabile;
+	}
+	public void setClassificatoreGenerico36Editabile(boolean classificatoreGenerico36Editabile) {
+		this.classificatoreGenerico36Editabile = classificatoreGenerico36Editabile;
+	}
+	public boolean isClassificatoreGenerico37Editabile() {
+		return classificatoreGenerico37Editabile;
+	}
+	public void setClassificatoreGenerico37Editabile(boolean classificatoreGenerico37Editabile) {
+		this.classificatoreGenerico37Editabile = classificatoreGenerico37Editabile;
+	}
+	public boolean isClassificatoreGenerico38Editabile() {
+		return classificatoreGenerico38Editabile;
+	}
+	public void setClassificatoreGenerico38Editabile(boolean classificatoreGenerico38Editabile) {
+		this.classificatoreGenerico38Editabile = classificatoreGenerico38Editabile;
+	}
+	public boolean isClassificatoreGenerico39Editabile() {
+		return classificatoreGenerico39Editabile;
+	}
+	public void setClassificatoreGenerico39Editabile(boolean classificatoreGenerico39Editabile) {
+		this.classificatoreGenerico39Editabile = classificatoreGenerico39Editabile;
+	}
+	public boolean isClassificatoreGenerico40Editabile() {
+		return classificatoreGenerico40Editabile;
+	}
+	public void setClassificatoreGenerico40Editabile(boolean classificatoreGenerico40Editabile) {
+		this.classificatoreGenerico40Editabile = classificatoreGenerico40Editabile;
+	}
+	public boolean isClassificatoreGenerico41Editabile() {
+		return classificatoreGenerico41Editabile;
+	}
+	public void setClassificatoreGenerico41Editabile(boolean classificatoreGenerico41Editabile) {
+		this.classificatoreGenerico41Editabile = classificatoreGenerico41Editabile;
+	}
+	public boolean isClassificatoreGenerico42Editabile() {
+		return classificatoreGenerico42Editabile;
+	}
+	public void setClassificatoreGenerico42Editabile(boolean classificatoreGenerico42Editabile) {
+		this.classificatoreGenerico42Editabile = classificatoreGenerico42Editabile;
+	}
+	public boolean isClassificatoreGenerico43Editabile() {
+		return classificatoreGenerico43Editabile;
+	}
+	public void setClassificatoreGenerico43Editabile(boolean classificatoreGenerico43Editabile) {
+		this.classificatoreGenerico43Editabile = classificatoreGenerico43Editabile;
+	}
+	public boolean isClassificatoreGenerico44Editabile() {
+		return classificatoreGenerico44Editabile;
+	}
+	public void setClassificatoreGenerico44Editabile(boolean classificatoreGenerico44Editabile) {
+		this.classificatoreGenerico44Editabile = classificatoreGenerico44Editabile;
+	}
+	public boolean isClassificatoreGenerico45Editabile() {
+		return classificatoreGenerico45Editabile;
+	}
+	public void setClassificatoreGenerico45Editabile(boolean classificatoreGenerico45Editabile) {
+		this.classificatoreGenerico45Editabile = classificatoreGenerico45Editabile;
+	}
+	public boolean isClassificatoreGenerico46Editabile() {
+		return classificatoreGenerico46Editabile;
+	}
+	public void setClassificatoreGenerico46Editabile(boolean classificatoreGenerico46Editabile) {
+		this.classificatoreGenerico46Editabile = classificatoreGenerico46Editabile;
+	}
+	public boolean isClassificatoreGenerico47Editabile() {
+		return classificatoreGenerico47Editabile;
+	}
+	public void setClassificatoreGenerico47Editabile(boolean classificatoreGenerico47Editabile) {
+		this.classificatoreGenerico47Editabile = classificatoreGenerico47Editabile;
+	}
+	public boolean isClassificatoreGenerico48Editabile() {
+		return classificatoreGenerico48Editabile;
+	}
+	public void setClassificatoreGenerico48Editabile(boolean classificatoreGenerico48Editabile) {
+		this.classificatoreGenerico48Editabile = classificatoreGenerico48Editabile;
+	}
+	public boolean isClassificatoreGenerico49Editabile() {
+		return classificatoreGenerico49Editabile;
+	}
+	public void setClassificatoreGenerico49Editabile(boolean classificatoreGenerico49Editabile) {
+		this.classificatoreGenerico49Editabile = classificatoreGenerico49Editabile;
+	}
+	public boolean isClassificatoreGenerico50Editabile() {
+		return classificatoreGenerico50Editabile;
+	}
+	public void setClassificatoreGenerico50Editabile(boolean classificatoreGenerico50Editabile) {
+		this.classificatoreGenerico50Editabile = classificatoreGenerico50Editabile;
+	}
 	/**
 	 * @return the numeroClassificatoriGenerici
 	 */
 	public int getNumeroClassificatoriGenerici() {
 		return NUMERO_CLASSIFICATORI_GENERICI;
+	}
+	
+	/**
+	 * @return the numeroClassificatoriGenerici
+	 */
+	public int getLastIndexClassificatoriGenerici() {
+		return 36 + NUMERO_CLASSIFICATORI_GENERICI;
 	}
 	
 	/**
@@ -469,21 +902,21 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	
 	@Override
 	protected void caricaClassificatoriGenericiDaSessione(SessionHandler sessionHandler) {
-		setClassificatoreGenerico1(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico1(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_36));
-		setClassificatoreGenerico2(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico2(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_37));
-		setClassificatoreGenerico3(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico3(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_38));
-		setClassificatoreGenerico4(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico4(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_39));
-		setClassificatoreGenerico5(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico5(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_40));
-		setClassificatoreGenerico6(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico6(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_41));
-		setClassificatoreGenerico7(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico7(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_42));
-		setClassificatoreGenerico8(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico8(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_43));
-		setClassificatoreGenerico9(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico9(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_44));
-		setClassificatoreGenerico10(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico10(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_45));
-		setClassificatoreGenerico11(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico11(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_46));
-		setClassificatoreGenerico12(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico12(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_47));
-		setClassificatoreGenerico13(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico13(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_48));
-		setClassificatoreGenerico14(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico14(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_49));
-		setClassificatoreGenerico15(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico15(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_50));
+		setClassificatoreGenerico36(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico36(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_36));
+		setClassificatoreGenerico37(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico37(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_37));
+		setClassificatoreGenerico38(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico38(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_38));
+		setClassificatoreGenerico39(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico39(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_39));
+		setClassificatoreGenerico40(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico40(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_40));
+		setClassificatoreGenerico41(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico41(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_41));
+		setClassificatoreGenerico42(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico42(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_42));
+		setClassificatoreGenerico43(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico43(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_43));
+		setClassificatoreGenerico44(caricaClassificatoriDaSessione(sessionHandler,  getClassificatoreGenerico44(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_44));
+		setClassificatoreGenerico45(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico45(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_45));
+		setClassificatoreGenerico46(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico46(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_46));
+		setClassificatoreGenerico47(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico47(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_47));
+		setClassificatoreGenerico48(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico48(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_48));
+		setClassificatoreGenerico49(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico49(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_49));
+		setClassificatoreGenerico50(caricaClassificatoriDaSessione(sessionHandler, getClassificatoreGenerico50(), BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_50));
 	}
 	
 	@Override
@@ -514,21 +947,21 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	
 	@Override
 	protected void isClassificatoriGenericiEditabile(boolean unico, boolean isMassivo, ControllaClassificatoriModificabiliCapitoloResponse response) {
-		setClassificatoreGenerico1Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_36));
-		setClassificatoreGenerico2Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_37));
-		setClassificatoreGenerico3Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_38));
-		setClassificatoreGenerico4Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_39));
-		setClassificatoreGenerico5Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_40));
-		setClassificatoreGenerico6Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_41));
-		setClassificatoreGenerico7Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_42));
-		setClassificatoreGenerico8Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_43));
-		setClassificatoreGenerico9Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_44));
-		setClassificatoreGenerico10Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_45));
-		setClassificatoreGenerico11Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_46));
-		setClassificatoreGenerico12Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_47));
-		setClassificatoreGenerico13Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_48));
-		setClassificatoreGenerico14Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_49));
-		setClassificatoreGenerico15Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_50));
+		setClassificatoreGenerico36Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_36));
+		setClassificatoreGenerico37Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_37));
+		setClassificatoreGenerico38Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_38));
+		setClassificatoreGenerico39Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_39));
+		setClassificatoreGenerico40Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_40));
+		setClassificatoreGenerico41Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_41));
+		setClassificatoreGenerico42Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_42));
+		setClassificatoreGenerico43Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_43));
+		setClassificatoreGenerico44Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_44));
+		setClassificatoreGenerico45Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_45));
+		setClassificatoreGenerico46Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_46));
+		setClassificatoreGenerico47Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_47));
+		setClassificatoreGenerico48Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_48));
+		setClassificatoreGenerico49Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_49));
+		setClassificatoreGenerico50Editabile(isEditabile(unico, isMassivo, response, TipologiaClassificatore.CLASSIFICATORE_50));
 	}
 	
 	/**
@@ -565,21 +998,21 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	 * @param listaClassificatoriGenerici la lista di classificatori generici da cui popolare il model
 	 */
 	protected void impostaClassificatoriGenericiDaLista(List<ClassificatoreGenerico> listaClassificatoriGenerici) {
-		setClassificatoreGenerico1(null);
-		setClassificatoreGenerico2(null);
-		setClassificatoreGenerico3(null);
-		setClassificatoreGenerico4(null);
-		setClassificatoreGenerico5(null);
-		setClassificatoreGenerico6(null);
-		setClassificatoreGenerico7(null);
-		setClassificatoreGenerico8(null);
-		setClassificatoreGenerico9(null);
-		setClassificatoreGenerico10(null);
-		setClassificatoreGenerico11(null);
-		setClassificatoreGenerico12(null);
-		setClassificatoreGenerico13(null);
-		setClassificatoreGenerico14(null);
-		setClassificatoreGenerico15(null);
+		setClassificatoreGenerico36(null);
+		setClassificatoreGenerico37(null);
+		setClassificatoreGenerico38(null);
+		setClassificatoreGenerico39(null);
+		setClassificatoreGenerico40(null);
+		setClassificatoreGenerico41(null);
+		setClassificatoreGenerico42(null);
+		setClassificatoreGenerico43(null);
+		setClassificatoreGenerico44(null);
+		setClassificatoreGenerico45(null);
+		setClassificatoreGenerico46(null);
+		setClassificatoreGenerico47(null);
+		setClassificatoreGenerico48(null);
+		setClassificatoreGenerico49(null);
+		setClassificatoreGenerico50(null);
 		
 		for(ClassificatoreGenerico classificatoreGenerico : listaClassificatoriGenerici) {
 			TipoClassificatore tipoClassificatore = classificatoreGenerico.getTipoClassificatore();
@@ -590,35 +1023,35 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 			}
 			
 			if(BilConstants.CODICE_CLASSIFICATORE36.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico1(classificatoreGenerico);
+				setClassificatoreGenerico36(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE37.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico2(classificatoreGenerico);
+				setClassificatoreGenerico37(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE38.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico3(classificatoreGenerico);
+				setClassificatoreGenerico38(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE39.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico4(classificatoreGenerico);
+				setClassificatoreGenerico39(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE40.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico5(classificatoreGenerico);
+				setClassificatoreGenerico40(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE41.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico6(classificatoreGenerico);
+				setClassificatoreGenerico41(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE42.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico7(classificatoreGenerico);
+				setClassificatoreGenerico42(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE43.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico8(classificatoreGenerico);
+				setClassificatoreGenerico43(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE44.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico9(classificatoreGenerico);
+				setClassificatoreGenerico44(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE45.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico10(classificatoreGenerico);
+				setClassificatoreGenerico45(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE46.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico11(classificatoreGenerico);
+				setClassificatoreGenerico46(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE47.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico12(classificatoreGenerico);
+				setClassificatoreGenerico47(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE48.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico13(classificatoreGenerico);
+				setClassificatoreGenerico48(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE49.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico14(classificatoreGenerico);
+				setClassificatoreGenerico49(classificatoreGenerico);
 			} else if(BilConstants.CODICE_CLASSIFICATORE50.getConstant().equals(tipoClassificatore.getCodice())) {
-				setClassificatoreGenerico15(classificatoreGenerico);
+				setClassificatoreGenerico50(classificatoreGenerico);
 			}
 		}
 	}
@@ -630,21 +1063,71 @@ public abstract class CapitoloEntrataModel extends CapitoloModel {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void impostaLabelDaSessione(SessionHandler sessionHandler) {
-		setLabelClassificatoreGenerico1(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_36)));
-		setLabelClassificatoreGenerico2(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_37)));
-		setLabelClassificatoreGenerico3(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_38)));
-		setLabelClassificatoreGenerico4(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_39)));
-		setLabelClassificatoreGenerico5(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_40)));
-		setLabelClassificatoreGenerico6(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_41)));
-		setLabelClassificatoreGenerico7(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_42)));
-		setLabelClassificatoreGenerico8(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_43)));
-		setLabelClassificatoreGenerico9(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_44)));
-		setLabelClassificatoreGenerico10(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_45)));
-		setLabelClassificatoreGenerico11(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_46)));
-		setLabelClassificatoreGenerico12(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_47)));
-		setLabelClassificatoreGenerico13(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_48)));
-		setLabelClassificatoreGenerico14(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_49)));
-		setLabelClassificatoreGenerico15(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_50)));
+		setLabelClassificatoreGenerico36(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_36)));
+		setLabelClassificatoreGenerico37(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_37)));
+		setLabelClassificatoreGenerico38(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_38)));
+		setLabelClassificatoreGenerico39(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_39)));
+		setLabelClassificatoreGenerico40(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_40)));
+		setLabelClassificatoreGenerico41(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_41)));
+		setLabelClassificatoreGenerico42(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_42)));
+		setLabelClassificatoreGenerico43(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_43)));
+		setLabelClassificatoreGenerico44(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_44)));
+		setLabelClassificatoreGenerico45(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_45)));
+		setLabelClassificatoreGenerico46(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_46)));
+		setLabelClassificatoreGenerico47(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_47)));
+		setLabelClassificatoreGenerico48(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_48)));
+		setLabelClassificatoreGenerico49(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_49)));
+		setLabelClassificatoreGenerico50(ottieniLabelClassificatoreGenerico((List<ClassificatoreGenerico>) sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_50)));
+	}
+	protected List<ClassificatoreGenerico> getListaClassificatoriGenerici() {
+		List<ClassificatoreGenerico> lista = new ArrayList<ClassificatoreGenerico>();
+		
+		addClassificatoreGenericoALista(lista, classificatoreGenerico36);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico37);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico38);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico39);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico40);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico41);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico42);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico43);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico44);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico45);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico46);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico47);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico48);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico49);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico50);
+		
+		return lista;
+	}
+	
+	/**
+	 * Costruisce la lista dei Classificatori Generici a partire dagli importi del Model.
+	 * 
+	 * @param classificatoreAggiornamento il wrapper per l'aggiornamento
+	 * 
+	 * @return la lista creata
+	 */
+	protected List<ClassificatoreGenerico> getListaClassificatoriGenericiAggiornamento(ClassificatoreAggiornamentoCapitoloEntrata classificatoreAggiornamento) {
+		List<ClassificatoreGenerico> lista = new ArrayList<ClassificatoreGenerico>();
+		
+		addClassificatoreGenericoALista(lista, classificatoreGenerico36,  classificatoreAggiornamento.getClassificatoreGenerico36(), classificatoreGenerico36Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico37,  classificatoreAggiornamento.getClassificatoreGenerico37(), classificatoreGenerico37Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico38,  classificatoreAggiornamento.getClassificatoreGenerico38(), classificatoreGenerico38Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico39,  classificatoreAggiornamento.getClassificatoreGenerico39(), classificatoreGenerico39Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico40,  classificatoreAggiornamento.getClassificatoreGenerico40(), classificatoreGenerico40Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico41,  classificatoreAggiornamento.getClassificatoreGenerico41(), classificatoreGenerico41Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico42,  classificatoreAggiornamento.getClassificatoreGenerico42(), classificatoreGenerico42Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico43,  classificatoreAggiornamento.getClassificatoreGenerico43(), classificatoreGenerico43Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico44,  classificatoreAggiornamento.getClassificatoreGenerico44(), classificatoreGenerico44Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico45,  classificatoreAggiornamento.getClassificatoreGenerico45(), classificatoreGenerico45Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico46,  classificatoreAggiornamento.getClassificatoreGenerico46(), classificatoreGenerico46Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico47,  classificatoreAggiornamento.getClassificatoreGenerico47(), classificatoreGenerico47Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico48,  classificatoreAggiornamento.getClassificatoreGenerico48(), classificatoreGenerico48Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico49,  classificatoreAggiornamento.getClassificatoreGenerico49(), classificatoreGenerico49Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico50,  classificatoreAggiornamento.getClassificatoreGenerico50(), classificatoreGenerico50Editabile);
+		
+		return lista;
 	}
 	
 }

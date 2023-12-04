@@ -10,7 +10,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.causali.RisultatiRicercaCausaleEPBaseAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per i risultati di ricerca della causale EP, gestione AJAX.
@@ -34,19 +35,26 @@ public class RisultatiRicercaCausaleEPFINAjaxAction extends RisultatiRicercaCaus
 	
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestioneCausaleEP() {
-		return AzioniConsentite.CAUSALEEP_GEN_GESTIONE;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestioneCausaleEP() {
+		return AzioneConsentitaEnum.CAUSALEEP_GEN_GESTIONE;
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaCausaleEP() {
-		return AzioniConsentite.CAUSALEEP_GEN_RICERCA;
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaCausaleEP() {
+		return AzioneConsentitaEnum.CAUSALEEP_GEN_RICERCA;
 	}
 
 
 	@Override
 	protected String getCodiceAmbitoForPattern() {
 		return "FIN";
+	}
+	
+	//SIAC-8323 e SIAC-8324
+	@Override
+	protected boolean isFaseBilancioCoerenteConAzioniModificaCausale() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO);
 	}
 	
 	

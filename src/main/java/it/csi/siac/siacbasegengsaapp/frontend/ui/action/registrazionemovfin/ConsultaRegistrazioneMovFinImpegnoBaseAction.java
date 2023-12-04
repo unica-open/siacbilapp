@@ -10,13 +10,12 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.model.registrazionemovfin.Consu
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.consultazione.ConsultaRegistrazioneMovFinImpegnoHelper;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommonapp.util.paginazione.PaginazioneUtil;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzatoResponse;
 import it.csi.siac.siacfinser.model.Impegno;
-import it.csi.siac.siacfinser.model.SubImpegno;
 
 /**
  * Consultazione per l'impegno. Modulo GEN.
@@ -65,7 +64,7 @@ public abstract class ConsultaRegistrazioneMovFinImpegnoBaseAction<M extends Con
 		sessionHandler.setParametro(BilSessionParameter.IMPEGNO, impegno);
 		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_IMPEGNO_PER_CHIAVE_SUBIMPEGNI, req);
 		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_IMPEGNO_PER_CHIAVE_SUBIMPEGNI,
-				CollectionUtil.toListaPaginata(res.getImpegno().getElencoSubImpegni(), res.getNumPagina(), res.getNumeroTotaleSub()));
+				PaginazioneUtil.toListaPaginata(res.getImpegno().getElencoSubImpegni(), res.getNumPagina(), res.getNumeroTotaleSub()));
 		
 		// SIAC-5294: creo l'helper
 		model.setConsultazioneHelper(new ConsultaRegistrazioneMovFinImpegnoHelper(impegno, model.isGestioneUEB()));
@@ -82,11 +81,7 @@ public abstract class ConsultaRegistrazioneMovFinImpegnoBaseAction<M extends Con
 	private Impegno popolaDatiImpegno(RicercaImpegnoPerChiaveOttimizzatoResponse response) {
 		Impegno impegno = response.getImpegno();
 		impegno.setElencoSubImpegni(defaultingList(impegno.getElencoSubImpegni()));
-		impegno.setListaVociMutuo(defaultingList(impegno.getListaVociMutuo()));
-		// Inizializzazione mutui sui subimpegni
-		for (SubImpegno si : impegno.getElencoSubImpegni()) {
-			si.setListaVociMutuo(defaultingList(si.getListaVociMutuo()));
-		}
+
 		if (impegno.getCapitoloUscitaGestione() == null) {
 			// Se il capitolo non e' stato impostato dal servizio, lo imposto io
 			impegno.setCapitoloUscitaGestione(response.getCapitoloUscitaGestione());

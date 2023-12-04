@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.core.appender.rewrite.MapRewritePolicy.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
@@ -28,30 +29,37 @@ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+import it.csi.siac.siacbilser.frontend.webservice.CapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
+import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaContoVincolatoCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaContoVincolatoCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatori;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatoriResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriGenericiByTipoElementoBil;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriGenericiByTipoElementoBilResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiSottoContiVincolatiCapitoloBySubdoc;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiSottoContiVincolatiCapitoloBySubdocResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.ClassificatoreStipendi;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siacfin2app.frontend.ui.model.ordinativo.GenericEmissioneOrdinativiModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.AllegatoAttoService;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoService;
 import it.csi.siac.siacfin2ser.frontend.webservice.EmissioneOrdinativiService;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceBollo;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceBolloResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceCommissioneDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceCommissioneDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElencoResponse;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
@@ -68,6 +76,7 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
 import it.csi.siac.siacfinser.model.Distinta;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
+import it.csi.siac.siacfinser.model.codifiche.CommissioneDocumento;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 
@@ -102,17 +111,18 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 	@Autowired protected transient EmissioneOrdinativiService emissioneOrdinativiService;
 
 	
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
 	/** Serviz&icirc; generici */
 	@Autowired protected transient GenericService genericService;
-	/** Serviz&icirc; del predocumento di spesa */
-	@Autowired private transient PreDocumentoSpesaService preDocumentoSpesaService;
+
 	/** documento */
 	@Autowired  private transient DocumentoService documentoService;
 	/** Serviz&icirc; del provvedimento */
 	@Autowired protected transient ProvvedimentoService provvedimentoService;
 	/** Serviz&icirc; del soggetto */
 	@Autowired private transient SoggettoService soggettoService;
-	
+	//SIAC-8017-CMTO
+	@Autowired private transient CapitoloService capitoloService;
 	
 	@Override
 	public void prepare() throws Exception {
@@ -169,6 +179,8 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 		caricaListaTipoFinanziamento();
 		caricaListaClassiSoggetto();
 		caricamentoDistinta();
+		//task-12
+		caricaListaContoTesoreria();
 	}
 	
 	/**
@@ -195,7 +207,7 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(TipiProvvedimento.class, response));
 			}
 			
 			listaInSessione = response.getElencoTipi();
@@ -229,7 +241,7 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoriGenericiByTipoElementoBil.class, response));
 			}
 			
 			listaInSessione = response.getClassificatoriTipoFinanziamento();
@@ -256,7 +268,7 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(ListeGestioneSoggetto.class, response));
 			}
 			listaClassiSoggetto = response.getListaClasseSoggetto();
 			ComparatorUtils.sortByCodiceFin(listaClassiSoggetto);
@@ -276,14 +288,14 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 		if(listaInSessione == null) {
 			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
 			logServiceRequest(request);
-			LeggiContiTesoreriaResponse response = preDocumentoSpesaService.leggiContiTesoreria(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
 			logServiceResponse(response);
 			
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiContiTesoreria.class, response));
 			}
 			
 			listaInSessione = response.getContiTesoreria();
@@ -372,7 +384,7 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 		
 		if(rreres.hasErrori()) {
 			// Ho un errore nel servizio: fornisco l'errore ed esco
-			log.info(methodName, createErrorInServiceInvocationString(rre, rreres));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaElenco.class, rreres));
 			addErrori(rreres);
 			return null;
 		}
@@ -439,7 +451,7 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, response));
 			addErrori(response);
 			return;
 		}
@@ -532,7 +544,7 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			addErrori(response);
 			return;
 		}
@@ -629,6 +641,29 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 		//se ho soltanto un elemento lo preimposto
 		if(model.getListaBollo() !=null && !model.getListaBollo().isEmpty() && model.getListaBollo().size()== 1){
 			model.setCodiceBollo(model.getListaBollo().get(0));
+		}
+	}
+	
+	/**
+	 * task-291
+	 * caricamento della lista commissioni documento
+	 */
+	public void caricaListaCommissioniDocumento() {
+		List<CommissioneDocumento> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_CODICE_COMMISSIONI_DOCUMENTO);
+		if(listaInSessione == null) {
+			RicercaCodiceCommissioneDocumento request = model.creaRequestRicercaCodiceCommissioneDocumento();
+			RicercaCodiceCommissioneDocumentoResponse response = documentoService.ricercaCodiceCommissioneDocumento(request);
+			if(!response.hasErrori()) {
+				model.setListaCommissioniDocumento(response.getElencoCodiciCommissioneDocumento());
+				listaInSessione = response.getElencoCodiciCommissioneDocumento();
+				sessionHandler.setParametro(BilSessionParameter.LISTA_CODICE_COMMISSIONI_DOCUMENTO, listaInSessione);
+			}  
+
+		}
+		model.setListaCommissioniDocumento(listaInSessione);
+		//se ho soltanto un elemento lo preimposto
+		if(model.getListaCommissioniDocumento() != null && !model.getListaCommissioniDocumento().isEmpty() && model.getListaCommissioniDocumento().size() == 1){
+			model.setCommissioneDocumento(model.getListaCommissioniDocumento().get(0));
 		}
 	}
 	
@@ -779,5 +814,50 @@ public abstract class GenericEmissioneOrdinativiAction<M extends GenericEmission
 	 */
 	protected void impostaClassificatoreStipendiFiltrati(List<ClassificatoreStipendi> listaClassificatori) {
 		//DA IMPLEMENTARE NELLE SOTTO CLASSI
+	}
+	
+	public void validateControllaDisponibilitaSottoConto() {
+		checkNotNull(model.getContoTesoreria(), "conto");
+	}
+	
+	//SIAC-8017-CMTO
+	/**
+	 * Controlla disponibilita di cassa capitoli.
+	 *
+	 * @return the string
+	 */
+	public String controllaDisponibilitaSottoConto() {
+		cleanErroriMessaggiInformazioni();
+		ControllaDisponibilitaCassaContoVincolatoCapitolo req = model.creaRequestControllaDisponibilitaCassaContoVincolato();
+		ControllaDisponibilitaCassaContoVincolatoCapitoloResponse res= capitoloService.controllaDisponibilitaCassaContoVincolatoCapitolo(req);
+		if(res.hasErrori()) {
+			addErrori(res);
+			return SUCCESS;
+		}
+		addMessaggi(res.getMessaggi());
+		return SUCCESS;
+	}
+	
+//	public void prepareOttieniUidContoDaSelezionare() {
+//		model.setUidsSubdocumentiSelezionati(null);
+//	}
+	
+	public void validateOttieniUidContoDaSelezionare() {
+		checkCondition(model.getUidsSubdocumentiSelezionati() != null && !model.getUidsSubdocumentiSelezionati().isEmpty(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("nessun subdocumento selezionato."));
+	}
+	
+	//SIAC-8784
+	public String ottieniUidContoDaSelezionare() {
+		LeggiSottoContiVincolatiCapitoloBySubdoc req = model.creaRequestCaricaSottoContiVincolatiCapitolo();
+		
+		LeggiSottoContiVincolatiCapitoloBySubdocResponse response = capitoloService.leggiSottoContiVincolatiCapitoloBySubdocService(req);
+		if(response.hasErrori()) {
+			addErrori(response);
+			return SUCCESS;
+		}
+		if(response.getListaIdsContoTesoreria() != null && !response.getListaIdsContoTesoreria().isEmpty()) {
+			model.setUidContoDaSelezionare(response.getListaIdsContoTesoreria().get(0));
+		}
+		return SUCCESS;
 	}
 }

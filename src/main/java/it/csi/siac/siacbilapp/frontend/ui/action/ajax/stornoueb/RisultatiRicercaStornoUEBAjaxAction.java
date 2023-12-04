@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaStornoUEBAjaxModel;
@@ -31,7 +31,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaStornoUEBAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoStornoUEB, 
+public class RisultatiRicercaStornoUEBAjaxAction extends PagedDataTableAjaxAction<ElementoStornoUEB, 
 	RisultatiRicercaStornoUEBAjaxModel, StornoUEB, RicercaStornoUEB, RicercaStornoUEBResponse> {
 	
 	/** Per la serializzazione */
@@ -58,12 +58,12 @@ public class RisultatiRicercaStornoUEBAjaxAction extends GenericRisultatiRicerca
 	}
 
 	@Override
-	protected ElementoStornoUEB ottieniIstanza(StornoUEB e) throws FrontEndBusinessException {
+	protected ElementoStornoUEB getInstance(StornoUEB e) throws FrontEndBusinessException {
 		return ElementoStornoUEBFactory.getInstance(e);
 	}
 
 	@Override
-	protected RicercaStornoUEBResponse ottieniResponse(RicercaStornoUEB request) {
+	protected RicercaStornoUEBResponse getResponse(RicercaStornoUEB request) {
 		return variazioneDiBilancioService.ricercaStornoUEB(request);
 	}
 

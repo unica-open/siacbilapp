@@ -5,7 +5,7 @@
 package it.csi.siac.siacbasegengsaapp.frontend.ui.model.registrazionemovfin;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.risultatiricerca.ElementoRegistrazioneMovFin;
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 
 /**
  * Classe di Model per le chiamate AJAX relative al DataTable.
@@ -15,7 +15,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjax
  * @version 1.1.0 05/10/2015 - portata a fattor comune per GEN/GSA
  *
  */
-public class RisultatiRicercaRegistrazioneMovFinBaseAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoRegistrazioneMovFin> {
+public class RisultatiRicercaRegistrazioneMovFinBaseAjaxModel extends PagedDataTableAjaxModel<ElementoRegistrazioneMovFin> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -1264952741721075029L;

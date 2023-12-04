@@ -23,7 +23,7 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaTipoBeneC
 import it.csi.siac.siaccespser.model.Cespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespite;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 

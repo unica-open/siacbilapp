@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgenapp.frontend.ui.action.primanotaintegrata.aggiornamento;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -13,6 +13,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.aggio
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgenapp.frontend.ui.model.primanotaintegrata.aggiorna.AggiornaPrimaNotaIntegrataDocumentoGSAModel;
 
 /**
@@ -45,6 +46,13 @@ public class AggiornaPrimaNotaIntegrataDocumentoGSAAction extends AggiornaPrimaN
 	@Override
 	protected BilSessionParameter getParametroSessioneLista() {
 		return BilSessionParameter.RISULTATI_RICERCA_OTTIENI_ENTITA_COLLEGATE_PRIMA_NOTA_GSA;
+	}
+	
+	@Override
+	protected boolean isFaseBilancioNonCompatibile(FaseBilancio faseBilancio) {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return FaseBilancio.PLURIENNALE.equals(faseBilancio) ||
+		FaseBilancio.PREVISIONE.equals(faseBilancio);
 	}
 
 }

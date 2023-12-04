@@ -136,7 +136,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<p>
 										<strong>Riepilogo:</strong>
 										<br/>
-										<s:property value="riepilogoImputazioniContabili" escape="false" />
+										<s:property value="riepilogoImputazioniContabili" escapeHtml="false" />
 									</p>
 								</s:if>
 								<p>Proseguire con l'associazione sulla selezione?</p>
@@ -151,7 +151,7 @@ SPDX-License-Identifier: EUPL-1.2
 						</div>
 						
 						<%-- Modale DEFINISCI --%>
-						<div aria-hidden="true" aria-labelledby="AssociaSelezLabel" role="dialog" tabindex="-1" class="modal hide fade" id="modaleDefinisci">
+						<div aria-hidden="true" aria-labelledby="CompletaDefinisciLabel" role="dialog" tabindex="-1" class="modal hide fade" id="modaleDefinisci">
 							<div class="modal-header">
 								<button aria-hidden="true" data-dismiss="modal" class="close" type="button">&times;</button>
 								<h4 class="nostep-pane">Definisci predisposizione pagamento</h4>
@@ -201,16 +201,16 @@ SPDX-License-Identifier: EUPL-1.2
 	</s:if>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}async.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/async.js"></script>
 	<s:if test="modificaAssociazioniContabiliAbilitato">
-		<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-		<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-		<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-		<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
-		<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-		<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_new.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_new.js"></script>
 		
 	</s:if>
-	<script type="text/javascript" src="${jspath}predocumento/risultatiRicercaSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/risultatiRicercaSpesa.js"></script>
 </body>
 </html>

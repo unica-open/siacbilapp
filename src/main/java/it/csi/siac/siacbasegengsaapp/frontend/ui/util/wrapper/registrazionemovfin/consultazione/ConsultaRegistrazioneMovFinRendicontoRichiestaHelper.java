@@ -77,7 +77,7 @@ public class ConsultaRegistrazioneMovFinRendicontoRichiestaHelper extends Consul
 	 * @return the numeroImpegno
 	 */
 	public String getNumeroImpegno() {
-		return rendicontoRichiesta.getImpegno() != null ? FormatUtils.formatPlain(rendicontoRichiesta.getImpegno().getNumero()) : "";
+		return rendicontoRichiesta.getImpegno() != null ? FormatUtils.formatPlain(rendicontoRichiesta.getImpegno().getNumeroBigDecimal()) : "";
 	}
 	/**
 	 * @return the subImpegnoPresente
@@ -89,7 +89,7 @@ public class ConsultaRegistrazioneMovFinRendicontoRichiestaHelper extends Consul
 	 * @return the numeroSubImpegno
 	 */
 	public String getNumeroSubImpegno() {
-		return rendicontoRichiesta.getSubImpegno() != null ? FormatUtils.formatPlain(rendicontoRichiesta.getSubImpegno().getNumero()) : "";
+		return rendicontoRichiesta.getSubImpegno() != null ? FormatUtils.formatPlain(rendicontoRichiesta.getSubImpegno().getNumeroBigDecimal()) : "";
 	}
 	/**
 	 * @return the datiTipoDocumento

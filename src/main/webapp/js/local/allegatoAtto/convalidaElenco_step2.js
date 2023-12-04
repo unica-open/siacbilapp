@@ -142,6 +142,7 @@
         var nonValidatoEntrate = 0;
         var i;
         var data;
+        var contatoreElementiSelezionati=0;
         for(i in selectedDatas) {
             if(Object.prototype.hasOwnProperty.call(selectedDatas, i) && selectedDatas[i] && selectedDatas[i].isSelected === true) {
                 data = selectedDatas[i].data;
@@ -150,7 +151,13 @@
                 nonValidatoSpese += (data.totaleDaConvalidareSpesa || 0);
                 nonValidatoEntrate += (data.totaleDaConvalidareEntrata || 0);
             }
+            contatoreElementiSelezionati++;
         }
+        //task-160
+        var $modaleTipoConvalida = $('#modaleTipoConvalida');
+        $('#numeroDocumentiCollegati').val(contatoreElementiSelezionati);
+    	$modaleTipoConvalida.find('#numeroDocumentiCollegati').html(contatoreElementiSelezionati);
+    	
         $('#totaleSpeseConvalidabili').html(totaleSpese.formatMoney());
         $('#totaleEntrateConvalidabili').html(totaleEntrate.formatMoney());
         $('#nonValidatoSpeseConvalidabili').html(nonValidatoSpese.formatMoney());

@@ -88,7 +88,7 @@ public abstract class RicercaAllegatoAttoBaseAction<M extends RicercaAllegatoAtt
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaAllegatoAtto.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -253,13 +253,13 @@ public abstract class RicercaAllegatoAttoBaseAction<M extends RicercaAllegatoAtt
 	private boolean checkImpegno() {
 		final String methodName = "checkImpegno";
 		Impegno impegno = model.getImpegno();
-		final boolean isImpegnoValido = impegno != null && impegno.getNumero() != null && impegno.getAnnoMovimento() != 0;
+		final boolean isImpegnoValido = impegno != null && impegno.getNumeroBigDecimal() != null && impegno.getAnnoMovimento() != 0;
 		
 		if(!isImpegnoValido) {
 			return false;
 		}
 		
-		log.debug(methodName, "Ricerca impegno con numero: " + impegno.getNumero() +" anno: " + impegno.getAnnoMovimento());
+		log.debug(methodName, "Ricerca impegno con numero: " + impegno.getNumeroBigDecimal() +" anno: " + impegno.getAnnoMovimento());
 		// Se ho i dati del soggetto, controllo che siano corretti
 		try {
 			controlloImpegno();			
@@ -282,7 +282,7 @@ public abstract class RicercaAllegatoAttoBaseAction<M extends RicercaAllegatoAtt
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMessage = createErrorInServiceInvocationString(request, response);
+			String errorMessage = createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response);
 			log.info(methodName, errorMessage);
 			addErrori(response);
 			throw new ParamValidationException(errorMessage);
@@ -309,18 +309,18 @@ public abstract class RicercaAllegatoAttoBaseAction<M extends RicercaAllegatoAtt
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMessage = createErrorInServiceInvocationString(request, response);
+			String errorMessage = createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, response);
 			log.info(methodName, errorMessage);
 			addErrori(response);
 			throw new ParamValidationException(errorMessage);
 		}
 		if(response.getImpegno() == null) {
 			log.info(methodName, "Nessun impegno ottenuto con codice" + model.getImpegno().getAnnoMovimento());
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", model.getImpegno().getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", model.getImpegno().getNumeroBigDecimal()));
 			return;
 		}
 		model.setImpegno(response.getImpegno());
-		if(model.getSubImpegno() != null && model.getSubImpegno().getNumero() != null) {
+		if(model.getSubImpegno() != null && model.getSubImpegno().getNumeroBigDecimal() != null) {
 			SubImpegno subImpegno = findSubImpegno(response.getImpegno(), model.getSubImpegno());
 			model.setSubImpegno(subImpegno);
 		}
@@ -343,13 +343,13 @@ public abstract class RicercaAllegatoAttoBaseAction<M extends RicercaAllegatoAtt
 			return null;
 		}
 		for(SubImpegno si : impegno.getElencoSubImpegni()) {
-			if(si != null && subImpegno.getNumero().compareTo(si.getNumero()) == 0) {
+			if(si != null && subImpegno.getNumeroBigDecimal().compareTo(si.getNumeroBigDecimal()) == 0) {
 				return si;
 			}
 		}
 		// TODO: lanciare eccezione: ho selezionato il subimpegno ma non l'ho trovato
-		log.warn(methodName, "Nessun subimpegno con uid " + subImpegno.getNumero() + " reperibile nell'impegno con uid " + impegno.getUid());
-		addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Nessun subimpegno con uid " + subImpegno.getNumero() + " reperibile nell'impegno con uid " + impegno.getUid()));
+		log.warn(methodName, "Nessun subimpegno con uid " + subImpegno.getNumeroBigDecimal() + " reperibile nell'impegno con uid " + impegno.getUid());
+		addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Nessun subimpegno con uid " + subImpegno.getNumeroBigDecimal() + " reperibile nell'impegno con uid " + impegno.getUid()));
 		return null;
 	}
 	

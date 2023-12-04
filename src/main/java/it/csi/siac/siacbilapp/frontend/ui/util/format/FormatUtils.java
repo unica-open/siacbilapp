@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.threadlocal.DateFormatMapThreadLocal;
-import it.csi.siac.siacbilapp.frontend.ui.util.threadlocal.NumberFormatThreadLocal;
+import it.csi.siac.siacbilapp.frontend.ui.util.threadlocal.NumberFormatMapThreadLocal;
 import it.csi.siac.siaccommon.util.threadlocal.ThreadLocalUtil;
 import it.csi.siac.siaccorser.model.Codifica;
 
@@ -34,7 +34,7 @@ public final class FormatUtils {
 	
 	// Standard formatters
 	private static final ThreadLocal<Map<String, DateFormat>> TL_DATE_FORMATS = ThreadLocalUtil.registerThreadLocal(DateFormatMapThreadLocal.class);
-	private static final ThreadLocal<NumberFormat> TL_NUMBER_FORMAT = ThreadLocalUtil.registerThreadLocal(NumberFormatThreadLocal.class);
+	private static final ThreadLocal<Map<Integer, NumberFormat>> TL_NUMBER_FORMATS = ThreadLocalUtil.registerThreadLocal(NumberFormatMapThreadLocal.class);
 	
 	/** Il contesto di calcolo per i BigDecimal standard. */
 	public static final MathContext MATH_CONTEXT = new MathContext(2, RoundingMode.DOWN);
@@ -197,10 +197,7 @@ public final class FormatUtils {
 	 * @return il valore formattato
 	 */
 	public static String formatCurrency(BigDecimal value) {
-		if(value == null) {
-			return "";
-		}
-		return TL_NUMBER_FORMAT.get().format(value);
+		return formatNumber(value, 2);
 	}
 	
 	/**
@@ -213,10 +210,39 @@ public final class FormatUtils {
 	 * @throws ParseException in caso di fallimento nella parsificazione
 	 */
 	public static BigDecimal parseCurrency(String string) throws ParseException {
+		return parseNumber(string, 2);
+	}
+	
+	/**
+	 * Formattazione del bigdecimal come importo con locale italiano.
+	 * 
+	 * @param value il valore da formattare
+	 * @param decimalPlaces il numero di decimali
+	 * @return il valore formattato
+	 */
+	public static String formatNumber(BigDecimal value, int decimalPlaces) {
+		if(value == null) {
+			return "";
+		}
+		NumberFormat nf = NumberFormatMapThreadLocal.getOrInitializeFormatter(TL_NUMBER_FORMATS, decimalPlaces);
+		return nf.format(value);
+	}
+	
+	/**
+	 * Parsificazione dell'importo con locale italiano in BigDecimal.
+	 * 
+	 * @param string il valore da parsificare
+	 * @param decimalPlaces il numero di decimali
+	 * @return l'importo
+	 * 
+	 * @throws ParseException in caso di fallimento nella parsificazione
+	 */
+	public static BigDecimal parseNumber(String string, int decimalPlaces) throws ParseException {
 		if(StringUtils.isBlank(string)) {
 			return null;
 		}
-		return (BigDecimal) TL_NUMBER_FORMAT.get().parse(string);
+		NumberFormat nf = NumberFormatMapThreadLocal.getOrInitializeFormatter(TL_NUMBER_FORMATS, decimalPlaces);
+		return (BigDecimal) nf.parse(string);
 	}
 	
 	/**

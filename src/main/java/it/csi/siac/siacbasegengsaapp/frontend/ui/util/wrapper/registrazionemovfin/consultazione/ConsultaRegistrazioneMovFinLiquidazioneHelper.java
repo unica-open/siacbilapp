@@ -52,13 +52,13 @@ public class ConsultaRegistrazioneMovFinLiquidazioneHelper extends ConsultaRegis
 	 * @return the datiImpegno
 	 */
 	public String getDatiImpegno() {
-		if(liquidazione == null || liquidazione.getImpegno() == null || liquidazione.getImpegno().getNumero() == null) {
+		if(liquidazione == null || liquidazione.getImpegno() == null || liquidazione.getImpegno().getNumeroBigDecimal() == null) {
 			return "";
 		}
 		return new StringBuilder()
 			.append(liquidazione.getImpegno().getAnnoMovimento())
 			.append(" / ")
-			.append(liquidazione.getImpegno().getNumero().toPlainString())
+			.append(liquidazione.getImpegno().getNumeroBigDecimal().toPlainString())
 			.toString();
 	}
 	
@@ -69,7 +69,7 @@ public class ConsultaRegistrazioneMovFinLiquidazioneHelper extends ConsultaRegis
 		if(liquidazione == null || liquidazione.getSubImpegno() == null) {
 			return "";
 		}
-		return FormatUtils.formatPlain(liquidazione.getSubImpegno().getNumero());
+		return FormatUtils.formatPlain(liquidazione.getSubImpegno().getNumeroBigDecimal());
 	}
 	
 	@Override

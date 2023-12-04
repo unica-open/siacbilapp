@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumbTrail;
-import org.softwareforge.struts2.breadcrumb.Crumb;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -25,9 +26,10 @@ import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesExcep
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.BilancioService;
+import it.csi.siac.siacbilser.model.Capitolo;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Filter;
 import it.csi.siac.siaccommonapp.action.GenericAction;
 import it.csi.siac.siaccommonapp.handler.session.CommonSessionParameter;
 import it.csi.siac.siaccommonapp.interceptor.anchor.Anchor;
@@ -36,17 +38,15 @@ import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.UtenteNonLoggatoException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.frontend.webservice.CoreService;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.FindAzione;
 import it.csi.siac.siaccorser.frontend.webservice.msg.FindAzioneResponse;
-import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Azione;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.ServiceRequest;
@@ -56,12 +56,18 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.errore.TipoErrore;
 import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.frontend.webservice.OilService;
+import it.csi.siac.siacfinser.frontend.webservice.msg.AccreditoTipoOilIsPagoPA;
+import it.csi.siac.siacfinser.frontend.webservice.msg.AccreditoTipoOilIsPagoPAResponse;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
 import it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
 import it.csi.siac.siacfinser.model.soggetto.ClassificazioneSoggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto;
+import xyz.timedrain.arianna.plugin.BreadCrumbTrail;
+import xyz.timedrain.arianna.plugin.Crumb;
+
 
 /**
  * 
@@ -81,21 +87,12 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	/** Il titolo del model, per la gestione con i Crumb */
 	protected static final String MODEL_TITOLO = "%{model.titolo}";
 	
-	/** Serviz&icirc; del bilancio */
 	@Autowired protected transient BilancioService bilancioService;
 
-	@Autowired private transient CoreService coreService;
-//	//SIAC-6884
-//		private boolean isDecentrato;
-//			
-//		public boolean isDecentrato() {
-//			return isDecentrato;
-//		}
-//
-//		public void setDecentrato(boolean isDecentrato) {
-//			this.isDecentrato = isDecentrato;
-//		}
-//		//END SIAC-6884
+	@Autowired protected transient OilService oilService;
+
+	@Value("${isHttps}")
+	private boolean https;
 	
 	@Override
 	public void prepare() throws Exception {
@@ -143,6 +140,20 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 		}
 	}
 	
+	/**
+	 * @return the https
+	 */
+	public boolean isHttps() {
+		return this.https;
+	}
+
+	/**
+	 * @param https the https to set
+	 */
+	public void setHttps(boolean https) {
+		this.https = https;
+	}
+
 	/**
 	 * @see Preparable#prepare()
 	 * @throws Exception in caso di errore nell'invocazione del metodo
@@ -207,7 +218,7 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @param e l'Entita di cui controllare l'id
 	 * @return <code>true</code> se l'Entita ha un id valorizzato correttamente; <code>false</code> altrimenti
 	 */
-	protected boolean checkPresenzaIdEntita(Entita e){
+	public boolean checkPresenzaIdEntita(Entita e){
 		// Delego al metodo del model
 		return model.checkPresenzaIdEntita(e);
 	}
@@ -553,7 +564,7 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @param condition la condizione da verificare
 	 * @param errore    l'errore da injettare
 	 */
-	protected void checkCondition(boolean condition, Errore errore) {
+	public void checkCondition(boolean condition, Errore errore) {
 		// Non rilancia l'eccezione
 		checkCondition(condition, errore, false);
 	}
@@ -591,7 +602,7 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @param throwException se l'eccezione sia da sollevare
 	 * @throws ParamValidationException nel caso in cui la condizione non sia verificata e in cui si sia scelto di rilanciare l'eccezione 
 	 */
-	protected void checkCondition(boolean condition, Errore errore, boolean throwException) {
+	public void checkCondition(boolean condition, Errore errore, boolean throwException) {
 		// Controllo della condizione
 		if(!condition) {
 			// Aggiunge l'errore
@@ -668,7 +679,7 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @param throwException se sia da rilanciare un'eccezione
 	 * @throws ParamValidationException nel caso in cui la condizione non sia verificata e in cui si sia scelto di rilanciare l'eccezione
 	 */
-	protected void checkNotNull(Object campo, String nomeCampo, boolean throwException) {
+	public void checkNotNull(Object campo, String nomeCampo, boolean throwException) {
 		// Controlla che il campo non sia null
 		checkCondition(campo != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore(nomeCampo), throwException);
 	}
@@ -1001,7 +1012,7 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @param errori la lista dei messaggi di errore
 	 * @throws GenericFrontEndMessagesException l'eccezione rilanciata
 	 */
-	protected void throwExceptionFromErrori(Collection<Errore> errori) {
+	public void throwExceptionFromErrori(Collection<Errore> errori) {
 	    throwExceptionFromErrori(ErroreCore.ERRORE_DI_SISTEMA, errori);
 	}
 	
@@ -1066,9 +1077,12 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @throws GenericFrontEndMessagesException sempre
 	 */
 	protected void throwOperazioneIncompatibileFaseBilancio(FaseBilancio faseBilancio) {
-		// Lancia l'errore di operazione incompatibile
 		throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore("Bilancio", faseBilancio.name()).getTesto(),
 			GenericFrontEndMessagesException.Level.ERROR);
+	}
+	
+	public void throwOperazioneIncompatibileFaseBilancioCorrente() {
+		throwOperazioneIncompatibileFaseBilancio(getBilancio().getFaseAttuale());
 	}
 	
 	/**
@@ -1201,35 +1215,7 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @return la lista originale, se non <code>null</code>; una lista vuota in caso contrario
 	 */
 	protected <T> List<T> defaultingList(List<T> list) {
-		// Se la lista non e' valorizzata la inizializza
-		return list == null ? new ArrayList<T>() : list;
-	}
-	
-	/**
-	 * Costrusice una stringa per segnalare l'errore nell'invocazione del servizio.
-	 * @param req il request del servizio che ha fornito l'errore
-	 * @param res la response tramite cui loggare gli errori
-	 * @return la stringa di errore
-	 */
-	public String createErrorInServiceInvocationString(ServiceRequest req, ServiceResponse res) {
-		if(req == null) {
-			// La request non e' valorizzata
-			return "NULL request";
-		}
-		// Creo la stringa di errore
-		StringBuilder sb = new StringBuilder()
-			.append("Errore nell'invocazione del servizio ")
-			.append(req.getClass().getSimpleName());
-		if(res != null && res.getErrori() != null) {
-			// Se ho errori
-			for(Errore errore : res.getErrori()) {
-				// Aggiungo errore per errore
-				sb.append(" - ")
-					.append(errore.getTesto());
-			}
-		}
-		// Restituisco la stringa
-		return sb.toString();
+		return CollectionUtil.defaultList(list);
 	}
 	
 	/**
@@ -1291,9 +1277,8 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @param strutturaAmministrativoContabileRicerca la struttura impostata nella ricerca
 	 * @param toThrow                                 se lanciare l'eccezione
 	 */
-	protected void checkUnicoAttoAmministrativo(List<AttoAmministrativo> listaAttoAmministrativo, StrutturaAmministrativoContabile strutturaAmministrativoContabileRicerca, boolean toThrow) {
+	public void checkUnicoAttoAmministrativo(List<AttoAmministrativo> listaAttoAmministrativo, StrutturaAmministrativoContabile strutturaAmministrativoContabileRicerca, boolean toThrow) {
 		if(listaAttoAmministrativo.size() == 1) {
-			// Univoco: sono a posto
 			return;
 		}
 		
@@ -1303,15 +1288,26 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 		checkCondition(listaAttoAmministrativo.size() == 1, ErroreFin.OGGETTO_NON_UNIVOCO.getErrore("Provvedimento"), toThrow);
 	}
 	
-	@Override
-	protected void logServiceRequest(ServiceRequest req) {
-		// IGNORO IL LOG
+	public void checkUnicoCapitolo(List<? extends Capitolo<?,?>> listaCapitolo, boolean toThrow) {
+		if(listaCapitolo.size() == 1) {
+			return;
+		}
+		
+		// Controllo di avere dei dati
+		checkCondition(!listaCapitolo.isEmpty(), ErroreAtt.PROVVEDIMENTO_INESISTENTE.getErrore(), toThrow);
+		// Controllo di avere esattamente un dato
+		checkCondition(listaCapitolo.size() == 1, ErroreFin.OGGETTO_NON_UNIVOCO.getErrore("Capitolo"), toThrow);
 	}
 	
-	@Override
-	protected void logServiceResponse(ServiceResponse res) {
-		// IGNORO IL LOG
-	}
+//	@Override
+//	protected void logServiceRequest(ServiceRequest req) {
+//		// IGNORO IL LOG
+//	}
+//	
+//	@Override
+//	protected void logServiceResponse(ServiceResponse res) {
+//		// IGNORO IL LOG
+//	}
 	
 	/**
 	 * Controlla che la condizione di business sia verificata: in caso contrario lancia un'eccezione
@@ -1334,12 +1330,12 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 	 * @param res la response
 	 * @throws WebServiceInvocationFailureException in caso di errori
 	 */
-	protected void checkServiceResponseException(String methodName, ServiceRequest req, ServiceResponse res) throws WebServiceInvocationFailureException {
+	protected void checkServiceResponseException(String methodName, Class<? extends ServiceRequest> reqCls, ServiceResponse res) throws WebServiceInvocationFailureException {
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			// Si sono verificati degli errori: esco.
 			// Creo il messaggio di errore
-			String msg = createErrorInServiceInvocationString(req, res);
+			String msg = createErrorInServiceInvocationString(reqCls, res);
 			// Loggo
 			log.info(methodName, msg);
 			// Aggiungo gli errori
@@ -1349,6 +1345,34 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 		}
 	}
 
+	
+	//SIAC-6840 // SIAC-8853 //task-34
+	protected boolean checkModalitaPagamentoIsPagoPA(int uidModPag, List<ModalitaPagamentoSoggetto> listaModalitaPagamentoSoggetto) throws WebServiceInvocationFailureException {
+
+		ModalitaPagamentoSoggetto modalitaPagamentoSoggetto = 
+			CollectionUtil.findFirst(listaModalitaPagamentoSoggetto, new Filter<ModalitaPagamentoSoggetto>() {
+				@Override
+				public boolean isAcceptable(ModalitaPagamentoSoggetto source) {
+					return source.getUid() == uidModPag;
+				}
+			});
+
+		//task-34
+		if(modalitaPagamentoSoggetto == null) {
+			return false;
+		}
+		
+		AccreditoTipoOilIsPagoPA req = model.creaRequest(AccreditoTipoOilIsPagoPA.class);
+		logServiceRequest(req);
+		req.setCodiceAccreditoTipo(modalitaPagamentoSoggetto.getModalitaAccreditoSoggetto().getCodice());
+		AccreditoTipoOilIsPagoPAResponse res = oilService.accreditoTipoOilIsPagoPA(req);
+		logServiceResponse(res);
+		checkServiceResponse(AccreditoTipoOilIsPagoPA.class, res);
+		
+		return res.isAccreditoTipoOilIsPagoPA();
+	}
+	
+	
 	/**
 	 * Ricerca l'azione
 	 * @param nome il nome dell'azione
@@ -1382,5 +1406,18 @@ public abstract class GenericBilancioAction<M extends GenericBilancioModel> exte
 		}
 		return lista;
 	}
-	
+
+	/**
+	 * Creazione del cookie per la stampa
+	 * @return il cookie
+	 */
+	protected Cookie createPrintCookie() {
+		Cookie cookie = new Cookie("siac_ajax_print", "PRINT EXECUTED");
+		cookie.setMaxAge(10);
+		cookie.setSecure(https);
+		// HttpOnly settato a false in quanto e' necessario che questo cookie effimero sia accessibile da javascript
+		cookie.setHttpOnly(false);
+		cookie.setPath("/");
+		return cookie;
+	}
 }

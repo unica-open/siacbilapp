@@ -309,7 +309,7 @@ SPDX-License-Identifier: EUPL-1.2
 													</div>
 												</div>
 											</s:if>
-											<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+											<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 												<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null && #attr['classificatoreGenerico1' + #idx + 'Editabile']}">
 													<div class="control-group">
 														<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
@@ -423,9 +423,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataPrevisione/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataPrevisione/ricerca.js"></script>
 </body>
 </html>

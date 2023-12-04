@@ -62,7 +62,7 @@ SPDX-License-Identifier: EUPL-1.2
 													Azioni <span class="caret"></span>
 												</button>
 												<ul class="dropdown-menu pull-right">
-													<s:if test="%{(#provvedimento.bloccoRagioneria!=true && ( #provvedimento.provenienza==null ||(#provvedimento.provenienza.equalsIgnoreCase('MANUALE')))) }">
+													<s:if test="%{isAggiornaAbilitato(#provvedimento)}">
 														<li><a href="risultatiRicercaProvvedimentoAggiorna.do?uidDaAggiornare=<s:property value='%{#provvedimento.uid}'/>">aggiorna</a></li>
 													</s:if>
 													<li><a href="risultatiRicercaProvvedimentoConsulta.do?uidDaConsultare=<s:property value='%{#provvedimento.uid}'/>">consulta</a></li>
@@ -88,6 +88,6 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
 	
-	<script type="text/javascript" src="${jspath}provvedimento/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/risultatiRicerca.js"></script>
 </body>
 </html>

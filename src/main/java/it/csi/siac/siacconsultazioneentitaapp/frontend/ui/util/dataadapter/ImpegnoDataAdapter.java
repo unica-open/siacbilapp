@@ -31,11 +31,14 @@ public class ImpegnoDataAdapter extends EntitaConsultabileDataAdapter {
 		super(	
 				asList(
 						new AnnoImpegnoDataInfo("Impegno", "right", "impegno_anno", "impegno_numero", "impegno_desc"),
-						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc"),
+						//SIAC-8188 "attoamm_oggetto", "attoal_causale"
+						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc", "attoamm_oggetto", "attoal_causale"),
 						new SimpleDataInfo("Stato", "impegno_stato"),
 						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc"),
 						new PianoDeiContiDataInfo("Piano dei Conti", "left", "pdc_code", "pdc_desc"),
 //						new BaseDataInfo("Piano dei Conti", "{0} - {1}", "pdc_code", "pdc_desc"),
+						//SIAC-7349 Start SR210 MR 17/04/2020 Nuovo campo per tabella riepilogo impegno
+						new SimpleDataInfo("Componente", "impegno_componente"),
 						new CurrencyDataInfo("Importo", "impegno_importo", true)
 
 						),
@@ -74,33 +77,46 @@ public class ImpegnoDataAdapter extends EntitaConsultabileDataAdapter {
 						new PlainNumberDataInfo("Impegno", "impegno_numero"),
 						new PlainNumberDataInfo("Anno impegno", "impegno_anno"),
 						new SimpleDataInfo("Descrizione","impegno_desc").forceNoEscape(),
-						new PlainNumberDataInfo("Provvedimento", "attoamm_numero"),
-						new SimpleDataInfo("Descrizione provvedimento","attoamm_desc").forceNoEscape(),												
-						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
-						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc").forceNoEscape(),
-						//SIAC-6193
+						//SIAC-8351
+						new BaseDataInfo("Struttura Competente" , "{0} - {1}", "imp_sac_code", "imp_sac_desc").forceNoEscape(),
 						
+						//PROVVEIDIMENTO
+						new SimpleDataInfo("Anno provv.", "attoamm_anno"),
+						new PlainNumberDataInfo("Numero Provv.", "attoamm_numero"),
+						//SIAC-8350
+						new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc").forceNoEscape(),
+						new SimpleDataInfo("Descrizione provvedimento","attoamm_oggetto").forceNoEscape(),												
+						//SIAC-8350
+						new BaseDataInfo("Struttura Provvedimento" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc").forceNoEscape(),
+						new SimpleDataInfo("Stato provv.", "attoamm_stato_desc").forceNoEscape(),
+						
+						//CAPITOLO
+						//SIAC-6193
+						new PlainNumberDataInfo("Anno capitolo", "impegno_anno_capitolo"),
 						new PlainNumberDataInfo("N.Capitolo", "impegno_nro_capitolo"),
 						new PlainNumberDataInfo("N.Articolo", "impegno_nro_articolo"),
-						new PlainNumberDataInfo("Anno capitolo", "impegno_anno_capitolo"),	
+						//SIAC-8351
+						new BaseDataInfo("Struttura Amm. capitolo" , "{0} - {1}", "cap_sac_code", "cap_sac_desc").forceNoEscape(),
 						
+						new SimpleDataInfo("Componente", "impegno_componente"),
 						new SimpleDataInfo("Flag prenotazione impegno","impegno_flag_prenotazione"),
 						new SimpleDataInfo("Cig","impegno_cig"),
 						new SimpleDataInfo("Cup","impegno_cup"),
 						new SimpleDataInfo("Motivazione assenza SIOPE.","impegno_motivo_assenza_cig").forceNoEscape(),
 						new SimpleDataInfo("Tipo debito SIOPE","impegno_tipo_debito").forceNoEscape(),										
-						new BaseDataInfo("Tipo Provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc").forceNoEscape(),
 						new BaseDataInfo("Piano dei Conti" , "{0} - {1}", "pdc_code", "pdc_desc").forceNoEscape(),
-						new BaseDataInfo("Struttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc").forceNoEscape(),
 						new SimpleDataInfo("Stato", "impegno_stato").forceNoEscape(),
 						new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc").forceNoEscape(),
-						new TypedDataInfo<BigDecimal>("Importo", "impegno_importo")
+						new TypedDataInfo<BigDecimal>("Importo", "impegno_importo"),
+						//SIAC-8877
+						new SimpleDataInfo("Progetto","programma"),
+						new SimpleDataInfo("Cronoprogramma","cronoprogramma")
 						),
 				asList(
 						new BaseDataInfo("testo", " Impegno {0,number,#}/{1,number,#}", "impegno_anno", "impegno_numero")
 						)
 				
-			);
+			); 
 	}  
 	
 }

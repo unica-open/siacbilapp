@@ -205,10 +205,10 @@ public class ElementoSubdocumentoDaEmettere<S extends Subdocumento<D, ?>, D exte
 			
 			sb.append(movimento.getAnnoMovimento())
 				.append("/")
-				.append(movimento.getNumero().toPlainString());
+				.append(movimento.getNumeroBigDecimal().toPlainString());
 			if(submovimento != null) {
 				sb.append("-")
-					.append(submovimento.getNumero().toPlainString());
+					.append(submovimento.getNumeroBigDecimal().toPlainString());
 			}
 		}
 		return sb.toString();

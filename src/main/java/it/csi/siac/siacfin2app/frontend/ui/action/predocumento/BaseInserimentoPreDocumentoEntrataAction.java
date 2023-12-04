@@ -116,7 +116,7 @@ public abstract class BaseInserimentoPreDocumentoEntrataAction<M extends BaseIns
 		checkNotNullNorEmpty(preDocumentoEntrata.getPeriodoCompetenza(), "Periodo competenza");
 		checkNotNull(preDocumentoEntrata.getImporto(), "Importo");
 		checkCondition(preDocumentoEntrata.getImporto() == null || preDocumentoEntrata.getImporto().signum()>0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("importo",": l'importo deve essere positivo"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo",": l'importo deve essere positivo"));
 		
 		checkNotNullNorInvalidUid(model.getTipoCausale(), "Causale tipo");
 		checkNotNullNorInvalidUid(model.getCausaleEntrata(), "Causale");
@@ -128,7 +128,7 @@ public abstract class BaseInserimentoPreDocumentoEntrataAction<M extends BaseIns
 		// Validazioni specifiche
 		validazioneSoggetto();
 		validazioneCapitolo();
-		validazioneAccertamentoSubAccertamento();
+		validazioneAccertamentoSubAccertamento(Integer.valueOf(1));
 		validazioneAttoAmministrativo();
 		
 		//metodi aggiunti in data 05/06/2015

@@ -15,10 +15,12 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:hidden id="HIDDEN_anno_datepicker" value="%{annoEsercizioInt}" />
 	<s:hidden id="nomeAzioneDecentrata" value="%{nomeAzioneDecentrata}" data-maintain="" />
+	<s:hidden id="HIDDEN_provvisorioCompletaDefinisci" value="true" />
+	<s:hidden id="HIDDEN_TipoProvvisorioCassa" />
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span12 contentPage">
-				<s:form cssClass="form-horizontal" action="completaDefinisciPreDocumentoEntrata_completaDefinisci" novalidate="true">
+				<s:form cssClass="form-horizontal" id="completaDefinisciForm" action="completaDefinisciPreDocumentoEntrata_completaDefinisci" novalidate="novalidate" method="post">
 					<s:include value="/jsp/include/messaggi.jsp" />
 					<h3>Completa e Definisci Predisposizione di Incasso</h3>
 					<div class="step-content">
@@ -29,6 +31,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<button type="button" class="btn btn-primary pull-right" id="pulsanteCercaTotali">cerca</button>
 								</span>
 							</p>
+
 							<h4>Predisposizione</h4>
 							<fieldset class="form-horizontal">
 								<fieldset id="fieldsetRicercaPredisposizione">
@@ -73,6 +76,15 @@ SPDX-License-Identifier: EUPL-1.2
 										<s:hidden id="HIDDEN_StrutturaAmministrativoContabileDescrizione" name="strutturaAmministrativoContabile.descrizione" />
 									</div>
 								</div>
+								<%-- SIAC-6780 --%>
+									<div class="control-group">
+										<label for="contoCorrente" class="control-label">Conto corrente</label>
+										<div class="controls">
+											<s:select list="listaContoCorrente" name="contoCorrente.uid" cssClass="span9" required="true" headerKey="0" headerValue=""
+												listKey="uid" listValue="%{codice + '-' + descrizione}" id="contoCorrente" />
+										</div>
+									</div>
+								<%-- --%>
 									<div class="control-group">
 										<label for="tipoCausale" class="control-label">Tipo causale</label>
 										<div class="controls">
@@ -83,7 +95,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<div class="control-group">
 										<label for="causaleEntrata" class="control-label">Causale</label>
 										<div class="controls">
-											<s:select list="listaCausaleEntrata" name="causaleEntrata.uid" cssClass="span8" headerKey="0" headerValue="" data-overlay=""
+											<s:select list="listaCausaleEntrata" name="causaleEntrata.uid" cssClass="span9" headerKey="0" headerValue="" data-overlay=""
 												listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="%{tipoCausale == null || tipoCausale.uid == 0}" id="causaleEntrata" />
 										</div>
 									</div>
@@ -91,59 +103,105 @@ SPDX-License-Identifier: EUPL-1.2
 								<div id="totaliElencoPredocumenti" class="hide">
 									<h4 class="step-pane active">&nbsp;</h4>
 									<fieldset class="form-horizontal">
-										<div class="control-group">
-											<label class="control-label" for="numeroPredisposizioniTotale">Numero Predisposizioni</label>
-											<div class="controls">
-												<input type="text" value="" class="span1 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniTotale" />
-												<span class="al">
-													<label class="radio inline" for="importoPredisposizioniTotale">Totale euro</label>
-												</span>
-												<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniTotale" />
+										<div class="span7">
+											<div class="control-group">
+												<label class="control-label" for="numeroPredisposizioniTotale">Numero Predisposizioni</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniTotale" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniTotale">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiTotale" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniTotale" />
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="numeroPredisposizioniIncomplete">di cui incomplete</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniIncomplete" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniIncomplete">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiIncompleti" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniIncomplete" />
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="numeroPredisposizioniComplete">di cui complete</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniComplete" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniComplete">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiCompleti" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniComplete" />
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="numeroPredisposizioniAnnullateDefinite">di cui annullate/definite</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniAnnullateDefinite" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniAnnullateDefinite">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiAnnullatiDefiniti" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniAnnullateDefinite" />
+												</div>
 											</div>
 										</div>
-										<div class="control-group">
-											<label class="control-label" for="numeroPredisposizioniIncomplete">di cui incomplete</label>
-											<div class="controls">
-												<input type="text" value="" class="span1 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniIncomplete" />
-												<span class="al">
-													<label class="radio inline" for="importoPredisposizioniIncomplete">Totale euro</label>
-												</span>
-												<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniIncomplete" />
+										<%-- SIAC-7420 --%>
+										<div class="span5">
+											<div class="control-group">
+												<label class="control-label span8" for="numeroPredisposizioniNoCassaTotale">Numero Predisposizioni senza Provvisorio di Cassa</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniNoCassaTotale" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniNoCassaTotale">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiNoCassaTotale" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniNoCassaTotale" />
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="numeroPredisposizioniNoCassaIncomplete">di cui incomplete</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniNoCassaIncomplete" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniNoCassaIncomplete">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiNoCassaIncompleti" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniNoCassaIncomplete" />
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="numeroPredisposizioniNoCassaComplete">di cui complete</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniNoCassaComplete" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniNoCassaComplet">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiNoCassaCompleti" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniNoCassaComplete" />
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="numeroPredisposizioniNoCassaAnnullateDefinite">di cui annullate/definite</label>
+												<div class="controls">
+													<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniNoCassaAnnullateDefinite" />
+													<span class="al">
+														<label class="radio inline" for="importoPredisposizioniNoCassaAnnullateDefinite">Totale euro</label>
+													</span>
+													<input type="text" value="" name="importoPreDocumentiNoCassaAnnullatiDefiniti" class="span5 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniNoCassaAnnullateDefinite" />
+												</div>
 											</div>
 										</div>
-										<div class="control-group">
-											<label class="control-label" for="numeroPredisposizioniComplete">di cui complete</label>
-											<div class="controls">
-												<input type="text" value="" class="span1 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniComplete" />
-												<span class="al">
-													<label class="radio inline" for="importoPredisposizioniComplete">Totale euro</label>
-												</span>
-												<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniComplete" />
-											</div>
-										</div>
-										<div class="control-group">
-											<label class="control-label" for="numeroPredisposizioniAnnullateDefinite">di cui annullate/definite</label>
-											<div class="controls">
-												<input type="text" value="" class="span1 soloNumeri text-right" readonly="readonly" id="numeroPredisposizioniAnnullateDefinite" />
-												<span class="al">
-													<label class="radio inline" for="importoPredisposizioniAnnullateDefinite">Totale euro</label>
-												</span>
-												<input type="text" value="" class="span2 soloNumeri text-right" readonly="readonly" id="importoPredisposizioniAnnullateDefinite" />
-											</div>
-										</div>
+										<%-- SIAC-7420 --%>
 									</fieldset>
 								</div>
 								
 								
 								<div id="accordionImputazioniContabili" class="accordion">
-									<div class="accordion-group">
+									 <div class="accordion-group">
 										<div class="accordion-heading">
 											<a href="#collapseImputazioniContabili" data-parent="#accordionImputazioniContabili" data-toggle="collapse" class="accordion-toggle">
 												Imputazioni contabili<span class="icon">&nbsp;</span>
 											</a>
 										</div>
 										<div class="accordion-body collapse in" id="collapseImputazioniContabili">
-											<div class="accordion-inner">
+											 <div class="accordion-inner">
 												<h4 class="step-pane">Provvedimento 
 													<span class="datiRIFProvvedimento" id="SPAN_InformazioniProvvedimentoAttoAmministrativo">
 														<s:property value="datiRiferimentoAttoAmministrativo" />
@@ -188,8 +246,8 @@ SPDX-License-Identifier: EUPL-1.2
 																	</div>
 																</div>
 																<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUidAttoAmministrativo" name="strutturaAmministrativoContabileAttoAmministrativo.uid" />
-<%-- 																<s:hidden id="HIDDEN_StrutturaAmministrativoContabileCodiceAttoAmministrativo" name="strutturaAmministrativoContabileAttoAmministrativo.codice" /> --%>
-<%-- 																<s:hidden id="HIDDEN_StrutturaAmministrativoContabileDescrizioneAttoAmministrativo" name="strutturaAmministrativoContabileAttoAmministrativo.descrizione" /> --%>
+																<s:hidden id="HIDDEN_StrutturaAmministrativoContabileCodiceAttoAmministrativo" name="strutturaAmministrativoContabileAttoAmministrativo.codice" />
+																<s:hidden id="HIDDEN_StrutturaAmministrativoContabileDescrizioneAttoAmministrativo" name="strutturaAmministrativoContabileAttoAmministrativo.descrizione" />
 															</div>
 														</div>
 													</div>
@@ -238,17 +296,45 @@ SPDX-License-Identifier: EUPL-1.2
 														</div>
 													</div>
 												</fieldset>
+												<%-- SIAC-7420 --%>
+													<h4 class="step-pane">Provvisorio di Cassa
+														<span class="datiRIFProvvisorioCassa" id="datiRiferimentoProvvisorioCassaSpan">
+															<s:property value="datiRiferimentoProvvisorioCassa || %{anno} / %{numero} - %{causale}" />
+														</span>
+													</h4>
+												<fieldset>
+													<div class="control-group">
+														<label for="codiceProvvisorioCassa" class="control-label">Anno</label>
+														<div class="controls">
+															<s:textfield id="annoProvvisorioCassa" name="provvisorioCassa.anno" cssClass="lbTextSmall span2" placeholder="%{'anno'}" />
+															<label for="importoProvvisorioCassa" class="radio inline">Numero</label>
+															<s:textfield id="numeroProvvisorioCassa" name="provvisorioCassa.numero" cssClass="lbTextSmall span2" placeholder="%{'numero'}" />
+															<label for="importoProvvisorioCassa" class="radio inline">Importo</label>
+															<s:textfield id="importoProvvisorioCassa" name="provvisorioCassa.importo" cssClass="lbTextSmall soloNumeri span2" placeholder="%{'importo'}" />
+															<label for="importoDaRegolarizzareProvvisorioCassa" class="radio inline">Da regolarizzare</label>
+															<input id="importoDaRegolarizzareProvvisorioCassa" name="provvisorioCassa.importoDaRegolarizzare" class="lbTextSmall soloNumeri span2" readonly="readonly" placeholder="importo da regolarizzare" />
+															&nbsp;
+															<s:hidden id="HIDDEN_CausaleProvvisorioCassa" name="provvisorioCassa.causale" value="%{causale}" />
+															<span class="radio guidata">
+																<button type="button" class="btn btn-primary" id="pulsanteCompilazioneGuidataProvvisorioCassa">compilazione guidata</button>
+															</span>
+														</div>
+													</div>
+												</fieldset>
+												<%-- SIAC-7420 --%>
+												</div>
 											</div>
 										</div>
-									</div>
-								</div>
+									</div> 
 							</fieldset>
+							
 						</div>
 					</div>
 					<p class="margin-medium">
 						<s:include value="/jsp/include/indietro.jsp" />
 						<button type="button" class="btn reset">annulla</button>
-						<s:submit cssClass="btn btn-primary pull-right" value="completa e definisci"/>
+						<s:submit id="completaDefinisciSubmit" cssClass="btn btn-primary pull-right" value="completa e definisci"/>
+
 					</p>
 				</s:form>
 			</div>
@@ -257,16 +343,22 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/movimentoGestione/modaleAccertamento.jsp" />
+	<s:include value="/jsp/provvisorioCassa/modaleRicercaProvvisorioCassa.jsp" />
 	<s:include value="/jsp/provvedimento/selezionaProvvedimento_modale_new.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.new2.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_new.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/predocumento.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/completaDefinisciEntrata.js"></script>
+
+	<%-- SIAC-6780 --%>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricercaInline.js"></script>
+	
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.new2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/predocumento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/completaDefinisciEntrata.js"></script>
 
 </body>
 </html>

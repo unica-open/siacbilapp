@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.capuscprev;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -233,7 +233,7 @@ public class AggiornaMassivaCapitoloUscitaPrevisioneAction extends CapitoloUscit
 		logServiceResponse(responseRicercaVariazioni);
 		
 		if(responseRicercaVariazioni.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(requestRicercaVariazioni, responseRicercaVariazioni));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaVariazioniCapitoloPerAggiornamentoCapitolo.class, responseRicercaVariazioni));
 			addErrori(responseRicercaVariazioni);
 			return false;
 		}

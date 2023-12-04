@@ -118,7 +118,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/definisciElencoSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/definisciElencoSpesa.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.documento;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
  * @version 1.0.0 22/09/2014
  *
  */
-public class RisultatiRicercaQuoteEntrataAjaxModel extends GenericRisultatiRicercaAjaxModel<SubdocumentoEntrata> {
+public class RisultatiRicercaQuoteEntrataAjaxModel extends PagedDataTableAjaxModel<SubdocumentoEntrata> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 2683210424353313326L;

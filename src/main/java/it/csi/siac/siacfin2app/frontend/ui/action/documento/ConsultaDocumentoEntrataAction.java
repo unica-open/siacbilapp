@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -27,6 +27,7 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento.ElementoDocum
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.OrdineService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioQuotaEntrata;
@@ -37,11 +38,14 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDocumentiCollegati
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDocumentiCollegatiByDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaModulareDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaModulareDocumentoEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOrdiniDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOrdiniDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
+import it.csi.siac.siacfin2ser.model.StatoSDIDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
@@ -68,6 +72,8 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 	@Autowired private transient DocumentoEntrataService documentoEntrataService;
 	@Autowired private transient MovimentoGestioneService movimentoGestioneService;
 	@Autowired private transient DocumentoIvaEntrataService documentoIvaEntrataService;
+	//SIAC-7557
+	@Autowired private transient OrdineService ordineService;
 	
 	@Override
 	public void prepare() throws Exception {
@@ -94,7 +100,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaModulareDocumentoEntrata.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -113,6 +119,10 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		model.setDocumento(doc);
 		if(doc.getImporto() != null && doc.getArrotondamento() != null){
 			model.setNetto(doc.getImporto().add(doc.getArrotondamento()).subtract(doc.getImportoTotaleDaDedurreSuFatturaNoteCollegate()));
+		}
+		//SIAC-7562 - 25/06/2020 - CM e GM
+		if(doc.getStatoSDI() != null && !doc.getStatoSDI().equals("")){
+			model.setStatoSDIdescrizione(StatoSDIDocumento.getDescrizioneFromCodice(doc.getStatoSDI()));
 		}
 		
 		BigDecimal totaleQuote = doc.getTotaleImportoQuote() != null ? doc.getTotaleImportoQuote() : BigDecimal.ZERO;
@@ -158,7 +168,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDocumentiCollegatiByDocumentoEntrata.class, res));
 			return INPUT;
 		}
 		
@@ -236,7 +246,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoEntrata.class, res));
 			return INPUT;
 		}
 		
@@ -262,7 +272,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoEntrata.class, res));
 			return INPUT;
 		}
 		
@@ -294,7 +304,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoSpesa.class, res));
 			return INPUT;
 		}
 		
@@ -329,7 +339,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoEntrata.class, res));
 			return INPUT;
 		}
 		
@@ -395,7 +405,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioQuotaEntrata.class, response));
 		}
 		return response.getSubdocumentoEntrata();
 	}
@@ -426,7 +436,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, response);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
@@ -467,7 +477,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 	 */
 	private void impostaSubAccertamento(SubdocumentoEntrata subdocumentoEntrata, Accertamento accertamento) {
 		final String methodName = "impostaSubAccertamento";
-		if(subdocumentoEntrata.getSubAccertamento() == null || subdocumentoEntrata.getSubAccertamento().getNumero() == null) {
+		if(subdocumentoEntrata.getSubAccertamento() == null || subdocumentoEntrata.getSubAccertamento().getNumeroBigDecimal() == null) {
 			// Non ho alcunche' da caricare
 			log.debug(methodName, "Subdocumento " + subdocumentoEntrata.getUid() + " senza subaccertamento associato");
 			return;
@@ -475,13 +485,41 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		
 		// Cerco il subaccertamento per numero
 		for(SubAccertamento subAccertamento : accertamento.getElencoSubAccertamenti()) {
-			if(subAccertamento.getNumero() != null && subdocumentoEntrata.getSubAccertamento().getNumero().equals(subAccertamento.getNumero())) {
+			if(subAccertamento.getNumeroBigDecimal() != null && subdocumentoEntrata.getSubAccertamento().getNumeroBigDecimal().equals(subAccertamento.getNumeroBigDecimal())) {
 				subdocumentoEntrata.setSubAccertamento(subAccertamento);
 				return;
 			}
 		}
 		
 		log.info(methodName, "Nessun subaccertamento trovato. Tutto questo e' molto imbarazzante");
+	}
+	
+	//SIAC-7557
+	/**
+	 * Caricamento degli ordini.
+	 * 
+	 * @return una Stringa corrispondente al risultato dell'invocazione
+	 */
+	public String caricaOrdini() {
+		final String methodName = "caricaOrdini";
+		log.debug(methodName, "Uid del documento di cui ottenere gli ordini: " + model.getDocumento().getUid());
+		
+		RicercaOrdiniDocumento req = model.creaRequestRicercaOrdiniDocumento();
+		logServiceRequest(req);
+		
+		RicercaOrdiniDocumentoResponse res = ordineService.ricercaOrdiniDocumento(req);
+		logServiceResponse(res);
+		
+		// Controllo gli errori
+		if(res.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			log.info(methodName, createErrorInServiceInvocationString(RicercaOrdiniDocumento.class, res));
+			addErrori(res);
+			return SUCCESS;
+		}
+		
+		model.setListaOrdine(res.getOrdini());
+		return SUCCESS;
 	}
 	
 	/**
@@ -504,7 +542,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaModulareDocumentoEntrata.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -531,7 +569,7 @@ public class ConsultaDocumentoEntrataAction extends GenericBilancioAction<Consul
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoEntrata.class, res));
 			addErrori(res);
 			return INPUT;
 		}

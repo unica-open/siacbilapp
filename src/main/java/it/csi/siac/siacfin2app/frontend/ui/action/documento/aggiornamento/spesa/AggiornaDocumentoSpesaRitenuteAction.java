@@ -14,7 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
@@ -115,7 +115,7 @@ public class AggiornaDocumentoSpesaRitenuteAction extends AggiornaDocumentoSpesa
 		
 		if(response.hasErrori()) {
 			// Errori nell'invocazione
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisciOnereSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -215,7 +215,7 @@ public class AggiornaDocumentoSpesaRitenuteAction extends AggiornaDocumentoSpesa
 		
 		if(response.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaOnereSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -271,7 +271,7 @@ public class AggiornaDocumentoSpesaRitenuteAction extends AggiornaDocumentoSpesa
 		
 		if(response.hasErrori()) {
 			// Errore nella validazione del dato
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaOnereSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -309,7 +309,7 @@ public class AggiornaDocumentoSpesaRitenuteAction extends AggiornaDocumentoSpesa
 		
 		if(response.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaDocumentoDiSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -382,7 +382,7 @@ public class AggiornaDocumentoSpesaRitenuteAction extends AggiornaDocumentoSpesa
 		checkNotNull(dettaglioOnere.getImportoImponibile(), "Imponibile");
 		// SIAC-6099: l'imponibile non deve essere superiore all'importo del documento
 		checkCondition(dettaglioOnere.getImportoImponibile() == null || dettaglioOnere.getImportoImponibile().compareTo(model.getDocumento().getImportoNetto()) <= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("imponibile", "non puo' essere maggiore dell'importo del documento ("
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("imponibile", "non puo' essere maggiore dell'importo del documento ("
 					+ FormatUtils.formatCurrency(model.getDocumento().getImportoNetto()) + ")"));
 		
 		checkNotNullNorInvalidUid(tipoOnere, "Codice Tributo",true);
@@ -553,7 +553,7 @@ public class AggiornaDocumentoSpesaRitenuteAction extends AggiornaDocumentoSpesa
 		if(response.hasErrori()) {
 			//si sono verificati errori. esco.
 			addErrori(response);
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioFatturaElettronica.class, response));
 			return INPUT;
 		}
 		

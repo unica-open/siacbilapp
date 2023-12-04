@@ -81,7 +81,7 @@ public class ConsultaRegistrazioneMovFinSubImpegnoBaseAction<M extends ConsultaR
 		}
 		for(SubImpegno si : listaSubImpegno) {
 			// Imposto solo la riga del singolo subimpegno ricercato
-			if(si != null && si.getNumero() != null && model.getNumeroSub().compareTo(si.getNumero()) == 0) {
+			if(si != null && si.getNumeroBigDecimal() != null && model.getNumeroSub().compareTo(si.getNumeroBigDecimal()) == 0) {
 				return si;
 			}
 		}

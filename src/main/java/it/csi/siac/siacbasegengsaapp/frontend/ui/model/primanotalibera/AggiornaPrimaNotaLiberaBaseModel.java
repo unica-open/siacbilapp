@@ -66,7 +66,7 @@ public abstract class AggiornaPrimaNotaLiberaBaseModel extends BaseInserisciAggi
 	 * 
 	 * @return la request creata
 	 */
-	public AggiornaPrimaNota creaRequestAggiornaPrimaNota( ) {
+	public AggiornaPrimaNota creaRequestAggiornaPrimaNota() {
 		AggiornaPrimaNota request = creaRequest(AggiornaPrimaNota.class);
 		/* imposto la lista dei movimenti*/
 		listaMovimentiEP= getListaMovimentoEP();
@@ -78,6 +78,8 @@ public abstract class AggiornaPrimaNotaLiberaBaseModel extends BaseInserisciAggi
 		getPrimaNotaLibera().setBilancio(getBilancio());
 		getPrimaNotaLibera().setAmbito(getAmbito());
 		getPrimaNotaLibera().setListaPrimaNotaFiglia(getListaPrimeNoteDaCollegare());
+		//SIAC-8134
+		popolaStrutturaCompetente();
 		request.setPrimaNota(getPrimaNotaLibera());
 
 		return request;
@@ -108,5 +110,11 @@ public abstract class AggiornaPrimaNotaLiberaBaseModel extends BaseInserisciAggi
 		return request;
 	}
 
+	/**
+	 * SIAC-8134
+	 */
+	protected void popolaStrutturaCompetente() {
+		getPrimaNotaLibera().setStrutturaCompetente(getStrutturaCompetentePrimaNotaLibera());
+	}
 	
 }

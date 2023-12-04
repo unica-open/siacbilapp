@@ -244,6 +244,15 @@ SPDX-License-Identifier: EUPL-1.2
 													listValue="%{codice + '-' + descrizione}" headerKey="" headerValue="" />
 											</div>
 										</div>
+										
+										<div class="control-group">
+											<label for="risorsaAccantonata" class="control-label">Risorsa accantonata </label>
+											<div class="controls">
+												<s:select id="risorsaAccantonata" listKey="uid" list="listaRisorsaAccantonata" name="risorsaAccantonata.uid" cssClass="span10"
+												listValue="%{codice + '-' + descrizione}" headerKey="0" headerValue="" />
+											</div>
+										</div>
+										
 									</fieldset>
 								</div>
 							</div>
@@ -391,7 +400,11 @@ SPDX-License-Identifier: EUPL-1.2
 										Atti di legge <span class="icon">&nbsp;</span>
 									</a>
 								</div>
-								<div id="collapsefour" class="accordion-body collapse">
+								<s:if test="%{attoDiLegge.anno != null}">
+									<div id="collapsefour" class="accordion-body in collapse">
+								</s:if><s:else>
+									<div id="collapsefour" class="accordion-body collapse">
+								</s:else>
 									<div class="accordion-inner">
 										<fieldset class="form-horizontal">
 											<div class="control-group">
@@ -475,9 +488,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloUscita.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloUscitaGestione/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloUscita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloUscitaGestione/ricerca.js"></script>
 </body>
 </html>

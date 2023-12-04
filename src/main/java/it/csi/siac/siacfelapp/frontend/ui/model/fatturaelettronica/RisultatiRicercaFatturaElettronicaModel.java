@@ -33,6 +33,11 @@ public class RisultatiRicercaFatturaElettronicaModel extends GenericBilancioMode
 	
 	private List<CodificaFin> listaClasseSoggetto = new ArrayList<CodificaFin>();
 	
+	//SIAC-7571
+	private String sceltaUtente;
+	//SIAC-8273
+	private String adeguaImportoNonValorizzato;
+	
 	/** Costruttore vuoto di default */
 	public RisultatiRicercaFatturaElettronicaModel() {
 		setTitolo("Risultati ricerca FEL");
@@ -94,8 +99,38 @@ public class RisultatiRicercaFatturaElettronicaModel extends GenericBilancioMode
 		this.listaClasseSoggetto = listaClasseSoggetto != null ? listaClasseSoggetto : new ArrayList<CodificaFin>();
 	}
 
+	/**
+	 * @return the sceltaUtente
+	 */
+	public String getSceltaUtente() {
+		return sceltaUtente;
+	}
+
+	/**
+	 * @param sceltaUtente the sceltaUtente to set
+	 */
+	public void setSceltaUtente(String sceltaUtente) {
+		this.sceltaUtente = sceltaUtente;
+	}
+	
+	/**
+	 * @return the adeguaImportoNonValorizzato
+	 */
+	public String getAdeguaImportoNonValorizzato() {
+		return adeguaImportoNonValorizzato;
+	}
+
+	/**
+	 * @param adeguaImportoNonValorizzato the adeguaImportoNonValorizzato to set
+	 */
+	public void setAdeguaImportoNonValorizzato(String adeguaImportoNonValorizzato) {
+		this.adeguaImportoNonValorizzato = adeguaImportoNonValorizzato;
+	}
+
+	
 	/* **** Requests **** */
 	
+
 	/**
 	 * Crea una request per il servizio di {@link SospendiFatturaElettronica}.
 	 * 

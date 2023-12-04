@@ -208,15 +208,15 @@ SPDX-License-Identifier: EUPL-1.2
 							</div>
 						</div>
 						
-						<!-- SIAC 6677 -->
-						<!-- SIAC-6840 si riabilita il campo -->
-	 							<div class="control-group"> -->
+						<%-- SIAC 6677 --%>
+						<%-- SIAC-6840 si riabilita il campo --%>
+	 							<div class="control-group">
 	 								<label class="control-label" for="codAvvisoPagoPA">Codice Avviso Pago PA</label> -->
-	 								<div class="controls"> -->
+	 								<div class="controls">
 								<s:textfield id="codAvvisoPagoPA" name="documento.codAvvisoPagoPA" cssClass="lbTextSmall span2 numeroNaturale" placeholder="Codice Avviso Pago PA" />
-	 								</div> -->
-	 							</div> -->
-						<!-- SIAC-6840 si riabilita il campo -->
+	 								</div>
+	 							</div>
+						<%-- SIAC-6840 si riabilita il campo --%>
 					
 						<div class="control-group">
 							<label class="control-label" for="codiceFiscalePignoratoDocumento">Soggetto pignorato</label>
@@ -292,10 +292,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisciSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisciSpesa.js"></script>
 
 </body>
 </html>

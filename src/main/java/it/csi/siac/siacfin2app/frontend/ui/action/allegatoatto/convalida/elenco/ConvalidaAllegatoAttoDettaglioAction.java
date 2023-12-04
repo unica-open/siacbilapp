@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
@@ -98,7 +98,7 @@ public class ConvalidaAllegatoAttoDettaglioAction extends ConvalidaAllegatoAttoB
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioElenco.class, response));
 		}
 		return response;
 	}
@@ -193,7 +193,7 @@ public class ConvalidaAllegatoAttoDettaglioAction extends ConvalidaAllegatoAttoB
 	 * @return <code>true</code> se l'utente &eacute; profilato per la quietanza; <code>false</code> in caso contrario.
 	 */
 	private boolean isUtenteProfilatoQuietanza() {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_CONVALIDA_QUIETANZA, sessionHandler.getAzioniConsentite());
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_CONVALIDA_QUIETANZA, sessionHandler.getAzioniConsentite());
 	}
 	
 	/**
@@ -257,14 +257,14 @@ public class ConvalidaAllegatoAttoDettaglioAction extends ConvalidaAllegatoAttoB
 		logServiceRequest(request);
 		
 		// SIAC-5575: l'operazione asincrona deve essere sotto nome 'CONVALIDA'
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_CONVALIDA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_CONVALIDA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = allegatoAttoService.convalidaAllegatoAttoPerElenchiAsync(wrapRequestToAsync(request, azioneRichiesta));
 		logServiceResponse(response);
 		
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(ConvalidaAllegatoAttoPerElenchi.class, response));
 			addErrori(response);
 			return INPUT;
 		}

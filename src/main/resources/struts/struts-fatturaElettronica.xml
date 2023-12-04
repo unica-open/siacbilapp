@@ -6,7 +6,7 @@ SPDX-License-Identifier: EUPL-1.2
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="fatturaElettronica" extends="capitoloDefault" namespace="/">
-			<!-- Ricerca -->
+		<!-- Ricerca -->
 		<action name="ricercaFatturaElettronica" class="ricercaFatturaElettronicaAction">
 			<result name="success">/jsp/fatturaElettronica/ricerca.jsp</result>
 		</action>
@@ -26,16 +26,101 @@ SPDX-License-Identifier: EUPL-1.2
 				<param name="fatturaFEL.idFattura">${fatturaFEL.idFattura}</param>
 			</result>
 		</action>
+		
+		<!-- SIAC-7571 -->
+		<action name="risultatiRicercaFatturaElettronica_importaAsincrono" class="risultatiRicercaFatturaElettronicaAction" method="importaAsincrono">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					sceltaUtente
+				</param>
+			</result>
+			<result name="askImporto" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					sceltaUtente
+				</param>
+			</result>
+			<result name="askDestination" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					sceltaUtente
+				</param>
+			</result>
+			<result name="input" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					sceltaUtente
+				</param>
+			</result>
+		</action>
+		
+		<!-- SIAC-8273 -->
+		<action name="risultatiRicercaFatturaElettronica_cercaFatturaAsincrono" class="risultatiRicercaFatturaElettronicaAction" method="cercaFatturaAsincrono">
+			<result name="success" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					sceltaUtente
+				</param>
+			</result>
+			<result name="askImporto" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					sceltaUtente
+				</param>
+			</result>
+			<result name="input" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					sceltaUtente
+				</param>
+			</result>
+		</action>
+		
 		<action name="risultatiRicercaFatturaElettronica_importa" class="risultatiRicercaFatturaElettronicaAction" method="importa">
 			<result name="success" type="redirectAction">inserisciDocumentoSpesa</result>
+			<!-- SIAC-7571 -->
+			<result name="fatturaAttiva" type="redirectAction">
+				<param name="actionName">inserisciDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="sceltaUtente">${sceltaUtente}</param>
+			</result>
+			<result name="notaCredito" type="redirectAction">
+				<param name="actionName">inserisciDocumentoSpesa</param>
+				<param name="namespace">/</param>
+				<param name="sceltaUtente">${sceltaUtente}</param>
+			</result>
+			<!-- SIAC-7571 -->
 			<result name="input">/jsp/fatturaElettronica/risultatiRicerca.jsp</result>
 		</action>
+		
 		<action name="risultatiRicercaFatturaElettronica_sospendi" class="risultatiRicercaFatturaElettronicaAction" method="sospendi">
 			<result name="success">/jsp/fatturaElettronica/risultatiRicerca.jsp</result>
 			<result name="input">/jsp/fatturaElettronica/risultatiRicerca.jsp</result>
 		</action>
 		
-			<!-- Consulta -->
+		<!-- Consulta -->
 		<action name="consultaFatturaElettronica" class="consultaFatturaElettronicaAction">
 			<result name="success">/jsp/fatturaElettronica/consulta.jsp</result>
 		</action>

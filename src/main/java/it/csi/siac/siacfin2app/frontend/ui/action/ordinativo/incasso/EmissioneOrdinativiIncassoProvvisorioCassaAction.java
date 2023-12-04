@@ -75,7 +75,7 @@ public class EmissioneOrdinativiIncassoProvvisorioCassaAction extends EmissioneO
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaQuoteDaEmettereEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -211,7 +211,7 @@ public class EmissioneOrdinativiIncassoProvvisorioCassaAction extends EmissioneO
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EmetteOrdinativiDiIncassoDaElenco.class, response));
 			addErrori(response);
 			return INPUT;
 		}

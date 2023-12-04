@@ -9,7 +9,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -27,20 +28,31 @@ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.AggiornaAllegatoAttoModel.TabVisualizzazione;
 import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.InserisciAllegatoAttoModel;
+import it.csi.siac.siacfin2app.frontend.ui.util.helper.VerificaBloccoRORHelper;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaElencoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceAllegatoAtto;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceAllegatoAttoResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaQuoteElenco;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaQuoteElencoResponse;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
+import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
+import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzatoResponse;
+import it.csi.siac.siacfinser.model.Impegno;
 
 /**
  * Classe di Action per l'inserimento dell'allegato atto.
@@ -58,7 +70,9 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 4168060280742278347L;
-
+	/** Serviz&icirc; del movimento di gestione */
+	@Autowired protected transient MovimentoGestioneService movimentoGestioneService;
+	
 	@Override
 	public void prepare() throws Exception {
 		cleanErroriMessaggiInformazioni();
@@ -107,8 +121,8 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		for(AzioneConsentita ac : sessionHandler.getAzioniConsentite()) {
 			// Considero solo la mia azione
 			if(ac == null || ac.getAzione() == null
-					|| (!AzioniConsentite.ALLEGATO_ATTO_INSERISCI_CENTRALE.getNomeAzione().equals(ac.getAzione().getNome())
-							&& !AzioniConsentite.ALLEGATO_ATTO_INSERISCI_DECENTRATO.getNomeAzione().equals(ac.getAzione().getNome()))) {
+					|| (!AzioneConsentitaEnum.ALLEGATO_ATTO_INSERISCI_CENTRALE.getNomeAzione().equals(ac.getAzione().getNome())
+							&& !AzioneConsentitaEnum.ALLEGATO_ATTO_INSERISCI_DECENTRATO.getNomeAzione().equals(ac.getAzione().getNome()))) {
 				// Azione non di pertinenza
 				continue;
 			}
@@ -151,7 +165,7 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceAllegatoAtto.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -221,7 +235,7 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		if(aa.getNumero() == 0 && !hasErrori()){
 			checkNotNullNorInvalidUid(model.getStrutturaAmministrativoContabile(), "Struttura Amministrativa", true);
 			checkCondition(BilConstants.CODICE_CDC.getConstant().equals(model.getStrutturaAmministrativoContabile().getTipoClassificatore().getCodice()),
-					ErroreCore.VALORE_NON_VALIDO.getErrore("Struttura Amministrativa", ": deve essere un SETTORE"),
+					ErroreCore.VALORE_NON_CONSENTITO.getErrore("Struttura Amministrativa", ": deve essere un SETTORE"),
 				true);
 			inserisciProvvedimentoAutomatico();
 			return;
@@ -242,7 +256,7 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		logServiceResponse(response);
 		// Controllo di non aver errori
 		if(response.hasErrori()) {
-			String msg = createErrorInServiceInvocationString(request, response);
+			String msg = createErrorInServiceInvocationString(InserisceProvvedimento.class, response);
 			log.info(methodName, msg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(msg);
@@ -275,7 +289,7 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		
 		// Controllo di non aver errori
 		if(response.hasErrori()) {
-			String msg = createErrorInServiceInvocationString(request, response);
+			String msg = createErrorInServiceInvocationString(RicercaProvvedimento.class, response);
 			log.info(methodName, msg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(msg);
@@ -307,7 +321,7 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		
 		// Controllo di non aver errori
 		if(response.hasErrori()) {
-			String msg = createErrorInServiceInvocationString(request, response);
+			String msg = createErrorInServiceInvocationString(RicercaProvvedimento.class, response);
 			log.info(methodName, msg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(msg);
@@ -355,6 +369,10 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 	public String associaElenco() {
 		final String methodName = "associaElenco";
 		validazioneAssociazione();
+		
+		//SIAC-7470
+		controlloBloccoROR();
+		
 		if(hasErrori()) {
 			log.debug(methodName, "Errore di validazione dei dati");
 			return SUCCESS;
@@ -368,7 +386,7 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AssociaElenco.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -379,6 +397,98 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		return SUCCESS;
 	}
 
+	//SIAC-7470: cerco di recuperare prima i subdoc dall'allegato, e da questi l'impegno
+	private void controlloBloccoROR(){
+		if(model.getElencoDocumentiAllegato() != null && AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.BLOCCO_SU_LIQ_IMP_RESIDUI, sessionHandler.getAzioniConsentite())){
+			ElencoDocumentiAllegato elenco = model.getElencoDocumentiAllegato();
+			if(elenco != null){
+				RicercaSinteticaQuoteElenco request = model.creaRequestRicercaSinteticaQuoteElenco();
+				request.setElencoDocumentiAllegato(elenco);
+				if(model.getAllegatoAtto() !=  null && model.getAllegatoAtto().getElencoSoggettiDurc() != null && !model.getAllegatoAtto().getElencoSoggettiDurc().isEmpty())
+					request.setSoggetto(model.getAllegatoAtto().getElencoSoggettiDurc().get(0));
+				request.setParametriPaginazione(new ParametriPaginazione(0,10));
+				RicercaSinteticaQuoteElencoResponse response = allegatoAttoService.ricercaSinteticaQuoteElenco(request);
+				if(response.getSubdocumenti() != null && !response.getSubdocumenti().isEmpty()){
+					for(Subdocumento<?, ?> subdoc:response.getSubdocumenti()){
+						if(subdoc != null && subdoc.getMovimentoGestione() != null && subdoc.getMovimentoGestione() instanceof Impegno){
+							Impegno impegno = (Impegno)subdoc.getMovimentoGestione();
+							if(impegno.getListaModificheMovimentoGestioneSpesa() == null)
+								//è necessario ricaricare l'impegno per averlo completo delle Modifiche necessarie al controllo
+								try{
+									Impegno comodo = ricercaImpegnoPerChiaveOttimizzato(impegno);
+									if(comodo != null)
+										impegno = comodo;
+								}catch(Exception e){
+									checkCondition(false, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non recuperabile"));
+								}
+							//controllo bloccoROR
+							boolean test = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno,  model.getAnnoEsercizioInt());
+							if(test){
+								checkCondition(!test, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile"));
+							}else if(impegno.getElencoSubImpegni() != null && !impegno.getElencoSubImpegni().isEmpty()){
+								for(int k = 0; k < impegno.getElencoSubImpegni().size(); k++){
+									test = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno.getElencoSubImpegni().get(k), model.getAnnoEsercizioInt());
+									if(test)
+										break;
+								}
+								if(test)
+									checkCondition(!test, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile"));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Ricerca l'impegno per chiave.
+	 * 
+	 * @return l'impegno trovato
+	 * @throws WebServiceInvocationFailureException in caso di errore nell'invocazione del servizio
+	 */
+	//SIAC-7470
+	private Impegno ricercaImpegnoPerChiaveOttimizzato(Impegno impegno) throws WebServiceInvocationFailureException {
+		//SIAC-6997-BLOCCOROR: se arrivo in questo punto mi è necessario ricercare l'impegno per avere la lista di MovimentoModifica
+		RicercaImpegnoPerChiaveOttimizzato req = model.creaRequestRicercaImpegnoPerChiaveOttimizzato(impegno);
+		logServiceRequest(req);
+		RicercaImpegnoPerChiaveOttimizzatoResponse res = movimentoGestioneService.ricercaImpegnoPerChiaveOttimizzato(req);
+		logServiceResponse(res);
+		// Controllo gli errori
+		if(res.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			String errorMsg = createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, res);
+			addErrori(res);
+			throw new WebServiceInvocationFailureException(errorMsg);
+		}
+		if(res.isFallimento()) {
+			//il servizio e' fallito: lancio un errore
+			String errorMsg = "Risultato ottenuto dal servizio RicercaImpegnoPerChiave: FALLIMENTO";
+			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore());
+			throw new WebServiceInvocationFailureException(errorMsg);
+		}
+		if(res.getImpegno() == null) {
+			//il servizio non ha trovato l'impegno: lancio un errore
+			String chiaveImpegno = req.getpRicercaImpegnoK().getAnnoEsercizio() + "/" + req.getpRicercaImpegnoK().getAnnoImpegno() + "/" + req.getpRicercaImpegnoK().getNumeroImpegno();
+			String errorMsg = "Impegno non presente per chiave " + chiaveImpegno;
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", chiaveImpegno));
+			throw new WebServiceInvocationFailureException(errorMsg);
+		}
+		impegno = res.getImpegno();
+		// Default per le liste
+		// IL SERVIZIO RESTITUISCE, SE HO SCELTO UN SUBIMPEGNO, UN IMPEGNO CON UN SOLO ELEMENTO 
+		//IN impegno.elencoSubImpegni. ALTRIMENTI NON CARICO I SUB
+		// GLI IMPEGNI E SUBIMPEGNI TROVATI DEVONO ESSERE IN STATO DEFINITIVO GIA' DAL PRINCIPIO. OPPURE LO CONTROLLO DOPO
+		impegno.setElencoSubImpegni(defaultingList(impegno.getElencoSubImpegni()));
+
+		// Inizializzo il capitolo se non gia' presente
+		if(impegno.getCapitoloUscitaGestione() == null) {
+			// Se il capitolo non e' stato impostato dal servizio, lo imposto io
+			impegno.setCapitoloUscitaGestione(res.getCapitoloUscitaGestione());
+		}
+		return impegno;
+	}
+	
 	/**
 	 * Valida l'associazione tra elenco ed allegato.
 	 */
@@ -397,6 +507,11 @@ public class InserisciAllegatoAttoAction extends GenericAllegatoAttoAction<Inser
 		return SUCCESS;
 	}
 	
+	//8853
+	private void validateAssociaMovimento() {
+		checkCondition(model.getElencoDocumentiAllegato() != null && model.getElencoDocumentiAllegato().getUid() != 0,
+				ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Elenco"));
+	}
 	/**
 	 * Redirezione all'associazione del documento.
 	 * 

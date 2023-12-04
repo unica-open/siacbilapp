@@ -5,7 +5,7 @@
 package it.csi.siac.siacfin2app.frontend.ui.action.causale;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -82,7 +82,7 @@ public class InserisciCausaleSpesaAction extends GenericCausaleSpesaAction<Inser
 		logServiceResponse(responseInserimento);
 		
 		if(responseInserimento.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(requestInserimento, responseInserimento));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceCausaleSpesa.class, responseInserimento));
 			addErrori(responseInserimento);
 			return INPUT;
 		}

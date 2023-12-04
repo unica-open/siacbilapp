@@ -43,6 +43,9 @@ SPDX-License-Identifier: EUPL-1.2
 		</action>
 
 
+		<action name="emissioneOrdinativiIncassoQuota_controllaDisponibilitaSottoContoVincolato" class="emissioneOrdinativiIncassoQuotaAction" method="controllaDisponibilitaSottoConto">
+			<result name="success" type="customMessagesJSON" />
+		</action>
 
 		<action name="emissioneOrdinativiIncassoElenco_completeStep2" class="emissioneOrdinativiIncassoElencoAction" method="completeStep2">
 			<result name="success">/jsp/ordinativi/incasso/step2ElencoDisabled.jsp</result>
@@ -87,6 +90,13 @@ SPDX-License-Identifier: EUPL-1.2
 			</result>
 		</action>
 		
+		<action name="emissioneOrdinativiIncassoQuota_ottieniUidContoDaSelezionare" class="emissioneOrdinativiIncassoQuotaAction" method="ottieniUidContoDaSelezionare">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">uidContoDaSelezionare</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
 		<action name="emissioneOrdinativiIncassoProvvisoriCassa_ottieniIdsElementiElaborati" class="emissioneOrdinativiIncassoElencoAction" method="ottieniIdsElementiElaborati">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">uidsElaborati.*</param>
@@ -129,6 +139,9 @@ SPDX-License-Identifier: EUPL-1.2
 		<action name="emissioneOrdinativiPagamentoQuota_controllaDisponibilitaDiCassaCapitoli" class="emissioneOrdinativiPagamentoQuotaAction" method="controllaDisponibilitaDiCassaCapitoli">
 			<result name="success" type="customMessagesJSON" />
 		</action>
+		<action name="emissioneOrdinativiPagamentoQuota_controllaDisponibilitaSottoContoVincolato" class="emissioneOrdinativiPagamentoQuotaAction" method="controllaDisponibilitaSottoConto">
+			<result name="success" type="customMessagesJSON" />
+		</action>
 		<action name="emissioneOrdinativiPagamentoQuota_ottieniIdsElementiElaborati" class="emissioneOrdinativiPagamentoQuotaAction" method="ottieniIdsElementiElaborati">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">uidsElaborati.*</param>
@@ -142,6 +155,14 @@ SPDX-License-Identifier: EUPL-1.2
 				<param name="includeProperties">uidsElenchiElaborati.*</param>
 			</result>
 		</action>
+		
+		<action name="emissioneOrdinativiPagamentoQuota_ottieniUidContoDaSelezionare" class="emissioneOrdinativiPagamentoQuotaAction" method="ottieniUidContoDaSelezionare">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">uidContoDaSelezionare</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
 		<action name="emissioneOrdinativiPagamentoElenco_backToStep1" class="emissioneOrdinativiPagamentoElencoAction" method="backToStep1">
 			<result>/jsp/ordinativi/pagamento/step1.jsp</result>
 		</action>		

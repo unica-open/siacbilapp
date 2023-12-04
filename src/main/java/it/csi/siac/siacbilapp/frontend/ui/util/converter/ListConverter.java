@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.opensymphony.xwork2.conversion.impl.DefaultTypeConverter;
-import com.opensymphony.xwork2.util.XWorkList;
+//import com.opensymphony.xwork2.util.XWorkList;
+import com.opensymphony.xwork2.conversion.impl.XWorkList;
 
 import it.csi.siac.siaccommon.util.log.LogUtil;
 

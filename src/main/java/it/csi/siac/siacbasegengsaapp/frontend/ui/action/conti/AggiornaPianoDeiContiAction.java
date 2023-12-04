@@ -90,7 +90,7 @@ public abstract class AggiornaPianoDeiContiAction<M extends AggiornaPianoDeiCont
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioConto.class, response));
 		}
 		model.setConto(response.getConto());
 		model.setContiFiglioSenzaFigli(response.getContiFiglioSenzaFigli());

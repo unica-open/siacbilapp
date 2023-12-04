@@ -17,7 +17,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.BaseIn
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoScritturaPrimaNotaIntegrata;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoScritturaPrimaNotaIntegrataFactory;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.consultazione.ConsultaRegistrazioneMovFinBaseHelper;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -28,6 +28,7 @@ import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaDettaglioContoRespo
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaSinteticaConto;
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaSinteticaContoResponse;
 import it.csi.siac.siacgenser.model.CausaleEP;
+import it.csi.siac.siacgenser.model.ClasseDiConciliazione;
 import it.csi.siac.siacgenser.model.Conto;
 import it.csi.siac.siacgenser.model.ContoTipoOperazione;
 import it.csi.siac.siacgenser.model.MovimentoDettaglio;
@@ -253,6 +254,8 @@ public abstract class BaseInserisciAggiornaContoPrimaNotaIntegrataAction <E exte
 	public void prepareAggiornaContoDaClasseDiConciliazione() {
 		model.setImporto(null);
 		model.setContoDaSostituire(null);
+		//SIAC-7388
+		model.setClasseDiConciliazioneContoDigitato(null);
 	}
 	
 	/**
@@ -286,19 +289,48 @@ public abstract class BaseInserisciAggiornaContoPrimaNotaIntegrataAction <E exte
 	}
 	
 	/**
-	  * Validazione per il metodo {@link #aggiornaContoDaClasseDiConciliazioneConti()}.
+	  * Validazione per il metodo {@link #aggiornaContoDaClasseDiConciliazioneConDigitazione()}.
 	 */
-	public void validateAggiornaContoDaClasseDiConciliazioneConti(){
+	public void validateAggiornaContoDaClasseDiConciliazioneConDigitazione(){
 		Conto conto = checkAndObtainContoFogliaEsistenteUnivoco();
+		//SIAC-7388
+		checkContoInListaContiClasse(conto);
+		
 		// Imposto il conto nel model
 		model.setContoDaSostituire(conto);
+	}
+
+	private void checkContoInListaContiClasse(Conto conto) {
+		int idx = model.getIndiceConto().intValue();
+		ElementoScritturaPrimaNotaIntegrata elementoScrittura = model.getListaElementoScritturaPerElaborazione().get(idx);
+		ClasseDiConciliazione cl = elementoScrittura.getClasseDiConcilazione();
+		
+		if(cl != null && ClasseDiConciliazione.CONTI.equals(cl)) {
+			//TODO: valutare con analista
+			return;
+		}
+		checkCondition(cl != null && elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione() != null && !elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione().isEmpty(), 
+				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("La classe di conciliazione non presenta conti con cui confrontare il conto digitato."), true);
+		
+		checkCondition(isContoAppartenenteAClasseConciliazione(conto, elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione()), 
+				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("Il conto digitato (" + StringUtils.defaultIfBlank(conto.getCodice(), "null") 
+				+ " ) non risulta essere tra i conti della classe " + StringUtils.defaultIfBlank(model.getClasseDiConciliazioneContoDigitato(), ""), true));
+	}
+
+	private boolean  isContoAppartenenteAClasseConciliazione(Conto conto, List<Conto> contiClasse) {
+		for (Conto ct : contiClasse) {
+			if(ct.getCodice().equalsIgnoreCase(conto.getCodice())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
 	 * Aggiornamento del conto dalla classe di conciliazione di tipo Conti
 	 * @return una stringa corrispondente al risultato dell'invocazione
 	 */
-	public String aggiornaContoDaClasseDiConciliazioneConti() {
+	public String aggiornaContoDaClasseDiConciliazioneConDigitazione() {
 		return aggiornaContoDaClasseDiConciliazione();
 	}
 	
@@ -400,7 +432,7 @@ public abstract class BaseInserisciAggiornaContoPrimaNotaIntegrataAction <E exte
 		if(response.hasErrori()) {
 			// Se ho errori esco
 			addErrori(response);
-			throw new ParamValidationException(createErrorInServiceInvocationString(request, response));
+			throw new ParamValidationException(createErrorInServiceInvocationString(RicercaSinteticaConto.class, response));
 		}
 		
 		return response;

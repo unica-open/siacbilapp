@@ -34,11 +34,11 @@ SPDX-License-Identifier: EUPL-1.2
 	<div class="control-group">
 		<label class="control-label" for="annoda2">Anno</label>
 		<div class="controls">
-			<s:textfield id="annoda2" cssClass="lbTextSmall span2 soloNumeri" name="annoLegge" required="true" maxLength="4" />
+			<s:textfield id="annoda2" cssClass="lbTextSmall span2 soloNumeri" name="annoLegge" required="true" maxlength="4" />
 			<span class="al">
 				<label class="radio inline" for="annoa">Numero</label>
 			</span>
-			<s:textfield id="annoa" cssClass="lbTextSmall span2 soloNumeri" required="true" name="numeroLegge" maxLength="9" />
+			<s:textfield id="annoa" cssClass="lbTextSmall span2 soloNumeri" required="true" name="numeroLegge" maxlength="9" />
 			<span class="al">
 				<label class="radio inline" for="tipoAtto">Tipo Atto</label>
 			</span>
@@ -54,11 +54,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<span class="al">
 				<label class="radio inline" for="comma">Comma</label>
 			</span>
-			<s:textfield id="comma" cssClass="lbTextSmall span2" name="comma" maxLength="500" />
+			<s:textfield id="comma" cssClass="lbTextSmall span2" name="comma" maxlength="500" />
 			<span class="al">
 				<label class="radio inline" for="Punto">Punto</label>
 			</span>
-			<s:textfield id="Punto" cssClass="lbTextSmall span2" name="punto" maxLength="500" />
+			<s:textfield id="Punto" cssClass="lbTextSmall span2" name="punto" maxlength="500" />
 		</div>
 	</div>
 </fieldset>

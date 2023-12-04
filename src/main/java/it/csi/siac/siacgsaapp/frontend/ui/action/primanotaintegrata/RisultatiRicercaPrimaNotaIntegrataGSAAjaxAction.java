@@ -13,9 +13,10 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.RisultatiRicercaPrimaNotaIntegrataBaseAjaxAction;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoPrimaNotaIntegrata;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
 
 /**
@@ -44,28 +45,28 @@ public class RisultatiRicercaPrimaNotaIntegrataGSAAjaxAction extends RisultatiRi
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaValidaPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_VALIDA_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaValidaPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_VALIDA_GSA;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_RICERCA_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_RICERCA_GSA;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestisciPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_GESTISCI_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestisciPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_GESTISCI_GSA;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRateiRisconti() {
-		return AzioniConsentite.RATEI_RISCONTI_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaRateiRisconti() {
+		return AzioneConsentitaEnum.RATEI_RISCONTI_GSA;
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaAggiornaPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_AGGIORNA_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaAggiornaPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_AGGIORNA_GSA;
 	}
 
 	@Override
@@ -94,6 +95,26 @@ public class RisultatiRicercaPrimaNotaIntegrataGSAAjaxAction extends RisultatiRi
 	@Override
 	protected boolean gestisciInserisciRateo(List<AzioneConsentita> listaAzioniConsentite, ElementoPrimaNotaIntegrata instance) {
 		return false;
+	}
+	
+	protected boolean isFaseBilancioCompatibileConAggiornamento() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE);
+	}
+
+	protected boolean isFaseBilancioCompatibileConValidazione() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return true;
+	}
+
+	protected boolean isFaseBilancioCompatibileConAnnullamento() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE);
+	}
+	
+	protected boolean isFaseBilancioCompatibileConCollegamento() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return true;
 	}
 
 }

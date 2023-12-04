@@ -7,7 +7,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.predocumento;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestioneResponse;
@@ -122,7 +122,7 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSinteticaPreDocumentoSpesa.class, res));
 		}
 		sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA_PREDOCUMENTO, res.getImportoTotale());
 	}
@@ -138,8 +138,8 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 	 */
 	private void controlloInserisciAbilitato(List<AzioneConsentita> listaAzioniConsentite) {
 		final String methodName = "controlloInserisciAbilitato";
-		boolean inserisciAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_INSERISCI, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_INSERISCI_DECENTRATO, listaAzioniConsentite);
+		boolean inserisciAbilitato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_INSERISCI, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_INSERISCI_DECENTRATO, listaAzioniConsentite);
 		inserisciAbilitato = inserisciAbilitato && Boolean.TRUE.equals(model.getFaseBilancioAbilitata());
 		log.debug(methodName, "Inserisci abilitato? " + inserisciAbilitato);
 		model.setInserisciAbilitato(Boolean.valueOf(inserisciAbilitato));
@@ -159,8 +159,8 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 	private void controlloAssociaAbilitato(List<AzioneConsentita> listaAzioniConsentite) {
 		final String methodName = "controlloAssociaAbilitato";
 		// Controllo sulle azioni
-		boolean associaAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
+		boolean associaAbilitato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
 		// Controllo sui criteri di ricerca
 		associaAbilitato = associaAbilitato && controllaCriteriRicerca(true, StatoOperativoPreDocumento.INCOMPLETO) && Boolean.TRUE.equals(model.getFaseBilancioAbilitata());
 		log.debug(methodName, "Associa abilitato? " + associaAbilitato);
@@ -204,7 +204,7 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaPreDocumentoSpesa.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -259,7 +259,7 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 		RicercaSinteticaPreDocumentoSpesa requestSintetica = sessionHandler.getParametroXmlType(BilSessionParameter.REQUEST_RICERCA_PREDOCUMENTI_SPESA, RicercaSinteticaPreDocumentoSpesa.class);
 		DefiniscePreDocumentoSpesa req = model.creaRequestDefiniscePreDocumentoSpesa(requestSintetica);
 		
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.PREDOCUMENTO_SPESA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.PREDOCUMENTO_SPESA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = preDocumentoSpesaService.definiscePreDocumentoSpesaAsync(wrapRequestToAsync(req, azioneRichiesta));
 		
 		// Controllo gli errori
@@ -329,7 +329,7 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 		AssociaImputazioniContabiliVariatePreDocumentoSpesa req = model.creaRequestAssociaImputazioniContabiliVariatePreDocumentoSpesa(
 				sessionHandler.getParametroXmlType(BilSessionParameter.REQUEST_RICERCA_PREDOCUMENTI_SPESA, RicercaSinteticaPreDocumentoSpesa.class));
 		
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.PREDOCUMENTO_SPESA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.PREDOCUMENTO_SPESA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response =
 				preDocumentoSpesaService.associaImputazioniContabiliVariatePreDocumentoSpesaAsync(wrapRequestToAsync(req, azioneRichiesta));
 		
@@ -373,7 +373,7 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 		Impegno impegno = model.getMovimentoGestione();
 		SubImpegno subImpegno = model.getSubMovimentoGestione();
 		
-		if(impegno == null || (impegno.getAnnoMovimento() == 0 || impegno.getNumero() == null)) {
+		if(impegno == null || (impegno.getAnnoMovimento() == 0 || impegno.getNumeroBigDecimal() == null)) {
 			return;
 		}
 		
@@ -387,19 +387,19 @@ public class RisultatiRicercaPreDocumentoSpesaAction extends RisultatiRicercaPre
 			throw new WebServiceInvocationFailureException("Errori nell'invocazione della ricercaImpegnoPerChiaveOttimizzato");
 		}
 		if(res.isFallimento() || res.getImpegno() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento() + "/" + impegno.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal()));
 			throw new WebServiceInvocationFailureException("Errori nell'invocazione della ricercaImpegnoPerChiaveOttimizzato: entita' non trovata");
 		}
 		
 		impegno = res.getImpegno();
 		model.setMovimentoGestione(impegno);
 		
-		if(subImpegno != null && subImpegno.getNumero() != null) {
-			BigDecimal numero = subImpegno.getNumero();
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subImpegno.getNumeroBigDecimal();
 			// Controlli di validita' sull'impegno
 			subImpegno = findSubMovimentoByNumero(res.getImpegno().getElencoSubImpegni(), subImpegno);
 			if(subImpegno == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", impegno.getAnnoMovimento() + "/" + impegno.getNumero() + "-" + numero));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal() + "-" + numero));
 				return;
 			}
 			model.setSubMovimentoGestione(subImpegno);

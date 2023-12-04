@@ -69,10 +69,11 @@
                 {aTargets: [5], mData: defaultPerDataTable('stringaFonte')},
                 {aTargets: [6], mData: defaultPerDataTable('stringaMomento')},
                 {aTargets: [7], mData: defaultPerDataTable('stringaAnno')},
-                {aTargets: [8], mData: defaultPerDataTable('stringaDefault')},
-                {aTargets: [9], mData: defaultPerDataTable('stringaDataInizioValidita')},
-                {aTargets: [10], mData: defaultPerDataTable('stringaDataFineValidita')},
-                {aTargets: [11], mData: defaultPerDataTable('azioni'), fnCreatedCell: function(nTd, sData, oData) {
+                {aTargets: [8], mData: defaultPerDataTable('stringaImpegnabile')},
+                {aTargets: [9], mData: defaultPerDataTable('stringaDefault')},
+                {aTargets: [10], mData: defaultPerDataTable('stringaDataInizioValidita')},
+                {aTargets: [11], mData: defaultPerDataTable('stringaDataFineValidita')},
+                {aTargets: [12], mData: defaultPerDataTable('azioni'), fnCreatedCell: function(nTd, sData, oData) {
                     var $nTd = $(nTd);
                     $nTd.find('a.annullaTipoComponenteImportiCapitolo')
                         .substituteHandler('click', gestioneModale.bind(undefined, oData, '#buttonConfermaModaleAnnullamentoRisultatiRicerca', '#modaleAnnullamentoRisultatiRicerca', undefined));

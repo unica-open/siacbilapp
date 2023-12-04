@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -35,7 +35,7 @@ import it.csi.siac.siacfin2ser.model.Subdocumento;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDettaglioQuoteElencoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoElencoDocumentiAllegato<?, ?, ?, ?, ?>, 
+public class RisultatiRicercaDettaglioQuoteElencoAjaxAction extends PagedDataTableAjaxAction<ElementoElencoDocumentiAllegato<?, ?, ?, ?, ?>, 
 		RisultatiRicercaDettaglioQuoteElencoAjaxModel, Subdocumento<?, ?>, RicercaSinteticaQuoteElenco, RicercaSinteticaQuoteElencoResponse> {
 	
 	/** Per la serializzazione */
@@ -64,7 +64,7 @@ public class RisultatiRicercaDettaglioQuoteElencoAjaxAction extends GenericRisul
 	}
 
 	@Override
-	protected ElementoElencoDocumentiAllegato<?, ?, ?, ?, ?> ottieniIstanza(Subdocumento<?, ?> e) throws FrontEndBusinessException {
+	protected ElementoElencoDocumentiAllegato<?, ?, ?, ?, ?> getInstance(Subdocumento<?, ?> e) throws FrontEndBusinessException {
 		ElencoDocumentiAllegato eda = sessionHandler.getParametro(parametroElencoDocumentiAllegato);
 		List<DatiSoggettoAllegato> listaDatiSoggettoAllegato = sessionHandler.getParametro(BilSessionParameter.LISTA_DATI_SOGGETTO_ALLEGATO_ALLEGATO_ATTO);
 		
@@ -72,7 +72,7 @@ public class RisultatiRicercaDettaglioQuoteElencoAjaxAction extends GenericRisul
 	}
 	
 	@Override
-	protected RicercaSinteticaQuoteElencoResponse ottieniResponse(RicercaSinteticaQuoteElenco request) {
+	protected RicercaSinteticaQuoteElencoResponse getResponse(RicercaSinteticaQuoteElenco request) {
 		return allegatoAttoService.ricercaSinteticaQuoteElenco(request);
 	}
 

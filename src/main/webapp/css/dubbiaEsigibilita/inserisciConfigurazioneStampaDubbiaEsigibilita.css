@@ -1,0 +1,137 @@
+/*
+*SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+*SPDX-License-Identifier: EUPL-1.2
+*/
+
+.bc-titolo-1 { background-color: #dec688; }
+.bc-titolo-2 { background-color: #e7a6a6; }
+.bc-titolo-3 { background-color: #e6e6fa; }
+.bc-titolo-4 { background-color: #98d0a9; }
+.bc-titolo-5 { background-color: #c2cf97; }
+.bc-titolo-6 { background-color: #7dc0db; }
+.bc-titolo-7 { background-color: #b0c4de; }
+.bc-titolo-8 { background-color: #f2b3dd; }
+.bc-titolo-9 { background-color: #a3aebd; }
+
+.btn-block + .btn-block {
+    margin-top: initial;
+}
+
+.ml-0 {
+    margin-left: 0 !important;
+}
+.p-5px {
+    padding: 5px;
+}
+
+table > thead td.checkbox {
+    border-top: 0;
+    /** SIAC-8425 - allineato il padding right */
+    padding: 0 8px 5px 0;
+}
+
+.v-middle {
+    vertical-align: middle !important;
+}
+.d-inline-block {
+    display: inline-block;
+}
+.icon-only-modificato {
+    display: none;
+}
+.capitolo.modificato .icon-only-modificato {
+    display: block;
+}
+
+.modificabile.modificato {
+    border: 2px solid red;
+}
+
+.text-purple {
+    color: #563d7c;
+}
+
+tbody.capitolo:not(:last-child) {
+    border-bottom: 2px solid #777;
+}
+
+.hidden {
+    display: none !important;
+}
+
+button.ripristinaAccantonamento, button.eliminaAccantonamento {
+    background-color: transparent;
+}
+
+tbody.capitolo input {
+    margin-bottom: 0;
+}
+
+#filtroCapitoliAttivo + span {
+    color: black;
+}
+#filtroCapitoliAttivo:checked + span {
+    color: blue;
+}
+
+@media only screen and (min-width: 400px) {
+    .control-group .span2-fcde {
+        width: 7%;
+    }
+    
+    .control-group .span6-fcde {
+        width: 100%;
+       	text-align: center;
+        margin-left: 0 !important;
+        margin-top: 0.5%;
+    }
+}
+
+@media only screen and (min-width: 1259px) {
+    .control-group .span2-fcde {
+        width: 9%;
+    }
+
+    .control-group .span6-fcde {
+        width: 50%;
+        margin-left: 0 !important;
+    }
+
+    .lf-al {
+        text-align: left !important;
+    }
+
+    .rg-al {
+        text-align: right !important;
+    }
+}
+
+@media only screen and (min-width: 1343px) {
+    .control-group .span2-fcde {
+        width: 10%;
+    }
+}
+
+@media only screen and (min-width: 1474px) {
+    .control-group .span2-fcde {
+        width: 11%;
+    }
+}
+
+@media only screen and (min-width: 1600px) {
+    .control-group .span2-fcde {
+        width: 12%;
+    }
+}
+
+@media only screen and (min-width: 1720px) {
+    .control-group .span2-fcde {
+        width: 13%;
+    }
+}
+
+@media only screen and (min-width: 1900px) {
+    .control-group .span2-fcde {
+        width: 15%;
+    }
+}

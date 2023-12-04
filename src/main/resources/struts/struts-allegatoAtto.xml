@@ -1,548 +1,840 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
-SPDX-License-Identifier: EUPL-1.2
--->
+<!-- SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte SPDX-License-Identifier: 
+	EUPL-1.2 -->
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
-	<package name="allegatoAtto" extends="capitoloDefault" namespace="/">
+	<package name="allegatoAtto" extends="capitoloDefault"
+		namespace="/">
 		<result-types>
 			<result-type name="associaImpegnoAllegatoAttoJSONResult"
 				class="it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.associa.movimento.AssociaImpegnoAllegatoAttoAction$AssociaImpegnoAllegatoAttoJSONResult" />
-			<result-type name="associaAccertamentoAllegatoAttoJSONResult"
+			<result-type
+				name="associaAccertamentoAllegatoAttoJSONResult"
 				class="it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.associa.movimento.AssociaAccertamentoAllegatoAttoAction$AssociaAccertamentoAllegatoAttoJSONResult" />
 			<result-type name="datiSospensioneSoggettoAllegatoJSON"
 				class="it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.aggiorna.AggiornaAllegatoAttoBaseAction$DatiSospensioneSoggettoAllegatoJSONResult" />
 		</result-types>
 		<!-- INSERIMENTO -->
-		<action name="inserisciAllegatoAtto" class="inserisciAllegatoAttoAction">
+		<action name="inserisciAllegatoAtto"
+			class="inserisciAllegatoAttoAction">
 			<result name="success">/jsp/allegatoAtto/inserimento/step1.jsp</result>
 		</action>
-		<action name="inserisciAllegatoAtto" class="inserisciAllegatoAttoAction">
+		<action name="inserisciAllegatoAtto"
+			class="inserisciAllegatoAttoAction">
 			<result name="success">/jsp/allegatoAtto/inserimento/step1.jsp</result>
 		</action>
-		<action name="inserisciAllegatoAtto_completeStep1" class="inserisciAllegatoAttoAction" method="completeStep1">
-			<result name="success" type="redirectAction">inserisciAllegatoAtto_step2</result>
+		<action name="inserisciAllegatoAtto_completeStep1"
+			class="inserisciAllegatoAttoAction" method="completeStep1">
+			<result name="success" type="redirectAction">inserisciAllegatoAtto_step2
+			</result>
 			<result name="input">/jsp/allegatoAtto/inserimento/step1.jsp</result>
 		</action>
-		<action name="inserisciAllegatoAtto_step2" class="inserisciAllegatoAttoAction" method="step2">
+		<action name="inserisciAllegatoAtto_step2"
+			class="inserisciAllegatoAttoAction" method="step2">
 			<result name="success">/jsp/allegatoAtto/inserimento/step2.jsp</result>
 		</action>
-		<action name="inserisciAllegatoAtto_backToStep1" class="inserisciAllegatoAttoAction" method="back">
+		<action name="inserisciAllegatoAtto_backToStep1"
+			class="inserisciAllegatoAttoAction" method="back">
 			<result name="success">/jsp/allegatoAtto/inserimento/step1.jsp</result>
 		</action>
-		<action name="inserisciAllegatoAtto_ottieniListaElenchi" class="inserisciAllegatoAttoAction" method="ottieniListaElenchi">
+		<action name="inserisciAllegatoAtto_ottieniListaElenchi"
+			class="inserisciAllegatoAttoAction" method="ottieniListaElenchi">
 			<result name="success" type="json">
 				<param name="enumAsBean">true</param>
 				<param name="excludeNullProperties">true</param>
 				<param name="includeProperties">listaElencoDocumentiAllegato.*</param>
 			</result>
 		</action>
-		<action name="inserisciAllegatoAtto_associaElenco" class="inserisciAllegatoAttoAction" method="associaElenco">
+		<action name="inserisciAllegatoAtto_associaElenco"
+			class="inserisciAllegatoAttoAction" method="associaElenco">
 			<result name="success" type="json">
 				<param name="ignoreHierarchy">false</param>
 				<param name="includeProperties">errori.*</param>
 			</result>
 		</action>
-		<action name="inserisciAllegatoAtto_associaMovimento" class="inserisciAllegatoAttoAction" method="associaMovimento">
+		<action name="inserisciAllegatoAtto_associaMovimento"
+			class="inserisciAllegatoAttoAction" method="associaMovimento">
 			<result name="success" type="redirectAction">
 				<param name="actionName">associaMovimentoAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${allegatoAtto.uid}</param>
 			</result>
 		</action>
-		<action name="inserisciAllegatoAtto_associaDocumento" class="inserisciAllegatoAttoAction" method="associaDocumento">
+		<action name="inserisciAllegatoAtto_associaDocumento"
+			class="inserisciAllegatoAttoAction" method="associaDocumento">
 			<result name="success" type="redirectAction">
 				<param name="actionName">associaDocumentoAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${allegatoAtto.uid}</param>
 			</result>
 		</action>
-		<action name="inserisciAllegatoAtto_redirezioneAggiornamentoAllegatoAtto" class="inserisciAllegatoAttoAction" method="redirezioneAggiornamentoAllegatoAtto">
+		<action
+			name="inserisciAllegatoAtto_redirezioneAggiornamentoAllegatoAtto"
+			class="inserisciAllegatoAttoAction"
+			method="redirezioneAggiornamentoAllegatoAtto">
 			<result name="success" type="redirectAction">
 				<param name="actionName">aggiornaAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${allegatoAtto.uid}</param>
 			</result>
 		</action>
-		
+
 		<!-- RICERCA -->
-		<action name="ricercaAllegatoAtto" class="ricercaAllegatoAttoAction">
-			<result name="success">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp</result>
+		<action name="ricercaAllegatoAtto"
+			class="ricercaAllegatoAttoAction">
+			<result name="success">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="effettuaRicercaAllegatoAtto" class="ricercaAllegatoAttoAction" method="effettuaRicerca">
-			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto</result>
-			<result name="input">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp</result>
+		<action name="effettuaRicercaAllegatoAtto"
+			class="ricercaAllegatoAttoAction" method="effettuaRicerca">
+			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto
+			</result>
+			<result name="input">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto" class="risultatiRicercaAllegatoAttoAction">
-			<result name="success">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp</result>
+		<action name="risultatiRicercaAllegatoAtto"
+			class="risultatiRicercaAllegatoAttoAction">
+			<result name="success">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto_annulla" class="risultatiRicercaAllegatoAttoAction" method="annulla">
-			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp</result>
-			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto</result>
+		<action name="risultatiRicercaAllegatoAtto_annulla"
+			class="risultatiRicercaAllegatoAttoAction" method="annulla">
+			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp
+			</result>
+			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto
+			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto_completa" class="risultatiRicercaAllegatoAttoAction" method="completa">
-			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp</result>
-			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto</result>
+		<action name="risultatiRicercaAllegatoAtto_completa"
+			class="risultatiRicercaAllegatoAttoAction" method="completa">
+			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp
+			</result>
+			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto
+			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto_consulta" class="risultatiRicercaAllegatoAttoAction" method="consulta">
+		<action name="risultatiRicercaAllegatoAtto_consulta"
+			class="risultatiRicercaAllegatoAttoAction" method="consulta">
 			<result name="success" type="redirectAction">
 				<param name="actionName">consultaAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${uidAllegatoAtto}</param>
 			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto_aggiorna" class="risultatiRicercaAllegatoAttoAction" method="aggiorna">
+		<action name="risultatiRicercaAllegatoAtto_aggiorna"
+			class="risultatiRicercaAllegatoAttoAction" method="aggiorna">
 			<result name="success" type="redirectAction">
 				<param name="actionName">aggiornaAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${uidAllegatoAtto}</param>
 			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto_stampa" class="risultatiRicercaAllegatoAttoAction" method="stampa">
-			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto</result>
-			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp</result>
+
+		<!-- SIAC-8804 -->
+		<action name="inviaAllegatoAttoChecklist" class="inviaAllegatoAttoChecklistAction">
+			<result name="success">/jsp/allegatoAtto/inviaAllegatoAttoChecklist.jsp
+			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto_invia" class="risultatiRicercaAllegatoAttoAction" method="invia">
-			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto</result>
-			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp</result>
+
+		<action name="inviaAllegatoAttoChecklist_invia" class="inviaAllegatoAttoChecklistAction" method="invia">
+			<result name="success" type="chain">
+				<param name="actionName">risultatiRicercaAllegatoAtto_invia</param>
+				<param name="namespace">/</param>
+				<param name="uidAllegatoAtto">${uidAllegatoAtto}</param>				
+			</result>
+			<result name="input">/jsp/allegatoAtto/inviaAllegatoAttoChecklist.jsp
+			</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAtto_convalida" class="risultatiRicercaAllegatoAttoAction" method="convalida">
+
+
+
+		<action name="risultatiRicercaAllegatoAtto_stampa"
+			class="risultatiRicercaAllegatoAttoAction" method="stampa">
+			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto
+			</result>
+			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp
+			</result>
+		</action>
+		<action name="risultatiRicercaAllegatoAtto_invia"
+			class="risultatiRicercaAllegatoAttoAction" method="invia">
+			<result name="success" type="redirectAction">risultatiRicercaAllegatoAtto
+			</result>
+			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp
+			</result>
+		</action>
+		<action name="risultatiRicercaAllegatoAtto_convalida"
+			class="risultatiRicercaAllegatoAttoAction" method="convalida">
 			<result name="success" type="redirectAction">
 				<param name="actionName">convalidaAllegatoAtto_completeStep1DaRicercaAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${uidAllegatoAtto}</param>
 			</result>
-			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp</result>
+			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp
+			</result>
 		</action>
-		
-		<action name="risultatiRicercaAllegatoAttoAjax" class="risultatiRicercaAllegatoAttoAjaxAction">
+
+		<action name="risultatiRicercaAllegatoAttoAjax"
+			class="risultatiRicercaAllegatoAttoAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
-		
-		
+
+
 		<!-- CONSULTA -->
-		<action name="consultaAllegatoAtto" class="consultaAllegatoAttoAction">
-			<result name="success">/jsp/allegatoAtto/consultaAllegatoAtto.jsp</result>
+		<action name="consultaAllegatoAtto"
+			class="consultaAllegatoAttoAction">
+			<result name="success">/jsp/allegatoAtto/consultaAllegatoAtto.jsp
+			</result>
 		</action>
-		
+
 		<!-- AGGIORNA -->
-		<action name="aggiornaAllegatoAtto" class="aggiornaAllegatoAttoBaseAction">
-			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp</result>
+		<action name="aggiornaAllegatoAtto"
+			class="aggiornaAllegatoAttoBaseAction">
+			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_effettuaAggiornamento" class="aggiornaAllegatoAttoDatiAllegatoAction" method="effettuaAggiornamento">
-			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp</result>
-			<result name="input">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp</result>
+		<action name="aggiornaAllegatoAtto_effettuaAggiornamento"
+			class="aggiornaAllegatoAttoDatiAllegatoAction"
+			method="effettuaAggiornamento">
+			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_stampa" class="aggiornaAllegatoAttoDatiAllegatoAction" method="stampa">
-			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp</result>
-			<result name="input">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp</result>
+		<action name="aggiornaAllegatoAtto_stampa"
+			class="aggiornaAllegatoAttoDatiAllegatoAction" method="stampa">
+			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_invio" class="aggiornaAllegatoAttoDatiAllegatoAction" method="invio">
-			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp</result>
-			<result name="input">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp</result>
+		<action name="aggiornaAllegatoAtto_invio"
+			class="aggiornaAllegatoAttoDatiAllegatoAction" method="invio">
+			<result name="success">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/aggiornaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_associaDocumento" class="aggiornaAllegatoAttoBaseAction" method="associaDocumento">
+		<action name="aggiornaAllegatoAtto_associaDocumento"
+			class="aggiornaAllegatoAttoBaseAction" method="associaDocumento">
 			<result name="success" type="redirectAction">
 				<param name="actionName">associaDocumentoAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${allegatoAtto.uid}</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_associaMovimento" class="aggiornaAllegatoAttoBaseAction" method="associaMovimento">
+		<action name="aggiornaAllegatoAtto_associaMovimento"
+			class="aggiornaAllegatoAttoBaseAction" method="associaMovimento">
 			<result name="success" type="redirectAction">
 				<param name="actionName">associaMovimentoAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${allegatoAtto.uid}</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_ottieniListaElenchi" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="ottieniListaElenchi">
+		<action name="aggiornaAllegatoAtto_ottieniListaElenchi"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="ottieniListaElenchi">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">listaElencoDocumentiAllegato.*,totaleEntrataListaElencoDocumentiAllegato,totaleSpesaListaElencoDocumentiAllegato,totaleNettoListaElencoDocumentiAllegato</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_associaElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="associaElenco">
+		<action name="aggiornaAllegatoAtto_associaElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="associaElenco">
 			<result name="success" type="customJSON">
-				<param name="includeProperties">errori.*, informazioni.*, listaElencoDocumentiAllegato.*</param>
+				<param name="includeProperties">errori.*, informazioni.*,
+					listaElencoDocumentiAllegato.*</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_eliminaElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="eliminaElenco">
+		<action name="aggiornaAllegatoAtto_eliminaElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="eliminaElenco">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">errori.*,informazioni.*,listaElencoDocumentiAllegato.*</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_caricaDatiAggiornamentoSubdocumentoElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="caricaDatiAggiornamentoSubdocumentoElenco">
-			<result name="success_spesa">/jsp/allegatoAtto/aggiornamento/modaleAggiornamentoQuotaElencoSpesa.jsp</result>
-			<result name="success_entrata">/jsp/allegatoAtto/aggiornamento/modaleAggiornamentoQuotaElencoEntrata.jsp</result>
-			<result name="input" type="customMessagesJSON" />
-		</action>
-		<action name="aggiornaAllegatoAtto_caricaDatiSpezzaSubdocumentoElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="caricaDatiSpezzaSubdocumentoElenco">
-			<result name="success_spesa">/jsp/allegatoAtto/aggiornamento/slideSpezzaQuotaElencoSpesa.jsp</result>
-			<result name="success_entrata">/jsp/allegatoAtto/aggiornamento/slideSpezzaQuotaElencoEntrata.jsp</result>
-			<result name="input" type="customMessagesJSON" />
-		</action>
-		<action name="aggiornaAllegatoAtto_aggiornaSubdocumentoElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="aggiornaSubdocumentoElenco">
-			<result name="success" type="customJSON">
-				<param name="includeProperties">errori.*,informazioni.*,elencoDocumentiAllegato.*</param>
+		<action
+			name="aggiornaAllegatoAtto_caricaDatiAggiornamentoSubdocumentoElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="caricaDatiAggiornamentoSubdocumentoElenco">
+			<result name="success_spesa">/jsp/allegatoAtto/aggiornamento/modaleAggiornamentoQuotaElencoSpesa.jsp
+			</result>
+			<result name="success_entrata">/jsp/allegatoAtto/aggiornamento/modaleAggiornamentoQuotaElencoEntrata.jsp
 			</result>
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="aggiornaAllegatoAtto_spezzaSubdocumentoElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="spezzaSubdocumentoElenco">
+		<action
+			name="aggiornaAllegatoAtto_caricaDatiSpezzaSubdocumentoElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="caricaDatiSpezzaSubdocumentoElenco">
+			<result name="success_spesa">/jsp/allegatoAtto/aggiornamento/slideSpezzaQuotaElencoSpesa.jsp
+			</result>
+			<result name="success_entrata">/jsp/allegatoAtto/aggiornamento/slideSpezzaQuotaElencoEntrata.jsp
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaAllegatoAtto_aggiornaSubdocumentoElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="aggiornaSubdocumentoElenco">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">errori.*,informazioni.*,elencoDocumentiAllegato.*</param>
 			</result>
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="aggiornaAllegatoAtto_eliminaSubdocumentoElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="eliminaSubdocumentoElenco">
+		<action name="aggiornaAllegatoAtto_spezzaSubdocumentoElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="spezzaSubdocumentoElenco">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*,informazioni.*,elencoDocumentiAllegato.*</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="aggiornaAllegatoAtto_eliminaSubdocumentoElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="eliminaSubdocumentoElenco">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">errori.*,informazioni.*,elencoDocumentiAllegato.*</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_sospendiPagamentoSoggetto" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="sospendiPagamentoSoggetto">
+		<action name="aggiornaAllegatoAtto_sospendiPagamentoSoggetto"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="sospendiPagamentoSoggetto">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">errori.*,informazioni.*,elencoDocumentiAllegato.*</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_riattivaSoggettoSospeso" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="riattivaSoggettoSospeso">
+		<action name="aggiornaAllegatoAtto_riattivaSoggettoSospeso"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="riattivaSoggettoSospeso">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">errori.*,informazioni.*,elencoDocumentiAllegato.*</param>
 			</result>
 		</action>
-		<action name="aggiornaAllegatoAtto_ricalcolaListaElenchi" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="ricalcolaListaElenchi">
+		<action name="aggiornaAllegatoAtto_ricalcolaListaElenchi"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="ricalcolaListaElenchi">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">
-					errori.*, informazioni.*, listaElencoDocumentiAllegato.*,
-					totaleEntrataListaElencoDocumentiAllegato, totaleSpesaListaElencoDocumentiAllegato, totaleNettoListaElencoDocumentiAllegato
+					errori.*, informazioni.*,
+					listaElencoDocumentiAllegato.*,
+					totaleEntrataListaElencoDocumentiAllegato,
+					totaleSpesaListaElencoDocumentiAllegato,
+					totaleNettoListaElencoDocumentiAllegato
 				</param>
 			</result>
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="aggiornaAllegatoAtto_sospendiTuttoAllegato" class="aggiornaAllegatoAttoDatiAllegatoAction" method="sospendiTuttoAllegato">
+		<action name="aggiornaAllegatoAtto_sospendiTuttoAllegato"
+			class="aggiornaAllegatoAttoDatiAllegatoAction"
+			method="sospendiTuttoAllegato">
 			<result name="success" type="customMessagesJSON" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="aggiornaAllegatoAtto_sospendiTuttoElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="sospendiTuttoElenco">
+		<action name="aggiornaAllegatoAtto_sospendiTuttoElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="sospendiTuttoElenco">
 			<result name="success" type="customMessagesJSON" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="aggiornaAllegatoAtto_ricercaDatiSospensioneAllegato" class="aggiornaAllegatoAttoDatiAllegatoAction" method="ricercaDatiSospensioneAllegato">
-			<result name="success" type="datiSospensioneSoggettoAllegatoJSON" />
+		<action
+			name="aggiornaAllegatoAtto_ricercaDatiSospensioneAllegato"
+			class="aggiornaAllegatoAttoDatiAllegatoAction"
+			method="ricercaDatiSospensioneAllegato">
+			<result name="success"
+				type="datiSospensioneSoggettoAllegatoJSON" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		<action name="aggiornaAllegatoAtto_ricercaDatiSospensioneElenco" class="aggiornaAllegatoAttoElenchiCollegatiAction" method="ricercaDatiSospensioneElenco">
-			<result name="success" type="datiSospensioneSoggettoAllegatoJSON" />
+		<action
+			name="aggiornaAllegatoAtto_ricercaDatiSospensioneElenco"
+			class="aggiornaAllegatoAttoElenchiCollegatiAction"
+			method="ricercaDatiSospensioneElenco">
+			<result name="success"
+				type="datiSospensioneSoggettoAllegatoJSON" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
-		
-		<action name="aggiornaAllegatoAtto_ottieniListaSoggettiDurc" class="aggiornaAllegatoAttoSoggettiDurcAction" method="ottieniListaSoggettiDurc">
+
+		<action name="aggiornaAllegatoAtto_ottieniListaSoggettiDurc"
+			class="aggiornaAllegatoAttoSoggettiDurcAction"
+			method="ottieniListaSoggettiDurc">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">
-					errori.*, informazioni.*, allegatoAtto\.elencoSoggettiDurc.*
+					errori.*, informazioni.*,
+					allegatoAtto\.elencoSoggettiDurc.*
 				</param>
 			</result>
 		</action>
-		
-		<action name="aggiornaAllegatoAtto_salvaDurc" class="aggiornaAllegatoAttoSoggettiDurcAction" method="salvaDurc">
+
+		<action name="aggiornaAllegatoAtto_salvaDurc"
+			class="aggiornaAllegatoAttoSoggettiDurcAction" method="salvaDurc">
 			<result name="success" type="redirectAction">
 				<param name="actionName">aggiornaAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${uidAllegatoAtto}</param>
 			</result>
 		</action>
-		
+
 		<!-- ASSOCIA -->
-			<!-- DOCUMENTO -->
-		<action name="associaDocumentoAllegatoAtto" class="associaDocumentoAllegatoAttoAction">
-			<result name="success">/jsp/allegatoAtto/associa/documento/step1.jsp</result>
+		<!-- DOCUMENTO -->
+		<action name="associaDocumentoAllegatoAtto"
+			class="associaDocumentoAllegatoAttoAction">
+			<result name="success">/jsp/allegatoAtto/associa/documento/step1.jsp
+			</result>
 		</action>
-		<action name="associaDocumentoAllegatoAtto_completeStep1" class="associaDocumentoAllegatoAttoAction" method="completeStep1">
-			<result name="success" type="redirectAction">associaDocumentoAllegatoAtto_step2</result>
-			<result name="input">/jsp/allegatoAtto/associa/documento/step1.jsp</result>
+		<action name="associaDocumentoAllegatoAtto_completeStep1"
+			class="associaDocumentoAllegatoAttoAction" method="completeStep1">
+			<result name="success" type="redirectAction">associaDocumentoAllegatoAtto_step2
+			</result>
+			<result name="input">/jsp/allegatoAtto/associa/documento/step1.jsp
+			</result>
 		</action>
-		<action name="associaDocumentoAllegatoAtto_step2" class="associaDocumentoAllegatoAttoAction" method="step2">
-			<result name="success">/jsp/allegatoAtto/associa/documento/step2.jsp</result>
+		<action name="associaDocumentoAllegatoAtto_step2"
+			class="associaDocumentoAllegatoAttoAction" method="step2">
+			<result name="success">/jsp/allegatoAtto/associa/documento/step2.jsp
+			</result>
 		</action>
-		<action name="associaDocumentoAllegatoAtto_backToStep1" class="associaDocumentoAllegatoAttoAction" method="back">
-			<result name="success">/jsp/allegatoAtto/associa/documento/step1.jsp</result>
+		<action name="associaDocumentoAllegatoAtto_backToStep1"
+			class="associaDocumentoAllegatoAttoAction" method="back">
+			<result name="success">/jsp/allegatoAtto/associa/documento/step1.jsp
+			</result>
 		</action>
-		<action name="associaDocumentoAllegatoAtto_completeStep2" class="associaDocumentoAllegatoAttoAction" method="completeStep2">
+		<action name="associaDocumentoAllegatoAtto_completeStep2"
+			class="associaDocumentoAllegatoAttoAction" method="completeStep2">
 			<result name="success" type="redirectAction">
 				<param name="actionName">aggiornaAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${uidAllegatoAtto}</param>
 			</result>
-			<result name="input">/jsp/allegatoAtto/associa/documento/step2.jsp</result>
+			<result name="input">/jsp/allegatoAtto/associa/documento/step2.jsp
+			</result>
 		</action>
-		<action name="risultatiRicercaQuoteDaAssociareAjax" class="risultatiRicercaQuoteDaAssociareAjaxAction">
+		<action name="risultatiRicercaQuoteDaAssociareAllegatoAttoAjax"
+			class="risultatiRicercaQuoteDaAssociareAllegatoAttoAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
-		<action name="risultatiRicercaQuoteDaAssociareAllegatoAttoAjax" class="risultatiRicercaQuoteDaAssociareAllegatoAttoAjaxAction">
-			<result name="success" type="dataTable" />
+
+		<!-- MOVIMENTO DI GESTIONE -->
+		<action name="associaMovimentoAllegatoAtto"
+			class="associaMovimentoAllegatoAttoAction">
+			<result name="success">/jsp/allegatoAtto/associa/movimento/step1.jsp
+			</result>
 		</action>
-		
-			<!-- MOVIMENTO DI GESTIONE -->
-		<action name="associaMovimentoAllegatoAtto" class="associaMovimentoAllegatoAttoAction">
-			<result name="success">/jsp/allegatoAtto/associa/movimento/step1.jsp</result>
+		<action name="associaMovimentoAllegatoAtto_completeStep1"
+			class="associaMovimentoAllegatoAttoAction" method="completeStep1">
+			<result name="success" type="redirectAction">associaMovimentoAllegatoAtto_step2
+			</result>
+			<result name="input">/jsp/allegatoAtto/associa/movimento/step1.jsp
+			</result>
 		</action>
-		<action name="associaMovimentoAllegatoAtto_completeStep1" class="associaMovimentoAllegatoAttoAction" method="completeStep1">
-			<result name="success" type="redirectAction">associaMovimentoAllegatoAtto_step2</result>
-			<result name="input">/jsp/allegatoAtto/associa/movimento/step1.jsp</result>
+		<action name="associaMovimentoAllegatoAtto_step2"
+			class="associaMovimentoAllegatoAttoAction" method="step2">
+			<result name="success">/jsp/allegatoAtto/associa/movimento/step2.jsp
+			</result>
 		</action>
-		<action name="associaMovimentoAllegatoAtto_step2" class="associaMovimentoAllegatoAttoAction" method="step2">
-			<result name="success">/jsp/allegatoAtto/associa/movimento/step2.jsp</result>
+		<action name="associaMovimentoAllegatoAtto_backToStep1"
+			class="associaMovimentoAllegatoAttoAction" method="back">
+			<result name="success">/jsp/allegatoAtto/associa/movimento/step1.jsp
+			</result>
 		</action>
-		<action name="associaMovimentoAllegatoAtto_backToStep1" class="associaMovimentoAllegatoAttoAction" method="back">
-			<result name="success">/jsp/allegatoAtto/associa/movimento/step1.jsp</result>
-		</action>
-		<action name="associaMovimentoAllegatoAtto_completeStep2" class="associaMovimentoAllegatoAttoAction" method="completeStep2">
+		<action name="associaMovimentoAllegatoAtto_completeStep2"
+			class="associaMovimentoAllegatoAttoAction" method="completeStep2">
 			<result name="success" type="redirectAction">
 				<param name="actionName">aggiornaAllegatoAtto</param>
 				<param name="uidAllegatoAtto">${uidAllegatoAtto}</param>
 			</result>
-			<result name="input">/jsp/allegatoAtto/associa/movimento/step2.jsp</result>
+			<result name="input">/jsp/allegatoAtto/associa/movimento/step2.jsp
+			</result>
 		</action>
-		<action name="associaMovimentoAllegatoAtto_obtainLists" class="associaMovimentoAllegatoAttoAction" method="obtainLists">
+		<action name="associaMovimentoAllegatoAtto_obtainLists"
+			class="associaMovimentoAllegatoAttoAction" method="obtainLists">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">listaSubdocumentoSpesa.*,listaSubdocumentoEntrata.*</param>
 			</result>
 		</action>
-		<action name="associaMovimentoAllegatoAtto_addImpegno" class="associaImpegnoAllegatoAttoAction" method="addImpegno">
-			<result name="success" type="associaImpegnoAllegatoAttoJSONResult" />
-			<result name="input" type="associaImpegnoAllegatoAttoJSONResult" />
+		<action name="associaMovimentoAllegatoAtto_addImpegno"
+			class="associaImpegnoAllegatoAttoAction" method="addImpegno">
+			<result name="success"
+				type="associaImpegnoAllegatoAttoJSONResult" />
+			<result name="input"
+				type="associaImpegnoAllegatoAttoJSONResult" />
 		</action>
-		<action name="associaMovimentoAllegatoAtto_removeImpegno" class="associaImpegnoAllegatoAttoAction" method="removeImpegno">
-			<result name="success" type="associaImpegnoAllegatoAttoJSONResult" />
-			<result name="input" type="associaImpegnoAllegatoAttoJSONResult" />
+		<action name="associaMovimentoAllegatoAtto_removeImpegno"
+			class="associaImpegnoAllegatoAttoAction" method="removeImpegno">
+			<result name="success"
+				type="associaImpegnoAllegatoAttoJSONResult" />
+			<result name="input"
+				type="associaImpegnoAllegatoAttoJSONResult" />
 		</action>
-		<action name="associaMovimentoAllegatoAtto_alterImpegno" class="associaImpegnoAllegatoAttoAction" method="alterImpegno">
-			<result name="success" type="associaImpegnoAllegatoAttoJSONResult" />
-			<result name="input" type="associaImpegnoAllegatoAttoJSONResult" />
+		<action name="associaMovimentoAllegatoAtto_alterImpegno"
+			class="associaImpegnoAllegatoAttoAction" method="alterImpegno">
+			<result name="success"
+				type="associaImpegnoAllegatoAttoJSONResult" />
+			<result name="input"
+				type="associaImpegnoAllegatoAttoJSONResult" />
 		</action>
-		<action name="associaMovimentoAllegatoAtto_addAccertamento" class="associaAccertamentoAllegatoAttoAction" method="addAccertamento">
-			<result name="success" type="associaAccertamentoAllegatoAttoJSONResult" />
-			<result name="input" type="associaAccertamentoAllegatoAttoJSONResult" />
+		<action name="associaMovimentoAllegatoAtto_addAccertamento"
+			class="associaAccertamentoAllegatoAttoAction"
+			method="addAccertamento">
+			<result name="success"
+				type="associaAccertamentoAllegatoAttoJSONResult" />
+			<result name="input"
+				type="associaAccertamentoAllegatoAttoJSONResult" />
 		</action>
-		<action name="associaMovimentoAllegatoAtto_removeAccertamento" class="associaAccertamentoAllegatoAttoAction" method="removeAccertamento">
-			<result name="success" type="associaAccertamentoAllegatoAttoJSONResult" />
-			<result name="input" type="associaAccertamentoAllegatoAttoJSONResult" />
+		<action name="associaMovimentoAllegatoAtto_removeAccertamento"
+			class="associaAccertamentoAllegatoAttoAction"
+			method="removeAccertamento">
+			<result name="success"
+				type="associaAccertamentoAllegatoAttoJSONResult" />
+			<result name="input"
+				type="associaAccertamentoAllegatoAttoJSONResult" />
 		</action>
-		<action name="associaMovimentoAllegatoAtto_alterAccertamento" class="associaAccertamentoAllegatoAttoAction" method="alterAccertamento">
-			<result name="success" type="associaAccertamentoAllegatoAttoJSONResult" />
-			<result name="input" type="associaAccertamentoAllegatoAttoJSONResult" />
+		<action name="associaMovimentoAllegatoAtto_alterAccertamento"
+			class="associaAccertamentoAllegatoAttoAction"
+			method="alterAccertamento">
+			<result name="success"
+				type="associaAccertamentoAllegatoAttoJSONResult" />
+			<result name="input"
+				type="associaAccertamentoAllegatoAttoJSONResult" />
 		</action>
-		<action name="associaMovimentoAllegatoAtto_calcolaDisponibilitaGiaImpegnataImpegno" class="associaImpegnoAllegatoAttoAction" method="calcolaDisponibilitaGiaImpegnata">
+		<action
+			name="associaMovimentoAllegatoAtto_calcolaDisponibilitaGiaImpegnataImpegno"
+			class="associaImpegnoAllegatoAttoAction"
+			method="calcolaDisponibilitaGiaImpegnata">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">totaleGiaImpegnato</param>
 			</result>
 		</action>
-		<action name="associaMovimentoAllegatoAtto_calcolaDisponibilitaGiaImpegnataAccertamento" class="associaAccertamentoAllegatoAttoAction" method="calcolaDisponibilitaGiaImpegnata">
+		<action
+			name="associaMovimentoAllegatoAtto_calcolaDisponibilitaGiaImpegnataAccertamento"
+			class="associaAccertamentoAllegatoAttoAction"
+			method="calcolaDisponibilitaGiaImpegnata">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">totaleGiaImpegnato</param>
 			</result>
 		</action>
-		
+
 		<!-- CONVALIDA -->
-			<!-- ALLEGATO ATTO -->
-		<action name="convalidaAllegatoAtto" class="convalidaAllegatoAttoBaseAction">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/step1.jsp</result>
+		<!-- ALLEGATO ATTO -->
+		<action name="convalidaAllegatoAtto"
+			class="convalidaAllegatoAttoBaseAction">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/step1.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_completeStep1" class="convalidaAllegatoAttoBaseAction" method="completeStep1">
-			<result name="success" type="redirectAction">convalidaAllegatoAtto_step2</result>
-			<result name="input">/jsp/allegatoAtto/convalida/allegato/step1.jsp</result>
+		<action name="convalidaAllegatoAtto_completeStep1"
+			class="convalidaAllegatoAttoBaseAction" method="completeStep1">
+			<result name="success" type="redirectAction">convalidaAllegatoAtto_step2
+			</result>
+			<result name="input">/jsp/allegatoAtto/convalida/allegato/step1.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_step2" class="convalidaAllegatoAttoElenchiAction" method="step2">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
+		<action name="convalidaAllegatoAtto_step2"
+			class="convalidaAllegatoAttoElenchiAction" method="step2">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_backToStep1" class="convalidaAllegatoAttoElenchiAction" method="back">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/step1.jsp</result>
+		<action name="convalidaAllegatoAtto_backToStep1"
+			class="convalidaAllegatoAttoElenchiAction" method="back">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/step1.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_backToStep2" class="convalidaAllegatoAttoElenchiAction" method="back">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
+		<action name="convalidaAllegatoAtto_backToStep2"
+			class="convalidaAllegatoAttoElenchiAction" method="back">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_ottieniListeElenchi" class="convalidaAllegatoAttoElenchiAction" method="ottieniListeElenchi">
+		<action name="convalidaAllegatoAtto_ottieniListeElenchi"
+			class="convalidaAllegatoAttoElenchiAction"
+			method="ottieniListeElenchi">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">listaConvalidabili.*,listaNonConvalidabili.*,totaleElenchi</param>
 			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_convalidaElenco" class="convalidaAllegatoAttoElenchiAction" method="convalidaElenco">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
-			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
+		<action name="convalidaAllegatoAtto_convalidaElenco"
+			class="convalidaAllegatoAttoElenchiAction" method="convalidaElenco">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_rifiutaElenco" class="convalidaAllegatoAttoElenchiAction" method="rifiutaElenco">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
-			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
+		<action name="convalidaAllegatoAtto_rifiutaElenco"
+			class="convalidaAllegatoAttoElenchiAction" method="rifiutaElenco">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_rifiutaAtto" class="convalidaAllegatoAttoElenchiAction" method="rifiutaAtto">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
-			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
+		<action name="convalidaAllegatoAtto_rifiutaAtto"
+			class="convalidaAllegatoAttoElenchiAction" method="rifiutaAtto">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_ottieniDettaglioElenco" class="convalidaAllegatoAttoDettaglioAction" method="ottieniDettaglioElenco">
-			<result name="success" type="redirectAction">convalidaAllegatoAtto_dettaglioElenco</result>
-			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
+		<action name="convalidaAllegatoAtto_ottieniDettaglioElenco"
+			class="convalidaAllegatoAttoDettaglioAction"
+			method="ottieniDettaglioElenco">
+			<result name="success" type="redirectAction">convalidaAllegatoAtto_dettaglioElenco
+			</result>
+			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_dettaglioElenco" class="convalidaAllegatoAttoDettaglioAction" method="dettaglioElenco">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp</result>
-			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp</result>
+		<action name="convalidaAllegatoAtto_dettaglioElenco"
+			class="convalidaAllegatoAttoDettaglioAction" method="dettaglioElenco">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/convalida/allegato/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAtto_convalidaSubdocumento" class="convalidaAllegatoAttoDettaglioAction" method="convalidaSubdocumento">
-			<result name="success">/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp</result>
-			<result name="input">/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp</result>
+		<action name="convalidaAllegatoAtto_convalidaSubdocumento"
+			class="convalidaAllegatoAttoDettaglioAction"
+			method="convalidaSubdocumento">
+			<result name="success">/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp
+			</result>
+			<result name="input">/jsp/allegatoAtto/convalida/allegato/dettaglio.jsp
+			</result>
 		</action>
 		<!-- Da ricerca -->
-		<action name="convalidaAllegatoAtto_completeStep1DaRicercaAllegatoAtto" class="convalidaAllegatoAttoBaseAction" method="completeStep1DaRicercaAllegatoAtto">
-			<result name="success" type="redirectAction">convalidaAllegatoAtto_step2</result>
-			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp</result>
+		<action
+			name="convalidaAllegatoAtto_completeStep1DaRicercaAllegatoAtto"
+			class="convalidaAllegatoAttoBaseAction"
+			method="completeStep1DaRicercaAllegatoAtto">
+			<result name="success" type="redirectAction">convalidaAllegatoAtto_step2
+			</result>
+			<result name="input">/jsp/allegatoAtto/risultatiRicercaAllegatoAtto.jsp
+			</result>
 		</action>
-			<!-- PER PROVVISORIO CASSA -->
-		<action name="convalidaAllegatoAttoPerProvvisorioCassa" class="convalidaAllegatoAttoPerProvvisorioCassaAction">
-			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step1.jsp</result>
+		<!-- PER PROVVISORIO CASSA -->
+		<action name="convalidaAllegatoAttoPerProvvisorioCassa"
+			class="convalidaAllegatoAttoPerProvvisorioCassaAction">
+			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step1.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAttoPerProvvisorioCassa_completeStep1" class="convalidaAllegatoAttoPerProvvisorioCassaAction" method="completeStep1">
-			<result name="input">/jsp/allegatoAtto/convalida/provvisorioCassa/step1.jsp</result>
-			<result name="success" type="redirectAction">convalidaAllegatoAttoPerProvvisorioCassa_step2</result>
+		<action
+			name="convalidaAllegatoAttoPerProvvisorioCassa_completeStep1"
+			class="convalidaAllegatoAttoPerProvvisorioCassaAction"
+			method="completeStep1">
+			<result name="input">/jsp/allegatoAtto/convalida/provvisorioCassa/step1.jsp
+			</result>
+			<result name="success" type="redirectAction">convalidaAllegatoAttoPerProvvisorioCassa_step2
+			</result>
 		</action>
-		<action name="convalidaAllegatoAttoPerProvvisorioCassa_step2" class="convalidaAllegatoAttoPerProvvisorioCassaAction" method="step2">
-			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step2.jsp</result>
+		<action name="convalidaAllegatoAttoPerProvvisorioCassa_step2"
+			class="convalidaAllegatoAttoPerProvvisorioCassaAction" method="step2">
+			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step2.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAttoPerProvvisorioCassa_backToStep1" class="convalidaAllegatoAttoPerProvvisorioCassaAction" method="back">
-			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step1.jsp</result>
+		<action
+			name="convalidaAllegatoAttoPerProvvisorioCassa_backToStep1"
+			class="convalidaAllegatoAttoPerProvvisorioCassaAction" method="back">
+			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step1.jsp
+			</result>
 		</action>
-		<action name="convalidaAllegatoAttoPerProvvisorioCassa_completeStep2" class="convalidaAllegatoAttoPerProvvisorioCassaAction" method="completeStep2">
-			<result name="input">/jsp/allegatoAtto/convalida/provvisorioCassa/step2.jsp</result>
-			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step2.jsp</result>
+		<action
+			name="convalidaAllegatoAttoPerProvvisorioCassa_completeStep2"
+			class="convalidaAllegatoAttoPerProvvisorioCassaAction"
+			method="completeStep2">
+			<result name="input">/jsp/allegatoAtto/convalida/provvisorioCassa/step2.jsp
+			</result>
+			<result name="success">/jsp/allegatoAtto/convalida/provvisorioCassa/step2.jsp
+			</result>
 		</action>
-		
-		
-		
-		
+
+
+
+
 		<!-- ELENCO -->
-		<action name="ricercaElencoDocumentiAllegato" class="ricercaElencoDocumentiAllegatoAjaxAction">
+		<action name="ricercaElencoDocumentiAllegato"
+			class="ricercaElencoDocumentiAllegatoAjaxAction">
 			<result type="json">
 				<param name="ignoreHierarchy">false</param>
 				<param name="includeProperties">errori.*</param>
 			</result>
 		</action>
-		<action name="risultatiRicercaElencoDocumentiAllegato" class="risultatiRicercaElencoDocumentiAllegatoAjaxAction">
+		<action name="risultatiRicercaElencoDocumentiAllegato"
+			class="risultatiRicercaElencoDocumentiAllegatoAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
-		<action name="ricercaDettaglioElencoDocumentiAllegato" class="dettaglioElencoDocumentiAllegatoAction">
+		<action name="ricercaDettaglioElencoDocumentiAllegato"
+			class="dettaglioElencoDocumentiAllegatoAction">
 			<result name="success" type="customMessagesJSON"></result>
 		</action>
-		<action name="risultatiRicercaQuoteElencoDocumentiAllegato" class="risultatiRicercaDettaglioQuoteElencoAjaxAction">
+		<action name="risultatiRicercaQuoteElencoDocumentiAllegato"
+			class="risultatiRicercaDettaglioQuoteElencoAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
-		<action name="risultatiRicercaElencoDocumentiAllegatoDaEmettere" class="risultatiRicercaElencoDocumentiAllegatoDaEmettereAjaxAction">
+		<action
+			name="risultatiRicercaElencoDocumentiAllegatoDaEmettere"
+			class="risultatiRicercaElencoDocumentiAllegatoDaEmettereAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
-		<action name="ricercaDettaglioElencoDocumentiAllegato_caricaQuoteElencoFiltrate" class="dettaglioElencoDocumentiAllegatoAction" method="caricaQuoteElencoFiltrate">
+		<action
+			name="ricercaDettaglioElencoDocumentiAllegato_caricaQuoteElencoFiltrate"
+			class="dettaglioElencoDocumentiAllegatoAction"
+			method="caricaQuoteElencoFiltrate">
 			<result name="success" type="customMessagesJSON"></result>
 		</action>
-		<action name="risultatiRicercaSinteticaQuoteElencoDocumentiAllegato" class="risultatiRicercaSinteticaQuoteElencoAjaxAction">
+		<action
+			name="risultatiRicercaSinteticaQuoteElencoDocumentiAllegato"
+			class="risultatiRicercaSinteticaQuoteElencoAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
-		
+
 		<!-- RICERCA STAMPA ALLEGATO ATTO -->
-		
-		<action name="ricercaStampaAllegatoAtto" class="ricercaStampaAllegatoAttoAction">
-			<result name="success">/jsp/allegatoAtto/stampe/ricercaStampaAllegatoAtto.jsp</result>
-		</action> 
-		
-		<action name="ricercaStampaAllegatoAtto_ricerca" class="ricercaStampaAllegatoAttoAction" method="ricerca">
-            <result name="success" type="redirectAction">risultatiRicercaStampaAllegatoAtto</result>
-            <result name="input">/jsp/allegatoAtto/stampe/ricercaStampaAllegatoAtto.jsp</result>
-        </action>
-		
-		<action name="risultatiRicercaStampaAllegatoAtto" class="risultatiRicercaStampaAllegatoAttoAction">
-            <result name="success">/jsp/allegatoAtto/stampe/risultatiRicercaStampaAllegatoAtto.jsp</result>
-        </action>
-        
-        <action name="risultatiRicercaStampaAllegatoAtto_download" class="risultatiRicercaStampaAllegatoAttoAction" method="download">
-            <result name="success" type="stream">
-                <param name="contentType">${contentType}</param>
-                <param name="contentLength">${contentLength}</param>
-                <param name="inputName">inputStream</param>
-                <param name="contentDisposition">attachment;filename="${fileName}"</param>
-                <param name="bufferSize">1024</param>
-            </result>
-            <result name="input">/jsp/allegatoAtto/stampe/risultatiRicercaStampaAllegatoAtto.jsp</result>
-        </action>
-        
-          <action name="risultatiRicercaStampaAllegatoAttoAjax" class="risultatiRicercaStampaAllegatoAttoAjaxAction">
-            <result name="success" type="dataTable">
-                <param name="excludeProperties">aaData\[\d+]\.allegatoAttoStampa</param>
-            </result>
-        </action>
-		
-		<!-- Riporta ALLEGATO ATTO a stato completato-->
-		
-		<action name="riCompletaAllegatoAtto" class="riCompletaAllegatoAttoElenchiAction">
-			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step1.jsp</result>
+
+		<action name="ricercaStampaAllegatoAtto"
+			class="ricercaStampaAllegatoAttoAction">
+			<result name="success">/jsp/allegatoAtto/stampe/ricercaStampaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="riCompletaAllegatoAtto_completeStep1" class="riCompletaAllegatoAttoElenchiAction" method="completeStep1">
-			<result name="success" type="redirectAction">riCompletaAllegatoAtto_step2</result>
-			<result name="input">/jsp/allegatoAtto/riCompleta/allegato/step1.jsp</result>
+
+		<action name="ricercaStampaAllegatoAtto_ricerca"
+			class="ricercaStampaAllegatoAttoAction" method="ricerca">
+			<result name="success" type="redirectAction">risultatiRicercaStampaAllegatoAtto
+			</result>
+			<result name="input">/jsp/allegatoAtto/stampe/ricercaStampaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="riCompletaAllegatoAtto_step2" class="riCompletaAllegatoAttoElenchiAction" method="step2">
-			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step2.jsp</result>
+
+		<action name="risultatiRicercaStampaAllegatoAtto"
+			class="risultatiRicercaStampaAllegatoAttoAction">
+			<result name="success">/jsp/allegatoAtto/stampe/risultatiRicercaStampaAllegatoAtto.jsp
+			</result>
 		</action>
-		<action name="riCompletaAllegatoAtto_ottieniListeElenchi" class="riCompletaAllegatoAttoElenchiAction" method="ottieniListeElenchi">
+
+		<action name="risultatiRicercaStampaAllegatoAtto_download"
+			class="risultatiRicercaStampaAllegatoAttoAction" method="download">
+			<result name="success" type="stream">
+				<param name="contentType">${contentType}</param>
+				<param name="contentLength">${contentLength}</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+			<result name="input">/jsp/allegatoAtto/stampe/risultatiRicercaStampaAllegatoAtto.jsp
+			</result>
+		</action>
+
+		<action name="risultatiRicercaStampaAllegatoAttoAjax"
+			class="risultatiRicercaStampaAllegatoAttoAjaxAction">
+			<result name="success" type="dataTable">
+				<param name="excludeProperties">aaData\[\d+]\.allegatoAttoStampa</param>
+			</result>
+		</action>
+
+		<!-- Riporta ALLEGATO ATTO a stato completato -->
+
+		<action name="riCompletaAllegatoAtto"
+			class="riCompletaAllegatoAttoElenchiAction">
+			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step1.jsp
+			</result>
+		</action>
+		<action name="riCompletaAllegatoAtto_completeStep1"
+			class="riCompletaAllegatoAttoElenchiAction" method="completeStep1">
+			<result name="success" type="redirectAction">riCompletaAllegatoAtto_step2
+			</result>
+			<result name="input">/jsp/allegatoAtto/riCompleta/allegato/step1.jsp
+			</result>
+		</action>
+		<action name="riCompletaAllegatoAtto_step2"
+			class="riCompletaAllegatoAttoElenchiAction" method="step2">
+			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step2.jsp
+			</result>
+		</action>
+		<action name="riCompletaAllegatoAtto_ottieniListeElenchi"
+			class="riCompletaAllegatoAttoElenchiAction"
+			method="ottieniListeElenchi">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">listaRiCompletabili.*,listaNonElaborabili.*</param>
 			</result>
 		</action>
-		<action name="riCompletaAllegatoAtto_riCompletaElenco" class="riCompletaAllegatoAttoElenchiAction" method="riCompletaElenco">
-			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step2.jsp</result>
-			<result name="input">/jsp/allegatoAtto/riCompleta/allegato/step2.jsp</result>
-		</action>
-		<action name="riCompletaAllegatoAtto_backToStep1" class="riCompletaAllegatoAttoElenchiAction" method="back">
-			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step1.jsp</result>
-		</action>
-		
-		<!--SIAC-5584  -->
-		<action name="completaAllegatoAttoMultiplo" class="ricercaAllegatoAttoCompletaMultiploAction">
-			<result name="success">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp</result>
-		</action>
-		<action name="ricercaAllegatoAttoCompletaMultiplo_effettuaRicercaAllegatoAtto" class="ricercaAllegatoAttoCompletaMultiploAction" method="effettuaRicerca">
-			<result name="success" type="redirectAction">
-				<param name="actionName">risultatiRicercaAllegatoAttoOperazioniMultiple</param>
-				<param name="namespace">/</param>
-				<param name="convalida">${convalida}</param>
+		<action name="riCompletaAllegatoAtto_riCompletaElenco"
+			class="riCompletaAllegatoAttoElenchiAction" method="riCompletaElenco">
+			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step2.jsp
 			</result>
-			<result name="input">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp</result>
-		</action>
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple_completaSelezionati" class="risultatiRicercaAllegatoAttoOperazioniMultipleAction" method="completaSelezionati">
-			<result name="success" type="customMessagesJSON"/>
-			<result name="input" type="customMessagesJSON"/>
-		</action>
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple_completaTutti" class="risultatiRicercaAllegatoAttoOperazioniMultipleAction" method="completaTutti">
-			<result name="success" type="customMessagesJSON"/>
-			<result name="input" type="customMessagesJSON"/>
-		</action>
-		<action name="convalidaAllegatoAttoMultiplo" class="ricercaAllegatoAttoConvalidaMultiploAction">
-			<result name="success">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp</result>
-		</action>
-		<action name="ricercaAllegatoAttoConvalidaMultiplo_effettuaRicercaAllegatoAtto" class="ricercaAllegatoAttoConvalidaMultiploAction" method="effettuaRicerca">
-			<result name="success" type="redirectAction">
-				<param name="actionName">risultatiRicercaAllegatoAttoOperazioniMultiple</param>
-				<param name="namespace">/</param>
-				<param name="convalida">${convalida}</param>
+			<result name="input">/jsp/allegatoAtto/riCompleta/allegato/step2.jsp
 			</result>
-			<result name="input">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp</result>
 		</action>
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple_convalidaSelezionati" class="risultatiRicercaAllegatoAttoOperazioniMultipleAction" method="convalidaSelezionati">
-			<result name="success" type="customMessagesJSON"/>
-			<result name="input" type="customMessagesJSON"/>
-		</action>
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple_convalidaTutti" class="risultatiRicercaAllegatoAttoOperazioniMultipleAction" method="convalidaTutti">
-			<result name="success" type="customMessagesJSON"/>
-			<result name="input" type="customMessagesJSON"/>
+		<action name="riCompletaAllegatoAtto_backToStep1"
+			class="riCompletaAllegatoAttoElenchiAction" method="back">
+			<result name="success">/jsp/allegatoAtto/riCompleta/allegato/step1.jsp
+			</result>
 		</action>
 
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple_controlloImportiImpegniVincolati" class="risultatiRicercaAllegatoAttoOperazioniMultipleAction" method="controlloImportiImpegniVincolati">
-			<result name="success" type="customMessagesJSON"/>
-			<result name="input" type="customMessagesJSON"/>
+		<!--SIAC-5584 -->
+		<action name="completaAllegatoAttoMultiplo"
+			class="ricercaAllegatoAttoCompletaMultiploAction">
+			<result name="success">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp
+			</result>
 		</action>
-		
+		<action
+			name="ricercaAllegatoAttoCompletaMultiplo_effettuaRicercaAllegatoAtto"
+			class="ricercaAllegatoAttoCompletaMultiploAction"
+			method="effettuaRicerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaAllegatoAttoOperazioniMultiple</param>
+				<param name="namespace">/</param>
+				<param name="convalida">${convalida}</param>
+			</result>
+			<result name="input">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp
+			</result>
+		</action>
+		<action
+			name="risultatiRicercaAllegatoAttoOperazioniMultiple_completaSelezionati"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAction"
+			method="completaSelezionati">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action
+			name="risultatiRicercaAllegatoAttoOperazioniMultiple_completaTutti"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAction"
+			method="completaTutti">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action name="convalidaAllegatoAttoMultiplo"
+			class="ricercaAllegatoAttoConvalidaMultiploAction">
+			<result name="success">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp
+			</result>
+		</action>
+		<action
+			name="ricercaAllegatoAttoConvalidaMultiplo_effettuaRicercaAllegatoAtto"
+			class="ricercaAllegatoAttoConvalidaMultiploAction"
+			method="effettuaRicerca">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaAllegatoAttoOperazioniMultiple</param>
+				<param name="namespace">/</param>
+				<param name="convalida">${convalida}</param>
+			</result>
+			<result name="input">/jsp/allegatoAtto/ricercaAllegatoAtto.jsp
+			</result>
+		</action>
+		<action
+			name="risultatiRicercaAllegatoAttoOperazioniMultiple_convalidaSelezionati"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAction"
+			method="convalidaSelezionati">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		<action
+			name="risultatiRicercaAllegatoAttoOperazioniMultiple_convalidaTutti"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAction"
+			method="convalidaTutti">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action
+			name="risultatiRicercaAllegatoAttoOperazioniMultiple_controlloImportiImpegniVincolati"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAction"
+			method="controlloImportiImpegniVincolati">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
 		<!-- SIAC-6688 -->
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple_controlloImportiImpegniVincolati" class="risultatiRicercaAllegatoAttoOperazioniMultipleAction" method="controlloImportiImpegniVincolati">
+		<action
+			name="risultatiRicercaAllegatoAttoOperazioniMultiple_controlloImportiImpegniVincolati"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAction"
+			method="controlloImportiImpegniVincolati">
 			<result name="input" type="customMessagesJSON" />
 			<result name="success" type="customMessagesJSON" />
 		</action>
-		
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple" class="risultatiRicercaAllegatoAttoOperazioniMultipleAction">
-			<result name="success">/jsp/allegatoAtto/risultatiRicercaAllegatoAttoOperazioniMultiple.jsp</result>
-		</action>		
-		<action name="risultatiRicercaAllegatoAttoOperazioniMultipleAjax" class="risultatiRicercaAllegatoAttoOperazioniMultipleAjaxAction">
+
+		<action name="risultatiRicercaAllegatoAttoOperazioniMultiple"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAction">
+			<result name="success">/jsp/allegatoAtto/risultatiRicercaAllegatoAttoOperazioniMultiple.jsp
+			</result>
+		</action>
+		<action
+			name="risultatiRicercaAllegatoAttoOperazioniMultipleAjax"
+			class="risultatiRicercaAllegatoAttoOperazioniMultipleAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
 	</package>

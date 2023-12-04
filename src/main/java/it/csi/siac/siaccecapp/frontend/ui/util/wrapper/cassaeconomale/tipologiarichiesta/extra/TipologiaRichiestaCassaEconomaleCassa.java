@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologia
 
 import java.util.List;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 
 /**
@@ -30,7 +30,7 @@ public class TipologiaRichiestaCassaEconomaleCassa extends TipologiaRichiestaCas
 		super();
 		
 		populateTipoRichiestaEconomale("Cassa");
-		addAbilitazioneRichiestaCassaEconomale("gestisci", "cassaEconomaleCassaGestione.do", azioniConsentite, AzioniConsentite.CASSA_ECONOMALE_GESTIONE_CASSA_ECONOMALE);
+		addAbilitazioneRichiestaCassaEconomale("gestisci", "cassaEconomaleCassaGestione.do", azioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_GESTIONE_CASSA_ECONOMALE);
 		// Movimenti non piu' disponibili per jira 1985
 	}
 	

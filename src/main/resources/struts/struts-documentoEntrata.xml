@@ -40,6 +40,38 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="input">/jsp/documento/inserisciDocumentoEntrata_step2.jsp</result>
 		</action>
 
+		<!-- SIAC-7567 -->
+		<action name="inserisciDocumentoEntrataEnterStep3Asincrono" class="inserisciDocumentoEntrataAction" method="enterStep3Asincrono">
+			<result name="validationSuccess" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					proseguireConElaborazioneCheckPA
+				</param>
+			</result>
+			<result name="validationError" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					proseguireConElaborazioneCheckPA
+				</param>
+			</result>
+			<result name="input" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					proseguireConElaborazioneCheckPA
+				</param>
+			</result>
+			<!-- <result name="input">/jsp/documento/inserisciDocumentoEntrata_step2.jsp</result>  -->
+		</action>
+
 		<action name="inserisciDocumentoEntrataStep3" class="inserisciDocumentoEntrataAction" method="step3">
 			<result name="success">/jsp/documento/inserisciDocumentoEntrata_step3.jsp</result>
 		</action>
@@ -76,6 +108,29 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="input">/jsp/documento/inserisciDocumentoEntrata_ripeti.jsp</result>
 		</action>
 
+		<!-- SIAC-7567 -->
+		<action name="inserisciDocumentoEntrata_ripetiSalvaAsincrono" class="inserisciDocumentoEntrataAction" method="ripetiSalvaAsincrono">
+			<result name="validationSuccess" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					proseguireConElaborazioneCheckPA
+				</param>
+			</result>
+			<result name="validationError" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					proseguireConElaborazioneCheckPA
+				</param>
+			</result>
+			<result name="input">/jsp/documento/inserisciDocumentoEntrata_ripeti.jsp</result>
+		</action>
+
 		<action name="inserisciDocumentoEntrata_ripetiStep3" class="inserisciDocumentoEntrataAction" method="ripetiStep3">
 			<result name="success">/jsp/documento/inserisciDocumentoEntrata_step3.jsp</result>
 		</action>
@@ -88,7 +143,60 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
 			<result name="input">/jsp/failure.jsp</result>
 		</action>
+		
+		<!-- SIAC-6780 -->
+		<action name="proseguiConWarning" class="collegaDocumentoEntrataAction" method="checkWithWarning">
+			<result name="input" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					messaggioConfermaSfondamentoAccertamento,
+					listaSubdocumentoEntrata.*,
+					totaleQuote,
+					importoDaAttribuire,
+					totaleDaPagareQuote,
+					flagDatiIvaAccessibile,
+					documentoIncompleto,
+					stato,
+					netto,
+					statoOperativoDocumentoCompleto,
+					attivaRegistrazioniContabiliVisible
+				</param>
+			</result>
+			<result name="success" type="redirectAction">
+				<param name="actionName">ritornoCollegaDocumentoToAggiornaPreDoc</param>
+				<param name="namespace">/</param>
+				<param name="uidSubDocumentoDaAssociare">${uidSubDocumentoDaAssociare}</param>
+				<param name="proseguireConElaborazione">${proseguireConElaborazione}</param>
+				<param name="proseguireConElaborazione">true</param>
+			</result>
+		</action>
 
+		<!-- SIAC-7567 -->
+		<action name="aggiornamentoDocumentoEntrata_aggiornamentoAnagraficaAsincrono" class="aggiornaDocumentoEntrataAnagraficaAction" method="aggiornamentoAnagraficaAsincrono">
+			<result name="validationSuccess" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					proseguireConElaborazioneCheckPA
+				</param>
+			</result>
+			<result name="validationError" type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					proseguireConElaborazioneCheckPA
+				</param>
+			</result>
+			<result name="input">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
+		</action>
+		
 		<action name="aggiornamentoDocumentoEntrata_aggiornamentoAnagrafica" class="aggiornaDocumentoEntrataAnagraficaAction" method="aggiornamentoAnagrafica">
 			<result name="success">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
 			<result name="input">/jsp/documento/aggiornaDocumentoEntrata.jsp</result>
@@ -511,6 +619,10 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success">/jsp/documento/consultazione/consultaDocEntrata_collapseQuota.jsp</result>
 			<result name="input" type="customMessagesJSON" />
 		</action>
+		<!-- SIAC-7557 -->
+		<action name="consultaDocumentoEntrata_caricaOrdini" class="consultaDocumentoEntrataAction" method="caricaOrdini">
+			<result name="success">/jsp/documento/consultazione/consultaDocSpesa_collapseOrdini.jsp</result>
+		</action>
 
 		<!-- ****************************************************************************************************** -->
 		<!-- ******************************************** Ricerca ************************************************* -->
@@ -559,6 +671,11 @@ SPDX-License-Identifier: EUPL-1.2
 				<param name="namespace">/</param>
 				<param name="uidDocumento">${uidDaConsultare}</param>
 			</result>
+		</action>
+
+		<!-- SIAC-6780 -->
+		<action name="risultatiRicercaQuoteDaAssociareAjax" class="risultatiRicercaQuoteDaAssociareAjaxAction">
+			<result name="success" type="dataTable" />
 		</action>
 
 		<action name="risultatiRicercaDocumentoEntrataDettaglioQuote" class="risultatiRicercaDocumentoEntrataAction" method="ottieniListaQuoteEntrata">
@@ -613,6 +730,27 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="customJSON">
 				<param name="includeProperties">listaSubdocumentoEntrata.*</param>
 			</result>
+		</action>
+		
+		<!-- SIAC-7557 -->
+		<action name="risultatiRicercaDocumentoEntrata_ottieniListaOrdine" class="risultatiRicercaDocumentoEntrataAction" method="ottieniListaOrdine">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, listaOrdine.*</param>
+			</result>
+		</action>
+		<action name="risultatiRicercaDocumentoEntrata_aggiornaOrdine" class="risultatiRicercaDocumentoEntrataAction" method="aggiornaOrdine">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="risultatiRicercaDocumentoEntrata_eliminaOrdine" class="risultatiRicercaDocumentoEntrataAction" method="eliminaOrdine">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="risultatiRicercaDocumentoEntrata_inserisceOrdine" class="risultatiRicercaDocumentoEntrataAction" method="inserisceOrdine">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
 		</action>
 		
 	</package>

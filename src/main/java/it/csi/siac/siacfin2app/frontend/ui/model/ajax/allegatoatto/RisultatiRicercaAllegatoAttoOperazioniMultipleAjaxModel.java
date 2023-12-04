@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.allegatoatto;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.allegatoatto.ElementoAllegatoAtto;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.allegatoatto.ElementoAl
  * @version 1.0.0 26/feb/2018
  *
  */
-public class RisultatiRicercaAllegatoAttoOperazioniMultipleAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoAllegatoAtto> {
+public class RisultatiRicercaAllegatoAttoOperazioniMultipleAjaxModel extends PagedDataTableAjaxModel<ElementoAllegatoAtto> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -4123720164469249806L;

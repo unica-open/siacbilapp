@@ -7,7 +7,7 @@ package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
@@ -179,7 +179,7 @@ public class BaseRisultatiRicercaRichiestaEconomaleAction<M extends BaseRisultat
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -212,7 +212,7 @@ public class BaseRisultatiRicercaRichiestaEconomaleAction<M extends BaseRisultat
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(StampaRicevutaRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -258,7 +258,7 @@ public class BaseRisultatiRicercaRichiestaEconomaleAction<M extends BaseRisultat
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(StampaRicevutaRendicontoRichiestaEconomale.class, res));
 			addErrori(res);
 			return INPUT;
 		}

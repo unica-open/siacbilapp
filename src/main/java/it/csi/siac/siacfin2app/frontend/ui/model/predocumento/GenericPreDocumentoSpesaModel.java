@@ -14,7 +14,6 @@ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloUGest;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiTipiCausaleSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaCausaleSpesa;
 import it.csi.siac.siacfin2ser.model.CausaleSpesa;
@@ -27,8 +26,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.ric.RicercaImpegnoK;
 import it.csi.siac.siacfinser.model.soggetto.ComuneNascita;
 import it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto;
@@ -65,10 +62,6 @@ public class GenericPreDocumentoSpesaModel extends GenericPreDocumentoModel {
 	private List<SedeSecondariaSoggetto> listaSedeSecondariaSoggetto = new ArrayList<SedeSecondariaSoggetto>();
 	private List<ModalitaPagamentoSoggetto> listaModalitaPagamentoSoggetto = new ArrayList<ModalitaPagamentoSoggetto>();
 
-	// aggiunto in data 05/06/2015 ahmad
-
-	private Mutuo mutuo;
-	private VoceMutuo voceMutuo;
 
 	/**
 	 * @return the preDocumento
@@ -239,34 +232,6 @@ public class GenericPreDocumentoSpesaModel extends GenericPreDocumentoModel {
 	}
 
 	/**
-	 * @return the mutuo
-	 */
-	public Mutuo getMutuo() {
-		return mutuo;
-	}
-
-	/**
-	 * @param mutuo the mutuo to set
-	 */
-	public void setMutuo(Mutuo mutuo) {
-		this.mutuo = mutuo;
-	}
-
-	/**
-	 * @return the voceMutuo
-	 */
-	public VoceMutuo getVoceMutuo() {
-		return voceMutuo;
-	}
-
-	/**
-	 * @param voceMutuo the voceMutuo to set
-	 */
-	public void setVoceMutuo(VoceMutuo voceMutuo) {
-		this.voceMutuo = voceMutuo;
-	}
-	
-	/**
 	 * @return the provinciaIndirizzo
 	 */
 	public String getProvinciaIndirizzo() {
@@ -364,7 +329,7 @@ public class GenericPreDocumentoSpesaModel extends GenericPreDocumentoModel {
 		request.setEnte(getEnte());
 		request.setpRicercaImpegnoK(creaPRicercaImpegnoK());
 		//carico i sub solo se ho il numero del sub valorizzato
-		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null);
+		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -380,22 +345,6 @@ public class GenericPreDocumentoSpesaModel extends GenericPreDocumentoModel {
 	 */
 	public LeggiTipiCausaleSpesa creaRequestLeggiTipiCausaleSpesa() {
 		LeggiTipiCausaleSpesa request = new LeggiTipiCausaleSpesa();
-
-		request.setDataOra(new Date());
-		request.setEnte(getEnte());
-		request.setRichiedente(getRichiedente());
-
-		return request;
-	}
-
-	/**
-	 * Crea una request per il servizio di {@link LeggiContiTesoreria} a partire
-	 * dal model.
-	 * 
-	 * @return la request creata
-	 */
-	public LeggiContiTesoreria creaRequestLeggiContiTesoreria() {
-		LeggiContiTesoreria request = new LeggiContiTesoreria();
 
 		request.setDataOra(new Date());
 		request.setEnte(getEnte());
@@ -447,10 +396,10 @@ public class GenericPreDocumentoSpesaModel extends GenericPreDocumentoModel {
 
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoImpegno(getMovimentoGestione().getAnnoMovimento());
-		utility.setNumeroImpegno(getMovimentoGestione().getNumero());
+		utility.setNumeroImpegno(getMovimentoGestione().getNumeroBigDecimal());
 
 		//SubImpegno
-		utility.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null) ? getSubMovimentoGestione().getNumero() : null);
+		utility.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null) ? getSubMovimentoGestione().getNumeroBigDecimal() : null);
 
 		return utility;
 	}

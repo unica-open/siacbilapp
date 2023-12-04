@@ -14,7 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step3.SpecificaVariazioneImportoUEBModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
@@ -31,8 +31,8 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettagliVariazioneI
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancioResponse;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReportResponse;
 import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.ServiceResponse;
@@ -114,7 +114,7 @@ public class AggiornaVariazioneImportiUEBAction extends AggiornaVariazioneImport
 		RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse response = variazioneDiBilancioService.ricercaDettagliVariazioneImportoCapitoloNellaVariazione(request);
 		
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettagliVariazioneImportoCapitoloNellaVariazione.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -517,8 +517,8 @@ public class AggiornaVariazioneImportiUEBAction extends AggiornaVariazioneImport
 	public String download() {
 		final String methodName = "download";
 		
-		StampaExcelVariazioneDiBilancio req = model.creaRequestStampaExcelVariazioneDiBilancio();
-		StampaExcelVariazioneDiBilancioResponse res = variazioneDiBilancioService.stampaExcelVariazioneDiBilancio(req);
+		VariazioneBilancioExcelReport req = model.creaRequestStampaExcelVariazioneDiBilancio();
+		VariazioneBilancioExcelReportResponse res = variazioneDiBilancioService.variazioneBilancioExcelReport(req);
 		
 		if(res.hasErrori()) {
 			addErrori(res);
@@ -527,7 +527,7 @@ public class AggiornaVariazioneImportiUEBAction extends AggiornaVariazioneImport
 		}
 		
 		byte[] bytes = res.getReport();
-		model.setContentType(res.getContentType());
+		model.setContentType(res.getContentType() == null ? null : res.getContentType().getMimeType());
 		model.setContentLength(Long.valueOf(bytes.length));
 		model.setFileName("esportazioneVariazione" + model.getAnnoEsercizio() + "_" + model.getNumeroVariazione() + "." + res.getExtension());
 		model.setInputStream(new ByteArrayInputStream(bytes));

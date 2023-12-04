@@ -15,24 +15,30 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+import it.csi.siac.siacbilapp.frontend.ui.util.helper.ImportiCapitoloComponenteVariazioneModificabile;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcolaTotaliStanziamentiDiPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriBilByIdPadre;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByRelazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipoElementoBil;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatori;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriGenericiByTipoElementoBil;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiTreePianoDeiConti;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiTreeSiope;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCategoriaCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaTipoComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ApplicazioneVariazione;
 import it.csi.siac.siacbilser.model.Capitolo;
+import it.csi.siac.siacbilser.model.StatoTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonapp.model.GenericModel;
 import it.csi.siac.siaccorser.frontend.webservice.msg.FindAzione;
 import it.csi.siac.siaccorser.frontend.webservice.msg.LeggiStrutturaAmminstrativoContabile;
+import it.csi.siac.siaccorser.frontend.webservice.util.ServiceUtils;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -42,6 +48,7 @@ import it.csi.siac.siaccorser.model.Operatore;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.VariabileProcesso;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -235,6 +242,20 @@ public abstract class GenericBilancioModel extends GenericModel {
 		request.setAnno(getAnnoEsercizioInt());
 		return request;
 	}
+	
+	/**
+	 * Crea request leggi classificatori by tipologie classificatori.
+	 *
+	 * @param listaTipi the lista tipi
+	 * @return the leggi classificatori by tipologie classificatori
+	 */
+	public LeggiClassificatoriByTipologieClassificatori creaRequestLeggiClassificatoriByTipologieClassificatori(List<TipologiaClassificatore> listaTipi) {
+		LeggiClassificatoriByTipologieClassificatori request = creaRequest(LeggiClassificatoriByTipologieClassificatori.class);
+		request.setEnte(getEnte());
+		request.setBilancio(getBilancio());
+		request.setListaTipologieClassificatori(listaTipi);
+		return request;
+	}
 
 	/**
 	 * Metodo di utilit&agrave; per la creazione di una Request per il servizio di Leggi Tree Piano dei Conti.
@@ -366,6 +387,18 @@ public abstract class GenericBilancioModel extends GenericModel {
 		return creaRequest(ListeGestioneSoggetto.class);
 	}
 	
+	public RicercaSinteticaTipoComponenteImportiCapitolo creaRequestRicercaSinteticaTipoComponentiImportoCapitolo() {
+		//return creaRequest(RicercaSinteticaTipoComponenteImportiCapitolo.class);
+		
+		RicercaSinteticaTipoComponenteImportiCapitolo req = creaRequest(RicercaSinteticaTipoComponenteImportiCapitolo.class);
+		req.setTipoComponenteImportiCapitolo(new TipoComponenteImportiCapitolo());
+		req.getTipoComponenteImportiCapitolo().setStatoTipoComponenteImportiCapitolo(StatoTipoComponenteImportiCapitolo.VALIDO);
+		//req.setMacrotipoComponenteImportiCapitoloDaEscludere(ImportiCapitoloComponenteVariazioneModificabile.getArrayMacrotipiNonDigitabiliSuiTreAnni(getApplicazione()));
+		//req.setSottotipoComponenteImportiCapitoloDaEscludere(ImportiCapitoloComponenteVariazioneModificabile.getArraySottoTipiNonDigitabiliSuiTreAnni(getApplicazione()));
+		req.setParametriPaginazione(creaParametriPaginazione(Integer.MAX_VALUE));
+		return req;
+	}
+	
 	/**
 	 * Crea una request per il servizio di {@link RicercaCodifiche}.
 	 * @param codifiche le codifice da injettare. Accetta classi e stringhe
@@ -400,12 +433,8 @@ public abstract class GenericBilancioModel extends GenericModel {
 	 * 
 	 * @throws IllegalArgumentException nel caso in cui non sia possibile instanziare la request
 	 */
-	protected <R extends ServiceRequest> R creaRequest(Class<R> clazz) {
-		R request = ReflectionUtil.silentlyBuildInstance(clazz);
-		request.setDataOra(now());
-		request.setRichiedente(getRichiedente());
-		request.setAnnoBilancio(bilancio.getAnno());
-		return request;
+	public <R extends ServiceRequest> R creaRequest(Class<R> clazz) {
+		return ServiceUtils.createRequest(clazz, getRichiedente(), bilancio.getAnno());
 	}
 	
 	/* **** Metodi di utilita **** */
@@ -602,7 +631,7 @@ public abstract class GenericBilancioModel extends GenericModel {
 	 * 
 	 * @return l'entit&agrave; corretta da impostare
 	 */
-	protected <E extends Entita> E impostaEntitaFacoltativa(E entita) {
+	public <E extends Entita> E impostaEntitaFacoltativa(E entita) {
 		return entita == null || entita.getUid() == 0 ? null : entita;
 	}
 	
@@ -666,11 +695,11 @@ public abstract class GenericBilancioModel extends GenericModel {
 		if(movimentoGestione.getAnnoMovimento() != 0) {
 			sbImpegno.append(movimentoGestione.getAnnoMovimento());
 		}
-		if(movimentoGestione.getNumero() != null) {
-			sbImpegno.append("/").append(movimentoGestione.getNumero());
+		if(movimentoGestione.getNumeroBigDecimal() != null) {
+			sbImpegno.append("/").append(movimentoGestione.getNumeroBigDecimal());
 		}
-		if(subMovimentoGestione != null && subMovimentoGestione.getNumero() != null) {
-			sbImpegno.append("-").append(subMovimentoGestione.getNumero());
+		if(subMovimentoGestione != null && subMovimentoGestione.getNumeroBigDecimal() != null) {
+			sbImpegno.append("-").append(subMovimentoGestione.getNumeroBigDecimal());
 		}
 		
 		if(sbImpegno.length() != 0) {

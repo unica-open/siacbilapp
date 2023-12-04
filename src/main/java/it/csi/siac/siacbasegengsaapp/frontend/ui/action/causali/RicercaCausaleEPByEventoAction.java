@@ -73,7 +73,7 @@ public class RicercaCausaleEPByEventoAction extends GenericBilancioAction<Ricerc
 			logServiceResponse(response);
 
 			if (response.hasErrori()) {
-				log.debug(methodName, createErrorInServiceInvocationString(request, response));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaCausale.class, response));
 				addErrori(response);
 				return SUCCESS;
 			}
@@ -116,7 +116,7 @@ public class RicercaCausaleEPByEventoAction extends GenericBilancioAction<Ricerc
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaMinimaCausale.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -131,7 +131,7 @@ public class RicercaCausaleEPByEventoAction extends GenericBilancioAction<Ricerc
 	public void validateExecute() {
 		checkNotNull(model.getAmbito(), "ambito", true);
 		checkCondition(Ambito.AMBITO_FIN.equals(model.getAmbito()) || Ambito.AMBITO_GSA.equals(model.getAmbito())||  Ambito.AMBITO_INV.equals(model.getAmbito()),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Ambito", ": deve essere AMBITO_FIN o AMBITO_GSA o AMBITO_INV"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Ambito", ": deve essere AMBITO_FIN o AMBITO_GSA o AMBITO_INV"));
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class RicercaCausaleEPByEventoAction extends GenericBilancioAction<Ricerc
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareCausale.class, res));
 			addErrori(res);
 			return INPUT;
 		}

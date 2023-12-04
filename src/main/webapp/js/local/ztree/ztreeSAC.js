@@ -27,8 +27,13 @@
     Ztree.prototype.destroy = destroy;
     Ztree.prototype.impostaValueStrutturaAmministrativoContabile = impostaValueStrutturaAmministrativoContabile;
     Ztree.prototype.deselezionaNodiEAbilitaAlberatura = deselezionaNodiEAbilitaAlberatura;
-    
-    w.Ztree = Ztree;
+
+    //SIAC-8280 poco pulito ma e' meglio che duplicare codice
+    if(w.Ztree !== undefined || w.Ztree !== null){
+    	w.ZtreeSAC = Ztree;    	
+    } else {
+    	w.Ztree = Ztree;    	
+    }
     
     function deseleziona (event) {
     	event.preventDefault();
@@ -90,7 +95,7 @@
         if(treeNode.checked) {
             $("#HIDDEN_" + idCampoHidden + "Uid" + suffix).val(treeNode.uid);
         } else {
-            $("#HIDDEN_" + idCampoHidden + "Uid" + suffix).val("");
+            $("#HIDDEN_" + idCampoHidden + "Uid" + suffix).val(0);
         }
         $("#HIDDEN_" + idCampoHidden + "Stringa").val(stringa);
         $("#SPAN_" + idCampoHidden + suffix).html(stringa);

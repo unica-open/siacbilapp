@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.movimentogestione;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 
 /**
@@ -13,7 +13,7 @@ import it.csi.siac.siacfinser.model.SubAccertamento;
  * @version 1.0.0 - 29/08/2016
  *
  */
-public class RisultatiRicercaSubAccertamentiAjaxModel extends GenericRisultatiRicercaAjaxModel<SubAccertamento> {
+public class RisultatiRicercaSubAccertamentiAjaxModel extends PagedDataTableAjaxModel<SubAccertamento> {
 	
 	/**
 	 * Per la serializzazione

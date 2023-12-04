@@ -67,10 +67,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<label for="numeroSubMovimentoGestione" class="radio inline">Subimpegno</label>
 			</span>
 			<s:textfield id="numeroSubMovimentoGestione" name="subMovimentoGestione.numero" cssClass="lbTextSmall soloNumeri span2" maxlength="7" placeholder="%{'numero subimpegno'}" value="%{subMovimentoGestione.numero.toString()}" />
-			<span class="alRight">
-				<label for="numeroMutuo" class="radio inline">Mutuo</label>
-			</span>
-			<s:textfield id="numeroMutuo" name="voceMutuo.numeroMutuo" cssClass="lbTextSmall soloNumeri span2" maxlength="7" placeholder="%{'numero mutuo'}" value="%{voceMutuo.numeroMutuo.toString()}" />
+
 			<span class="radio guidata">
 				<button type="button" class="btn btn-primary" id="pulsanteCompilazioneGuidataMovimentoGestione">compilazione guidata</button>
 			</span>

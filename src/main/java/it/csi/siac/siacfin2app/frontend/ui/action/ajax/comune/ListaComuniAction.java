@@ -42,7 +42,7 @@ public class ListaComuniAction extends GenericBilancioAction<ListaComuniModel> {
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(ListaComuni.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

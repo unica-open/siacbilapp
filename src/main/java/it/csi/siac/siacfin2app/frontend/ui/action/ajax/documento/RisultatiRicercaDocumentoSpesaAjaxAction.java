@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -36,7 +36,7 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDocumentoSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDocumento, 
+public class RisultatiRicercaDocumentoSpesaAjaxAction extends PagedDataTableAjaxAction<ElementoDocumento, 
 	RisultatiRicercaDocumentoAjaxModel, DocumentoSpesa, RicercaSinteticaModulareDocumentoSpesa, RicercaSinteticaModulareDocumentoSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -96,12 +96,12 @@ public class RisultatiRicercaDocumentoSpesaAjaxAction extends GenericRisultatiRi
 	}
 	
 	@Override
-	protected ElementoDocumentoSpesa ottieniIstanza(DocumentoSpesa e) throws FrontEndBusinessException {
+	protected ElementoDocumentoSpesa getInstance(DocumentoSpesa e) throws FrontEndBusinessException {
 		return ElementoDocumentoFactory.getInstanceSpesa(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaModulareDocumentoSpesaResponse ottieniResponse(RicercaSinteticaModulareDocumentoSpesa request) {	
+	protected RicercaSinteticaModulareDocumentoSpesaResponse getResponse(RicercaSinteticaModulareDocumentoSpesa request) {	
 		return documentoSpesaService.ricercaSinteticaModulareDocumentoSpesa(request);
 	}
 	
@@ -111,7 +111,7 @@ public class RisultatiRicercaDocumentoSpesaAjaxAction extends GenericRisultatiRi
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		
@@ -124,10 +124,10 @@ public class RisultatiRicercaDocumentoSpesaAjaxAction extends GenericRisultatiRi
 		Boolean isConsultaQuoteConsentita = Boolean.TRUE;
 		
 		//LOTTO M - Documenti Bozze
-		Boolean isAttivaRegistrazioniContabili = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
-		Boolean isAttivaGestioneOrdini = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
+		Boolean isAttivaRegistrazioniContabili = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
+		Boolean isAttivaGestioneOrdini = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, listaAzioniConsentite);
 		
 		boolean statoOperativoValido = instance.checkStatoOperativoValido();
 		boolean statoOperativoIncompleto = instance.checkStatoOperativoIncompleto();
@@ -175,7 +175,7 @@ public class RisultatiRicercaDocumentoSpesaAjaxAction extends GenericRisultatiRi
 	 */
 	private boolean isAnnullaDocumentoFELConsentita(ElementoDocumentoSpesa instance, List<AzioneConsentita> listaAzioniConsentite) {
 		
-		return !AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL, listaAzioniConsentite)
+		return !AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL, listaAzioniConsentite)
 				|| !instance.isImportabileDaFEL();
 	}
 	
@@ -185,7 +185,7 @@ public class RisultatiRicercaDocumentoSpesaAjaxAction extends GenericRisultatiRi
 	}
 	
 	@Override
-	protected void eseguiOperazioniUlteriori() {
+	protected void executeEnd() {
 		model.addMoreData("importoTotale", sessionHandler.getParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA));
 	}
 

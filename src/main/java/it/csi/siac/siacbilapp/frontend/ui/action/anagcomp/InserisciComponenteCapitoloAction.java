@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,14 +22,13 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceTipoComponenteImp
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceTipoComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.model.AmbitoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.FonteFinanziariaComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ImpegnabileComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MomentoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.SottotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
-import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
-import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -63,9 +62,11 @@ public class InserisciComponenteCapitoloAction extends ComponenteCapitoloAction<
 		cleanErroriMessaggiInformazioni();
 		caricaListaMacrotipo();
 		caricaListaPrevisione();
-		caricaListaGestione();
+		//SIAC-7349
+		//caricaListaGestione();
+		caricaListaImpegnabile();
 	}
-	
+
 	@Override
 	public void prepareExecute() throws Exception {
 		// Pulisco il model
@@ -115,8 +116,8 @@ public class InserisciComponenteCapitoloAction extends ComponenteCapitoloAction<
 		
 		log.debug(methodName, "TipoComponenteImportiCapitolo inserito correttamente  " + 
 				model.getComponenteCapitolo().getUid()  );
-		
-		model.getComponenteCapitolo().setCodice(response.getTipoComponenteImportiCapitolo().getCodice());
+		//SIAC-7492
+//		model.getComponenteCapitolo().setCodice(response.getTipoComponenteImportiCapitolo().getCodice());
 		String macroTipoComponentePerInserimento = req.getTipoComponenteImportiCapitolo().getMacrotipoComponenteImportiCapitolo().getDescrizione();
 		SottotipoComponenteImportiCapitolo sottoTipoComponentePerInserimento = req.getTipoComponenteImportiCapitolo().getSottotipoComponenteImportiCapitolo();
 		String descrizioneComponentePerInserimento=req.getTipoComponenteImportiCapitolo().getDescrizione();
@@ -171,7 +172,9 @@ public class InserisciComponenteCapitoloAction extends ComponenteCapitoloAction<
 //		}
 		
 		//checkNotNull(model.getComponenteCapitolo().getPropostaDefaultComponenteImportiCapitolo(), "Default Previsione");
-		checkNotNull(model.getComponenteCapitolo().getTipoGestioneComponenteImportiCapitolo(), "Tipo Gestione");
+		//SIAC-7349
+		//checkNotNull(model.getComponenteCapitolo().getTipoGestioneComponenteImportiCapitolo(), "Tipo Gestione");
+		checkNotNull(model.getComponenteCapitolo().getImpegnabileComponenteImportiCapitolo(), "Impegnabile");
 		checkNotNull(model.getComponenteCapitolo().getPropostaDefaultComponenteImportiCapitolo(), "Default Previsione");
 		checkNotNull(model.getComponenteCapitolo().getDataInizioValidita(), "Data Inizio Validità");
 
@@ -179,7 +182,7 @@ public class InserisciComponenteCapitoloAction extends ComponenteCapitoloAction<
 	}
 	
 	
-	protected void caricaListaMacrotipo() throws WebServiceInvocationFailureException {
+	protected void caricaListaMacrotipo() {
 		List<MacrotipoComponenteImportiCapitolo> macrotipoList = Arrays.asList(MacrotipoComponenteImportiCapitolo.values());
 		model.setListaMacroTipo(macrotipoList);
 	}
@@ -206,19 +209,30 @@ public class InserisciComponenteCapitoloAction extends ComponenteCapitoloAction<
 	       
 	       model.setListaPrevisione(tipoPropostaList);
 	}
-	
+	//SIAC-7349
 	//valori possibili: manuale, solo automatica
-	private void caricaListaGestione() {
-		TipoGestioneComponenteImportiCapitolo[] tipoGestione = TipoGestioneComponenteImportiCapitolo.values();
-	       List<TipoGestioneComponenteImportiCapitolo> tipoGestioneList = new ArrayList<TipoGestioneComponenteImportiCapitolo>();
-	       for (TipoGestioneComponenteImportiCapitolo tipoGestioneElem : tipoGestione) {
-	    	   tipoGestioneList.add(tipoGestioneElem);
-	       }
-	       
-	       model.setListaGestione(tipoGestioneList);
-	}
+//	private void caricaListaGestione() {
+//		TipoGestioneComponenteImportiCapitolo[] tipoGestione = TipoGestioneComponenteImportiCapitolo.values();
+//	       List<TipoGestioneComponenteImportiCapitolo> tipoGestioneList = new ArrayList<TipoGestioneComponenteImportiCapitolo>();
+//	       for (TipoGestioneComponenteImportiCapitolo tipoGestioneElem : tipoGestione) {
+//	    	   tipoGestioneList.add(tipoGestioneElem);
+//	       }
+//	       
+//	       model.setListaGestione(tipoGestioneList);
+//	}
+	
 	
 
+	//valori possibili: si , no , auto
+	private void caricaListaImpegnabile() {
+		ImpegnabileComponenteImportiCapitolo[] impegnabile = ImpegnabileComponenteImportiCapitolo.values();
+	       List<ImpegnabileComponenteImportiCapitolo> impegnabileList = new ArrayList<ImpegnabileComponenteImportiCapitolo>();
+	       for (ImpegnabileComponenteImportiCapitolo tipoGestioneElem : impegnabile) {
+	    	   impegnabileList.add(tipoGestioneElem);
+	       }
+	       
+	       model.setListaImpegnabile(impegnabileList);
+	}
 	/**
 	 * Annullamento dei campi dell'azione
 	 * @return una stringa corrispondente al risultato dell'invocazione

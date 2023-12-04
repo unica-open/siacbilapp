@@ -92,10 +92,10 @@ public class ElementoCausaleFactory extends BaseFactory {
 		if(movimentoGestione != null) {
 			movgest.append(movimentoGestione.getAnnoMovimento())
 				.append("/")
-				.append(movimentoGestione.getNumero());
+				.append(movimentoGestione.getNumeroBigDecimal());
 			if(subMovimentoGestione != null) {
 				movgest.append("-")
-					.append(subMovimentoGestione.getNumero());
+					.append(subMovimentoGestione.getNumeroBigDecimal());
 			}
 		}
 		if(causale.getAttoAmministrativo() != null) {

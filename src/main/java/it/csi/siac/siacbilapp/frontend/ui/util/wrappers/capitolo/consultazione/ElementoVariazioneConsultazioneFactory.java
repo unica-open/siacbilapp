@@ -12,10 +12,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilser.model.DatiVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.DatiVariazioneImportoCapitoloAnno;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 
 /**
  * Factory per l'elemento delle variazioni per la consultazione.
@@ -50,7 +50,31 @@ public final class ElementoVariazioneConsultazioneFactory {
 		
 		return res;
 	}
-
+	
+	// CONTABILIA-285 INIZIO
+	/**
+	 * Crea un'istanza di {@link ElementoVariazioneConsultazione} a partire dai dati della variazione.
+	 * 
+	 * @param datiVariazioneImportiCapitoloPerAnnoNonNegative i dati delle variazioni non negative
+	 * @param datiVariazioneImportiCapitoloPerAnnoNegative i dati delle variazioni negative
+	 * @param datiVariazioneImportiCapitoloPerAnnoNeutre dati delle variazioni neutre
+	 * @param annoEsercizio l'anno di esercizio
+	 * @return l'istanza del wrapper dei dati di consultazione relativa ai dati forniti
+	 */
+	public static ElementoVariazioneConsultazione getInstance(Map<Integer, DatiVariazioneImportoCapitoloAnno> datiVariazioneImportiCapitoloPerAnnoNonNegative,
+			Map<Integer, DatiVariazioneImportoCapitoloAnno> datiVariazioneImportiCapitoloPerAnnoNegative, 
+			Map<Integer, DatiVariazioneImportoCapitoloAnno> datiVariazioneImportiCapitoloPerAnnoNeutre, Integer annoEsercizio) {
+		ElementoVariazioneConsultazione res = new ElementoVariazioneConsultazione();
+		
+		populate(res, datiVariazioneImportiCapitoloPerAnnoNonNegative, annoEsercizio.intValue(), "Aumento");
+		populate(res, datiVariazioneImportiCapitoloPerAnnoNegative, annoEsercizio.intValue(), "Diminuzione");
+		populate(res, datiVariazioneImportiCapitoloPerAnnoNeutre, annoEsercizio.intValue(), "Neutre");
+		
+		return res;
+	}
+	// CONTABILIA-285 FINE
+	
+	
 	/**
 	 * Popolamento dell'istanza.
 	 * 
@@ -83,7 +107,7 @@ public final class ElementoVariazioneConsultazioneFactory {
 			return;
 		}
 		
-		for(Entry<StatoOperativoVariazioneDiBilancio, DatiVariazioneImportoCapitolo> entry : datiVariazioneImportoCapitoloAnno.getDatiVariazioneCapitolo().entrySet()) {
+		for(Entry<StatoOperativoVariazioneBilancio, DatiVariazioneImportoCapitolo> entry : datiVariazioneImportoCapitoloAnno.getDatiVariazioneCapitolo().entrySet()) {
 			populate(res, direzione, delta, entry.getKey(), entry.getValue());
 		}
 	}
@@ -97,7 +121,7 @@ public final class ElementoVariazioneConsultazioneFactory {
 	 * @param dvic i dati della variazione
 	 */
 	private static void populate(ElementoVariazioneConsultazione res, String direzione,
-			int delta, StatoOperativoVariazioneDiBilancio sovdb, DatiVariazioneImportoCapitolo dvic) {
+			int delta, StatoOperativoVariazioneBilancio sovdb, DatiVariazioneImportoCapitolo dvic) {
 		String metodo = "variazioniIn";
 		String stato = computeStringForStato(sovdb);
 		String anno = Integer.toString(delta);
@@ -128,18 +152,25 @@ public final class ElementoVariazioneConsultazioneFactory {
 	/**
 	 * Computa la stringa corrispondente allo stato.
 	 * 
-	 * @param statoOperativoVariazioneDiBilancio lo stato operativo della variazione
+	 * @param statoOperativoVariazioneBilancio lo stato operativo della variazione
 	 * @return la stringa corrispondente allo stato
 	 */
-	private static String computeStringForStato(StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio) {
-		if(statoOperativoVariazioneDiBilancio == null) {
+	private static String computeStringForStato(StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio) {
+		if(statoOperativoVariazioneBilancio == null) {
 			return "";
 		}
 		// Giunta e consiglio vanno insieme
-		if(StatoOperativoVariazioneDiBilancio.CONSIGLIO.equals(statoOperativoVariazioneDiBilancio) || StatoOperativoVariazioneDiBilancio.GIUNTA.equals(statoOperativoVariazioneDiBilancio)) {
+		if(StatoOperativoVariazioneBilancio.CONSIGLIO.equals(statoOperativoVariazioneBilancio) || 
+				StatoOperativoVariazioneBilancio.GIUNTA.equals(statoOperativoVariazioneBilancio)) {
 			return "GiuntaConsiglio";
 		}
-		String tmp = WordUtils.capitalizeFully(statoOperativoVariazioneDiBilancio.toString(), new char[]{'_'});
+		
+		// SIAC-8831
+		if(StatoOperativoVariazioneBilancio.PRE_BOZZA.equals(statoOperativoVariazioneBilancio)) {
+			return "Bozza";
+		}
+		
+		String tmp = WordUtils.capitalizeFully(statoOperativoVariazioneBilancio.toString(), new char[]{'_'});
 		Matcher matcher = SNAKE_TO_CAMEL_PATTERN.matcher(tmp);
 		return matcher.replaceAll("");
 	}

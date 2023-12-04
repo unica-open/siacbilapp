@@ -77,7 +77,7 @@ public class ConsultaRegistrazioneMovFinModificaMovimentoGestioneSpesaBaseAction
 			return null;
 		}
 		for(SubImpegno si : impegno.getElencoSubImpegni()) {
-			if(si != null && si.getNumero() != null && si.getNumero().compareTo(numeroSub) == 0) {
+			if(si != null && si.getNumeroBigDecimal() != null && si.getNumeroBigDecimal().compareTo(numeroSub) == 0) {
 				return si;
 			}
 		}

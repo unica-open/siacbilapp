@@ -12,32 +12,32 @@ SPDX-License-Identifier: EUPL-1.2
 <body>
 	<s:include value="/jsp/include/header.jsp" />
 	
-	<!-- TABELLE RIEPILOGO -->
+	<%-- TABELLE RIEPILOGO --%>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span12 ">
 				<div class="contentPage">
 					<s:include value="/jsp/include/messaggi.jsp"/>
 					<form method="post" action="#">
-				    <h3><span id="id_num_result" class="num_result"></span> Risultati trovati</h3>                           
-					<!-- TABELLE RIEPILOGO con azioni -->
-					<table class="table table-striped table-bordered table-hover dataTable" id="risultatiRicercaVincolo" summary="...." >
-						<thead>
-							<tr>
-								<th scope="col">Codice vincolo</th>
-								<th scope="col">Bilancio</th>
-								<th scope="col">Trasferimenti vincolati</th>
-								<th scope="col">n&deg; capitoli entrata</th>
-						        <th scope="col">n&deg; capitoli spesa</th>
-								<th scope="col">Azioni</th>
-							</tr>
-						</thead>	
-						<tbody>
-						</tbody>	
-					</table>
-					<s:hidden id="HIDDEN_startPosition" name="startPosition" value="%{savedDisplayStart}" />
-					
-					<!-- Modale ANNULLA -->
+					    <h3><span id="id_num_result" class="num_result"></span> Risultati trovati</h3>                           
+						<%-- TABELLE RIEPILOGO con azioni --%>
+						<table class="table table-striped table-bordered table-hover dataTable" id="risultatiRicercaVincolo" summary="...." >
+							<thead>
+								<tr>
+									<th scope="col">Codice vincolo</th>
+									<th scope="col">Bilancio</th>
+									<th scope="col">Trasferimenti vincolati</th>
+									<th scope="col">n&deg; capitoli entrata</th>
+							        <th scope="col">n&deg; capitoli spesa</th>
+									<th scope="col">Azioni</th>
+								</tr>
+							</thead>	
+							<tbody>
+							</tbody>	
+						</table>
+						<s:hidden id="HIDDEN_startPosition" name="startPosition" value="%{savedDisplayStart}" />
+						
+						<%-- Modale ANNULLA --%>
 						<div id="msgAnnulla" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="msgAnnullaLabel" aria-hidden="true">
 							<s:hidden id="HIDDEN_UidDaAnnullare" name="uidDaAnnullare" />
 							<div class="modal-body">
@@ -54,7 +54,7 @@ SPDX-License-Identifier: EUPL-1.2
 								<button class="btn btn-primary" formmethod="post" type="submit" formaction="risultatiRicercaVincoloAnnulla.do">si, prosegui</button>
 							</div>
 						</div>  
-	  					<!-- /Modale ANNULLA -->
+	  					<%-- /Modale ANNULLA --%>
 						<p>
 							<s:include value="/jsp/include/indietro.jsp" />
 						</p>  	 
@@ -67,6 +67,6 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}vincolo/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/vincolo/risultatiRicerca.js"></script>
 </body>
 </html>

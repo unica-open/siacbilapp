@@ -104,7 +104,7 @@ public class GenericTipoBeneAction<M extends GenericTipoBeneModel> extends Gener
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 			}
 			listaEvento = filtraEventoPerTipoBene(response.getCodifiche(Evento.class));
 			listaClassePiano = response.getCodifiche(ClassePiano.class);
@@ -248,7 +248,7 @@ public class GenericTipoBeneAction<M extends GenericTipoBeneModel> extends Gener
 			RicercaSinteticaModulareCausaleResponse res = causaleService.ricercaSinteticaModulareCausale(req);
 
 			if (res.hasErrori()) {
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaModulareCausale.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);

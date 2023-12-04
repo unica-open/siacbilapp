@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -129,7 +129,8 @@ public class AggiornaVariazioneCodificheAction extends AggiornaVariazioneBaseAct
 		log.debug(methodName, "Ottengo l'azione richiesta dalla sessione");
 		AzioneRichiesta azioneRichiesta = sessionHandler.getAzioneRichiesta();
 		log.debug(methodName, "Injetto le variabili del processo");
-		model.injettaVariabiliProcesso(azioneRichiesta);
+		model.impostaDatiNelModel(azioneRichiesta);
+//		model.injettaVariabiliProcesso(azioneRichiesta);
 		
 		// Controllo se ho la response in cache. In caso contrario, effettuo l'invocazione dal servizio
 		RicercaDettaglioVariazioneCodificheResponse response = model.getFromCache(RicercaDettaglioVariazioneCodificheResponse.class);
@@ -145,13 +146,17 @@ public class AggiornaVariazioneCodificheAction extends AggiornaVariazioneBaseAct
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				log.info(methodName, createErrorInServiceInvocationString(request, response));
+				log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioVariazioneCodifiche.class, response));
 				addErrori(response);
 				throwExceptionFromErrori(model.getErrori());
 			}
 			// Metto la response in cache
 			model.putInCache(response);
 		}
+		
+		//SIAC-7530
+		controllaStatoOperativoVariazione(response.getVariazioneCodificaCapitolo());
+		//
 		
 		log.debug(methodName, "Creo la request per la ricerca del provvedimento");
 		AttoAmministrativo attoAmministrativo = response.getVariazioneCodificaCapitolo().getAttoAmministrativo();
@@ -175,7 +180,7 @@ public class AggiornaVariazioneCodificheAction extends AggiornaVariazioneBaseAct
 		if(responseProvvedimento == null) {
 			log.debug(methodName, "Non ho cercato nulla");
 		} else if(responseProvvedimento.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(requestProvvedimento, responseProvvedimento));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, responseProvvedimento));
 			addErrori(responseProvvedimento);
 			return INPUT;
 		} else if(!responseProvvedimento.getListaAttiAmministrativi().isEmpty()) {

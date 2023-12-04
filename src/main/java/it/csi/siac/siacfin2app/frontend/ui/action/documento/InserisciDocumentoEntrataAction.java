@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
@@ -39,8 +40,10 @@ import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+import it.csi.siac.sirfelser.model.CausaleFEL;
+import it.csi.siac.sirfelser.model.FatturaFEL;
 
 /**
  * Classe di action per l'inserimento del Documento di entrata.
@@ -87,9 +90,15 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 		
 		caricaProvvisoriDiCassa();
 		
+		// SIAC-7571
+		// Dati FEL
+		caricaDatiFatturaFEL();
+		// TODO CONTROLLARE SE SELEZIONA QUELLO CORRETTO
+		impostaDefaultFatturaFELStep1();			
+		
 		return SUCCESS;
 	}
-	
+
 	/**
 	 * Metodo per l'ingresso nello step2 dell'inserimento.
 	 * 
@@ -99,6 +108,13 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 		// Caricamento liste
 		checkAndObtainListaCodiceBollo();
 		model.popolaParametriDiDefaultStep2();
+		
+		//SIAC-7567
+		//controllo che il soggetto sia o meno una PA
+		model.setCheckCanale(model.getSoggetto().isSoggettoPA());
+		
+		//SIAC-7571
+		impostaDefaultFatturaFELStep2();
 
 		return SUCCESS;
 	}
@@ -120,6 +136,39 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 	 */
 	public String enterStep3() {
 		return salvaDocumento();
+	}
+	
+	/**
+	 * SIAC-7567
+	 * Inserimento del Documento di Entrata tramite chiamata asincrona
+	 * questo metodo cappello richiama la validazione dei campi e ne esegue i controlli
+	 * se superati si eseguono i controlli per il warning in caso di soggetto PA
+	 * se presenti messaggi, a seguito del warning, verranno resituti all'utente
+	 * in caso di validazione da parte dell'utente si prosegue con il giro solito
+	 * 
+	 * @return una stringa corrispondente al risultato dell'invocazione
+	 */
+	public String enterStep3Asincrono() {
+		String methodName = "enterStep3Asincrono";
+
+		log.debug(methodName, "INIZIO validazione asincrona");
+		
+		//richiamo la validazione
+		validateEnterStep3();
+		//non vado avanti se ho errori
+		if(model.getErrori().size() > 0 && !model.getErrori().isEmpty()) {
+			return "validationError";
+		}
+		
+		//controllo se il debitore e' una PA
+		//se ci sono messaggi e non ho la conferma li devo resituire all'utente
+		if(checkWarningCigCupPA(model.getDocumento(), model.getSoggetto()) && Boolean.FALSE.equals(model.isProseguireConElaborazioneCheckPA())) {
+			return "validationError";
+		}
+		
+		log.debug(methodName, "FINE validazione asincrona");
+		
+		return "validationSuccess";
 	}
 	
 	/**
@@ -180,6 +229,39 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 	public String ripetiSalva() {
 		return salvaDocumento();
 	}
+
+	/**
+	 * SIAC-7567
+	 * Inserimento del Documento di Entrata tramite chiamata asincrona
+	 * questo metodo cappello richiama la validazione dei campi e ne esegue i controlli
+	 * se superati si eseguono i controlli per il warning in caso di soggetto PA
+	 * se presenti messaggi, a seguito del warning, verranno resituti all'utente
+	 * in caso di validazione da parte dell'utente si prosegue con il giro solito
+	 * 
+	 * @return una stringa corrispondente al risultato dell'invocazione
+	 */
+	public String ripetiSalvaAsincrono() {
+		String methodName = "ripetiSalvaAsincrono";
+		
+		log.debug(methodName, "FINE validazione asincrona");
+		
+		//richiamo la validazione
+		validateRipetiSalva();
+		//non vado avanti se ho errori
+		if(model.getErrori().size() > 0 && !model.getErrori().isEmpty()) {
+			return "validationError";
+		}
+		
+		//controllo se il debitore e' una PA
+		//se ci sono messaggi e non ho la conferma li devo resituire all'utente
+		if(checkWarningCigCupPA(model.getDocumento(), model.getSoggetto()) && Boolean.FALSE.equals(model.isProseguireConElaborazioneCheckPA())) {
+			return "validationError";
+		}
+		
+		log.debug(methodName, "FINE validazione asincrona");
+		
+		return "validationSuccess";
+	}
 	
 	/**
 	 * Metodo per l'ingresso nello step3 dell'inserimento.
@@ -188,6 +270,9 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 	 */
 	@AnchorAnnotation(value = "OP-ENT-insDocEnt", name = "Documento STEP 3")
 	public String ripetiStep3() {
+		//SIAC-7567
+		impostaInformazioneSuccesso();
+		leggiEventualiMessaggiAzionePrecedente();
 		return SUCCESS;
 	}
 	
@@ -207,15 +292,15 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 		checkNotNull(documento.getDataEmissione(), "Data");
 		
 		// SIAC 6677
-				Date today = new Date();
-				Calendar todayCal = Calendar.getInstance();
-				todayCal.setTime(today);
-				todayCal.set(Calendar.HOUR_OF_DAY, 0);
-				todayCal.set(Calendar.MINUTE, 0);
-				todayCal.set(Calendar.SECOND, 0);
-				checkCondition(
-						documento.getDataOperazione() == null ||  documento.getDataOperazione().compareTo(todayCal.getTime()) <= 0,
-								ErroreFin.DATA_OPERAZIONE_SUCCESSIVA_ALLA_DATA_ODIERNA.getErrore());
+		Date today = new Date();
+		Calendar todayCal = Calendar.getInstance();
+		todayCal.setTime(today);
+		todayCal.set(Calendar.HOUR_OF_DAY, 0);
+		todayCal.set(Calendar.MINUTE, 0);
+		todayCal.set(Calendar.SECOND, 0);
+		checkCondition(
+				documento.getDataOperazione() == null ||  documento.getDataOperazione().compareTo(todayCal.getTime()) <= 0,
+						ErroreFin.DATA_OPERAZIONE_SUCCESSIVA_ALLA_DATA_ODIERNA.getErrore());
 		
 		// Controlla se il soggetto sia valido
 		boolean controlloSoggetto = soggetto != null && StringUtils.isNotBlank(soggetto.getCodiceSoggetto());
@@ -271,12 +356,15 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 		if(model.getUidDocumentoCollegato() != null){
 			checkPerDocumentoCollegato();
 		}
-		// SIAC-5257
+		
+		//SIAC-5257
 		checkProtocollo(documento);
 		
 		//SIAC 6677 
 		checkAndFillCodAvviso(documento);
 		
+		//SIAC-7567
+		checkErrorCigCupPA(documento, model.getSoggetto());
 		
 	}
 	
@@ -382,7 +470,7 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 		CodiceBollo codiceBollo = documento.getCodiceBollo();
 		List<CodiceBollo> listaCodiceBollo = model.getListaCodiceBollo();
 		codiceBollo = ComparatorUtils.searchByUid(listaCodiceBollo, codiceBollo);
-			
+		
 		documento.setTipoDocumento(tipoDocumento);
 		documento.setCodiceBollo(codiceBollo);
 	}
@@ -484,17 +572,17 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 	 */
 	private void checkAndFillCodAvviso(DocumentoEntrata documento){
 
-		checkCondition(documento.getCodAvvisoPagoPA() == null || documento.getCodAvvisoPagoPA().length()==0 ||
+		checkCondition(documento.getCodAvvisoPagoPA() == null || documento.getCodAvvisoPagoPA().length() == 0 ||
 				isNumeric(documento.getCodAvvisoPagoPA()),
 				ErroreFin.COD_AVVISO_PAGO_PA_NUMERICO.getErrore());
 		
-		int maxLength = Constanti.CODICE_AVVISO_PAGO_PA_LENGTH;
+		int maxLength = CostantiFin.CODICE_AVVISO_PAGO_PA_LENGTH;
 		checkCondition(documento.getCodAvvisoPagoPA() == null || documento.getCodAvvisoPagoPA().length() <= maxLength,
 				ErroreFin.COD_AVVISO_PAGO_PA_MAXLENGTH.getErrore());
-		if(documento.getCodAvvisoPagoPA()!= null && documento.getCodAvvisoPagoPA().length()>0 && documento.getCodAvvisoPagoPA().length()< maxLength){
-			int diff = maxLength -documento.getCodAvvisoPagoPA().length();
+		if(documento.getCodAvvisoPagoPA() != null && documento.getCodAvvisoPagoPA().length() > 0 && documento.getCodAvvisoPagoPA().length() < maxLength){
+			int diff = maxLength - documento.getCodAvvisoPagoPA().length();
 			StringBuilder codAvviso = new StringBuilder();
-			for(int i=0; i<diff; i++){
+			for(int i = 0; i < diff; i++){
 				codAvviso.append("0");
 			}
 			codAvviso.append(documento.getCodAvvisoPagoPA());
@@ -502,8 +590,140 @@ public class InserisciDocumentoEntrataAction extends GenericDocumentoAction<Inse
 		}	
 	
 	}
-	
-	
-	
+
+	/**
+	 * SIAC-7571
+	 * Impostazione dei default della fattura FEL per lo step 1, in merito a nuova gestione di FEL a importo negativo
+	 * <ul>
+	 *     <li>Anno documento = Anno data documento FEL (entit&agrave; Fattura Elettronica)</li>
+	 *     <li>Tipo documento = vedi nuovi tipi NCF e FSN</li>
+	 *     <li>Numero documento = numero documento FEL (entit&agrave; Fattura Elettronica) <strong>(LOTTO M)</strong></li>
+	 *     <li>Soggetto Intestatario = Soggetto identificato dall'operatore nell'importazione del documento FEL e passato come parametro</li>
+	 *     <li>Data documento = data documento FEL (entit&agrave; Fattura Elettronica)</li>
+	 *     <li>Data ricezione = data ricezione FEL (entit&agrave; Portale Fatture)</li>
+	 * </ul>
+	 */
+	private void impostaDefaultFatturaFELStep1() {
+		final String methodName = "impostaDefaultFatturaFELStep1";
+		FatturaFEL fatturaFEL = model.getFatturaFEL();
+		if(fatturaFEL == null) {
+			// Non ho la fattura: esco
+			return;
+		}
+		
+		DocumentoEntrata documentoEntrata = model.getDocumento() != null ? model.getDocumento() : new DocumentoEntrata();
+		
+		// Numero Documento =  Numero Documento FEL
+		documentoEntrata.setNumero(fatturaFEL.getNumero());
+		
+		// Anno documento = Anno data documento FEL
+		if(fatturaFEL.getData() != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(fatturaFEL.getData());
+			
+			Integer anno = cal.get(Calendar.YEAR);
+			documentoEntrata.setAnno(anno);
+			log.debug(methodName, "Fattura.data = " + fatturaFEL.getData() + " => documento.anno = " + documentoEntrata.getAnno());
+			
+			// Data documento = data documento FEL
+			documentoEntrata.setDataEmissione(fatturaFEL.getData());
+			log.debug(methodName, "Fattura.data = " + fatturaFEL.getData() + " => documento.dataCreazioneDocumento = " + documentoEntrata.getDataEmissione());
+		}
+		
+		// Tipo documento
+		impostaTipoDocumentoDaFatturaFEL(documentoEntrata);
+		
+		// Soggetto Intestatario = Soggetto identificato dall'operatore nell'importazione del documento FEL e passato come parametro
+		log.debug(methodName, "Soggetto = " + (model.getSoggettoFEL() != null ? model.getSoggettoFEL().getCodiceSoggetto() : "null"));
+		model.setSoggetto(ReflectionUtil.deepClone(model.getSoggettoFEL()));
+		
+		// Data ricezione = data ricezione FEL
+		//TODO controllare la data se è quella giusta
+		if(fatturaFEL.getPortaleFattureFEL() != null) {
+			documentoEntrata.setDataOperazione(fatturaFEL.getPortaleFattureFEL().getDataRicezione());
+			log.debug(methodName, "Fattura.portaleFattureFEL.dataRicezione = " + fatturaFEL.getPortaleFattureFEL().getDataRicezione() + " => documento.dataRicezionePortale = " + documentoEntrata.getDataRicezionePortale());
+		}
+		
+		//passo i dati al model
+		model.setDocumento(documentoEntrata);
+	}
+
+	/**
+	 * SIAC-7571
+	 * Impostazione dei default della fattura FEL per lo step 2.
+	 * <ul>
+	 *     <li>Dati repertorio = Dati protocollo (Numero, Data, Anno e registroProtocollo) documento FEL (entit&agrave; protocollo) <strong>(LOTTO M aggiunti registro e anno)</strong></li>
+	 *     <li>Descrizione = Causale con progressivo pi&uacute; basso del documento FEL se presente (entit&agrave; Causale)</li>
+	 *     <li>Importo = importo totale documento FEL se presente (entit&agrave; Fattura Elettronica), vedi 1.3.9</li>
+	 *     <li>Arrotondamento = importo arrotondamento documento FEL se presente (entit&agrave; Fattura Elettronica)</li>
+	 *     <li>Codice Ufficio Destinatario = Codice Destinatario (entit&agrave; Fattura Elettronica) se presente in archivio altrimenti non si valorizza</li>
+	 *     <li>Elenco Ordini = tutti i 'numero documento' (entit&agrave; OrdineAcquisto) associati alla fattura che si sta importando <strong>(LOTTO M)</strong></li>
+	 * </ul>
+	 */
+	private void impostaDefaultFatturaFELStep2() {
+		final String methodName = "impostaDefaultFatturaFELStep2";
+		FatturaFEL fatturaFEL = model.getFatturaFEL();
+		if(fatturaFEL == null) {
+			// Non ho la fattura: esco
+			return;
+		}
+		
+		// Se non ho il documento lo inizializzo. Dovrei averlo, ma null-safe
+		DocumentoEntrata documentoEntrata = model.getDocumento() != null ? model.getDocumento() : new DocumentoEntrata();
+
+		// Dati repertorio = Dati protocollo (Numero e Data) documento FEL
+		if(fatturaFEL.getProtocolloFEL() != null) {
+			// Registro protocollo copiato dalla fattura
+			documentoEntrata.setRegistroRepertorio(fatturaFEL.getProtocolloFEL().getRegistroProtocollo());
+			log.debug(methodName, "Fattura.protocolloFEL.registroProtocollo = " + fatturaFEL.getProtocolloFEL().getRegistroProtocollo() + " => documento.registroProtocollo= " + documentoEntrata.getRegistroRepertorio());
+			
+			// Numero repertorio copiato dalla fattura
+			documentoEntrata.setNumeroRepertorio(fatturaFEL.getProtocolloFEL().getNumeroProtocollo());
+			log.debug(methodName, "Fattura.protocolloFEL.numeroProtocollo = " + fatturaFEL.getProtocolloFEL().getNumeroProtocollo() + " => documento.numeroRepertorio = " + documentoEntrata.getNumeroRepertorio());
+			// Data repertorio copiata dalla fattura
+			documentoEntrata.setDataRepertorio(fatturaFEL.getProtocolloFEL().getDataRegProtocollo());
+			log.debug(methodName, "Fattura.protocolloFEL.dataRegProtocollo = " + fatturaFEL.getProtocolloFEL().getDataRegProtocollo() + " => documento.dataRepertorio = " + documentoEntrata.getDataRepertorio());
+			
+			// SIAC-3101 : l'anno protocollo potrebbe non essere impostato
+			Integer annoRepertorio = null;
+			try {
+				annoRepertorio = Integer.valueOf(fatturaFEL.getProtocolloFEL().getAnnoProtocollo());
+			} catch(NumberFormatException nfe) {
+				log.warn(methodName, "Attenzione! Anno di protocollo non valido per la fattura " + fatturaFEL.getUid() + " - impostazione del default a null");
+			}
+			documentoEntrata.setAnnoRepertorio(annoRepertorio);
+			log.debug(methodName, "Fattura.protocolloFEL.annoProtocollo = " + fatturaFEL.getProtocolloFEL().getAnnoProtocollo() + " => documento.annoProtocollo= " + documentoEntrata.getAnnoRepertorio());
+		}
+		
+		// Non injetto qua gli ordini perche' potrebbero essere cancellati. Passo il dato alla creazione della request
+		
+		// Descrizione = Causale con progressivo piu' basso del documento FEL se presente
+		if(fatturaFEL.getCausaliFEL() != null) {
+			CausaleFEL causaleFEL = null;
+			// Calcolo il progressivo piu' basso
+			for(CausaleFEL c : fatturaFEL.getCausaliFEL()) {
+				if(causaleFEL == null || causaleFEL.getProgressivo().compareTo(c.getProgressivo()) > 0) {
+					causaleFEL = c;
+				}
+			}
+			
+			if(causaleFEL != null) {
+				// Se ho la causale, imposto la descrizione
+				documentoEntrata.setDescrizione(causaleFEL.getCausale());
+				log.debug(methodName, "Causale.progressivo = " + causaleFEL.getProgressivo() + " => Causale.causale = " + causaleFEL.getCausale() + " => documento.descrizione = " + documentoEntrata.getDescrizione());
+			}
+		}
+		
+		// Importo = importo totale documento FEL se presente
+		impostaImportoFEL(documentoEntrata, fatturaFEL);
+		
+		// Arrotondamento = importo arrotondamento documento FEL se presente
+		documentoEntrata.setArrotondamento(fatturaFEL.getArrotondamento());
+		log.debug(methodName, "Fattura.arrotondamento = " + fatturaFEL.getArrotondamento() + " => documento.arrotondamento = " + documentoEntrata.getArrotondamento());
+		
+		// Codice Ufficio Destinatario = Codice Destinatario
+//		TODO vale anche per entrata il PCC?
+//		impostaUfficioDestinatario(documentoEntrata, fatturaFEL);
+	}
 	
 }

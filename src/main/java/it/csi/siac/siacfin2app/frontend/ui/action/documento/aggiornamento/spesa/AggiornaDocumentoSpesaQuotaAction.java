@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,19 +23,25 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
-import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Filter;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Filter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
 import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Filter;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
+import it.csi.siac.siacfin2app.frontend.ui.util.helper.VerificaBloccoRORHelper;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EliminaQuotaDocumentoSpesa;
@@ -54,6 +61,9 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoModalitaPagamentoSoggetto;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoIvaSplitReverse;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.frontend.webservice.OilService;
+import it.csi.siac.siacfinser.frontend.webservice.msg.AccreditoTipoOilIsPagoPA;
+import it.csi.siac.siacfinser.frontend.webservice.msg.AccreditoTipoOilIsPagoPAResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzatoResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisorioDiCassaPerChiave;
@@ -62,7 +72,6 @@ import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto;
 import it.csi.siac.siacfinser.model.movgest.VincoloImpegno;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
@@ -70,7 +79,6 @@ import it.csi.siac.siacfinser.model.soggetto.ClassificazioneSoggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto;
 import it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSoggetto;
-
 /**
  * Classe di action per l'aggiornamento del Documento di spesa, sezione Quote.
  * 
@@ -91,6 +99,9 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	private static final Pattern CIG_PATTERN = Pattern.compile("[A-Z0-9]{10}");
 	/** Pattern per il Cup */
 	private static final Pattern CUP_PATTERN = Pattern.compile("[A-Z][A-Z0-9]{2}[A-Z][A-Z0-9]{11}");
+	
+	//SIAC-8853
+	@Autowired private transient OilService oilService;
 	
 	/**
 	 * Restituisce la lista delle quote relative al documento.
@@ -183,6 +194,9 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		
 		//SIAC-5469
 		model.setShowSiopeAssenzaMotivazione(false);
+		
+		//SIAC-8153
+		model.setStrutturaCompetenteQuota(null);
 		
 		model.setSuffisso(SUFFIX);
 		return SUCCESS;
@@ -337,7 +351,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	
 	
 	
-	public String inserimentoNuovaQuota() {
+	public String inserimentoNuovaQuota() throws WebServiceInvocationFailureException{
 		final String methodName = "inserimentoNuovaQuota";
 		// Valido i dati
 		validazioneInserimentoNuovaQuota();
@@ -361,7 +375,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		
 		if(res.hasErrori()) {
 			// Ho degli errori: loggo ed esco
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceQuotaDocumentoSpesa.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -391,6 +405,9 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		//SIAC-6261
 		impostaMessaggioDatiDurc(res.getSubdocumentoSpesa(), res.getSubdocumentoSpesa().getModalitaPagamentoSoggetto());
 		
+		//SIAC-8153
+		model.setStrutturaCompetenteQuota(res.getSubdocumentoSpesa().getStrutturaCompetenteQuota());
+		
 		return SUCCESS;
 	}
 	
@@ -418,7 +435,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		
 		if(res.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaQuotaDocumentoSpesa.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -460,7 +477,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	 * 
 	 * @return una Stringa corrispondente al risultato dell'invocazione
 	 */
-	public String aggiornamentoQuota() {
+	public String aggiornamentoQuota() throws WebServiceInvocationFailureException{
 		final String methodName = "aggiornamentoQuota";
 		// Stessa validazione del caso dell'inserimento
 		validazioneAggiornamentoNuovaQuota();
@@ -490,7 +507,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		
 		if(res.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaQuotaDocumentoSpesa.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -581,7 +598,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	/**
 	 * Valida l'inserimento di una nuova quota.
 	 */
-	private void validazioneInserimentoNuovaQuota() {
+	private void validazioneInserimentoNuovaQuota() throws WebServiceInvocationFailureException{
 		//valido i dati per le quote
 		validazioneNuovaQuota(false);
 		//cpontrollo gli importi
@@ -591,7 +608,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	/**
 	 * Valida l'aggiornamento di una nuova quota.
 	 */
-	private void validazioneAggiornamentoNuovaQuota() {
+	private void validazioneAggiornamentoNuovaQuota() throws WebServiceInvocationFailureException{
 		validazioneNuovaQuota(true);
 		//cpontrollo gli importi
 		checkCoerenzaTotaliQuoteAggiornamento();
@@ -602,7 +619,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	 *
 	 * @param isAggiornamento se la validazione sia in aggiornamento
 	 */
-	private void validazioneNuovaQuota(boolean isAggiornamento) {
+	private void validazioneNuovaQuota(boolean isAggiornamento) throws WebServiceInvocationFailureException{
 		SubdocumentoSpesa subdocumento = model.getSubdocumento();
 		DocumentoSpesa documento = model.getDocumento();
 		
@@ -632,9 +649,10 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		// se corrisponde ed il campo "Codice avviso PagoPA" non e' valorizzato, lancio un warning
 		// se l'utente indica di proseguire con l'elaborazione, salto il controllo
 		//SIAC-7241: se non c'e' la modalita oagamento del soggetto, non devo andare in null pointer!!!
-		if(!Boolean.TRUE.equals(model.getProseguireConElaborazione()) && model.getModalitaPagamentoSoggetto() != null) {
-			boolean condition = !(checkModalitaPagamentoIsPagoPA() && StringUtils.isBlank(model.getDocumento().getCodAvvisoPagoPA()));
-			warnCondition(condition, ErroreFin.COD_AVVISO_PAGO_PA_ASSENTE.getErrore("Proseguire con l'operazione?"));
+		if(model.getModalitaPagamentoSoggetto() != null) {
+			//SIAC-8853
+			checkCondition(!checkModalitaPagamentoIsPagoPA(model.getModalitaPagamentoSoggetto().getUid(), model.getListaModalitaPagamentoSoggetto()), 
+					ErroreFin.MOD_PAGO_PA_NON_AMMESSA.getErrore());	
 		}
 		
 		// L'importo deve essere > 0 se abilitato
@@ -696,7 +714,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		if(isAggiornamento && Boolean.TRUE.equals(documento.getContabilizzaGenPcc()) && isUnicaQuotaConMovimento(documento.getListaSubdocumenti(), model.getSubdocumento())){
 			checkCondition(model.getMovimentoGestione()!=null 
 					&& model.getMovimentoGestione().getAnnoMovimento()!=0 
-					&& model.getMovimentoGestione().getNumero()!=null, 
+					&& model.getMovimentoGestione().getNumeroBigDecimal()!=null, 
 					ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Le registrazioni GEN e PCC sul documento sono state attivate. "
 							+ "E' obbligatoria almeno una quota con l'impegno."));
 		}
@@ -710,19 +728,6 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		
 	}
 
-	
-	//SIAC-680
-	private boolean checkModalitaPagamentoIsPagoPA() {
-		boolean res = false;
-		List<ModalitaPagamentoSoggetto> listModPag = model.getSoggetto().getModalitaPagamentoList();
-		for (ModalitaPagamentoSoggetto modPag : listModPag) {
-			if(modPag.getUid() == model.getModalitaPagamentoSoggetto().getUid() && "APA".equals(modPag.getModalitaAccreditoSoggetto().getCodice())) {
-				res = true;											
-			}
-		}
-		return res;
-	}
-	
 	/**
 	 * Controlla se la data segnalata sia stata modificata rispetto a quella fornita
 	 * @param dataDaControllare la data da controllare
@@ -742,7 +747,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		int count = 0;
 		SubdocumentoSpesa subUnicoConMovimento = null;
 		for (SubdocumentoSpesa ss : listaSubdocumenti) {
-			if(ss.getImpegno() != null && ss.getImpegno().getAnnoMovimento() != 0 && ss.getImpegno().getNumero() != null){
+			if(ss.getImpegno() != null && ss.getImpegno().getAnnoMovimento() != 0 && ss.getImpegno().getNumeroBigDecimal() != null){
 				count++;
 				subUnicoConMovimento = ss;
 				if(count > 1){
@@ -894,18 +899,16 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		Impegno impegno = model.getMovimentoGestione();
 		String cig = subdocumento.getCig();
 		String cup = subdocumento.getCup();
-		VoceMutuo voceMutuo = model.getVoceMutuo();
 		
 		// Controllo se l'impoegno sia da cercare
-		boolean impegnoDaRicercare = impegno != null && impegno.getAnnoMovimento() > 0 && impegno.getNumero() != null;
+		boolean impegnoDaRicercare = impegno != null && impegno.getAnnoMovimento() > 0 && impegno.getNumeroBigDecimal() != null;
 		
 		// Se l'impegno e' presente, allora anno e numero devono essere entrambi presenti o entrambi assenti
-		checkCondition(impegno == null || !(impegno.getAnnoMovimento() == 0 ^ impegno.getNumero() == null), 
+		checkCondition(impegno == null || !(impegno.getAnnoMovimento() == 0 ^ impegno.getNumeroBigDecimal() == null), 
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno impegno e numero impegno", ": devono essere entrambi selezionati o entrambi non selezionati"));
 		checkCondition(impegno == null || impegno.getAnnoMovimento() <= model.getAnnoEsercizioInt(), 
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno impegno", ": non deve essere superiore all'anno di esercizio"));
 		
-		// Check CIG-CUP-NumeroMutuo
 		if(!(StringUtils.isBlank(cig) || CIG_PATTERN.matcher(cig).matches())){
 			//il cig non rispetta il formato corretto
 			addErrore(ErroreCore.FORMATO_NON_VALIDO.getErrore("CIG", "Deve essere composto da dieci caratteri"));
@@ -917,13 +920,23 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 			model.setProseguireConElaborazione(Boolean.TRUE);
 		}
 		
-		if(impegnoDaRicercare) {
+		//SIAC-7470-BLOCCOROR
+		//l'impegno arriva sempre senza la lista di MovimentiModifica quindi è necessario ricaricarlo; per influire meno possibile sul pregresso lo ricarico
+		//se è verificata almeno la prima condizione sull'azione "OP-COM-insAllegatoAttoNoRes"
+//		if(!impegnoDaRicercare){
+//			impegnoDaRicercare = AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite());
+//		}
+		//SIAC-8067 l'azione prevale anche sui parametri, rendo null-safe il tutto così da bloccare la ricerca ed il controllo
+		//in validazioneImpegnoDaResponse per evitare di bloccare il processo
+		if(impegnoDaRicercare || AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite())) {
 			try {
 				//devo chiamare il servizio per ottenere  l'impegno
-				Impegno i = ricercaImpegnoPerChiaveOttimizzato();
-				model.setMovimentoGestione(i);
-				//valido l'impegno ottenuto dal servizio
-				validazioneImpegnoDaResponse(i, cig, cup, voceMutuo);
+				Impegno i = ricercaImpegnoPerChiaveOttimizzato(impegnoDaRicercare);
+				if(i != null) {
+					model.setMovimentoGestione(i);
+					//valido l'impegno ottenuto dal servizio
+					validazioneImpegnoDaResponse(i, cig, cup);
+				}
 			} catch(WebServiceInvocationFailureException wsife) {
 				//si sono verificati degli errori. Li loggo ma non lancio un'eccezione, continuando 
 				log.info(methodName, wsife.getMessage());
@@ -938,11 +951,12 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	 * @return l'impegno trovato
 	 * @throws WebServiceInvocationFailureException in caso di errore nell'invocazione del servizio
 	 */
-	private Impegno ricercaImpegnoPerChiaveOttimizzato() throws WebServiceInvocationFailureException {
+	private Impegno ricercaImpegnoPerChiaveOttimizzato(boolean forceToSearch) throws WebServiceInvocationFailureException {
 		Impegno impegno = sessionHandler.getParametro(BilSessionParameter.IMPEGNO);
 		
 		//controllo l'effettiva necessita' di chiamare il servizio
-		if(isNecessarioRicaricareImpegno(impegno)) {
+		//SIAC-6997-BLOCCOROR: se arrivo in questo punto mi è necessario ricercare l'impegno per avere la lista di MovimentoModifica
+		if(isNecessarioRicaricareImpegno(impegno) || forceToSearch) {
 			//in sessione non ho i dati, devo per forza ottenerli da db
 			RicercaImpegnoPerChiaveOttimizzato req = model.creaRequestRicercaImpegnoPerChiaveOttimizzato(model.getMovimentoGestione());
 			logServiceRequest(req);
@@ -953,7 +967,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 			// Controllo gli errori
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, res);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
@@ -977,10 +991,8 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 			//IN impegno.elencoSubImpegni. ALTRIMENTI NON CARICO I SUB
 			// GLI IMPEGNI E SUBIMPEGNI TROVATI DEVONO ESSERE IN STATO DEFINITIVO GIA' DAL PRINCIPIO. OPPURE LO CONTROLLO DOPO
 			impegno.setElencoSubImpegni(defaultingList(impegno.getElencoSubImpegni()));
-			impegno.setListaVociMutuo(defaultingList(impegno.getListaVociMutuo()));
-			for(SubImpegno si : impegno.getElencoSubImpegni()) {
-				si.setListaVociMutuo(defaultingList(si.getListaVociMutuo()));
-			}
+
+
 			// Inizializzo il capitolo se non gia' presente
 			if(impegno.getCapitoloUscitaGestione() == null) {
 				// Se il capitolo non e' stato impostato dal servizio, lo imposto io
@@ -998,8 +1010,13 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	 * */
 	private boolean isNecessarioRicaricareImpegno(Impegno impegnoDaSessione) {
 		//se ho il numero del submovimento, devo ricaricarlo sempre!
-		return model.getSubMovimentoGestione() != null && model.getSubMovimentoGestione().getNumero() !=null ||
-				 !ValidationUtil.isValidMovimentoGestioneFromSession(impegnoDaSessione, model.getMovimentoGestione());
+		return model.getSubMovimentoGestione() != null && model.getSubMovimentoGestione().getNumeroBigDecimal() !=null 
+				//SIAC-8067 si rimuove questo confronto per verificare che ci siano state modifiche al movimento il caso
+				//permetterebbe di lanciare nei controlli dei paramentri un errore del servizio di ricerca 
+				//nel caso volessimo smarcare una quota da un movimento, inoltre, se i parametri sono validi
+				//il booleano corrispondente (forceToSearch) ne permettera' la ricarica
+//				|| !ValidationUtil.isValidMovimentoGestioneFromSession(impegnoDaSessione, model.getMovimentoGestione())
+				;
 	}
 	
 	/**
@@ -1008,9 +1025,8 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	 * @param impegno   l'impegno da validare
 	 * @param cig       il CIG
 	 * @param cup       il CUP
-	 * @param voceMutuo la voce di mutuo
 	 */
-	private void validazioneImpegnoDaResponse(Impegno impegno, String cig, String cup, VoceMutuo voceMutuo) {
+	private void validazioneImpegnoDaResponse(Impegno impegno, String cig, String cup) {
 		
 		SubImpegno subimpegno = model.getSubMovimentoGestione();
 		SubdocumentoSpesa subdocumento = model.getSubdocumento();
@@ -1025,16 +1041,15 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		String cupDaControllare = impegno.getCup();
 		SiopeAssenzaMotivazione samMovgest = impegno.getSiopeAssenzaMotivazione();
 		
-		ClassificatoreGenerico tipoImpegno = impegno.getTipoImpegno();
-		List<VoceMutuo> listaVoceMutuo = impegno.getListaVociMutuo();
+		impegno.getTipoImpegno();
 		
 		SiopeTipoDebito siopeTipoDebito = impegno.getSiopeTipoDebito();
 		
 		// Check del subimpegno nella lista degli impegni: mantenuto in questo modo per evitare di cambiare troppo codice
-		if(subimpegno != null && subimpegno.getNumero() != null && impegno.getElencoSubImpegni() != null) {
+		if(subimpegno != null && subimpegno.getNumeroBigDecimal() != null && impegno.getElencoSubImpegni() != null) {
 			SubImpegno sub = null;
 			for(SubImpegno s : impegno.getElencoSubImpegni()) {
-				if(s.getNumero().compareTo(subimpegno.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subimpegno.getNumeroBigDecimal()) == 0) {
 					sub = s;
 					soggettoCollegatoAllImpegno = s.getSoggetto();
 					//ho selezionato il soggetto che mi interessa, esco dal ciclo
@@ -1042,7 +1057,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 				}
 			}
 			
-			checkCondition(sub != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", subimpegno.getNumero()+""));
+			checkCondition(sub != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", subimpegno.getNumeroBigDecimal()+""));
 			if(sub != null){
 				//imposto nel model il submovimento di gestione
 				model.setSubMovimentoGestione(sub);
@@ -1052,8 +1067,6 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 				cigMovgestCollegato = sub.getCig();
 				cupDaControllare = sub.getCup();
 				
-				listaVoceMutuo = sub.getListaVociMutuo();
-				tipoImpegno = sub.getTipoImpegno();
 				siopeTipoDebito = sub.getSiopeTipoDebito();
 				samMovgest = sub.getSiopeAssenzaMotivazione();
 			}
@@ -1078,14 +1091,13 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		
 		
 		
-		// SIAC-6164
+		// SIAC-6164 e SIAC-6657
 		if(!Boolean.TRUE.equals(model.getProseguireConElaborazione())) {
 			checkCondition(model.getDocumento() == null || model.getDocumento().getTipoDocumento() == null || !"FAT".equals(model.getDocumento().getTipoDocumento().getCodice())
 					|| model.getMovimentoGestione().getSiopeTipoDebito() == null || !"NC".equals(model.getMovimentoGestione().getSiopeTipoDebito().getCodice()),
 					ErroreFin.IMPEGNO_QUOTA_NC_NON_CONGRUENTE.getErrore());
 		}
 		
-		// Controllo CIG-CUP-NUMERO MUTUO
 		if(!Boolean.TRUE.equals(model.getProseguireConElaborazione())) {
 			warnCondition((StringUtils.isBlank(cig) || cig.equalsIgnoreCase(cigMovgestCollegato)) &&
 					(StringUtils.isBlank(cup) || cup.equalsIgnoreCase(cupDaControllare)),
@@ -1095,32 +1107,6 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		model.setProseguireConElaborazione(Boolean.FALSE);
 		
 		
-		//CONTROLLI SUL MUTUO
-		boolean impegnoNonFinanziatoDaMutuoEMutuoPresente = tipoImpegno != null
-				&& !BilConstants.IMPEGNO_FINANZIATO_DA_MUTUO.getConstant().equals(tipoImpegno.getCodice())
-				&& voceMutuo != null
-				&& StringUtils.isNotBlank(voceMutuo.getNumeroMutuo());
-		
-		checkCondition(!impegnoNonFinanziatoDaMutuoEMutuoPresente, ErroreFin.IMPEGNO_NON_FINANZIATO_CON_MUTUO.getErrore());
-		
-		boolean impegnoFinanziatoDaMutuoEMutuoNonPresente = tipoImpegno != null
-				&& BilConstants.IMPEGNO_FINANZIATO_DA_MUTUO.getConstant().equals(tipoImpegno.getCodice())
-				&& (voceMutuo == null || StringUtils.isBlank(voceMutuo.getNumeroMutuo()));
-		checkCondition(!impegnoFinanziatoDaMutuoEMutuoNonPresente, ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore());
-		
-		if(voceMutuo != null && StringUtils.isNotBlank(voceMutuo.getNumeroMutuo())){
-			// Controllo che la voce di mutuo sia tra quelle fornite in input
-			if(listaVoceMutuo == null){
-				 addErrore(ErroreFin.ENTITA_NON_VALIDA.getErrore("Numero mutuo indicato"));
-			} else {
-				VoceMutuo voceMutuoImpegno = ComparatorUtils.findVoceMutuoByNumero(listaVoceMutuo, voceMutuo);
-				checkCondition(voceMutuoImpegno != null, ErroreFin.ENTITA_NON_VALIDA.getErrore("Numero mutuo indicato"));
-				if(voceMutuoImpegno != null) {
-					// Imposto la voce di mutuo
-					model.setVoceMutuo(voceMutuoImpegno);
-				}
-			}
-		}
 		
 		//CONTROLLI SUL SIOPE E SUL CIG
 		SiopeAssenzaMotivazione samSubdoc = subdocumento.getSiopeAssenzaMotivazione();
@@ -1139,7 +1125,26 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		// SIAC-5311 SIOPE+
 		checkSiope(subdocumento.getCig(), subdocumento.getSiopeAssenzaMotivazione(), siopeTipoDebito, impegno);
 		
+		//SIAC-7470-6997-BLOCCOROR
+		boolean test2 = checkBloccoRor(impegno, model.getAnnoEsercizioInt());
+		//se l'impegno ha superato i test, verifico gli eventuali subImpegni
+		if(!test2 && impegno.getElencoSubImpegni() != null && !impegno.getElencoSubImpegni().isEmpty()){
+			for(int k = 0; k < impegno.getElencoSubImpegni().size(); k++){
+				checkBloccoRor(impegno.getElencoSubImpegni().get(k), model.getAnnoEsercizioInt());
+			}
+		}
 	}
+	
+	private boolean checkBloccoRor(Impegno impegno, Integer annoEsercizio){
+		//il controllo viene demandato ad apposita classe di utilità
+		boolean checkBloccoROR = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno, model.getAnnoEsercizioInt());
+		//la gestione della messaggistica deve avvenire nella presente action
+		if(checkBloccoROR){
+			checkCondition(!checkBloccoROR, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile"));
+		}
+		return checkBloccoROR;
+	}
+	//END SIAC-7470-6997-BLOCCOROR
 	
 	/**
 	 * Controllo dei dati del SIOPE+.
@@ -1200,10 +1205,10 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		String siopeAssenzaDaDefinire = BilConstants.CODICE_SIOPE_ASSENZA_MOTIVAZIONE_DA_DEFINIRE_IN_LIQUIDAZIONE.getConstant();
 		// a livello di subdocumento non posso avere una motivazione assenza cig da definire, deve essere specificato
 		checkCondition(!siopeAssenzaDaDefinire.equals(assenzaMotivazioneWithCodice.getCodice()), 
-				ErroreCore.VALORE_NON_VALIDO.getErrore("motivo assenza cig :"  + siopeAssenzaDaDefinire,"selezionare una motivazione valida"));		
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("motivo assenza cig :"  + siopeAssenzaDaDefinire,"selezionare una motivazione valida"));		
 		String siopeAssenzaInCorsoDiDefinizione = BilConstants.CODICE_SIOPE_ASSENZA_MOTIVAZIONE_IN_CORSO_DEFINIZIONE.getConstant();
 		checkCondition(!siopeAssenzaInCorsoDiDefinizione.equals(assenzaMotivazioneWithCodice.getCodice()), 
-				ErroreCore.VALORE_NON_VALIDO.getErrore("motivo assenza cig " + siopeAssenzaInCorsoDiDefinizione,"selezionare una motivazione valida"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("motivo assenza cig " + siopeAssenzaInCorsoDiDefinizione,"selezionare una motivazione valida"));
 	}
 	
 	@Override
@@ -1216,7 +1221,6 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		model.setModalitaPagamentoSoggetto(null);
 		model.setMovimentoGestione(null);
 		model.setSubMovimentoGestione(null);
-		model.setVoceMutuo(null);
 		model.setAttoAmministrativo(null);
 		model.setTipoAtto(null);
 		model.setContoTesoreria(null);
@@ -1294,7 +1298,6 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		model.getSubdocumento().setSiopeAssenzaMotivazione(null);
 		model.getSubdocumento().setCup("");
 		
-		model.setVoceMutuo(subdocumentoSpesa.getVoceMutuo());
 		
 		AttoAmministrativo attoAmministrativo = subdocumentoSpesa.getAttoAmministrativo();
 		model.setAttoAmministrativo(attoAmministrativo);
@@ -1321,6 +1324,9 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 			//i provvedimento deve essere disabilitato
 			model.setProvvedimentoQuotaDisabilitato(Boolean.TRUE);
 		}
+		
+		//SIAC-8153
+		model.setStrutturaCompetenteQuota(subdocumentoSpesa.getStrutturaCompetenteQuota());
 	
 	}
 	
@@ -1336,7 +1342,6 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		model.setSubdocumento(subdocumentoSpesa);
 		model.setMovimentoGestione(subdocumentoSpesa.getImpegno());
 		model.setSubMovimentoGestione(subdocumentoSpesa.getSubImpegno());
-		model.setVoceMutuo(subdocumentoSpesa.getVoceMutuo());
 		
 		if(subdocumentoSpesa.getLiquidazione() != null && subdocumentoSpesa.getLiquidazione().getUid() != 0){
 			//ho una liquidazione, non posso 
@@ -1389,6 +1394,9 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		//SIAC-5469
 		SiopeTipoDebito siopeTipoDebitoSub = subdocumentoSpesa.getImpegnoOSubImpegno() != null? subdocumentoSpesa.getImpegnoOSubImpegno().getSiopeTipoDebito() : null; 
 		model.setShowSiopeAssenzaMotivazione(siopeTipoDebitoSub != null && siopeTipoDebitoSub.getUid()!=0 && BilConstants.CODICE_SIOPE_DEBITO_TIPO_COMMERCIALE.getConstant().equals(siopeTipoDebitoSub.getCodice()));
+		
+		//SIAC-8153
+		model.setStrutturaCompetenteQuota(subdocumentoSpesa.getStrutturaCompetenteQuota());
 		
 	}
 	
@@ -1540,7 +1548,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	 * @return the azioneProvvedimentoConsentita
 	 */
 	public Boolean getAzioneProvvedimentoConsentita(){
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROVVEDIMENTO_SPESA_GESTISCI, sessionHandler.getAzioniConsentite());
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROVVEDIMENTO_SPESA_GESTISCI, sessionHandler.getAzioniConsentite());
 	}
 	
 	/**
@@ -1560,7 +1568,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		
 		if(res.hasErrori()) {
 			// Ho degli errori: loggo ed esco
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(ProporzionaImportiSplitReverse.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -1676,7 +1684,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 	private <T> void checkValidIndex(Integer index, List<T> list, String fieldName) {
 		checkNotNull(index, fieldName, true);
 		int intIndex = index.intValue();
-		checkCondition(intIndex >= 0 && intIndex < list.size(), ErroreCore.VALORE_NON_VALIDO.getErrore(fieldName, "deve essere compreso tra 0 e " + (list.size() - 1)));
+		checkCondition(intIndex >= 0 && intIndex < list.size(), ErroreCore.VALORE_NON_CONSENTITO.getErrore(fieldName, "deve essere compreso tra 0 e " + (list.size() - 1)));
 	}
 	/**
 	 * Validazione della sospensione
@@ -1690,7 +1698,7 @@ public class AggiornaDocumentoSpesaQuotaAction extends AggiornaDocumentoSpesaBas
 		checkCondition(model.getSospensioneSubdocumento().getDataSospensione() == null
 			|| model.getSospensioneSubdocumento().getDataRiattivazione() == null
 			|| !model.getSospensioneSubdocumento().getDataRiattivazione().before(model.getSospensioneSubdocumento().getDataSospensione()),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Data riattivazione", ": non puo' essere inferiore alla data di sospensione"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Data riattivazione", ": non puo' essere inferiore alla data di sospensione"));
 	}
 
 	/**

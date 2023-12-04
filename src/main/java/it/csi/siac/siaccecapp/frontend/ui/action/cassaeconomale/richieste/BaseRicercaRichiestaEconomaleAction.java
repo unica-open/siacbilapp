@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
@@ -27,6 +26,7 @@ import it.csi.siac.siaccecser.model.TipoRichiestaEconomale;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -93,7 +93,7 @@ public abstract class BaseRicercaRichiestaEconomaleAction<M extends BaseRicercaR
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			lista = response.getCodifiche(TipoRichiestaEconomale.class);
@@ -123,7 +123,7 @@ public abstract class BaseRicercaRichiestaEconomaleAction<M extends BaseRicercaR
 	protected void checkCasoDUsoApplicabile() {
 		List<AzioneConsentita> azioniConsentite = sessionHandler.getAzioniConsentite();
 		
-		AzioniConsentite[] azioniRichieste = retrieveAzioniConsentite();
+		AzioneConsentitaEnum[] azioniRichieste = retrieveAzioniConsentite();
 		boolean consentito = AzioniConsentiteFactory.isConsentitoAll(azioniConsentite, azioniRichieste);
 		if(!consentito) {
 			throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("non si dispone dei permessi necessari per l'esecuzione").getTesto(),
@@ -135,7 +135,7 @@ public abstract class BaseRicercaRichiestaEconomaleAction<M extends BaseRicercaR
 	 * Ottiene le azioni consentite richieste per l'attivazione della funzionalit&agrave;
 	 * @return le azioni richieste
 	 */
-	protected abstract AzioniConsentite[] retrieveAzioniConsentite();
+	protected abstract AzioneConsentitaEnum[] retrieveAzioniConsentite();
 
 	/**
 	 * Effettua la ricerca della richiesta economale.
@@ -152,7 +152,7 @@ public abstract class BaseRicercaRichiestaEconomaleAction<M extends BaseRicercaR
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}

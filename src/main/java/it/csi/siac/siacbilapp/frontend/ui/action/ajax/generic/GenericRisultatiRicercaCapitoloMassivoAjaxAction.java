@@ -34,7 +34,7 @@ public abstract class GenericRisultatiRicercaCapitoloMassivoAjaxAction<CAP exten
 	}
 	
 	@Override
-	protected ElementoCapitolo ottieniIstanza(CAP cap) throws FrontEndBusinessException {
+	protected ElementoCapitolo getInstance(CAP cap) throws FrontEndBusinessException {
 		return ElementoCapitoloFactory.getInstance(cap, true, model.isGestioneUEB());
 	}
 	

@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import it.csi.siac.siacbilapp.BaseJUnit4TestCase;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 
 
 /**

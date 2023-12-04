@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -34,7 +34,7 @@ import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaSinteticaProvvisorioDiCassaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoProvvisorioDiCassa,
+public class RisultatiRicercaSinteticaProvvisorioDiCassaAjaxAction extends PagedDataTableAjaxAction<ElementoProvvisorioDiCassa,
 		RisultatiRicercaSinteticaProvvisorioDiCassaAjaxModel, ProvvisorioDiCassa, RicercaProvvisoriDiCassa, RicercaProvvisoriDiCassaResponse> {
 		
 	/** Per la serializzazione */
@@ -80,12 +80,12 @@ public class RisultatiRicercaSinteticaProvvisorioDiCassaAjaxAction extends Gener
 	}
 	
 	@Override
-	protected ElementoProvvisorioDiCassa ottieniIstanza(ProvvisorioDiCassa e) throws FrontEndBusinessException {
+	protected ElementoProvvisorioDiCassa getInstance(ProvvisorioDiCassa e) throws FrontEndBusinessException {
 		return new ElementoProvvisorioDiCassa(e);
 	}
 	
 	@Override
-	protected RicercaProvvisoriDiCassaResponse ottieniResponse(RicercaProvvisoriDiCassa request) {
+	protected RicercaProvvisoriDiCassaResponse getResponse(RicercaProvvisoriDiCassa request) {
 		return provvisorioService.ricercaProvvisoriDiCassa(request);
 	}
 	
@@ -109,10 +109,10 @@ public class RisultatiRicercaSinteticaProvvisorioDiCassaAjaxAction extends Gener
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoProvvisorioDiCassa instance,
+	protected void handleAzioniConsentite(ElementoProvvisorioDiCassa instance,
 			boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isAssociaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROVVISORIO_DI_CASSA_GESTISCI, listaAzioniConsentite);
+		Boolean isAssociaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROVVISORIO_DI_CASSA_GESTISCI, listaAzioniConsentite);
 		
 		// Gestione delle azioni consentite
 		StringBuilder azioniBuilder = new StringBuilder();

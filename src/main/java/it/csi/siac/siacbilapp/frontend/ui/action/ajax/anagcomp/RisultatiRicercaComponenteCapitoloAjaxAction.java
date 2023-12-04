@@ -4,24 +4,20 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.ajax.anagcomp;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaComponenteCapitoloAjaxModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.anagcomp.ElementoComponenteCapitolo;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilser.frontend.webservice.TipoComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaTipoComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
-import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 
@@ -34,7 +30,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaComponenteCapitoloAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoComponenteCapitolo, 
+public class RisultatiRicercaComponenteCapitoloAjaxAction extends PagedDataTableAjaxAction<ElementoComponenteCapitolo, 
 RisultatiRicercaComponenteCapitoloAjaxModel, TipoComponenteImportiCapitolo, RicercaSinteticaTipoComponenteImportiCapitolo, RicercaSinteticaTipoComponenteImportiCapitoloResponse> {
 	
 	/** Per la serializzazione*/
@@ -83,12 +79,12 @@ RisultatiRicercaComponenteCapitoloAjaxModel, TipoComponenteImportiCapitolo, Rice
 	}
 	
 	@Override
-	protected ElementoComponenteCapitolo ottieniIstanza(TipoComponenteImportiCapitolo e) throws FrontEndBusinessException {
+	protected ElementoComponenteCapitolo getInstance(TipoComponenteImportiCapitolo e) throws FrontEndBusinessException {
 		return new ElementoComponenteCapitolo(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaTipoComponenteImportiCapitoloResponse ottieniResponse(RicercaSinteticaTipoComponenteImportiCapitolo request) {
+	protected RicercaSinteticaTipoComponenteImportiCapitoloResponse getResponse(RicercaSinteticaTipoComponenteImportiCapitolo request) {
 		return componenteCapitoloService.ricercaSinteticaTipoComponenteImportiCapitolo(request);
 	}
 	
@@ -98,15 +94,11 @@ RisultatiRicercaComponenteCapitoloAjaxModel, TipoComponenteImportiCapitolo, Rice
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoComponenteCapitolo instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, 
+	protected void handleAzioniConsentite(ElementoComponenteCapitolo instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, 
 			boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		 
 		boolean gestioneAggiorna = gestisciAggiornamento(instance);
 		boolean gestioneAnnulla = gestisciAnnullamento(instance);
-		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isAggiornaConsentitoVincolo(listaAzioniConsentite);
-		Boolean isAnnullaConsentita = AzioniConsentiteFactory.isAnnullaConsentitoVincolo(listaAzioniConsentite);
-		
 		
 		StringBuilder strAzioni = new StringBuilder(AZIONI_CONSENTITE_BEGIN);
 	

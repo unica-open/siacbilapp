@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.causali.AggiornaCausaleEPBaseModel;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -85,7 +85,7 @@ public abstract class AggiornaCausaleEPBaseAction <M extends AggiornaCausaleEPBa
 		
 		if(res.hasErrori()) {
 			// Errore nel caricamento della causale: importo gli errori ed esco
-			String errorMsg = createErrorInServiceInvocationString(req, res);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioCausale.class, res);
 			log.info(methodName, errorMsg);
 			addErrori(res);
 			// Lancio l'eccezione
@@ -135,7 +135,7 @@ public abstract class AggiornaCausaleEPBaseAction <M extends AggiornaCausaleEPBa
 			
 			if(res.hasErrori()) {
 				// Errore nella chiamata al servizio: imposto gli errori ed esco
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, res);
 				log.debug(methodName, errorMsg);
 				addErrori(res);
 				// Lancio l'eccezione

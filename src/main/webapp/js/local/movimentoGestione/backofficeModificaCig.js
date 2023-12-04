@@ -69,7 +69,10 @@
         
         oggettoPerChiamataAjax = {
     		'impegno.annoMovimento': annoImpegno,
-    		'impegno.numero': numeroImpegno
+			'impegno.numero': numeroImpegno,
+			//SIAC-7661
+			//permetto la ricerca di tutti i sub, in questo modo verranno mostrati tutti i sub che non sono in stato annullato
+			'bko': true
         };
 		
         // resettiamo i campi e li nascondiamo all'utente

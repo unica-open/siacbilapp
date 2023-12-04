@@ -19,7 +19,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione.ElementoStato
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione.ElementoStatoOperativoVariazioneFactory;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneCodificheResponse;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
@@ -44,7 +44,7 @@ public class ConsultaVariazioneCodificheModel extends GenericBilancioModel {
 	private TipoVariazione tipoVariazione;
 	private String applicazioneVariazione;
 	private String descrizioneVariazione;
-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+	private StatoOperativoVariazioneBilancio statoVariazione;
 	private String noteVariazione;
 	
 	private Integer uidProvvedimento;
@@ -137,7 +137,7 @@ public class ConsultaVariazioneCodificheModel extends GenericBilancioModel {
 	/**
 	 * @return the statoVariazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
 		return statoVariazione;
 	}
 
@@ -145,7 +145,7 @@ public class ConsultaVariazioneCodificheModel extends GenericBilancioModel {
 	 * @param statoVariazione the statoVariazione to set
 	 */
 	public void setStatoVariazione(
-			StatoOperativoVariazioneDiBilancio statoVariazione) {
+			StatoOperativoVariazioneBilancio statoVariazione) {
 		this.statoVariazione = statoVariazione;
 	}
 

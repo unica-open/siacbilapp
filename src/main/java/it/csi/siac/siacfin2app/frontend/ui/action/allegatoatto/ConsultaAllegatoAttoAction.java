@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -66,7 +66,7 @@ public class ConsultaAllegatoAttoAction extends GenericBilancioAction<ConsultaAl
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioAllegatoAtto.class, response));
 			throwExceptionFromErrori(response.getErrori());
 		}
 		AllegatoAtto allegatoAtto = response.getAllegatoAtto();

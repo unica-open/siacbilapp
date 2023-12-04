@@ -89,7 +89,7 @@ public abstract class GestioneModificaMovimentoGestioneSpesaPrimaNotaIntegrataBa
 		if(subImpegnoModifica != null){
 			Impegno impegnoPadre = new Impegno();
 			impegnoPadre.setAnnoMovimento(subImpegnoModifica.getAnnoImpegnoPadre());
-			impegnoPadre.setNumero(subImpegnoModifica.getNumeroImpegnoPadre());
+			impegnoPadre.setNumeroBigDecimal(subImpegnoModifica.getNumeroImpegnoPadre());
 			return MovimentoGestioneHelper.creaRequestRicercaImpegnoPerChiaveOttimizzato(getAnnoEsercizioInt(), getEnte(), getRichiedente(), impegnoPadre, subImpegnoModifica);
 		}
 		

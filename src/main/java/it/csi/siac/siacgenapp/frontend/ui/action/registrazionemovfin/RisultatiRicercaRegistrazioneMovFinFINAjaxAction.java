@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.registrazionemovfin.RisultatiRicercaRegistrazioneMovFinBaseAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 
 /**
@@ -45,22 +45,22 @@ public class RisultatiRicercaRegistrazioneMovFinFINAjaxAction extends RisultatiR
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestionePrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_GESTISCI_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestionePrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_GESTISCI_GEN;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestioneRegistrazioneMovFin() {
-		return AzioniConsentite.REGISTRAZIONE_MOV_FIN_GESTISCI_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestioneRegistrazioneMovFin() {
+		return AzioneConsentitaEnum.REGISTRAZIONE_MOV_FIN_GESTISCI_GEN;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaMovFin() {
-		return AzioniConsentite.REGISTRAZIONE_MOV_FIN_RICERCA_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaMovFin() {
+		return AzioneConsentitaEnum.REGISTRAZIONE_MOV_FIN_RICERCA_GEN;
 	}
 	
 	@Override
 	protected boolean isAggiornaPdCConsentita(List<AzioneConsentita> listaAzioniConsentite) {
-		return Boolean.TRUE.equals(AzioniConsentiteFactory.isConsentito(AzioniConsentite.PIANO_DEI_CONTI_AGGIORNA_SU_REGISTRO, listaAzioniConsentite));
+		return Boolean.TRUE.equals(AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PIANO_DEI_CONTI_AGGIORNA_SU_REGISTRO, listaAzioniConsentite));
 	}
 }

@@ -52,6 +52,9 @@ public class ElementoComponenteVariazione implements Serializable, Cloneable, Mo
 	private BigDecimal importoComponenteOriginaleCapitoloAnno1 = BigDecimal.ZERO;
 	private BigDecimal importoComponenteOriginaleCapitoloAnno2 = BigDecimal.ZERO;
 	
+	//SIAC-7384
+	private Boolean legataAlCapitolo = Boolean.FALSE;
+	
 
 	/** Per la serializzazione */
 	
@@ -238,6 +241,20 @@ public class ElementoComponenteVariazione implements Serializable, Cloneable, Mo
 	 */
 	public void setImportoComponenteOriginaleCapitoloAnno2(BigDecimal importoComponenteOriginaleAnno2) {
 		this.importoComponenteOriginaleCapitoloAnno2 = importoComponenteOriginaleAnno2 != null? importoComponenteOriginaleAnno2 : BigDecimal.ZERO;
+	}
+	
+	/**
+	 * @return the legataAlCapitolo
+	 */
+	public Boolean getLegataAlCapitolo() {
+		return legataAlCapitolo;
+	}
+
+	/**
+	 * @param legataAlCapitolo the legataAlCapitolo to set
+	 */
+	public void setLegataAlCapitolo(Boolean legataAlCapitolo) {
+		this.legataAlCapitolo = legataAlCapitolo;
 	}
 
 	/**

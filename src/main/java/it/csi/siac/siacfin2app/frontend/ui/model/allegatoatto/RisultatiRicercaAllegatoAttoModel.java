@@ -104,10 +104,13 @@ public class RisultatiRicercaAllegatoAttoModel extends RisultatiRicercaAllegatoA
 		aa.setUid(getUidAllegatoAtto());
 		aa.setEnte(getEnte());
 		request.setAllegatoAtto(aa);
+		request.setAllegatoAttoChecklist(getChecklist());
 		
 		request.setBilancio(getBilancio());
-		request.setAnnoEsercizio(getAnnoEsercizioInt()!=null?getAnnoEsercizioInt():(getBilancio()!=null&&getBilancio().getAnno()!=0?getBilancio().getAnno():null));
-		
+		request.setAnnoEsercizio(
+				getAnnoEsercizioInt() != null ? 
+				getAnnoEsercizioInt() : 
+				(getBilancio() != null && getBilancio().getAnno() != 0 ? getBilancio().getAnno() : null));		
 		
 		return request;
 	}

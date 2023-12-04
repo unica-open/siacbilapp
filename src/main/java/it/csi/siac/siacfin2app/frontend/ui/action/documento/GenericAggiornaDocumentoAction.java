@@ -25,11 +25,11 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.documento.AggiornaDocumentoModel;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNoteTesoriere;
@@ -60,9 +60,9 @@ public class GenericAggiornaDocumentoAction<M extends AggiornaDocumentoModel> ex
 	
 	/** Serviz&icirc; del movimento di gestione */
 	@Autowired protected transient MovimentoGestioneService movimentoGestioneService;
-	/** Serviz&icirc; del predocumento di spesa */
-	@Autowired private transient PreDocumentoSpesaService preDocumentoSpesaService;
-	
+
+	@Autowired private transient ContoTesoreriaService contoTesoreriaService;
+
 	/**
 	 * Controlla se la lista delle Natura Onere sia presente valorizzata nel model.
 	 * <br>
@@ -110,7 +110,7 @@ public class GenericAggiornaDocumentoAction<M extends AggiornaDocumentoModel> ex
 		}
 		
 		LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
-		LeggiContiTesoreriaResponse response = preDocumentoSpesaService.leggiContiTesoreria(request);
+		LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
 		if(!response.hasErrori()) {
 			listaContoTesoreria = response.getContiTesoreria();
 			model.setListaContoTesoreria(listaContoTesoreria);
@@ -164,7 +164,7 @@ public class GenericAggiornaDocumentoAction<M extends AggiornaDocumentoModel> ex
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, response));
 			addErrori(response);
 			return;
 		}

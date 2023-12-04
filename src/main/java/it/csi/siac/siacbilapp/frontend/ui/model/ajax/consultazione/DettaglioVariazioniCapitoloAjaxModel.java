@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.ajax.consultazione;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.consultazione.ElementoVariazioneImportoSingoloCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneComponenteImportoCapitolo;
 import it.csi.siac.siacbilser.model.Capitolo;
@@ -22,7 +22,7 @@ import it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo;
  * @version 1.0.0 - 01/09/2016
  *
  */
-public class DettaglioVariazioniCapitoloAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoVariazioneImportoSingoloCapitolo> {
+public class DettaglioVariazioniCapitoloAjaxModel extends PagedDataTableAjaxModel<ElementoVariazioneImportoSingoloCapitolo> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 6331261716894909156L;

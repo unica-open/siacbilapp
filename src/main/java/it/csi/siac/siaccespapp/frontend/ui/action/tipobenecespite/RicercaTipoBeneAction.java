@@ -7,7 +7,7 @@ package it.csi.siac.siaccespapp.frontend.ui.action.tipobenecespite;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -63,7 +63,7 @@ public class RicercaTipoBeneAction extends GenericTipoBeneAction<RicercaTipoBene
 			RicercaSinteticaCategoriaCespitiResponse res = classificazioneCespiteService.ricercaSinteticaCategoriaCespiti(req);
 			if(res.hasErrori()) {
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSinteticaCategoriaCespiti.class, res));
 			}
 			listaCategoriaCespiti = res.getListaCategoriaCespiti();
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CATEGORIA_CESPITI, listaCategoriaCespiti);

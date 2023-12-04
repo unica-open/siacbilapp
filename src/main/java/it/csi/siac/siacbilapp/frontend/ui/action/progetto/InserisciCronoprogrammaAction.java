@@ -4,8 +4,6 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.progetto;
 
-import java.math.BigDecimal;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -17,7 +15,6 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceAnagraficaProgett
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeProgettoResponse;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
-import it.csi.siac.siacbilser.model.DettaglioUscitaCronoprogramma;
 import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -119,7 +116,7 @@ public class InserisciCronoprogrammaAction extends BaseInserisciCronoprogrammaAc
 		
 		if(response.hasErrori() && !response.verificatoErrore(ErroreCore.ENTITA_NON_TROVATA)) {
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaPuntualeProgetto.class, response));
 		}
 		if(response.getProgetto() != null) {
 			addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Progetto", model.getProgetto().getCodice()));
@@ -149,7 +146,7 @@ public class InserisciCronoprogrammaAction extends BaseInserisciCronoprogrammaAc
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(InserisceAnagraficaProgetto.class, response));
 		}
 		
 		Progetto progetto = response.getProgetto();
@@ -173,27 +170,6 @@ public class InserisciCronoprogrammaAction extends BaseInserisciCronoprogrammaAc
 //		model.getCronoprogramma().setAttoAmministrativo(model.getAttoAmministrativo());
 		model.setAttoAmministrativo(model.getProgetto().getAttoAmministrativo());
 		return SUCCESS;
-	}
-	
-	/**
-	 * Check importi dettagli uscita cronoprogramma.
-	 */
-	private void checkImportiDettagliUscitaCronoprogramma() {
-		BigDecimal valoreComplessivoProgetto =model.getProgetto().getValoreComplessivo();
-		if(valoreComplessivoProgetto == null || BigDecimal.ZERO.compareTo(valoreComplessivoProgetto) == 0) {
-			//SCELTA IMPLEMENTATIVA: il valore complessivo del progetto non e' obbligatorio, se e' presente il valore di default non lo metto
-			return;
-		}
-		BigDecimal importoRigheSpesa = BigDecimal.ZERO;
-		for (DettaglioUscitaCronoprogramma dett : model.getListaDettaglioUscitaCronoprogramma()) {
-			if(dett.getUid()!=0 && dett.getDataFineValidita()!=null) {
-				//questo cronoprogramma verra' cancellato: non va conteggiato
-				continue;
-			}
-			importoRigheSpesa = importoRigheSpesa.add(dett.getStanziamento());			
-		}
-		
-		checkCondition(importoRigheSpesa.compareTo(valoreComplessivoProgetto) <= 0, ErroreCore.IMPORTI_NON_VALIDI_PER_ENTITA.getErrore(" totale delle spese previste", "superato il valore complessivo del progetto (valore complessivo = " + valoreComplessivoProgetto.toPlainString() + ")."));
 	}
 	
 

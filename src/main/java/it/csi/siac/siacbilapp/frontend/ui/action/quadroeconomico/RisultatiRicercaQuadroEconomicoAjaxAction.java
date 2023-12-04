@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.quadroeconomico.RisultatiRicercaQuadroEconomicoAjaxModel;
@@ -30,7 +30,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaQuadroEconomicoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoQuadroEconomico, 
+public class RisultatiRicercaQuadroEconomicoAjaxAction extends PagedDataTableAjaxAction<ElementoQuadroEconomico, 
 RisultatiRicercaQuadroEconomicoAjaxModel, QuadroEconomico, RicercaSinteticaQuadroEconomico, RicercaSinteticaQuadroEconomicoResponse> {
 	    
 	
@@ -63,12 +63,12 @@ RisultatiRicercaQuadroEconomicoAjaxModel, QuadroEconomico, RicercaSinteticaQuadr
 	}
 	
 	@Override
-	protected ElementoQuadroEconomico ottieniIstanza(QuadroEconomico e) throws FrontEndBusinessException {
+	protected ElementoQuadroEconomico getInstance(QuadroEconomico e) throws FrontEndBusinessException {
 		return new ElementoQuadroEconomico(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaQuadroEconomicoResponse ottieniResponse(RicercaSinteticaQuadroEconomico request) {
+	protected RicercaSinteticaQuadroEconomicoResponse getResponse(RicercaSinteticaQuadroEconomico request) {
 		RicercaSinteticaQuadroEconomicoResponse ris = quadroEconomicoService.ricercaSinteticaQuadroEconomico(request);
 		return  ris;
 	}

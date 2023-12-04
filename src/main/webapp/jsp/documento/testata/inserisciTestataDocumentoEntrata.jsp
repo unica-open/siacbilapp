@@ -95,10 +95,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisciTestataEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisciTestataEntrata.js"></script>
 
 </body>
 </html>

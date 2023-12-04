@@ -9,9 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumbTrail;
+import xyz.timedrain.arianna.plugin.Crumb;
+/*
+import org.softwareforge.struts2.breadcrumb.BreadCrumb;_
 import org.softwareforge.struts2.breadcrumb.BreadCrumbTrail;
 import org.softwareforge.struts2.breadcrumb.Crumb;
+*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,14 +30,14 @@ import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService;
-import it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcolaTotaliStanziamentiDiPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcolaTotaliStanziamentiDiPrevisioneResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiUscitaPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiUscitaPrevisioneResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
@@ -47,19 +52,19 @@ import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
+import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TotaliAnnoDiEsercizio;
 import it.csi.siac.siaccommonapp.handler.session.CommonSessionParameter;
-import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
-
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di Action per la gestione dell'inserimento del Capitolo di Uscita Previsione.
@@ -77,7 +82,6 @@ public class InserisciCapitoloUscitaPrevisioneAction extends CapitoloUscitaActio
 	
 	@Autowired private transient CapitoloUscitaPrevisioneService capitoloUscitaPrevisioneService;
 	@Autowired private transient CapitoloUscitaGestioneService capitoloUscitaGestioneService;
-	@Autowired private transient ComponenteImportiCapitoloService componenteImportiCapitoloService;
 	
 	@Override
 	public void prepare() throws Exception {
@@ -157,11 +161,28 @@ public class InserisciCapitoloUscitaPrevisioneAction extends CapitoloUscitaActio
 		
 		cup.setCategoriaCapitolo(categoriaCapitoloStandard);
 		cup.setFlagImpegnabile(Boolean.TRUE);
+		//task-55
+		cup.setFlagNonInserireAllegatoA1(Boolean.FALSE);
 		if(!daCduChiamante || !model.isGestioneUEB()) {
 			cup.setNumeroUEB(1);
 			log.debug(methodName, "Default per il capitolo da inserire - UEB " + cup.getNumeroUEB());
 		}
 		
+		//task-86
+		if(abilitaNumerazioneAutomaticaCapitolo()) {
+			LeggiPropostaNumeroCapitolo req = model.leggiPropostaNumeroCapitolo();
+			logServiceRequest(req);
+			LeggiPropostaNumeroCapitoloResponse response = capitoloService.leggiPropostaNumeroCapitoloService(req);
+			logServiceResponse(response);
+			if(!response.hasErrori()) {
+				model.getCapitoloUscitaPrevisione().setNumeroCapitolo(response.getNumeroPropostoCapitolo());
+			}else {
+				log.debug(methodName, "Errore nella risposta del servizio");
+				addErrori(methodName, response);
+				log.debug(methodName, "Model: " + model);
+			}
+		}
+				
 		// CR-2559
 		impostaSiopeSeUnico();
 		// SIAC-4724
@@ -193,8 +214,7 @@ public class InserisciCapitoloUscitaPrevisioneAction extends CapitoloUscitaActio
 		Boolean daVariazione = model.getDaVariazione();
 		
 		//SIAC-6884
-		Account account = sessionHandler.getAccount();
-		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
+		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
 		
 		StatoOperativoElementoDiBilancio statoOperativoElementoDiBilancio = Boolean.TRUE.equals(model.getDaVariazione()) ? StatoOperativoElementoDiBilancio.PROVVISORIO : StatoOperativoElementoDiBilancio.VALIDO;
 		
@@ -568,21 +588,24 @@ public class InserisciCapitoloUscitaPrevisioneAction extends CapitoloUscitaActio
 			checkNotNullNorInvalidUid(model.getTitoloSpesa(), "Titolo");
 			checkNotNullNorInvalidUid(model.getMacroaggregato(), "Macroaggregato");
 			checkNotNullNorInvalidUid(model.getElementoPianoDeiConti(), "Elemento del Piano dei Conti");
+			//task-9
+			checkNotNullNorInvalidUid(model.getClassificazioneCofog(), "Cofog");
 		}
 		
 		checkNotNullNorInvalidUid(model.getStrutturaAmministrativoContabile(), "Struttura Amministrativa Responsabile");
 		
+		//task-55
+		Missione missioneConDati = ComparatorUtils.searchByUid(model.getListaMissione(), model.getMissione());
+		if("20".equals(missioneConDati.getCodice())) {
+			checkNotNull(cup.getFlagNonInserireAllegatoA1(), "Capitolo da non inserire nell'allegato A1");
+		}else {
+			model.getCapitoloUscitaPrevisione().setFlagNonInserireAllegatoA1(null);
+		}
+				
+		
+		checkCondition(!isMissioneWithCodice(CODICE_MISSIONE_20) || model.idEntitaPresente(model.getRisorsaAccantonata()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("risorsa accantonata"));
 		
 		//validaImportoCapitoloUscitaPrevisione();
-	}
-	
-	/**
-	 * Unifica la validazione per gli Importi del Capitolo di Uscita Previsione.
-	 */
-	private void validaImportoCapitoloUscitaPrevisione() {
-		validaImportoCapitolo(model.getImportiCapitoloUscitaPrevisione0(), 0, true, true);
-		validaImportoCapitolo(model.getImportiCapitoloUscitaPrevisione1(), 1, false, true);
-		validaImportoCapitolo(model.getImportiCapitoloUscitaPrevisione2(), 2, false, true);
 	}
 	
 	@Override
@@ -655,7 +678,7 @@ public class InserisciCapitoloUscitaPrevisioneAction extends CapitoloUscitaActio
 			if(forceCassaCoherence && importi.getStanziamento() != null && importi.getStanziamentoResiduo() != null && importi.getStanziamentoCassa() != null
 					&& (importi.getStanziamentoResiduo().compareTo(BigDecimal.ZERO)>0 || importi.getStanziamento().compareTo(BigDecimal.ZERO)>0 )) {
 				checkCondition(importi.getStanziamentoCassa().subtract(importi.getStanziamento()).subtract(importi.getStanziamentoResiduo()).signum() <= 0,
-						ErroreCore.VALORE_NON_VALIDO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
+						ErroreCore.VALORE_NON_CONSENTITO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
 							+ FormatUtils.formatCurrency(importi.getStanziamento().add(importi.getStanziamentoResiduo())) + ")"));
 			}
 		}

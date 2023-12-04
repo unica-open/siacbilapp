@@ -13,14 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.RisultatiRicercaPrimaNotaLiberaBaseAjaxModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoPrimaNotaLibera;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacgenser.frontend.webservice.PrimaNotaService;
@@ -35,7 +35,7 @@ import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
  *  @author Elisa Chiari
  * @version 1.0.0 - 08/10/2015
  */
-public abstract class RisultatiRicercaPrimaNotaLiberaBaseAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoPrimaNotaLibera, RisultatiRicercaPrimaNotaLiberaBaseAjaxModel,
+public abstract class RisultatiRicercaPrimaNotaLiberaBaseAjaxAction extends PagedDataTableAjaxAction<ElementoPrimaNotaLibera, RisultatiRicercaPrimaNotaLiberaBaseAjaxModel,
 PrimaNota, RicercaSinteticaPrimaNota, RicercaSinteticaPrimaNotaResponse> {
 
 
@@ -74,12 +74,12 @@ PrimaNota, RicercaSinteticaPrimaNota, RicercaSinteticaPrimaNotaResponse> {
 	}
 
 	@Override
-	protected ElementoPrimaNotaLibera ottieniIstanza(PrimaNota e) throws FrontEndBusinessException {
+	protected ElementoPrimaNotaLibera getInstance(PrimaNota e) throws FrontEndBusinessException {
 		return new ElementoPrimaNotaLibera(e);
 	}
 
 	@Override
-	protected RicercaSinteticaPrimaNotaResponse ottieniResponse(RicercaSinteticaPrimaNota req) {
+	protected RicercaSinteticaPrimaNotaResponse getResponse(RicercaSinteticaPrimaNota req) {
 		return primaNotaService.ricercaSinteticaPrimaNota(req);
 	}
 
@@ -110,20 +110,20 @@ PrimaNota, RicercaSinteticaPrimaNota, RicercaSinteticaPrimaNotaResponse> {
 	/**
 	 * @return azione consentita corrispondente alla gestione della prima nota libera
 	 * */
-	protected abstract AzioniConsentite getAzioneConsentitaGestionePrimaNotaLibera();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaGestionePrimaNotaLibera();
 	
 	/**
 	 * @return azione consentita corrispondente alla validazione della prima nota libera
 	 * */
-	protected abstract AzioniConsentite getAzioneConsentitaValidazionePrimaNotaLibera();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaValidazionePrimaNotaLibera();
 	
 	/**
 	 * @return azione consentita corrispondente alla validazione della prima nota libera
 	 * */
-	protected abstract AzioniConsentite getAzioneConsentitaRicercaPrimaNotaLibera();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaRicercaPrimaNotaLibera();
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoPrimaNotaLibera instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoPrimaNotaLibera instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
@@ -175,7 +175,7 @@ PrimaNota, RicercaSinteticaPrimaNota, RicercaSinteticaPrimaNotaResponse> {
 	 * @return <code>true</code> se la validazione &eacute; consentita; <code>false</code> altrimenti
 	 */
 	private boolean gestisciValidazione(List<AzioneConsentita> listaAzioniConsentite, ElementoPrimaNotaLibera instance) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO)
+		return isFaseBilancioCoerenteConValidazione()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaValidazionePrimaNotaLibera(), listaAzioniConsentite)
 				&& StatoOperativoPrimaNota.PROVVISORIO.equals(instance.getStatoOperativoPrimaNota());
 	}
@@ -200,11 +200,12 @@ PrimaNota, RicercaSinteticaPrimaNota, RicercaSinteticaPrimaNotaResponse> {
 	 * @return <code>true</code> se l'annullamento &eacute; consentita; <code>false</code> altrimenti
 	 */
 	protected boolean gestisciAnnullamento(List<AzioneConsentita> listaAzioniConsentite, ElementoPrimaNotaLibera instance) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO)
+		return isFaseBilancioCoerenteConAnnullamento()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaGestionePrimaNotaLibera(), listaAzioniConsentite)
 				&& !StatoOperativoPrimaNota.ANNULLATO.equals(instance.getStatoOperativoPrimaNota());
 
 	}
+
 
 	/**
 	 * Controlla che il rifiuto sia eseguibile.
@@ -226,11 +227,17 @@ PrimaNota, RicercaSinteticaPrimaNota, RicercaSinteticaPrimaNotaResponse> {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentita; <code>false</code> altrimenti
 	 */
 	private boolean gestisciAggiornamento(List<AzioneConsentita> listaAzioniConsentite, ElementoPrimaNotaLibera instance) {
-		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO)
+		return isFaseBilancioCoerenteConAggiornamento()
 				&& AzioniConsentiteFactory.isConsentito(getAzioneConsentitaGestionePrimaNotaLibera(), listaAzioniConsentite)
 				&& isStatoOperativoCoerenteConAggiornamento(instance);
 	}
 
+	//SIAC-8323
+	protected abstract boolean isFaseBilancioCoerenteConAggiornamento();
+	//SIAC-8323
+	protected abstract boolean isFaseBilancioCoerenteConValidazione();
+	//SIAC-8323
+	protected abstract boolean isFaseBilancioCoerenteConAnnullamento();
 	/**
 	 * Checks if is stato operativo coerente con aggiornamento.
 	 *

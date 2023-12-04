@@ -5,6 +5,7 @@
 package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
 import it.csi.siac.siacbilser.model.StatoOperativoProgetto;
@@ -30,6 +31,7 @@ public class ElementoProgetto implements Serializable, ModelWrapper {
 	private String ambito;
 	
 	private String codiceTipoProgetto;
+	private String valoreComplessivo;
 	
 	private String azioni;
 	
@@ -172,5 +174,18 @@ public class ElementoProgetto implements Serializable, ModelWrapper {
 	public boolean checkStatoOperativoAnnullato() {
 		return StatoOperativoProgetto.ANNULLATO.name().equalsIgnoreCase(statoOperativoProgetto);
 	}
+
+
+	public String getValoreComplessivo() {
+		return valoreComplessivo;
+	}
+
+
+	public void setValoreComplessivo(String valoreComplessivo) {
+		this.valoreComplessivo = valoreComplessivo;
+	}
+
+
+
 	
 }

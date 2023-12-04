@@ -18,7 +18,6 @@
     var numeroSubmovimento = $("#numeroSubmovimentoGestione");
     var divCigCup = $("div[data-cig-cup]");
     var assenzaCig = $('*[data-assenza-cig]');
-    var spanMutuo = $("#spanMutuo");
     var alertErrori = $("#ERRORI");
     var alertInformazioni = $("#INFORMAZIONI");
     var isGestioneUEB = $("#HIDDEN_gestioneUEB").val() === "true";
@@ -32,9 +31,7 @@
         "Impegno": {
             apriModale: apriModaleImpegno,
             conferma: confermaImpegno,
-            hasCigCupMutuo: true,
             gestisciCigCup: "slideDown",
-            gestisciMutuo: "removeClass",
             campoDisponibilita: "disponibilitaLiquidare",
             campoModel: "subdocumentoSpesa",
             urlInserimento: 'associaMovimentoAllegatoAtto_addImpegno.do',
@@ -43,9 +40,7 @@
         "Accertamento": {
             apriModale: apriModaleAccertamento,
             conferma: confermaAccertamento,
-            hasCigCupMutuo: false,
             gestisciCigCup: "slideUp",
-            gestisciMutuo: "addClass",
             campoDisponibilita: "disponibilitaIncassare",
             campoModel: "subdocumentoEntrata",
             urlInserimento: "associaMovimentoAllegatoAtto_addAccertamento.do",
@@ -90,7 +85,6 @@
 
         // SIAC-5409
         $('#divImpegniTrovati').slideUp();
-        $('#divMutui').slideUp();
     }
 
     /**
@@ -163,9 +157,10 @@
         pulsanteCompilazioneGuidata.addClass("disabled")
             .off("click");
         pulsanteConferma.addClass("disabled")
+        //SIAC-7613
+        	.overlay('hide')
             .off("click");
         $("#divDisponibilitaMovimentoGestione").addClass("hide");
-        spanMutuo.addClass("hide");
         divCigCup.slideUp();
         assenzaCig.slideUp();
         collapse.collapse("hide")
@@ -192,6 +187,8 @@
         // Modifico la scritta nel pulsante
         button.html("chiudi");
         $('#movimentoDati').html('');
+        //SIAC-7613
+        pulsanteConferma.overlay('hide');
         collapse.collapse("show")
         	.find('input[type="radio"][name="tipoMovimento"]:checked')
         		.change();
@@ -214,7 +211,6 @@
         // Mostro/nascondo il div dei CIG e CUP
         divCigCup[functions[tipoMovimento].gestisciCigCup]();
         assenzaCig.slideUp();
-        spanMutuo[functions[tipoMovimento].gestisciMutuo]("hide");
     }
 
     /**
@@ -426,10 +422,6 @@
                     $("select", nTd).data("row", iRow);
                 }},
                 {aTargets: [4], mData: function(source) {
-                    return source.impegno && source.impegno.listaVociMutuo && source.impegno.listaVociMutuo.length &&
-                        source.impegno.listaVociMutuo[0] && source.impegno.listaVociMutuo[0].numeroMutuo || "";
-                }},
-                {aTargets: [5], mData: function(source) {
                     var result = "";
                     if(source.impegno && source.impegno.capitoloUscitaGestione && source.impegno.capitoloUscitaGestione.numeroCapitolo) {
                         result = source.impegno.capitoloUscitaGestione.numeroCapitolo + "/" + source.impegno.capitoloUscitaGestione.numeroArticolo;
@@ -439,7 +431,7 @@
                     }
                     return result;
                 }},
-                {aTargets: [6], mData: function(source) {
+                {aTargets: [5], mData: function(source) {
                     var result = "";
                     if(source.impegno && source.impegno.attoAmministrativo) {
                         result = "<a rel='popover' href='#'>" + source.impegno.attoAmministrativo.anno + "/" + source.impegno.attoAmministrativo.numero;
@@ -463,21 +455,21 @@
                         $("a", nTd).popover(settings);
                     }
                 }},
-                {aTargets: [7], mData: function(source) {
+                {aTargets: [6], mData: function(source) {
                     var result = "";
                     if(source.provvisorioCassa && source.provvisorioCassa.anno && source.provvisorioCassa.numero) {
                         result = source.provvisorioCassa.anno + "/" + source.provvisorioCassa.numero;
                     }
                     return result;
                 }},
-                {aTargets:[8], mData: function(source) {
+                {aTargets:[7], mData: function(source) {
                     return source.importo.formatMoney();
                 }, fnCreatedCell: function(nTd, sData, oData, iRow) {
                     $(nTd).addClass("tab_Right")
                         .find("input")
                             .data("row", iRow);
                 }},
-                {aTargets:[9], mData: function() {
+                {aTargets:[8], mData: function() {
                     return "<a href='#'><i class='icon-trash icon-2x'></i></a>";
                 }, fnCreatedCell: function(nTd, sData, oData, iRow) {
                     $("a", nTd).data("row", iRow).substituteHandler("click", function(e) {
@@ -485,7 +477,7 @@
                         eliminaImpegno(iRow, oData);
                     });
                 }},
-                {aTargets:[10], mData: function() {
+                {aTargets:[9], mData: function() {
                     return "<a href='#'><i class='icon-pencil icon-2x'></i></a>";
                 }, fnCreatedCell: function(nTd, sData, oData, iRow) {
                     $("a", nTd).data("row", iRow).substituteHandler("click", function(e) {
@@ -680,6 +672,10 @@
         if(!tipoMovimento) {
             return;
         }
+        
+        //SIAC-7613
+        pulsanteConferma.overlay('show');
+        
         url = functions[tipoMovimento].urlInserimento;
         // Creo l'oggetto per la chiamata AJAX
         obj = creazioneOggettoPerChiamataAjax(tipoMovimento);
@@ -700,6 +696,8 @@
             callback(data);
         }).always(function() {
             spinner.removeClass("activated");
+            //SIAC-7613
+            pulsanteConferma.overlay('hide');
         });
     }
 
@@ -750,7 +748,6 @@
         var obj = {};
         var lowerCaseTipo = tipo.toLowerCase();
         var campoModel = functions[tipo].campoModel;
-        var hasCigCupMutuo = functions[tipo].hasCigCupMutuo;
 
         obj[campoModel + "." + lowerCaseTipo + ".annoMovimento"] = $("#annoMovimento").val();
         obj[campoModel + "." + lowerCaseTipo + ".numero"] = $("#numeroMovimentoGestione").val();
@@ -759,12 +756,12 @@
         obj[campoModel + ".provvisorioCassa"+".anno"] = $("#annoProvvisorioCassaSubdocumento").val();
         obj[campoModel + ".provvisorioCassa"+".numero"] = $("#numeroProvvisorioCassaSubdocumento").val();
         
-        if(hasCigCupMutuo) {
-            obj["voceMutuo.numeroMutuo"] = $("#numeroMutuoVoceMutuo").val();
-            obj[campoModel + ".cig"] = $("#cigMovimentoGestione").val();
-            obj[campoModel + ".cup"] = $("#cupMovimentoGestione").val();
-            obj[campoModel + '.siopeAssenzaMotivazione.uid'] = $('#siopeAssenzaMotivazione').val();
-        }
+        //task-113
+        obj[campoModel + ".cig"] = $("#cigMovimentoGestione").val();
+        obj[campoModel + ".cup"] = $("#cupMovimentoGestione").val();
+        obj[campoModel + '.siopeAssenzaMotivazione.uid'] = $('#siopeAssenzaMotivazione').val();
+        
+
         obj[campoModel + ".importo"] = $("#importoInAtto").val();
 
         return obj;
@@ -844,6 +841,8 @@
         var obj = {};
         var url = "associaMovimentoAllegatoAtto_alterImpegno.do";
         
+        //SIAC-7613
+        pulsanteConferma.overlay('show');
         obj.row = row;
         obj["subdocumentoSpesa.siopeAssenzaMotivazione.uid"] =  $('#siopeAssenzaMotivazioneModale').val();
         obj["subdocumentoSpesa.importo"] = $('#importoInAttoModale').val();
@@ -878,6 +877,8 @@
             $("#spanTotaleImpegni").html(data.totaleSpesa.formatMoney());
             $('#editMovimento').modal('hide');
         }).always(function() {
+        	//SIAC-7613
+            pulsanteConferma.overlay('hide');
         });
     }
 
@@ -891,6 +892,9 @@
             .overlay("show");
         var obj = {};
         var url = "associaMovimentoAllegatoAtto_alterAccertamento.do";
+        
+        //SIAC-7613
+        pulsanteConferma.overlay('show');
 
         obj.row = row;
         obj["subdocumentoEntrata.importo"] = tr.find("input[name='importoInAtto']").val();
@@ -923,6 +927,8 @@
             $("#spanTotaleAccertamenti").html(data.totaleEntrata.formatMoney());
         }).always(function() {
             tr.overlay("hide");
+            //SIAC-7613
+            pulsanteConferma.overlay('hide');
         });
     }
     
@@ -957,7 +963,7 @@
         $(document).on("accertamentoCaricato", accertamentoCaricatoCallback);
         Accertamento.inizializza("#annoMovimento", "#numeroMovimentoGestione", "#numeroSubmovimentoGestione", undefined, "#disponibilitaMovimentoGestione");
         Impegno.inizializza("#annoMovimento", "#numeroMovimentoGestione", "#numeroSubmovimentoGestione", undefined,
-            "#cigMovimentoGestione", "#cupMovimentoGestione", "#numeroMutuoVoceMutuo", "#disponibilitaMovimentoGestione",
+            "#cigMovimentoGestione", "#cupMovimentoGestione", "#disponibilitaMovimentoGestione",
             undefined, '#siopeAssenzaMotivazione');
 
         // Alla modifica dei campi del tipo movimento, anno, numero e numero subdoc, se valorizzati, ricalcolo i dati del movimenti di gestione

@@ -7,7 +7,7 @@ package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.antic
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -17,7 +17,6 @@ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospesepermissione.InserisciAnticipoSpesePerMissioneCassaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomale;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomaleResponse;
@@ -32,6 +31,7 @@ import it.csi.siac.siaccecser.model.TipoDiCassa;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.Valuta;
 
 /**
@@ -165,7 +165,7 @@ public class InserisciAnticipoSpesePerMissioneCassaEconomaleAction extends BaseI
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -263,7 +263,7 @@ public class InserisciAnticipoSpesePerMissioneCassaEconomaleAction extends BaseI
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioRichiestaAnticipoMissioneNonErogata.class, response));
 			return INPUT;
 		}
 		
@@ -289,7 +289,7 @@ public class InserisciAnticipoSpesePerMissioneCassaEconomaleAction extends BaseI
 	}
 	
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA};
 	}
 }

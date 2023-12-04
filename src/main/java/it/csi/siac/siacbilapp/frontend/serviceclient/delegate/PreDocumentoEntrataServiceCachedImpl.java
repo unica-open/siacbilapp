@@ -22,6 +22,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDataTrasmissioneP
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDataTrasmissionePreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoPreDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaCausaleEntrata;
@@ -216,6 +218,16 @@ public class PreDocumentoEntrataServiceCachedImpl implements PreDocumentoEntrata
 	@Override
 	public RicercaTotaliPreDocumentoEntrataPerStatoResponse ricercaTotaliPreDocumentoEntrataPerStato(RicercaTotaliPreDocumentoEntrataPerStato parameters) {
 		return preDocumentoEntrataService.ricercaTotaliPreDocumentoEntrataPerStato(parameters);
+	}
+	
+	@Override
+	public RicercaTotaliPreDocumentoEntrataPerStatoResponse ricercaTotaliPreDocumentoEntrataPerStatoRiepilogo(RicercaTotaliPreDocumentoEntrataPerStato parameters) {
+		return preDocumentoEntrataService.ricercaTotaliPreDocumentoEntrataPerStatoRiepilogo(parameters);
+	}
+
+	@Override
+	public AggiornaPreDocumentoEntrataCollegaDocumentoResponse aggiornaPreDocumentoEntrataCollegaDocumento(AggiornaPreDocumentoEntrataCollegaDocumento parameters) {
+		return preDocumentoEntrataService.aggiornaPreDocumentoEntrataCollegaDocumento(parameters);
 	}
 
 }

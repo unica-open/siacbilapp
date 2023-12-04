@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,19 +19,19 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.documento.InserisciDocumentoSpesaModel;
-import it.csi.siac.siacfin2app.frontend.ui.util.helper.TipoDocumentoFELHelper;
+//import it.csi.siac.siacfin2app.frontend.ui.util.helper.TipoDocumentoFELHelper;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceDocumentoPerProvvisoriSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceDocumentoPerProvvisoriSpesaResponse;
@@ -50,7 +50,7 @@ import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
 import it.csi.siac.siacfin2ser.model.TipoImpresa;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipo;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipoAnalogico;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -114,7 +114,7 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 	 * Caricamento dell'azione per la gestione della SAC
 	 */
 	private void caricaAzionePerSAC() {
-		model.setNomeAzioneSAC(AzioniConsentite.DOCUMENTO_SPESA_INSERISCI.getNomeAzione());
+		model.setNomeAzioneSAC(AzioneConsentitaEnum.DOCUMENTO_SPESA_INSERISCI.getNomeAzione());
 	}
 
 	/**
@@ -447,7 +447,7 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 		TipoDocumento tipoDocumento = ComparatorUtils.searchByUid(model.getListaTipoDocumento(), model.getDocumento().getTipoDocumento());
 		boolean inserimentoTipoDocumentoImportabileDaFEL = Arrays.asList(TIPI_DOCUMENTO_IMPORTABILI_DA_FEL_CODES).contains(tipoDocumento.getCodice());
 		//               non  devo imporre limitazioni sui dpcumenti FEL
-		checkCondition(!AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite())
+		checkCondition(!AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite())
 				//sto importando un documento FEL
 				|| model.getFatturaFEL() != null
 				//sto inserendo da cruscotto un documento con tipo documento non importabile da fel
@@ -481,7 +481,7 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 		StrutturaAmministrativoContabile sac = model.getDocumento().getStrutturaAmministrativoContabile();
 		if(sac == null || sac.getUid() == 0) {
 			//SIAC-5346: la SAC e' obbligatoria per utenti con azione limita dati fel
-			checkCondition(!AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("struttura amministrativa"));
+			checkCondition(!AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("struttura amministrativa"));
 			return;
 		}
 		// Recupero la SAC dalla lista in sessione
@@ -798,29 +798,6 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 	}
 	
 	/**
-	 * Caricamento dei dati della fattura FEL.
-	 */
-	private void caricaDatiFatturaFEL() {
-		// Pulisco i dati
-		model.setFatturaFEL(null);
-		model.setSoggettoFEL(null);
-		FatturaFEL fatturaFEL = sessionHandler.getParametro(BilSessionParameter.FATTURA_FEL);
-		if(fatturaFEL == null) {
-			// Non ho i dati della fattura FEL
-			return;
-		}
-		// Pulisco il dato in sessione
-		sessionHandler.setParametro(BilSessionParameter.FATTURA_FEL, null);
-		// Imposto i dati della fattura FEL nel model e calcolo i dafault
-		model.setFatturaFEL(fatturaFEL);
-		
-		// Ottengo il dato del soggetto da sessione
-		Soggetto soggettoFEL = sessionHandler.getParametro(BilSessionParameter.SOGGETTO);
-		sessionHandler.setParametro(BilSessionParameter.SOGGETTO, null);
-		model.setSoggettoFEL(soggettoFEL);
-	}
-	
-	/**
 	 * Impostazione dei default della fattura FEL per lo step 1.
 	 * <ul>
 	 *     <li>Anno documento = Anno data documento FEL (entit&agrave; Fattura Elettronica)</li>
@@ -858,7 +835,12 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 		}
 		
 		// Tipo documento
-		impostaTipoDocumento(documentoSpesa, fatturaFEL);
+		//SIAC-7571
+		if(sessionHandler.containsKey(BilSessionParameter.TIPO_DOCUMENTO_IMPORTA_FATTURA)) {
+			impostaTipoDocumentoDaFatturaFEL(documentoSpesa);
+		} else {
+			impostaTipoDocumento(documentoSpesa, fatturaFEL);
+		}
 		
 		// Soggetto Intestatario = Soggetto identificato dall'operatore nell'importazione del documento FEL e passato come parametro
 		log.debug(methodName, "Soggetto = " + (model.getSoggettoFEL() != null ? model.getSoggettoFEL().getCodiceSoggetto() : "null"));
@@ -890,7 +872,7 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 	 */
 	private void impostaFlagDatiFelDisabilitati() {
 		//controllo se l'utente ha delle limitazioni sui dati importati da fattura
-		boolean isLimitaDatiFel = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite());
+		boolean isLimitaDatiFel = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL, sessionHandler.getAzioniConsentite());
 		//imposto il dato nel model
 		model.setInibisciModificaDatiImportatiFEL(isLimitaDatiFel);
 	}
@@ -965,7 +947,7 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 		}
 		
 		// Importo = importo totale documento FEL se presente
-		impostaImporto(documentoSpesa, fatturaFEL);
+		impostaImportoFEL(documentoSpesa, fatturaFEL);
 		
 		// Arrotondamento = importo arrotondamento documento FEL se presente
 		documentoSpesa.setArrotondamento(fatturaFEL.getArrotondamento());
@@ -1019,44 +1001,44 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 			return;
 		}
 		
-		TipoDocumentoFELHelper helper = TipoDocumentoFELHelper.byTipoDocumentoFEL(fatturaFEL.getTipoDocumentoFEL());
-		if(helper == null) {
-			// Non dovrebbe mai succedere, ma null-safe
-			log.error(methodName, "Il tipo documento FEL " + fatturaFEL.getTipoDocumentoFEL() + " non ha un corrispondente helper");
-			return;
+		
+		
+//		TipoDocumentoFELHelper helper = TipoDocumentoFELHelper.byTipoDocumentoFEL(fatturaFEL.getTipoDocumentoFEL());
+//		if(helper == null) {
+//			// Non dovrebbe mai succedere, ma null-safe
+//			log.error(methodName, "Il tipo documento FEL " + fatturaFEL.getTipoDocumentoFEL() + " non ha un corrispondente helper");
+//			return;
+//		}
+//		// Recupero il codice e il tipo documento corrispondente
+//		String codiceTipoDocumento = helper.getCodiceTipoDocumento();
+//		TipoDocumento tipoDocumento = ComparatorUtil.findByCodice(model.getListaTipoDocumento(), codiceTipoDocumento);
+//		
+//		if(tipoDocumento == null) {
+//			// Nessun tipo documento corrispondente al codice
+//			log.info(methodName, "Tipo documento non trovato per codice  " + codiceTipoDocumento);
+//			return;
+//		}
+//		// Imposto il tipo documento
+//		documentoSpesa.setTipoDocumento(tipoDocumento);
+		
+		
+		/*
+		 * SIAC-7557-VG
+		 * model.getListaTipoDocumento(), fatturaFEL.getDocTipoSpesa()
+		 */
+		if(fatturaFEL.getDocTipoSpesa()!= null && model.getListaTipoDocumento()!=null && !model.getListaTipoDocumento().isEmpty()){
+			for(TipoDocumento td :model.getListaTipoDocumento()){
+				if(fatturaFEL.getDocTipoSpesa().intValue() == td.getUid()){
+					documentoSpesa.setTipoDocumento(td);
+				}
+			}
 		}
-		// Recupero il codice e il tipo documento corrispondente
-		String codiceTipoDocumento = helper.getCodiceTipoDocumento();
-		TipoDocumento tipoDocumento = ComparatorUtils.findByCodice(model.getListaTipoDocumento(), codiceTipoDocumento);
-		if(tipoDocumento == null) {
-			// Nessun tipo documento corrispondente al codice
-			log.info(methodName, "Tipo documento non trovato per codice  " + codiceTipoDocumento);
-			return;
-		}
-		// Imposto il tipo documento
-		documentoSpesa.setTipoDocumento(tipoDocumento);
+		
+		
+		
+		
 		log.debug(methodName, "Fattura.tipoDocumentoFEL.codice = " + fatturaFEL.getTipoDocumentoFEL().getCodice()
 				+ " => documento.tipoDocumento = " + (documentoSpesa.getTipoDocumento() != null ? documentoSpesa.getTipoDocumento().getUid() : "null"));
-	}
-	
-	/**
-	 * Imposta l'importo.
-	 * 
-	 * @param documentoSpesa il documento di spesa
-	 * @param fatturaFEL     la fattura
-	 */
-	private void impostaImporto(DocumentoSpesa documentoSpesa, FatturaFEL fatturaFEL) {
-		final String methodName = "impostaImporto";
-		if(!BilConstants.CODICE_DIVISA_EUR.getConstant().equals(fatturaFEL.getDivisa())) {
-			// Se la divisa non e' EURO, non imposto l'importo
-			log.debug(methodName, "La divisa della fattura " + fatturaFEL.getDivisa() + " non e' pari a " + BilConstants.CODICE_DIVISA_EUR.getConstant() + ": non imposto l'importo");
-			addInformazione(ErroreFin.DIVISA_FEL_NON_EURO.getErrore());
-			return;
-		}
-		// Impostato importo con divisa EURO
-		documentoSpesa.setImporto(fatturaFEL.getImportoTotaleDocumento() == null ? BigDecimal.ZERO : fatturaFEL.getImportoTotaleDocumento().abs());
-		
-		log.debug(methodName, "Fattura.importoTotaleDocumento = " + fatturaFEL.getImportoTotaleDocumento() + " => documento.importo = " + documentoSpesa.getImporto());
 	}
 	
 	/**
@@ -1124,7 +1106,7 @@ public class InserisciDocumentoSpesaAction extends GenericDocumentoSpesaAction<I
 				isNumeric(documento.getCodAvvisoPagoPA()),
 				ErroreFin.COD_AVVISO_PAGO_PA_NUMERICO.getErrore());
 		
-		int maxLength = Constanti.CODICE_AVVISO_PAGO_PA_LENGTH;
+		int maxLength = CostantiFin.CODICE_AVVISO_PAGO_PA_LENGTH;
 		checkCondition(documento.getCodAvvisoPagoPA() == null || documento.getCodAvvisoPagoPA().length() <= maxLength,
 				ErroreFin.COD_AVVISO_PAGO_PA_MAXLENGTH.getErrore());
 		

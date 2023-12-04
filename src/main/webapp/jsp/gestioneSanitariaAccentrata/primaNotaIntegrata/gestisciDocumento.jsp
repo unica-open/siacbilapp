@@ -26,7 +26,7 @@ SPDX-License-Identifier: EUPL-1.2
 					
 					<s:include value="/jsp/include/messaggi.jsp" />
 					<h3><s:property value="intestazionePagina" /></h3>
-					<h4><s:property value="intestazioneRichiesta" escape="false"/></h4>
+					<h4><s:property value="intestazioneRichiesta" escapeHtml="false"/></h4>
 					
 					<div class="accordion" id="accordionMovimento">
 						<div class="accordion-group">
@@ -114,7 +114,7 @@ SPDX-License-Identifier: EUPL-1.2
 													</a>
 												</td>
 												<td><s:property value="#elqu.numeroQuotaString"/></td>
-												<td><s:property value="#elqu.causaleString" escape="false"/></td>
+												<td><s:property value="#elqu.causaleString" escapeHtml="false"/></td>
 												<td><s:property value="#elqu.statoRichiestaString"/></td>
 												<td><s:property value="#elqu.dataRegistrazioneString"/></td>
 												<td><s:property value="#elqu.contoFinanziarioInizialeString"/></td>
@@ -148,9 +148,9 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/classifgsa/ztree.classifgsa.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.documento.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin${consultazioneSubpath}.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/classifgsa/ztree.classifgsa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.documento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin${consultazioneSubpath}.js"></script>
 </body>
 </html>

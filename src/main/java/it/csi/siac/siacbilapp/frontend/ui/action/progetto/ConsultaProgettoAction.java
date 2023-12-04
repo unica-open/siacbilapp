@@ -4,23 +4,26 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.progetto;
 
+import java.util.Comparator;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.progetto.ConsultaProgettoModel;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogramma;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioProgettoResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsulta;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsultaResponse;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
+import it.csi.siac.siacbilser.model.progetto.MutuoAssociatoProgetto;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 
 /**
  * Classe di Action per la gestione della consultazione del Progetto.
@@ -34,6 +37,12 @@ public class ConsultaProgettoAction extends GenericProgettoAction<ConsultaProget
 	
 	/** Per la serialiazzazione */
 	private static final long serialVersionUID = 7033998987854718167L;
+	
+	private static final Comparator<MutuoAssociatoProgetto> MutuoAssociatoEntitaNumeroMutuoComparator = new Comparator<MutuoAssociatoProgetto>() {
+		@Override
+		public int compare(MutuoAssociatoProgetto arg0, MutuoAssociatoProgetto arg1) {
+			return arg0.getMutuo().getNumero().compareTo(arg1.getMutuo().getNumero());
+		}};	
 	
 	@Override
 	public void prepareExecute() throws Exception {
@@ -56,10 +65,12 @@ public class ConsultaProgettoAction extends GenericProgettoAction<ConsultaProget
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioProgetto.class, response));
 			addErrori(response);
 			return INPUT;
 		}
+		
+		CollectionUtil.sort(response.getProgetto().getElencoMutuiAssociati(), MutuoAssociatoEntitaNumeroMutuoComparator);
 		
 		log.debug(methodName, "Progetto ottenuto");
 		
@@ -127,16 +138,16 @@ public class ConsultaProgettoAction extends GenericProgettoAction<ConsultaProget
 		log.debug(methodName, "Consultazione cronoprogrammaGestione");
 
 		Integer uidProgetto = sessionHandler.getParametro(BilSessionParameter.UID_PROGETTO);
-		CalcoloProspettoRiassuntivoCronoprogramma request = model.creaRequestCalcoloProspettoRiassuntivoCronoprogramma(uidProgetto);
+		CalcoloProspettoRiassuntivoCronoprogrammaConsulta request = model.creaRequestCalcoloProspettoRiassuntivoCronoprogrammaConsulta(uidProgetto);
 		logServiceRequest(request);
 
-		CalcoloProspettoRiassuntivoCronoprogrammaResponse response = progettoService.calcoloProspettoRiassuntivoCronoprogramma(request);
+		CalcoloProspettoRiassuntivoCronoprogrammaConsultaResponse response = progettoService.calcoloProspettoRiassuntivoCronoprogrammaConsulta(request);
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
 			log.info(
 					methodName,
-					createErrorInServiceInvocationString(request, response));
+					createErrorInServiceInvocationString(CalcoloProspettoRiassuntivoCronoprogrammaConsulta.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

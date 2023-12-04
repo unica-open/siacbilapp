@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.notacredito.InserisciPrimaNotaIntegrataNotaCreditoBaseModel;
@@ -18,7 +19,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.consultazione.ConsultaRegistrazioneMovFinDocumentoHelper;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
@@ -36,6 +37,7 @@ import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaDettaglioRegistrazi
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaSinteticaConto;
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaSinteticaContoResponse;
 import it.csi.siac.siacgenser.model.CausaleEP;
+import it.csi.siac.siacgenser.model.ClasseDiConciliazione;
 import it.csi.siac.siacgenser.model.Conto;
 import it.csi.siac.siacgenser.model.MovimentoDettaglio;
 import it.csi.siac.siacgenser.model.MovimentoEP;
@@ -165,9 +167,9 @@ public abstract class InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseActi
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioRegistrazioneMovFin.class, response));
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioRegistrazioneMovFin.class, response));
 		}
 		if (response.getRegistrazioneMovFin() == null) {
 			log.info(methodName, "RegistrazioneMovFin con uid " + model.getUidRegistrazione() + " non presente");
@@ -525,10 +527,11 @@ public abstract class InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseActi
 	 */
 	public String aggiornaContoDaClasseDiConciliazione() {
 		int idx = model.getIndiceConto().intValue();
-		impostaDatiConto();
+		//SIAC-8199
+		Conto contoSelezionato = impostaDatiConto();
 		ElementoScritturaPrimaNotaIntegrata elementoScrittura = model.getListaElementoScritturaPerElaborazione().get(idx);
 //		elementoScrittura.getContoTipoOperazione().setConto(model.getContoDaSostituire());
-		elementoScrittura.getMovimentoDettaglio().setConto(model.getContoDaSostituire());
+		elementoScrittura.getMovimentoDettaglio().setConto(contoSelezionato);
 		model.getListaElementoScritturaPerElaborazione().set(idx, elementoScrittura);
 		calcolaTotaleDareAvere();
 		impostaInformazioneSuccesso();
@@ -537,9 +540,43 @@ public abstract class InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseActi
 	}
 	
 	/**
-	 * valida il metodo aggiornaContoDaClasseDiConciliazioneConti
+	 * valida il metodo aggiornaContoDaClasseDiConciliazioneConDigitazione
 	 */
-	public void validateAggiornaContoDaClasseDiConciliazioneConti(){
+	public void validateAggiornaContoDaClasseDiConciliazioneConDigitazione(){
+		Conto conto = checkAndObtainContoFogliaEsistenteUnivoco();
+		//SIAC-7388
+		checkContoInListaContiClasse(conto);
+		// Imposto il conto nel model
+		model.setContoDaSostituire(conto);
+	}
+	
+	private void checkContoInListaContiClasse(Conto conto) {
+		int idx = model.getIndiceConto().intValue();
+		ElementoScritturaPrimaNotaIntegrata elementoScrittura = model.getListaElementoScritturaPerElaborazione().get(idx);
+		ClasseDiConciliazione cl = elementoScrittura.getClasseDiConcilazione();
+		
+		if(cl != null && ClasseDiConciliazione.CONTI.equals(cl)) {
+			//TODO: valutare con analista
+			return;
+		}
+		checkCondition(cl != null && elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione() != null && !elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione().isEmpty(), 
+				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("La classe di conciliazione non presenta conti con cui confrontare il conto digitato."), true);
+		
+		checkCondition(isContoAppartenenteAClasseConciliazione(conto, elementoScrittura.getContiSelezionabiliDaClasseDiConciliazione()), 
+				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("Il conto digitato (" + StringUtils.defaultIfBlank(conto.getCodice(), "null") 
+				+ " ) non risulta essere tra i conti della classe " + StringUtils.defaultIfBlank(model.getClasseDiConciliazioneContoDigitato(), ""), true));
+	}
+	
+	private boolean  isContoAppartenenteAClasseConciliazione(Conto conto, List<Conto> contiClasse) {
+		for (Conto ct : contiClasse) {
+			if(ct.getCodice().equalsIgnoreCase(conto.getCodice())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Conto checkAndObtainContoFogliaEsistenteUnivoco() {
 		RicercaSinteticaConto request = model.creaRequestRicercaSinteticaConto(model.getConto());
 		logServiceRequest(request);
 	
@@ -551,34 +588,33 @@ public abstract class InserisciPrimaNotaIntegrataSubdocumentoNotaCreditoBaseActi
 			//si sono verificati degli errori: esco.
 			// Se ho errori esco
 			addErrori(response);
-			throw new ParamValidationException(createErrorInServiceInvocationString(request, response));
+			throw new ParamValidationException(createErrorInServiceInvocationString(RicercaSinteticaConto.class, response));
 		}
 		checkCondition(!response.getConti().isEmpty(), ErroreCore.ENTITA_NON_TROVATA.getErrore("Conto", model.getConto().getCodice()), true);
 		checkCondition(response.getConti().size() < 2, ErroreFin.OGGETTO_NON_UNIVOCO.getErrore("Conto"), true);
 		
 		Conto conto = response.getConti().get(0);
 		checkCondition(Boolean.TRUE.equals(conto.getContoFoglia()), ErroreCore.ENTITA_NON_COMPLETA.getErrore("Il conto " + conto.getCodice(), "non e' un Conto foglia"), true);
-		// Imposto il conto nel model
-		model.setContoDaSostituire(conto);
+		return conto;
 	}
 	
 	/**
 	 * Aggiornamento del conto dalla classe di conciliazione di tipo Conti
 	 * @return una stringa corrispondente al risultato dell'invocazione
 	 */
-	public String aggiornaContoDaClasseDiConciliazioneConti() {
+	public String aggiornaContoDaClasseDiConciliazioneConDigitazione() {
 		return aggiornaContoDaClasseDiConciliazione();
 	}
 	
-	private void impostaDatiConto() {
+	private Conto impostaDatiConto() {
 		if(model.getContoDaSostituire() != null && model.getContoDaSostituire().getUid() != 0){
 			log.debug("impostaDatiConto", "ho il conto!");
 			RicercaDettaglioConto req = model.creaRequestRicercaDettaglioConto(model.getContoDaSostituire());
 			RicercaDettaglioContoResponse res = contoService.ricercaDettaglioConto(req);
-			model.setContoDaSostituire(res.getConto());
+			return res.getConto();
 		}else{
 			log.debug("impostaDatiConto", "non ho il conto!");
-			model.setContoDaSostituire(null);
+			return null;
 		}
 	}
 	

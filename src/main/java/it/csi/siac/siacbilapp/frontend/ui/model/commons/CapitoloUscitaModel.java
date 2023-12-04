@@ -13,12 +13,16 @@ import org.apache.commons.lang3.StringUtils;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.ClassificatoreAggiornamento;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.ClassificatoreAggiornamentoCapitoloUscita;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.RigaComponenteTabellaImportiCapitolo;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.RigaImportoTabellaImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaAttributiModificabiliCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaClassificatoriModificabiliCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatoreGenerico;
 import it.csi.siac.siacbilser.model.ClassificazioneCofog;
 import it.csi.siac.siacbilser.model.ClassificazioneCofogProgramma;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.Macroaggregato;
 import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.PerimetroSanitarioSpesa;
@@ -53,8 +57,8 @@ public abstract class CapitoloUscitaModel extends CapitoloModel {
 	/** Per la serializzazione  */
 	private static final long serialVersionUID = 5795279638816969800L;
 
-	/** Il numero dei classificatori generici */
-	private static final int NUMERO_CLASSIFICATORI_GENERICI = 15;
+	//SIAC-7192
+	private static final String CODICE_MISSIONE_FONDI = "20";
 	
 	/* Prima maschera: dati di base */
 	private Missione             missione;
@@ -99,8 +103,82 @@ public abstract class CapitoloUscitaModel extends CapitoloModel {
 	private boolean perimetroSanitarioSpesaEditabile;
 	private boolean transazioneUnioneEuropeaSpesaEditabile;
 	private boolean politicheRegionaliUnitarieEditabile;
-	
 	private boolean flagFunzioniDelegateRegioneEditabile;
+	
+	//SIAC-7192
+	private List<RisorsaAccantonata> listaRisorsaAccantonata = new ArrayList<RisorsaAccantonata>();
+	private RisorsaAccantonata risorsaAccantonata;
+	//SIAC-8214
+	//SIAC-XXXX
+	private List<RigaComponenteTabellaImportiCapitolo> righeComponentiTabellaImportiCapitolo = new ArrayList<RigaComponenteTabellaImportiCapitolo>();
+	private List<RigaImportoTabellaImportiCapitolo> righeImportiTabellaImportiCapitolo = new ArrayList<RigaImportoTabellaImportiCapitolo>();
+	private List<RigaComponenteTabellaImportiCapitolo> righeDisponibilitaImpegnareComponenti = new ArrayList<RigaComponenteTabellaImportiCapitolo>();
+	private List<RigaComponenteTabellaImportiCapitolo> righeDisponibilitaVariareComponenti = new ArrayList<RigaComponenteTabellaImportiCapitolo>();
+	
+	//SIAC-8517
+	private ClassificatoreGenerico classificatoreGenerico1;
+	private ClassificatoreGenerico classificatoreGenerico2;
+	private ClassificatoreGenerico classificatoreGenerico3;
+	private ClassificatoreGenerico classificatoreGenerico4;
+	private ClassificatoreGenerico classificatoreGenerico5;
+	private ClassificatoreGenerico classificatoreGenerico6;
+	private ClassificatoreGenerico classificatoreGenerico7;
+	private ClassificatoreGenerico classificatoreGenerico8;
+	private ClassificatoreGenerico classificatoreGenerico9;
+	private ClassificatoreGenerico classificatoreGenerico10;
+	private ClassificatoreGenerico classificatoreGenerico11;
+	private ClassificatoreGenerico classificatoreGenerico12;
+	private ClassificatoreGenerico classificatoreGenerico13;
+	private ClassificatoreGenerico classificatoreGenerico14;
+	private ClassificatoreGenerico classificatoreGenerico15;
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico1  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico2  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico3  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico4  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico5  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico6  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico7  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico8  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico9  = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico10 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico11 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico12 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico13 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico14 = new ArrayList<ClassificatoreGenerico>();
+	private List<ClassificatoreGenerico> listaClassificatoreGenerico15 = new ArrayList<ClassificatoreGenerico>();
+	/* Labels */
+	private String labelClassificatoreGenerico1;
+	private String labelClassificatoreGenerico2;
+	private String labelClassificatoreGenerico3;
+	private String labelClassificatoreGenerico4;
+	private String labelClassificatoreGenerico5;
+	private String labelClassificatoreGenerico6;
+	private String labelClassificatoreGenerico7;
+	private String labelClassificatoreGenerico8;
+	private String labelClassificatoreGenerico9;
+	private String labelClassificatoreGenerico10;
+	private String labelClassificatoreGenerico11;
+	private String labelClassificatoreGenerico12;
+	private String labelClassificatoreGenerico13;
+	private String labelClassificatoreGenerico14;
+	private String labelClassificatoreGenerico15;
+	
+	private boolean classificatoreGenerico1Editabile;
+	private boolean classificatoreGenerico2Editabile;
+	private boolean classificatoreGenerico3Editabile;
+	private boolean classificatoreGenerico4Editabile;
+	private boolean classificatoreGenerico5Editabile;
+	private boolean classificatoreGenerico6Editabile;
+	private boolean classificatoreGenerico7Editabile;
+	private boolean classificatoreGenerico8Editabile;
+	private boolean classificatoreGenerico9Editabile;
+	private boolean classificatoreGenerico10Editabile;
+	private boolean classificatoreGenerico11Editabile;
+	private boolean classificatoreGenerico12Editabile;
+	private boolean classificatoreGenerico13Editabile;
+	private boolean classificatoreGenerico14Editabile;
+	private boolean classificatoreGenerico15Editabile;
+	
 	
 	/**
 	 * @return the missione
@@ -499,6 +577,441 @@ public abstract class CapitoloUscitaModel extends CapitoloModel {
 		this.flagFunzioniDelegateRegioneEditabile = flagFunzioniDelegateRegioneEditabile;
 	}
 	
+	
+	
+	public ClassificatoreGenerico getClassificatoreGenerico1() {
+		return classificatoreGenerico1;
+	}
+	public void setClassificatoreGenerico1(ClassificatoreGenerico classificatoreGenerico1) {
+		this.classificatoreGenerico1 = classificatoreGenerico1;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico2() {
+		return classificatoreGenerico2;
+	}
+	public void setClassificatoreGenerico2(ClassificatoreGenerico classificatoreGenerico2) {
+		this.classificatoreGenerico2 = classificatoreGenerico2;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico3() {
+		return classificatoreGenerico3;
+	}
+	public void setClassificatoreGenerico3(ClassificatoreGenerico classificatoreGenerico3) {
+		this.classificatoreGenerico3 = classificatoreGenerico3;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico4() {
+		return classificatoreGenerico4;
+	}
+	public void setClassificatoreGenerico4(ClassificatoreGenerico classificatoreGenerico4) {
+		this.classificatoreGenerico4 = classificatoreGenerico4;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico5() {
+		return classificatoreGenerico5;
+	}
+	public void setClassificatoreGenerico5(ClassificatoreGenerico classificatoreGenerico5) {
+		this.classificatoreGenerico5 = classificatoreGenerico5;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico6() {
+		return classificatoreGenerico6;
+	}
+	public void setClassificatoreGenerico6(ClassificatoreGenerico classificatoreGenerico6) {
+		this.classificatoreGenerico6 = classificatoreGenerico6;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico7() {
+		return classificatoreGenerico7;
+	}
+	public void setClassificatoreGenerico7(ClassificatoreGenerico classificatoreGenerico7) {
+		this.classificatoreGenerico7 = classificatoreGenerico7;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico8() {
+		return classificatoreGenerico8;
+	}
+	public void setClassificatoreGenerico8(ClassificatoreGenerico classificatoreGenerico8) {
+		this.classificatoreGenerico8 = classificatoreGenerico8;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico9() {
+		return classificatoreGenerico9;
+	}
+	public void setClassificatoreGenerico9(ClassificatoreGenerico classificatoreGenerico9) {
+		this.classificatoreGenerico9 = classificatoreGenerico9;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico10() {
+		return classificatoreGenerico10;
+	}
+	public void setClassificatoreGenerico10(ClassificatoreGenerico classificatoreGenerico10) {
+		this.classificatoreGenerico10 = classificatoreGenerico10;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico11() {
+		return classificatoreGenerico11;
+	}
+	public void setClassificatoreGenerico11(ClassificatoreGenerico classificatoreGenerico11) {
+		this.classificatoreGenerico11 = classificatoreGenerico11;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico12() {
+		return classificatoreGenerico12;
+	}
+	public void setClassificatoreGenerico12(ClassificatoreGenerico classificatoreGenerico12) {
+		this.classificatoreGenerico12 = classificatoreGenerico12;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico13() {
+		return classificatoreGenerico13;
+	}
+	public void setClassificatoreGenerico13(ClassificatoreGenerico classificatoreGenerico13) {
+		this.classificatoreGenerico13 = classificatoreGenerico13;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico14() {
+		return classificatoreGenerico14;
+	}
+	public void setClassificatoreGenerico14(ClassificatoreGenerico classificatoreGenerico14) {
+		this.classificatoreGenerico14 = classificatoreGenerico14;
+	}
+	public ClassificatoreGenerico getClassificatoreGenerico15() {
+		return classificatoreGenerico15;
+	}
+	public void setClassificatoreGenerico15(ClassificatoreGenerico classificatoreGenerico15) {
+		this.classificatoreGenerico15 = classificatoreGenerico15;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico1() {
+		return listaClassificatoreGenerico1;
+	}
+	public void setListaClassificatoreGenerico1(List<ClassificatoreGenerico> listaClassificatoreGenerico1) {
+		this.listaClassificatoreGenerico1 = listaClassificatoreGenerico1;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico2() {
+		return listaClassificatoreGenerico2;
+	}
+	public void setListaClassificatoreGenerico2(List<ClassificatoreGenerico> listaClassificatoreGenerico2) {
+		this.listaClassificatoreGenerico2 = listaClassificatoreGenerico2;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico3() {
+		return listaClassificatoreGenerico3;
+	}
+	public void setListaClassificatoreGenerico3(List<ClassificatoreGenerico> listaClassificatoreGenerico3) {
+		this.listaClassificatoreGenerico3 = listaClassificatoreGenerico3;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico4() {
+		return listaClassificatoreGenerico4;
+	}
+	public void setListaClassificatoreGenerico4(List<ClassificatoreGenerico> listaClassificatoreGenerico4) {
+		this.listaClassificatoreGenerico4 = listaClassificatoreGenerico4;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico5() {
+		return listaClassificatoreGenerico5;
+	}
+	public void setListaClassificatoreGenerico5(List<ClassificatoreGenerico> listaClassificatoreGenerico5) {
+		this.listaClassificatoreGenerico5 = listaClassificatoreGenerico5;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico6() {
+		return listaClassificatoreGenerico6;
+	}
+	public void setListaClassificatoreGenerico6(List<ClassificatoreGenerico> listaClassificatoreGenerico6) {
+		this.listaClassificatoreGenerico6 = listaClassificatoreGenerico6;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico7() {
+		return listaClassificatoreGenerico7;
+	}
+	public void setListaClassificatoreGenerico7(List<ClassificatoreGenerico> listaClassificatoreGenerico7) {
+		this.listaClassificatoreGenerico7 = listaClassificatoreGenerico7;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico8() {
+		return listaClassificatoreGenerico8;
+	}
+	public void setListaClassificatoreGenerico8(List<ClassificatoreGenerico> listaClassificatoreGenerico8) {
+		this.listaClassificatoreGenerico8 = listaClassificatoreGenerico8;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico9() {
+		return listaClassificatoreGenerico9;
+	}
+	public void setListaClassificatoreGenerico9(List<ClassificatoreGenerico> listaClassificatoreGenerico9) {
+		this.listaClassificatoreGenerico9 = listaClassificatoreGenerico9;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico10() {
+		return listaClassificatoreGenerico10;
+	}
+	public void setListaClassificatoreGenerico10(List<ClassificatoreGenerico> listaClassificatoreGenerico10) {
+		this.listaClassificatoreGenerico10 = listaClassificatoreGenerico10;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico11() {
+		return listaClassificatoreGenerico11;
+	}
+	public void setListaClassificatoreGenerico11(List<ClassificatoreGenerico> listaClassificatoreGenerico11) {
+		this.listaClassificatoreGenerico11 = listaClassificatoreGenerico11;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico12() {
+		return listaClassificatoreGenerico12;
+	}
+	public void setListaClassificatoreGenerico12(List<ClassificatoreGenerico> listaClassificatoreGenerico12) {
+		this.listaClassificatoreGenerico12 = listaClassificatoreGenerico12;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico13() {
+		return listaClassificatoreGenerico13;
+	}
+	public void setListaClassificatoreGenerico13(List<ClassificatoreGenerico> listaClassificatoreGenerico13) {
+		this.listaClassificatoreGenerico13 = listaClassificatoreGenerico13;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico14() {
+		return listaClassificatoreGenerico14;
+	}
+	public void setListaClassificatoreGenerico14(List<ClassificatoreGenerico> listaClassificatoreGenerico14) {
+		this.listaClassificatoreGenerico14 = listaClassificatoreGenerico14;
+	}
+	public List<ClassificatoreGenerico> getListaClassificatoreGenerico15() {
+		return listaClassificatoreGenerico15;
+	}
+	public void setListaClassificatoreGenerico15(List<ClassificatoreGenerico> listaClassificatoreGenerico15) {
+		this.listaClassificatoreGenerico15 = listaClassificatoreGenerico15;
+	}
+	public String getLabelClassificatoreGenerico1() {
+		return labelClassificatoreGenerico1;
+	}
+	public void setLabelClassificatoreGenerico1(String labelClassificatoreGenerico1) {
+		this.labelClassificatoreGenerico1 = labelClassificatoreGenerico1;
+	}
+	public String getLabelClassificatoreGenerico2() {
+		return labelClassificatoreGenerico2;
+	}
+	public void setLabelClassificatoreGenerico2(String labelClassificatoreGenerico2) {
+		this.labelClassificatoreGenerico2 = labelClassificatoreGenerico2;
+	}
+	public String getLabelClassificatoreGenerico3() {
+		return labelClassificatoreGenerico3;
+	}
+	public void setLabelClassificatoreGenerico3(String labelClassificatoreGenerico3) {
+		this.labelClassificatoreGenerico3 = labelClassificatoreGenerico3;
+	}
+	public String getLabelClassificatoreGenerico4() {
+		return labelClassificatoreGenerico4;
+	}
+	public void setLabelClassificatoreGenerico4(String labelClassificatoreGenerico4) {
+		this.labelClassificatoreGenerico4 = labelClassificatoreGenerico4;
+	}
+	public String getLabelClassificatoreGenerico5() {
+		return labelClassificatoreGenerico5;
+	}
+	public void setLabelClassificatoreGenerico5(String labelClassificatoreGenerico5) {
+		this.labelClassificatoreGenerico5 = labelClassificatoreGenerico5;
+	}
+	public String getLabelClassificatoreGenerico6() {
+		return labelClassificatoreGenerico6;
+	}
+	public void setLabelClassificatoreGenerico6(String labelClassificatoreGenerico6) {
+		this.labelClassificatoreGenerico6 = labelClassificatoreGenerico6;
+	}
+	public String getLabelClassificatoreGenerico7() {
+		return labelClassificatoreGenerico7;
+	}
+	public void setLabelClassificatoreGenerico7(String labelClassificatoreGenerico7) {
+		this.labelClassificatoreGenerico7 = labelClassificatoreGenerico7;
+	}
+	public String getLabelClassificatoreGenerico8() {
+		return labelClassificatoreGenerico8;
+	}
+	public void setLabelClassificatoreGenerico8(String labelClassificatoreGenerico8) {
+		this.labelClassificatoreGenerico8 = labelClassificatoreGenerico8;
+	}
+	public String getLabelClassificatoreGenerico9() {
+		return labelClassificatoreGenerico9;
+	}
+	public void setLabelClassificatoreGenerico9(String labelClassificatoreGenerico9) {
+		this.labelClassificatoreGenerico9 = labelClassificatoreGenerico9;
+	}
+	public String getLabelClassificatoreGenerico10() {
+		return labelClassificatoreGenerico10;
+	}
+	public void setLabelClassificatoreGenerico10(String labelClassificatoreGenerico10) {
+		this.labelClassificatoreGenerico10 = labelClassificatoreGenerico10;
+	}
+	public String getLabelClassificatoreGenerico11() {
+		return labelClassificatoreGenerico11;
+	}
+	public void setLabelClassificatoreGenerico11(String labelClassificatoreGenerico11) {
+		this.labelClassificatoreGenerico11 = labelClassificatoreGenerico11;
+	}
+	public String getLabelClassificatoreGenerico12() {
+		return labelClassificatoreGenerico12;
+	}
+	public void setLabelClassificatoreGenerico12(String labelClassificatoreGenerico12) {
+		this.labelClassificatoreGenerico12 = labelClassificatoreGenerico12;
+	}
+	public String getLabelClassificatoreGenerico13() {
+		return labelClassificatoreGenerico13;
+	}
+	public void setLabelClassificatoreGenerico13(String labelClassificatoreGenerico13) {
+		this.labelClassificatoreGenerico13 = labelClassificatoreGenerico13;
+	}
+	public String getLabelClassificatoreGenerico14() {
+		return labelClassificatoreGenerico14;
+	}
+	public void setLabelClassificatoreGenerico14(String labelClassificatoreGenerico14) {
+		this.labelClassificatoreGenerico14 = labelClassificatoreGenerico14;
+	}
+	public String getLabelClassificatoreGenerico15() {
+		return labelClassificatoreGenerico15;
+	}
+	public void setLabelClassificatoreGenerico15(String labelClassificatoreGenerico15) {
+		this.labelClassificatoreGenerico15 = labelClassificatoreGenerico15;
+	}
+	public boolean isClassificatoreGenerico1Editabile() {
+		return classificatoreGenerico1Editabile;
+	}
+	public void setClassificatoreGenerico1Editabile(boolean classificatoreGenerico1Editabile) {
+		this.classificatoreGenerico1Editabile = classificatoreGenerico1Editabile;
+	}
+	public boolean isClassificatoreGenerico2Editabile() {
+		return classificatoreGenerico2Editabile;
+	}
+	public void setClassificatoreGenerico2Editabile(boolean classificatoreGenerico2Editabile) {
+		this.classificatoreGenerico2Editabile = classificatoreGenerico2Editabile;
+	}
+	public boolean isClassificatoreGenerico3Editabile() {
+		return classificatoreGenerico3Editabile;
+	}
+	public void setClassificatoreGenerico3Editabile(boolean classificatoreGenerico3Editabile) {
+		this.classificatoreGenerico3Editabile = classificatoreGenerico3Editabile;
+	}
+	public boolean isClassificatoreGenerico4Editabile() {
+		return classificatoreGenerico4Editabile;
+	}
+	public void setClassificatoreGenerico4Editabile(boolean classificatoreGenerico4Editabile) {
+		this.classificatoreGenerico4Editabile = classificatoreGenerico4Editabile;
+	}
+	public boolean isClassificatoreGenerico5Editabile() {
+		return classificatoreGenerico5Editabile;
+	}
+	public void setClassificatoreGenerico5Editabile(boolean classificatoreGenerico5Editabile) {
+		this.classificatoreGenerico5Editabile = classificatoreGenerico5Editabile;
+	}
+	public boolean isClassificatoreGenerico6Editabile() {
+		return classificatoreGenerico6Editabile;
+	}
+	public void setClassificatoreGenerico6Editabile(boolean classificatoreGenerico6Editabile) {
+		this.classificatoreGenerico6Editabile = classificatoreGenerico6Editabile;
+	}
+	public boolean isClassificatoreGenerico7Editabile() {
+		return classificatoreGenerico7Editabile;
+	}
+	public void setClassificatoreGenerico7Editabile(boolean classificatoreGenerico7Editabile) {
+		this.classificatoreGenerico7Editabile = classificatoreGenerico7Editabile;
+	}
+	public boolean isClassificatoreGenerico8Editabile() {
+		return classificatoreGenerico8Editabile;
+	}
+	public void setClassificatoreGenerico8Editabile(boolean classificatoreGenerico8Editabile) {
+		this.classificatoreGenerico8Editabile = classificatoreGenerico8Editabile;
+	}
+	public boolean isClassificatoreGenerico9Editabile() {
+		return classificatoreGenerico9Editabile;
+	}
+	public void setClassificatoreGenerico9Editabile(boolean classificatoreGenerico9Editabile) {
+		this.classificatoreGenerico9Editabile = classificatoreGenerico9Editabile;
+	}
+	public boolean isClassificatoreGenerico10Editabile() {
+		return classificatoreGenerico10Editabile;
+	}
+	public void setClassificatoreGenerico10Editabile(boolean classificatoreGenerico10Editabile) {
+		this.classificatoreGenerico10Editabile = classificatoreGenerico10Editabile;
+	}
+	public boolean isClassificatoreGenerico11Editabile() {
+		return classificatoreGenerico11Editabile;
+	}
+	public void setClassificatoreGenerico11Editabile(boolean classificatoreGenerico11Editabile) {
+		this.classificatoreGenerico11Editabile = classificatoreGenerico11Editabile;
+	}
+	public boolean isClassificatoreGenerico12Editabile() {
+		return classificatoreGenerico12Editabile;
+	}
+	public void setClassificatoreGenerico12Editabile(boolean classificatoreGenerico12Editabile) {
+		this.classificatoreGenerico12Editabile = classificatoreGenerico12Editabile;
+	}
+	public boolean isClassificatoreGenerico13Editabile() {
+		return classificatoreGenerico13Editabile;
+	}
+	public void setClassificatoreGenerico13Editabile(boolean classificatoreGenerico13Editabile) {
+		this.classificatoreGenerico13Editabile = classificatoreGenerico13Editabile;
+	}
+	public boolean isClassificatoreGenerico14Editabile() {
+		return classificatoreGenerico14Editabile;
+	}
+	public void setClassificatoreGenerico14Editabile(boolean classificatoreGenerico14Editabile) {
+		this.classificatoreGenerico14Editabile = classificatoreGenerico14Editabile;
+	}
+	public boolean isClassificatoreGenerico15Editabile() {
+		return classificatoreGenerico15Editabile;
+	}
+	public void setClassificatoreGenerico15Editabile(boolean classificatoreGenerico15Editabile) {
+		this.classificatoreGenerico15Editabile = classificatoreGenerico15Editabile;
+	}
+	/**
+	 * @return the listaRisorsaAccantonata
+	 */
+	public List<RisorsaAccantonata> getListaRisorsaAccantonata() {
+		return listaRisorsaAccantonata;
+	}
+	/**
+	 * @param listaRisorsaAccantonata the listaRisorsaAccantonata to set
+	 */
+	public void setListaRisorsaAccantonata(List<RisorsaAccantonata> listaRisorsaAccantonata) {
+		this.listaRisorsaAccantonata = listaRisorsaAccantonata != null? listaRisorsaAccantonata : new ArrayList<RisorsaAccantonata>();
+	}
+	
+	/**
+	 * @return the risorsaAccantonata
+	 */
+	public RisorsaAccantonata getRisorsaAccantonata() {
+		return risorsaAccantonata;
+	}
+	/**
+	 * @param risorsaAccantonata the risorsaAccantonata to set
+	 */
+	public void setRisorsaAccantonata(RisorsaAccantonata risorsaAccantonata) {
+		this.risorsaAccantonata = risorsaAccantonata;
+	}
+	
+	public List<RigaComponenteTabellaImportiCapitolo> getRigheComponentiTabellaImportiCapitolo() {
+		return righeComponentiTabellaImportiCapitolo;
+	}
+
+	public void setRigheComponentiTabellaImportiCapitolo(
+			List<RigaComponenteTabellaImportiCapitolo> righeComponentiTabellaImportiCapitolo) {
+		this.righeComponentiTabellaImportiCapitolo = righeComponentiTabellaImportiCapitolo;
+	}
+
+	public List<RigaImportoTabellaImportiCapitolo> getRigheImportiTabellaImportiCapitolo() {
+		return righeImportiTabellaImportiCapitolo;
+	}
+
+	public void setRigheImportiTabellaImportiCapitolo(
+			List<RigaImportoTabellaImportiCapitolo> righeImportiTabellaImportiCapitolo) {
+		this.righeImportiTabellaImportiCapitolo = righeImportiTabellaImportiCapitolo;
+	}
+	
+	
+	public List<RigaComponenteTabellaImportiCapitolo> getRigheDisponibilitaImpegnareComponenti() {
+		return righeDisponibilitaImpegnareComponenti;
+	}
+	public void setRigheDisponibilitaImpegnareComponenti(List<RigaComponenteTabellaImportiCapitolo> righeDisponibilitaImpegnare) {
+		this.righeDisponibilitaImpegnareComponenti = righeDisponibilitaImpegnare;
+	}
+	public List<RigaComponenteTabellaImportiCapitolo> getRigheDisponibilitaVariareComponenti() {
+		return righeDisponibilitaVariareComponenti;
+	}
+	public void setRigheDisponibilitaVariareComponenti(List<RigaComponenteTabellaImportiCapitolo> righeDisponibilitaVariare) {
+		this.righeDisponibilitaVariareComponenti = righeDisponibilitaVariare;
+	}
+	/**
+	 * Checks if is visualizza disavanzo da debito.
+	 *
+	 * @return true, if is visualizza disavanzo da debito
+	 */
+	public boolean isMissioneFondi() {
+		if(missione == null || missione.getUid() == 0) {
+			return false;
+		}
+		String codiceMissione = missione.getCodice();
+		if(StringUtils.isEmpty(codiceMissione)) {
+			Missione missioneConDati = ComparatorUtils.searchByUid(getListaMissione(), missione);
+			codiceMissione = missioneConDati != null? missioneConDati.getCodice() : "";
+		}
+		return CODICE_MISSIONE_FONDI.equals(codiceMissione);
+	}
 	/**
 	 * @return the numeroClassificatoriGenerici
 	 */
@@ -580,6 +1093,9 @@ public abstract class CapitoloUscitaModel extends CapitoloModel {
 		transazioneUnioneEuropeaSpesa = caricaClassificatoriDaSessione(sessionHandler, transazioneUnioneEuropeaSpesa, BilSessionParameter.LISTA_TRANSAZIONE_UNIONE_EUROPEA_SPESA);
 		politicheRegionaliUnitarie = caricaClassificatoriDaSessione(sessionHandler, politicheRegionaliUnitarie, BilSessionParameter.LISTA_POLITICHE_REGIONALI_UNITARIE);
 		
+		//SIAC-7192
+		risorsaAccantonata = caricaClassificatoriDaSessione(sessionHandler, risorsaAccantonata, BilSessionParameter.LISTA_RISORSA_ACCANTONATA);
+		
 		siopeSpesa = caricaClassificatoriDaSessione(sessionHandler, siopeSpesa, BilSessionParameter.LISTA_SIOPE_SPESA);
 		if(siopeSpesa != null && siopeSpesa.getUid() != 0 && StringUtils.isBlank(siopeInserito)) {
 			siopeInserito = getCodiceEDescrizione(siopeSpesa);
@@ -645,6 +1161,7 @@ public abstract class CapitoloUscitaModel extends CapitoloModel {
 		perimetroSanitarioSpesaEditabile = isEditabile(unico, isMassivo, response, TipologiaClassificatore.PERIMETRO_SANITARIO_SPESA);
 		transazioneUnioneEuropeaSpesaEditabile = isEditabile(unico, isMassivo, response, TipologiaClassificatore.TRANSAZIONE_UE_SPESA);
 		politicheRegionaliUnitarieEditabile = isEditabile(unico, isMassivo, response, TipologiaClassificatore.POLITICHE_REGIONALI_UNITARIE);
+		//SIAC-7192
 	}
 	
 	@Override
@@ -684,6 +1201,22 @@ public abstract class CapitoloUscitaModel extends CapitoloModel {
 	public void setParametriDisabilitati(ClassificatoreAggiornamentoCapitoloUscita classificatoreAggiornamento) {
 		super.setParametriDisabilitati(classificatoreAggiornamento);
 		
+		classificatoreGenerico1 = impostaIlDato(classificatoreGenerico1Editabile, classificatoreGenerico1, classificatoreAggiornamento.getClassificatoreGenerico1());
+		classificatoreGenerico2 = impostaIlDato(classificatoreGenerico2Editabile, classificatoreGenerico2, classificatoreAggiornamento.getClassificatoreGenerico2());
+		classificatoreGenerico3 = impostaIlDato(classificatoreGenerico3Editabile, classificatoreGenerico3, classificatoreAggiornamento.getClassificatoreGenerico3());
+		classificatoreGenerico4 = impostaIlDato(classificatoreGenerico4Editabile, classificatoreGenerico4, classificatoreAggiornamento.getClassificatoreGenerico4());
+		classificatoreGenerico5 = impostaIlDato(classificatoreGenerico5Editabile, classificatoreGenerico5, classificatoreAggiornamento.getClassificatoreGenerico5());
+		classificatoreGenerico6 = impostaIlDato(classificatoreGenerico6Editabile, classificatoreGenerico6, classificatoreAggiornamento.getClassificatoreGenerico6());
+		classificatoreGenerico7 = impostaIlDato(classificatoreGenerico7Editabile, classificatoreGenerico7, classificatoreAggiornamento.getClassificatoreGenerico7());
+		classificatoreGenerico8 = impostaIlDato(classificatoreGenerico8Editabile, classificatoreGenerico8, classificatoreAggiornamento.getClassificatoreGenerico8());
+		classificatoreGenerico9 = impostaIlDato(classificatoreGenerico9Editabile, classificatoreGenerico9, classificatoreAggiornamento.getClassificatoreGenerico9());
+		classificatoreGenerico10 = impostaIlDato(classificatoreGenerico10Editabile, classificatoreGenerico10, classificatoreAggiornamento.getClassificatoreGenerico10());
+		classificatoreGenerico11 = impostaIlDato(classificatoreGenerico11Editabile, classificatoreGenerico11, classificatoreAggiornamento.getClassificatoreGenerico11());
+		classificatoreGenerico12 = impostaIlDato(classificatoreGenerico12Editabile, classificatoreGenerico12, classificatoreAggiornamento.getClassificatoreGenerico12());
+		classificatoreGenerico13 = impostaIlDato(classificatoreGenerico13Editabile, classificatoreGenerico13, classificatoreAggiornamento.getClassificatoreGenerico13());
+		classificatoreGenerico14 = impostaIlDato(classificatoreGenerico14Editabile, classificatoreGenerico14, classificatoreAggiornamento.getClassificatoreGenerico14());
+		classificatoreGenerico15 = impostaIlDato(classificatoreGenerico15Editabile, classificatoreGenerico15, classificatoreAggiornamento.getClassificatoreGenerico15());
+		
 		missione = impostaIlDato(missioneEditabile, missione, classificatoreAggiornamento.getMissione());
 		programma = impostaIlDato(programmaEditabile, programma, classificatoreAggiornamento.getProgramma());
 		classificazioneCofog = impostaIlDato(classificazioneCofogEditabile, classificazioneCofog, classificatoreAggiornamento.getClassificazioneCofog());
@@ -706,6 +1239,62 @@ public abstract class CapitoloUscitaModel extends CapitoloModel {
 			// Valore di default
 			siopeInserito = "Nessun SIOPE selezionato";
 		}
+	}
+	
+	/**
+	 * Costruisce la lista dei Classificatori Generici a partire dagli importi del Model.
+	 * 
+	 * @return la lista creata
+	 */
+	protected List<ClassificatoreGenerico> getListaClassificatoriGenerici() {
+		List<ClassificatoreGenerico> lista = new ArrayList<ClassificatoreGenerico>();
+		
+		addClassificatoreGenericoALista(lista, classificatoreGenerico1);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico2);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico3);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico4);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico5);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico6);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico7);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico8);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico9);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico10);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico11);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico12);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico13);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico14);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico15);
+		
+		return lista;
+	}
+	
+	/**
+	 * Costruisce la lista dei Classificatori Generici a partire dagli importi del Model.
+	 * 
+	 * @param classificatoreAggiornamento il wrapper per l'aggiornamento
+	 * 
+	 * @return la lista creata
+	 */
+	protected List<ClassificatoreGenerico> getListaClassificatoriGenericiAggiornamento(ClassificatoreAggiornamentoCapitoloUscita classificatoreAggiornamento) {
+		List<ClassificatoreGenerico> lista = new ArrayList<ClassificatoreGenerico>();
+		
+		addClassificatoreGenericoALista(lista, classificatoreGenerico1,  classificatoreAggiornamento.getClassificatoreGenerico1(),  classificatoreGenerico1Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico2,  classificatoreAggiornamento.getClassificatoreGenerico2(),  classificatoreGenerico2Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico3,  classificatoreAggiornamento.getClassificatoreGenerico3(),  classificatoreGenerico3Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico4,  classificatoreAggiornamento.getClassificatoreGenerico4(),  classificatoreGenerico4Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico5,  classificatoreAggiornamento.getClassificatoreGenerico5(),  classificatoreGenerico5Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico6,  classificatoreAggiornamento.getClassificatoreGenerico6(),  classificatoreGenerico6Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico7,  classificatoreAggiornamento.getClassificatoreGenerico7(),  classificatoreGenerico7Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico8,  classificatoreAggiornamento.getClassificatoreGenerico8(),  classificatoreGenerico8Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico9,  classificatoreAggiornamento.getClassificatoreGenerico9(),  classificatoreGenerico9Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico10, classificatoreAggiornamento.getClassificatoreGenerico10(), classificatoreGenerico10Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico11, classificatoreAggiornamento.getClassificatoreGenerico11(), classificatoreGenerico11Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico12, classificatoreAggiornamento.getClassificatoreGenerico12(), classificatoreGenerico12Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico13, classificatoreAggiornamento.getClassificatoreGenerico13(), classificatoreGenerico13Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico14, classificatoreAggiornamento.getClassificatoreGenerico14(), classificatoreGenerico14Editabile);
+		addClassificatoreGenericoALista(lista, classificatoreGenerico15, classificatoreAggiornamento.getClassificatoreGenerico15(), classificatoreGenerico15Editabile);
+		
+		return lista;
 	}
 	
 	/**

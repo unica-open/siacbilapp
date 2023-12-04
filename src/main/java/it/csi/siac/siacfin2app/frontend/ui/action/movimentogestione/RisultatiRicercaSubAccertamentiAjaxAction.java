@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -28,7 +28,7 @@ import it.csi.siac.siacfinser.model.SubAccertamento;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaSubAccertamentiAjaxAction extends GenericRisultatiRicercaAjaxAction<SubAccertamento, RisultatiRicercaSubAccertamentiAjaxModel, SubAccertamento, RicercaAccertamentoPerChiaveOttimizzato, RicercaAccertamentoPerChiaveOttimizzatoResponse> {
+public class RisultatiRicercaSubAccertamentiAjaxAction extends PagedDataTableAjaxAction<SubAccertamento, RisultatiRicercaSubAccertamentiAjaxModel, SubAccertamento, RicercaAccertamentoPerChiaveOttimizzato, RicercaAccertamentoPerChiaveOttimizzatoResponse> {
 
 	/**
 	 * Per la serializzazione
@@ -60,12 +60,12 @@ public class RisultatiRicercaSubAccertamentiAjaxAction extends GenericRisultatiR
 	}
 
 	@Override
-	protected SubAccertamento ottieniIstanza(SubAccertamento e) throws FrontEndBusinessException {
+	protected SubAccertamento getInstance(SubAccertamento e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaAccertamentoPerChiaveOttimizzatoResponse ottieniResponse(RicercaAccertamentoPerChiaveOttimizzato request) {
+	protected RicercaAccertamentoPerChiaveOttimizzatoResponse getResponse(RicercaAccertamentoPerChiaveOttimizzato request) {
 		
 		return movimentoGestioneService.ricercaAccertamentoPerChiaveOttimizzato(request);
 	}

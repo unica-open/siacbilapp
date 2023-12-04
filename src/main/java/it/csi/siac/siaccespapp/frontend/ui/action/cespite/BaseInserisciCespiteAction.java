@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccespapp.frontend.ui.action.cespite;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siaccespapp.frontend.ui.model.cespite.BaseInserisciCespiteModel;
@@ -76,7 +76,7 @@ public abstract class BaseInserisciCespiteAction<M extends BaseInserisciCespiteM
 		RicercaCespitePerChiaveResponse res = cespiteService.ricercaCespitePerChiave(req);
 		
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaCespitePerChiave.class, res));
 			addErrori(res);
 			return INPUT;
 		}

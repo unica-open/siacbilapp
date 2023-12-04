@@ -31,7 +31,7 @@ import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUGest;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.wrapper.EntitaConsultabileFilter;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 
@@ -95,7 +95,14 @@ public class ConsultaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 	//per importi residui e anni successivi
 	private ImportiCapitolo importiCapitoloSuccessivi;
 	private ImportiCapitolo importiResidui;
-
+	
+	//SIAC-7349 Start - SR210 -MR - 16/04/2020 Setting delle disponibilita dei componenti nel model
+	private List<ImportiCapitoloPerComponente> disponibilitaImpegnareComponentiCapitolo = new ArrayList<ImportiCapitoloPerComponente>();
+	//SIAC-7349 - End
+	
+	//SIAC-7349 Start - SR210 -MR - 16/04/2020 Setting delle disponibilita a variare dei componenti nel model
+	private List<ImportiCapitoloPerComponente> disponibilitaVariareComponentiCapitolo = new ArrayList<ImportiCapitoloPerComponente>();
+	//SIAC-7349 - End
 	/** Costruttore vuoto di default */
 	public ConsultaCapitoloUscitaGestioneModel() {
 		super();
@@ -170,6 +177,24 @@ public class ConsultaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 
 	public void setImportiComponentiCapitolo(List<ImportiCapitoloPerComponente> importiComponentiCapitolo) {
 		this.importiComponentiCapitolo = importiComponentiCapitolo;
+	}
+
+	public List<ImportiCapitoloPerComponente> getDisponibilitaImpegnareComponentiCapitolo() {
+		return disponibilitaImpegnareComponentiCapitolo;
+	}
+
+	public void setDisponibilitaImpegnareComponentiCapitolo(
+			List<ImportiCapitoloPerComponente> disponibilitaImpegnareComponentiCapitolo) {
+		this.disponibilitaImpegnareComponentiCapitolo = disponibilitaImpegnareComponentiCapitolo;
+	}
+
+	public List<ImportiCapitoloPerComponente> getDisponibilitaVariareComponentiCapitolo() {
+		return disponibilitaVariareComponentiCapitolo;
+	}
+
+	public void setDisponibilitaVariareComponentiCapitolo(
+			List<ImportiCapitoloPerComponente> disponibilitaVariareComponentiCapitolo) {
+		this.disponibilitaVariareComponentiCapitolo = disponibilitaVariareComponentiCapitolo;
 	}
 
 	public ImportiCapitolo getImportiCapitoloSuccessivi() {
@@ -500,7 +525,8 @@ public class ConsultaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 	 * @return 12° Regime Provvisorio
 	 */
 	public BigDecimal getRegimeProvvisorio0() {
-		return calcolaRegimeProvvisorio(getImportiCapitoloUscitaGestione0().getStanziamentoIniziale(),
+		//SIAC-8697
+		return calcolaRegimeProvvisorio(getImportiCapitoloUscitaGestione0().getStanziamento(),
 				getDisponibilitaCapitoloUscitaGestioneAnno0().getImpegnatoDaRiaccertamento(),
 				getDisponibilitaCapitoloUscitaGestioneAnno0().getImpegnatoDaEserciziPrec());
 	}
@@ -511,7 +537,8 @@ public class ConsultaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 	 * @return 12° Regime Provvisorio
 	 */
 	public BigDecimal getRegimeProvvisorio1() {
-		return calcolaRegimeProvvisorio(getImportiCapitoloUscitaGestione1().getStanziamentoIniziale(),
+		//SIAC-8697
+		return calcolaRegimeProvvisorio(getImportiCapitoloUscitaGestione1().getStanziamento(),
 				getDisponibilitaCapitoloUscitaGestioneAnno1().getImpegnatoDaRiaccertamento(),
 				getDisponibilitaCapitoloUscitaGestioneAnno1().getImpegnatoDaEserciziPrec());
 	}
@@ -522,7 +549,8 @@ public class ConsultaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 	 * @return 12° Regime Provvisorio
 	 */
 	public BigDecimal getRegimeProvvisorio2() {
-		return calcolaRegimeProvvisorio(getImportiCapitoloUscitaGestione2().getStanziamentoIniziale(),
+		//SIAC-8697
+		return calcolaRegimeProvvisorio(getImportiCapitoloUscitaGestione2().getStanziamento(),
 				getDisponibilitaCapitoloUscitaGestioneAnno2().getImpegnatoDaRiaccertamento(),
 				getDisponibilitaCapitoloUscitaGestioneAnno2().getImpegnatoDaEserciziPrec());
 	}

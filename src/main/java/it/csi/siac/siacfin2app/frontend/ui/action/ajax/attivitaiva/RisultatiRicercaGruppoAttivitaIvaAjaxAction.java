@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -35,7 +35,7 @@ import it.csi.siac.siacfin2ser.model.GruppoAttivitaIva;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaGruppoAttivitaIvaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoGruppoAttivitaIva, 
+public class RisultatiRicercaGruppoAttivitaIvaAjaxAction extends PagedDataTableAjaxAction<ElementoGruppoAttivitaIva, 
 	RisultatiRicercaGruppoAttivitaIvaAjaxModel, GruppoAttivitaIva, RicercaSinteticaGruppoAttivitaIva, RicercaSinteticaGruppoAttivitaIvaResponse> {
 	
 	/** Per la serializzazione */
@@ -88,12 +88,12 @@ public class RisultatiRicercaGruppoAttivitaIvaAjaxAction extends GenericRisultat
 	}
 	
 	@Override
-	protected ElementoGruppoAttivitaIva ottieniIstanza(GruppoAttivitaIva e) throws FrontEndBusinessException {
+	protected ElementoGruppoAttivitaIva getInstance(GruppoAttivitaIva e) throws FrontEndBusinessException {
 		return new ElementoGruppoAttivitaIva(e, model.getAnnoEsercizioInt());
 	}
 	
 	@Override
-	protected RicercaSinteticaGruppoAttivitaIvaResponse ottieniResponse(RicercaSinteticaGruppoAttivitaIva request) {	
+	protected RicercaSinteticaGruppoAttivitaIvaResponse getResponse(RicercaSinteticaGruppoAttivitaIva request) {	
 		return gruppoAttivitaIvaService.ricercaSinteticaGruppoAttivitaIva(request);
 	}
 	
@@ -103,12 +103,12 @@ public class RisultatiRicercaGruppoAttivitaIvaAjaxAction extends GenericRisultat
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoGruppoAttivitaIva instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoGruppoAttivitaIva instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.GRUPPO_ATTIVITA_IVA_AGGIORNA, listaAzioniConsentite);
-		Boolean isEliminaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.GRUPPO_ATTIVITA_IVA_ELIMINA, listaAzioniConsentite);
-		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.GRUPPO_ATTIVITA_IVA_CONSULTA, listaAzioniConsentite);
+		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.GRUPPO_ATTIVITA_IVA_AGGIORNA, listaAzioniConsentite);
+		Boolean isEliminaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.GRUPPO_ATTIVITA_IVA_ELIMINA, listaAzioniConsentite);
+		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.GRUPPO_ATTIVITA_IVA_CONSULTA, listaAzioniConsentite);
 		
 		// Gestione delle azioni consentite
 		StringBuilder azioniBuilder = new StringBuilder();

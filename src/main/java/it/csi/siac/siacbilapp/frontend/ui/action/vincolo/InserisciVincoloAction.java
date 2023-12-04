@@ -6,7 +6,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.vincolo;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -24,7 +24,7 @@ import it.csi.siac.siacbilser.model.TipoVincoloCapitoli;
 import it.csi.siac.siacbilser.model.Vincolo;
 import it.csi.siac.siacbilser.model.VincoloCapitoli;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -45,6 +45,8 @@ public class InserisciVincoloAction extends GenericVincoloAction<InserisciVincol
 		super.prepare();
 		// SIAC-5076: caricamento Genere Vincolo
 		caricaGenereVincolo();
+		//SIAC-7129
+		caricaRisorsaVincolata();
 	}
 	
 	@Override
@@ -103,7 +105,7 @@ public class InserisciVincoloAction extends GenericVincoloAction<InserisciVincol
 		logServiceResponse(responseRicerca);
 		
 		if(responseRicerca.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(requestRicerca, responseRicerca));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaVincolo.class, responseRicerca));
 			addErrori(responseRicerca);
 			return INPUT;
 		}
@@ -120,7 +122,7 @@ public class InserisciVincoloAction extends GenericVincoloAction<InserisciVincol
 		logServiceResponse(responseInserimento);
 		
 		if(responseInserimento.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(requestInserimento, responseInserimento));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceAnagraficaVincolo.class, responseInserimento));
 			addErrori(responseInserimento);
 			return INPUT;
 		}
@@ -142,8 +144,12 @@ public class InserisciVincoloAction extends GenericVincoloAction<InserisciVincol
 			addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Bilancio"));
 			addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Codice"));
 		} else {
-			checkNotNull(vincolo.getTipoVincoloCapitoli(), "Bilancio");
+			checkNotNull(vincolo.getTipoVincoloCapitoli(), "Tipo vincolo");
 			checkNotNullNorEmpty(vincolo.getCodice(), "codice");
+			//SIAC-7550
+			checkCondition(vincolo.getGenereVincolo().getUid() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Omesso Tipo Vincolo"));
+			//SIAC-7192
+			checkCondition(vincolo.getRisorsaVincolata().getUid() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Omesso Risorse Vincolate"));
 		}
 	}
 	

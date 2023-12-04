@@ -113,19 +113,19 @@ public class ElementoRegistrazioneMovFin implements Serializable, ModelWrapper {
 		}
 		if(TipoCollegamento.IMPEGNO.equals(tipoCollegamento)){
 			Impegno impegno = (Impegno) registrazioneMovFin.getMovimento();
-			return impegno.getAnnoMovimento() + "/" + impegno.getNumero();
+			return impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal();
 		}
 		if(TipoCollegamento.ACCERTAMENTO.equals(tipoCollegamento)){
 			Accertamento accertamento = (Accertamento) registrazioneMovFin.getMovimento();
-			return accertamento.getAnnoMovimento() + "/" + accertamento.getNumero();
+			return accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal();
 		}
 		if(TipoCollegamento.SUBIMPEGNO.equals(tipoCollegamento)){
 			SubImpegno subImpegno = (SubImpegno) registrazioneMovFin.getMovimento();
-			return subImpegno.getAnnoMovimento() + "/" + subImpegno.getNumeroImpegnoPadre() + "-" + subImpegno.getNumero();
+			return subImpegno.getAnnoMovimento() + "/" + subImpegno.getNumeroImpegnoPadre() + "-" + subImpegno.getNumeroBigDecimal();
 		}
 		if(TipoCollegamento.SUBACCERTAMENTO.equals(tipoCollegamento)){
 			SubAccertamento subAccertamento = (SubAccertamento) registrazioneMovFin.getMovimento();
-			return subAccertamento.getAnnoMovimento() + "/" + subAccertamento.getNumeroAccertamentoPadre() + "-" + subAccertamento.getNumero();
+			return subAccertamento.getAnnoMovimento() + "/" + subAccertamento.getNumeroAccertamentoPadre() + "-" + subAccertamento.getNumeroBigDecimal();
 		}
 		if(TipoCollegamento.LIQUIDAZIONE.equals(tipoCollegamento)){
 			Liquidazione liquidazione = (Liquidazione) registrazioneMovFin.getMovimento();
@@ -156,21 +156,21 @@ public class ElementoRegistrazioneMovFin implements Serializable, ModelWrapper {
 		if(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_SPESA.equals(tipoCollegamento)) {
 			ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesa = (ModificaMovimentoGestioneSpesa) registrazioneMovFin.getMovimento();
 			if(modificaMovimentoGestioneSpesa != null && modificaMovimentoGestioneSpesa.getImpegno() != null) {
-				return modificaMovimentoGestioneSpesa.getImpegno().getAnnoMovimento() + "/" + modificaMovimentoGestioneSpesa.getImpegno().getNumero();
+				return modificaMovimentoGestioneSpesa.getImpegno().getAnnoMovimento() + "/" + modificaMovimentoGestioneSpesa.getImpegno().getNumeroBigDecimal();
 			}
 			if(modificaMovimentoGestioneSpesa != null && modificaMovimentoGestioneSpesa.getSubImpegno() != null) {
 				return modificaMovimentoGestioneSpesa.getSubImpegno().getAnnoImpegnoPadre() + "/" + modificaMovimentoGestioneSpesa.getSubImpegno().getNumeroImpegnoPadre()
-						+ "-" + modificaMovimentoGestioneSpesa.getSubImpegno().getNumero();
+						+ "-" + modificaMovimentoGestioneSpesa.getSubImpegno().getNumeroBigDecimal();
 			}
 		}
 		if(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_ENTRATA.equals(tipoCollegamento)) {
 			ModificaMovimentoGestioneEntrata modificaMovimentoGestioneEntrata = (ModificaMovimentoGestioneEntrata) registrazioneMovFin.getMovimento();
 			if(modificaMovimentoGestioneEntrata != null && modificaMovimentoGestioneEntrata.getAccertamento() != null) {
-				return modificaMovimentoGestioneEntrata.getAccertamento().getAnnoMovimento() + "/" + modificaMovimentoGestioneEntrata.getAccertamento().getNumero();
+				return modificaMovimentoGestioneEntrata.getAccertamento().getAnnoMovimento() + "/" + modificaMovimentoGestioneEntrata.getAccertamento().getNumeroBigDecimal();
 			}
 			if(modificaMovimentoGestioneEntrata != null && modificaMovimentoGestioneEntrata.getSubAccertamento() != null) {
 				return modificaMovimentoGestioneEntrata.getSubAccertamento().getAnnoAccertamentoPadre() + "/" + modificaMovimentoGestioneEntrata.getSubAccertamento().getNumeroAccertamentoPadre()
-						+ "-" + modificaMovimentoGestioneEntrata.getSubAccertamento().getNumero();
+						+ "-" + modificaMovimentoGestioneEntrata.getSubAccertamento().getNumeroBigDecimal();
 			}
 		}
 		if(TipoCollegamento.RATEO.equals(tipoCollegamento) || TipoCollegamento.RISCONTO.equals(tipoCollegamento)){

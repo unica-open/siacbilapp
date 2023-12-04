@@ -18,7 +18,8 @@ SPDX-License-Identifier: EUPL-1.2
 		</p>
 		
 		<p class="login-text pull-right">
-			<s:property value="sessionHandler.account.ente.nome" /> - <s:property value="sessionHandler.account.nome" /> - <s:property value="sessionHandler.operatore.nome" />
+			<s:property value="sessionHandler.account.ente.nome" /> - <s:property value="sessionHandler.account.nome" /> - 
+			<s:property value="sessionHandler.operatore.nome" />  <s:property value="sessionHandler.operatore.cognome" />
 			<a href="/siaccruapp/logout.do" class="navbar-link"></a>
 		</p>
 	</div>

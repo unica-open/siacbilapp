@@ -101,6 +101,9 @@ public final class ElementoDocumentoFactory extends BaseFactory {
 		wrapper.setFlagComunicaPCC(Boolean.TRUE.equals(documento.getTipoDocumento().getFlagComunicaPCC()));
 		//SIAC-5617
 		wrapper.setTipoDocumentoCode(documento.getTipoDocumento().getCodice());
+		//SIAC-7557
+		wrapper.setIdTipoDocumento(documento.getTipoDocumento().getUid());
+		
 		wrapper.setContabilizzaGenPCC(Boolean.TRUE.equals(documento.getContabilizzaGenPcc()));
 		wrapper.setSoggetto(soggettoWrapper);
 		wrapper.setTipoDocumentoNotaCredito(tipoDocumentoNotaCredito);

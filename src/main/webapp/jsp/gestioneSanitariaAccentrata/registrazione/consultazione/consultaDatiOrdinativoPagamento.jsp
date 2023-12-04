@@ -132,9 +132,9 @@ SPDX-License-Identifier: EUPL-1.2
 				</td>
 				<td>
 					<s:if test="%{#so.liquidazione != null && #so.liquidazione.impegno != null}">
-						<s:property value="#so.liquidazione.impegno.annoMovimento"/> / <si:plainstringproperty value="#so.liquidazione.impegno.numero"/>
+						<s:property value="#so.liquidazione.impegno.annoMovimento"/> / <s:property value="#so.liquidazione.impegno.numero"/>
 						<s:if test="%{#so.liquidazione.impegno.elencoSubImpegni != null}">
-							- <si:plainstringproperty value="#so.liquidazione.impegno.elencoSubImpegni.get(0).numero"/>
+							- <s:property value="#so.liquidazione.impegno.elencoSubImpegni.get(0).numero"/>
 						</s:if>
 					</s:if>
 				</td>

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccespapp.frontend.ui.model.ajax.registroa;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.registroa.ElementoPrimaNotaRegistroA;
 
 /**
@@ -12,7 +12,7 @@ import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.registroa.ElementoPrima
  * @author elisa
  * @version 1.0.0 - 29-11-2018
  */
-public class RisultatiRicercaScrittureRegistroAByCespiteAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoPrimaNotaRegistroA> {
+public class RisultatiRicercaScrittureRegistroAByCespiteAjaxModel extends PagedDataTableAjaxModel<ElementoPrimaNotaRegistroA> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 3019819285391153286L;

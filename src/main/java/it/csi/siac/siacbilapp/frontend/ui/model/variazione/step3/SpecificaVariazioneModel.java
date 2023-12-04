@@ -4,11 +4,8 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.variazione.step3;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 
 /**
  * Classe racchiudente i campi comuni dei form di specifica delle variazioni.
@@ -34,6 +31,9 @@ public abstract class SpecificaVariazioneModel extends GenericBilancioModel {
 	// Abilitazioni dell'utente
 	private Boolean utenteAbilitatoAdInserimento = Boolean.FALSE;
 	private Boolean utenteAbilitatoAdAnnullamento = Boolean.FALSE;
+	//SIAC-8332
+	private StatoOperativoVariazioneBilancio statoVariazione;
+	
 	
 	/**
 	 * @return the annoCapitolo
@@ -133,5 +133,15 @@ public abstract class SpecificaVariazioneModel extends GenericBilancioModel {
 			Boolean utenteAbilitatoAdAnnullamento) {
 		this.utenteAbilitatoAdAnnullamento = utenteAbilitatoAdAnnullamento;
 	}
+
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
+		return statoVariazione;
+	}
+
+	public void setStatoVariazione(StatoOperativoVariazioneBilancio statoVariazione) {
+		this.statoVariazione = statoVariazione;
+	}
+	
+	
 	
 }

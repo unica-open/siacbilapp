@@ -12,19 +12,24 @@ SPDX-License-Identifier: EUPL-1.2
 <body>
 	<s:include value="/jsp/include/header.jsp" />
 
-	<!-- TABELLE RIEPILOGO -->
+	<%-- TABELLE RIEPILOGO --%>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span12 ">
 				<div class="contentPage">
 					<s:include value="/jsp/include/messaggi.jsp" />
-					<form method="post">
+					<form id="risultatiRicercaPreDocEntrataForm" method="post">
+					<s:hidden id="fromRiepilogoCompletaDefinisci" value="%{fromRiepilogoCompletaDefinisci}"/>
+					<s:if test="modificaAssociazioniContabiliAbilitato">
+						<s:hidden id="HIDDEN_provvisorioCompletaDefinisci" value="true"/>
+					</s:if>
+					<div class="span6">
 						<s:hidden id="importoTotale" name="importoTotale" />
 						<s:hidden id="HIDDEN_anno_datepicker" value="%{annoEsercizioInt}" />
 						<h3>Risultati di ricerca Predisposizione di Incasso</h3>
 						<h5>Dati di ricerca: <s:property value="riepilogoRicerca" /></h5>
 						<h4><span id="id_num_result" class="num_result"></span></h4>
-						
+					</div>
 						<table class="table table-hover tab_left dataTable" id="risultatiRicercaPreDocumento">
 							<thead>
 								<tr role="row">
@@ -55,13 +60,59 @@ SPDX-License-Identifier: EUPL-1.2
 								</tr>
 							</tfoot>
 						</table>
-
-						<s:hidden id="HIDDEN_startPosition" name="startPosition" value="%{savedDisplayStart}" />
 						
+						<%-- Modale ANNULLA --%>
+						<div id="modaleAnnullaPreDocumento" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="msgAnnullaLabel" aria-hidden="true">
+							<s:hidden id="HIDDEN_UidDaAnnullare" name="uidDaAnnullare" />
+							<div class="modal-body">
+								<div class="alert alert-error">
+									<button type="button" class="close" data-hide="alert">&times;</button>
+									<p><strong>Attenzione!</strong></p>
+									<p><strong>Elemento selezionato: <span id="elementoSelezionatoAnnullamento"></span></strong></p>
+									<p>Stai per annullare l'elemento selezionato: sei sicuro di voler proseguire?</p>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<%--
+								<button type="button" aria-hidden="true" class="btn" id="pulsanteAnnullaAnnullaPreDocumento">annulla</button>
+								<button type="button" aria-hidden="true" class="btn btn-primary" id="pulsanteConfermaAnnullaPreDocumento">s&iacute;, prosegui</button>
+								--%>
+								<button class="btn" data-dismiss="modal" aria-hidden="true">no, indietro</button>
+								<button class="btn btn-primary" formmethod="post" type="submit" formaction="risultatiRicercaPreDocumentoEntrataAnnulla.do">s&iacute;, prosegui</button>
+							</div>
+						</div>
+
+						<s:hidden id="HIDDEN_inviaTutti" name="inviaTutti" value="%{inviaTutti}" />
+						<s:hidden id="HIDDEN_startPosition" name="startPosition" value="%{savedDisplayStart}" />
+						<s:hidden id="HIDDEN_fromCompletaDefinisci" name="fromCompletaDefinisci" value="%{fromCompletaDefinisci}" />
+						<s:hidden id="HIDDEN_riepilogoCompletaDefinisci" name="riepilogoCompletaDefinisci" value="%{riepilogoCompletaDefinisci}" />
+					</form>
 						<div id="divAzioni">
 							<s:if test="inserisciAbilitato">
 								<div class="<s:property value="spanClassOperazioni"/>">
 									<button type="button" class="btn btn-secondary" id="pulsanteInserisciPreDocumento">inserisci predisposizione</button>
+								</div>
+							</s:if>
+							<s:if test="completaDefinisciAbilitato">
+								<%-- <div class="<s:property value="spanClassOperazioni"/>"></div> --%>
+								<div class="accordion-group <s:property value="spanClassOperazioni"/>" id="accordionCompletaDefinisci">
+									<div class="accordion-heading">
+										<a href="#collapseCompletaDefinisci" data-parent="#accordionCompletaDefinisci" data-toggle="collapse" class="accordion-toggle collapsed">
+											completa e definisci<span class="icon">&nbsp;</span>
+										</a>
+									</div>
+									<div class="accordion-body collapse" id="collapseCompletaDefinisci">
+										<div>
+											<ul class="listSelectAccordion">
+												<li>
+													<a id="pulsanteCompletaDefinisciTutti" href="#"><span class="iconSmall icon-chevron-right"></span>tutti</a>
+												</li>
+												<li>
+													<a id="pulsanteCompletaDefinisciSelezionati" href="#"><span class="iconSmall icon-chevron-right"></span>solo selezionati</a>
+												</li>
+											</ul>
+										</div>
+									</div>
 								</div>
 							</s:if>
 							<s:if test="associaAbilitato">
@@ -129,20 +180,25 @@ SPDX-License-Identifier: EUPL-1.2
 							</s:if>
 						</div>
 
-						<%-- Modale ANNULLA --%>
-						<div id="modaleAnnullaPreDocumento" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="msgAnnullaLabel" aria-hidden="true">
-							<s:hidden id="HIDDEN_UidDaAnnullare" name="uidDaAnnullare" />
+						<%-- Modale COMPLETA e DEFINISCI --%>
+						<div aria-hidden="true" aria-labelledby="CompletaDefinisciLabel" role="dialog" tabindex="-1" class="modal hide fade" id="modaleCompletaDefinisci">
+							<div class="modal-header">
+								<button aria-hidden="true" data-dismiss="modal" class="close" type="button">&times;</button>
+								<h4 class="nostep-pane">Completa e definisci</h4>
+							</div>
 							<div class="modal-body">
-								<div class="alert alert-error">
-									<button type="button" class="close" data-hide="alert">&times;</button>
-									<p><strong>Attenzione!</strong></p>
-									<p><strong>Elemento selezionato: <span id="elementoSelezionatoAnnullamento"></span></strong></p>
-									<p>Stai per annullare l'elemento selezionato: sei sicuro di voler proseguire?</p>
-								</div>
+								<p><strong>Predisposizioni selezionate n. <span id="numeroPreDocumentiDaCompletaDefinisci"></span></strong></p>
+								<p><strong>Importo totale: <span id="importoTotalePreDocumentiDaCompletaDefinisci"></span></strong></p>
+								<input type="hidden" name="chooseAdeguaDisponibilitaAccertamento" value="false" />
+								<%-- modificaAccertamentoDisponibile --%>
+								<p> Proseguire con il completamento sulla selezione?</p>
 							</div>
 							<div class="modal-footer">
-								<button class="btn" data-dismiss="modal" aria-hidden="true">no, indietro</button>
-								<button class="btn btn-primary" formmethod="post" type="submit" formaction="risultatiRicercaPreDocumentoEntrataAnnulla.do">s&iacute;, prosegui</button>
+								<button type="button" aria-hidden="true" class="btn" id="pulsanteAnnullaCompletaDefinisci">annulla</button>
+								<button type="button" aria-hidden="true" class="btn btn-primary" id="pulsanteConfermaCompletaDefinisci">conferma</button>
+								<s:if test="modificaCompletaDefinisci">
+									<button type="button" aria-hidden="true" class="btn btn-secondary" id="pulsanteModificaAssociaCompletaDefinisci">modifica</button>
+								</s:if>
 							</div>
 						</div>
 						
@@ -159,7 +215,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<p>
 										<strong>Riepilogo:</strong>
 										<br/>
-										<s:property value="riepilogoImputazioniContabili" escape="false" />
+										<s:property value="riepilogoImputazioniContabili" escapeHtml="false" />
 									</p>
 								</s:if>
 								<s:if test="modificaAccertamentoDisponibile">
@@ -173,7 +229,7 @@ SPDX-License-Identifier: EUPL-1.2
 												<input type="radio" id="" value="false" name="chooseAdeguaDisponibilitaAccertamento">Non adeguare la disponibilit&agrave;
 											</label>
 										</div>
-									</div> 
+									</div>
 								</s:if><s:else>
 									<input type="hidden" name="chooseAdeguaDisponibilitaAccertamento" value="false" />
 								</s:else>
@@ -242,7 +298,6 @@ SPDX-License-Identifier: EUPL-1.2
 						<p>
 							<s:include value="/jsp/include/indietro.jsp" />
 						</p>
-					</form>
 				</div>
 			</div>
 		</div>
@@ -253,18 +308,25 @@ SPDX-License-Identifier: EUPL-1.2
 		<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 		<s:include value="/jsp/movimentoGestione/modaleAccertamento.jsp" />
 		<s:include value="/jsp/provvedimento/selezionaProvvedimento_modale_new.jsp" />
+
+		<%--SIAC-7423 --%>
+		<s:include value="/jsp/provvisorioCassa/modaleRicercaProvvisorioCassa.jsp" />
 	</s:if>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}async.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/async.js"></script>
 	<s:if test="modificaAssociazioniContabiliAbilitato">
-		<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-		<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-		<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-		<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-		<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-		<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_new.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_new.js"></script>
+		
+		<%--SIAC-7423 --%>
+		<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricerca.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricercaInline.js"></script>
 	</s:if>
-	<script type="text/javascript" src="${jspath}predocumento/risultatiRicercaEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/risultatiRicercaEntrata.js"></script>
 </body>
 </html>

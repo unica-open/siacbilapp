@@ -38,9 +38,10 @@ SPDX-License-Identifier: EUPL-1.2
 								<tbody id="componentiCompetenzaDettaglioVar">
 								</tbody>
 							</table>
+							<s:hidden id="idAzioneReportVariazioni" name="idAzioneReportVariazioni"/>
 						</div>
 						<p>
-							<s:url var="surl" action="%{currentCrumb.action}" namespace="%{currentCrumb.namespace}" includeContext="false" />
+						  <s:url var="surl" action="%{currentCrumb.action}" namespace="%{currentCrumb.namespace}" includeContext="false" />
 							<c:set var="openTabGiaPresente" value="false" />
 							<c:url var="url" value="${surl}">
 								<c:forEach var="p" items="${currentCrumb.params}">
@@ -62,6 +63,6 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/dettaglioVariazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/dettaglioVariazioni.js"></script>
 </body>
 </html>

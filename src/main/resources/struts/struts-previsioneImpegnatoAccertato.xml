@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <package name="previsioneImpegnatoAccertato" extends="capitoloDefault" namespace="/">
+     	<!-- SIAC-8291 -->
+        <action name="ricercaPrevisioneImpegnatoAccertato" method="execute" class="it.csi.siac.siacbilapp.frontend.ui.action.previmpacc.RicercaPrevisioneImpegnatoAccertatoAction">
+            <result name="success">/jsp/previsioneImpAcc/gestisciPrevisioneImpegnatoAccertato.jsp</result>
+        </action>       
+
+         <action name="ricercaPrevisioneImpegnatoAccertato_ricercaCapitoliEntrata" method="ricercaCapitoliEntrata" class="it.csi.siac.siacbilapp.frontend.ui.action.previmpacc.RicercaPrevisioneImpegnatoAccertatoAction">
+            <result name="success" type="customMessagesJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        
+        <action name="ricercaPrevisioneImpegnatoAccertato_ricercaCapitoliSpesa" method="ricercaCapitoliSpesa" class="it.csi.siac.siacbilapp.frontend.ui.action.previmpacc.RicercaPrevisioneImpegnatoAccertatoAction">
+            <result name="success" type="customMessagesJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>   
+           
+        <!-- Action AJAX per i risultati di ricerca sintetica capitolo uscita Gestione -->
+        <action name="risultatiRicercaCapUscitaGestionePrevisioneImpegnatoAjax" class="risultatiRicercaPrevisioneImpegnatoCapUGAjaxAction">
+            <result name="success" type="dataTable" />
+        </action>
+        
+        <!-- Action AJAX per i risultati di ricerca sintetica capitolo uscita Gestione -->
+        <action name="risultatiRicercaCapEntrataGestionePrevisioneAccertatoAjax" class="risultatiRicercaPrevisioneAccertatoCapEGAjaxAction">
+            <result name="success" type="dataTable" />
+        </action>
+        <!-- SIAC-8291 -->   
+        
+        <!-- Risultati Ricerca con operazioni -->
+        <action name="risultatiRicercaCapUGPrevisioneImpegnatoAccertato_caricaTabellaImporti" class="risultatiRicercaPrevisioneImpegnatoCapUGAction"  method="caricaTabellaImporti">
+            <result name="success">/jsp/previsioneImpAcc/tabellaPrevisioneSuCapitolo.jsp</result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="risultatiRicercaCapUGPrevisioneImpegnatoAccertato_aggiorna" class="risultatiRicercaPrevisioneImpegnatoCapUGAction"  method="aggiorna">
+            <result name="success" type="customMessagesJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>
+
+		<action name="risultatiRicercaCapEGPrevisioneImpegnatoAccertato_caricaTabellaImporti" class="risultatiRicercaPrevisioneAccertatoCapEGAction"  method="caricaTabellaImporti">
+            <result name="success">/jsp/previsioneImpAcc/tabellaPrevisioneSuCapitolo.jsp</result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
+        <action name="risultatiRicercaCapEGPrevisioneImpegnatoAccertato_aggiorna" class="risultatiRicercaPrevisioneAccertatoCapEGAction"  method="aggiorna">
+            <result name="success" type="customMessagesJSON" />
+            <result name="input" type="customMessagesJSON" />
+        </action>
+		
+
+		<action name="risultatiRicercaPrevisioneImpegnatoCapUG_consulta" class="risultatiRicercaPrevisioneImpegnatoCapUGAction" method="consulta" >
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaPrevisioneImpegnatoCapUG</param>
+                <param name="namespace">/</param>
+                <param name="uidCapitolo">${uidCapitolo}</param>
+            </result>
+        </action>
+        <action name="consultaPrevisioneImpegnatoCapUG" method="execute" class="consultaPrevisioneImpegnatoCapUGAction">
+            <result name="success">/jsp/previsioneImpAcc/consultaPrevisioneImpegnatoAccertato.jsp</result>
+        </action>
+        <action name="consultaPrevisioneImpegnatoCapUG_backToRicerca" method="backToRicerca" class="consultaPrevisioneImpegnatoCapUGAction">
+             <result name="success" type="redirectAction">
+                <param name="actionName">ricercaPrevisioneImpegnatoAccertato</param>
+                <param name="namespace">/</param>
+                <param name="daConsultaSpesa">true</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaCapEGPrevisioneImpegnatoAccertato_consulta" class="risultatiRicercaPrevisioneAccertatoCapEGAction" method="consulta" >
+            <result name="success" type="redirectAction">
+                <param name="actionName">consultaPrevisioneAccertatoCapEG</param>
+                <param name="namespace">/</param>
+                <param name="uidCapitolo">${uidCapitolo}</param>
+            </result>
+        </action>
+	 	<action name="consultaPrevisioneAccertatoCapEG" method="execute" class="consultaPrevisioneAccertatoCapEGAction">
+            <result name="success">/jsp/previsioneImpAcc/consultaPrevisioneImpegnatoAccertato.jsp</result>
+        </action>
+        <action name="consultaPrevisioneAccertatoCapEG_backToRicerca" method="backToRicerca" class="consultaPrevisioneAccertatoCapEGAction">
+             <result name="success" type="redirectAction">
+                <param name="actionName">ricercaPrevisioneImpegnatoAccertato</param>
+                <param name="namespace">/</param>
+                <param name="daConsultaEntrata">true</param>
+            </result>
+        </action>
+
+    </package>
+</struts>

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,6 +19,10 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
+import it.csi.siac.siacbilser.frontend.webservice.TipoDocumentoFELService;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoDocFEL;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoDocFELResponse;
+import it.csi.siac.siacbilser.model.TipoDocFEL;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -35,7 +39,6 @@ import it.csi.siac.sirfelser.frontend.webservice.msg.RicercaSinteticaFatturaElet
 import it.csi.siac.sirfelser.frontend.webservice.msg.RicercaSinteticaFatturaElettronicaResponse;
 import it.csi.siac.sirfelser.model.FatturaFEL;
 import it.csi.siac.sirfelser.model.StatoAcquisizioneFEL;
-import it.csi.siac.sirfelser.model.TipoDocumentoFEL;
 
 /**
  * Classe di action per la ricerca della fattura elettronica.
@@ -52,6 +55,9 @@ public class RicercaFatturaElettronicaAction extends GenericBilancioAction<Ricer
 	
 	@Autowired private transient DocumentoService documentoService;
 	@Autowired private transient FatturaElettronicaService fatturaElettronicaService;
+	
+	//SIAC-7557
+	@Autowired	private transient TipoDocumentoFELService tipoDocumentoServiceFEL;
 	
 	@Override
 	public void prepare() throws Exception {
@@ -73,10 +79,16 @@ public class RicercaFatturaElettronicaAction extends GenericBilancioAction<Ricer
 	/**
 	 * Caricamento della lista del tipo di documento FEL
 	 */
+	//SIAC-7557 inizio FL
 	private void caricaListaTipoDocumentoFEL() {
-		model.setListaTipoDocumentoFEL(Arrays.asList(TipoDocumentoFEL.values()));
-	}
 
+		RicercaTipoDocFEL request = model.creaRequestRicercaTipoDocFEL();		 
+		RicercaTipoDocFELResponse ricercaTipoDocumentoFEL = tipoDocumentoServiceFEL.ricercaTipoDocFEL(request);
+		List<TipoDocFEL> listaTtipoDocumentiFEL = ricercaTipoDocumentoFEL.getListaTipoDocFEL();
+		model.setListaTipoDocumentoFELDB(listaTtipoDocumentiFEL);
+		//model.setListaTipoDocumentoFEL(Arrays.asList(TipoDocumentoFEL.values()));
+	}
+	//SIAC-7557 fine  FL
 	/**
 	 * Caricamento della lista dell'ufficio destinatario.
 	 * 
@@ -102,7 +114,7 @@ public class RicercaFatturaElettronicaAction extends GenericBilancioAction<Ricer
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodiceUfficioDestinatarioPCC.class, response);
 				log.info(methodName, errorMsg);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
@@ -189,7 +201,7 @@ public class RicercaFatturaElettronicaAction extends GenericBilancioAction<Ricer
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaCodicePCC.class, response);
 				log.info(methodName, errorMsg);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
@@ -235,7 +247,7 @@ public class RicercaFatturaElettronicaAction extends GenericBilancioAction<Ricer
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaFatturaElettronica.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -267,7 +279,9 @@ public class RicercaFatturaElettronicaAction extends GenericBilancioAction<Ricer
 		
 		FatturaFEL fatturaFEL = model.getFatturaFEL();
 		
-		boolean ricercaValida = fatturaFEL.getTipoDocumentoFEL() != null
+		//SIAC-7557 Recupero  il valore del tipo Documento dal DB
+		boolean ricercaValida = //fatturaFEL.getTipoDocumentoFEL() != null
+				(fatturaFEL.getTipoDocFEL() != null && StringUtils.isNotBlank(fatturaFEL.getTipoDocFEL().getCodice()))
 				|| StringUtils.isNotBlank(model.getCodiceFiscale())
 				|| StringUtils.isNotBlank(model.getPartitaIva())
 				|| StringUtils.isNotBlank(fatturaFEL.getNumero())

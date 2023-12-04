@@ -11,7 +11,8 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.RisultatiRicercaPrimaNotaLiberaBaseAjaxAction;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoPrimaNotaLibera;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
 
 /**
@@ -40,23 +41,39 @@ public class RisultatiRicercaPrimaNotaLiberaGSAAjaxAction extends RisultatiRicer
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestionePrimaNotaLibera() {
-		return AzioniConsentite.PRIMANOTALIBERA_GSA_GESTIONE;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestionePrimaNotaLibera() {
+		return AzioneConsentitaEnum.PRIMANOTALIBERA_GSA_GESTIONE;
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaValidazionePrimaNotaLibera() {
-		return AzioniConsentite.PRIMANOTALIBERA_GSA_VALIDA;
+	protected AzioneConsentitaEnum getAzioneConsentitaValidazionePrimaNotaLibera() {
+		return AzioneConsentitaEnum.PRIMANOTALIBERA_GSA_VALIDA;
 		}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaPrimaNotaLibera() {
-		return AzioniConsentite.PRIMANOTALIBERA_GSA_RICERCA;	 	
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaPrimaNotaLibera() {
+		return AzioneConsentitaEnum.PRIMANOTALIBERA_GSA_RICERCA;	 	
 	}
 	
 	@Override
 	protected boolean isStatoOperativoCoerenteConAggiornamento(ElementoPrimaNotaLibera instance) {
 		return !StatoOperativoPrimaNota.ANNULLATO.equals(instance.getStatoOperativoPrimaNota());
+	}
+	
+	//SIAC-8323
+	protected boolean isFaseBilancioCoerenteConAggiornamento() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return true;
+	}
+	//SIAC-8323
+	protected boolean isFaseBilancioCoerenteConValidazione() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return true;
+	}
+	//SIAC-8323
+	protected boolean isFaseBilancioCoerenteConAnnullamento() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE);
 	}
 
 

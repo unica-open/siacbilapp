@@ -138,6 +138,12 @@
         // Controllo che non vi siano errori
         pushError(err, !isNaN(+this.$annoProvvedimentoModale.val()), 'Il campo Anno deve essere selezionato');
         pushError(err, !isNaN(+this.$numeroProvvedimentoModale.val()) || !isNaN(+this.$tipoProvvedimentoModale.val()), 'Almeno uno tra i campi Numero e Tipo deve essere compilato');
+        
+        //SIAC-7447
+        //devo controllare anche le stringhe
+        pushError(err, !(this.$annoProvvedimentoModale.val() === ""), 'Il campo Anno deve essere selezionato');
+        pushError(err, !(this.$numeroProvvedimentoModale.val() === "") || !(this.$tipoProvvedimentoModale.val() === ""), 'Almeno uno tra i campi Numero e Tipo deve essere compilato');
+        
         if(impostaDatiNegliAlert(err, this.$alertErrori)) {
             return;
         }

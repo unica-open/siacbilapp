@@ -68,9 +68,9 @@
                    return source.data || "";
                }},
                {aTargets: [3], mData: function(source) {
-                   var statoOperativoDocumentoCode = source.statoOperativoDocumentoCode + "/" || "";
+                   var statoOperativoDocumentoCode = source.statoOperativoDocumentoCode + " / " || "";
                    var statoOperativoDocumento = source.documentoEntrata && source.documentoEntrata.statoOperativoDocumento || "";
-                   return statoOperativoDocumentoCode + statoOperativoDocumento;
+                   return statoOperativoDocumentoCode + statoOperativoDocumento.descrizione;
                }},
                {aTargets: [4], mData: function(source) {
                    var imp = source.importo || 0;

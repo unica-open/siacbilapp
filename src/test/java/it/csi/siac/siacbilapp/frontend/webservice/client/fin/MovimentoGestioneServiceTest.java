@@ -39,7 +39,7 @@ public class MovimentoGestioneServiceTest extends BaseProxyServiceTest<Movimento
 	@Override
 	protected String getEndpoint() {
 		//return "http://coll-srv-contabilia.bilancio.csi.it/siacbilser/MovimentoGestioneService";
-		return "http://10.136.6.151/siacbilser/MovimentoGestioneService";
+		return "http://127.0.0.1:8080/siacbilser/MovimentoGestioneService";
 	}
 	/**
 	 * Test per RicercaImpegnoPerChiave
@@ -98,16 +98,16 @@ public class MovimentoGestioneServiceTest extends BaseProxyServiceTest<Movimento
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
 		req.setNumPagina(1);
-		req.setNumRisultatiPerPagina(10);
+		req.setNumRisultatiPerPagina(1);
 		req.setEnte(req.getRichiedente().getAccount().getEnte());
 		
 		ParametroRicercaImpSub parametroRicercaImpSub = new ParametroRicercaImpSub();
-		parametroRicercaImpSub.setAnnoEsercizio(2017);
-		parametroRicercaImpSub.setAnnoImpegno(2017);
+		parametroRicercaImpSub.setAnnoEsercizio(2021);
+		parametroRicercaImpSub.setAnnoImpegno(2021);
 		parametroRicercaImpSub.setIsRicercaDaImpegno(Boolean.TRUE);
-		parametroRicercaImpSub.setNumeroCapitolo(101310);
-		parametroRicercaImpSub.setNumeroArticolo(0);
-		parametroRicercaImpSub.setNumeroUEB(1);
+//		parametroRicercaImpSub.setNumeroCapitolo(101310);
+//		parametroRicercaImpSub.setNumeroArticolo(0);
+//		parametroRicercaImpSub.setNumeroUEB(1);
 		req.setParametroRicercaImpSub(parametroRicercaImpSub);
 		
 		RicercaImpegniSubimpegniResponse res = service.ricercaImpegniSubimpegni(req);
@@ -133,8 +133,6 @@ public class MovimentoGestioneServiceTest extends BaseProxyServiceTest<Movimento
 		req.setCaricaSub(false);
 		req.setDatiOpzionaliElencoSubTuttiConSoloGliIds(new DatiOpzionaliElencoSubTuttiConSoloGliIds());
 		req.getDatiOpzionaliElencoSubTuttiConSoloGliIds().setCaricaElencoModificheMovGest(true);
-		req.getDatiOpzionaliElencoSubTuttiConSoloGliIds().setCaricaMutui(true);
-		req.getDatiOpzionaliElencoSubTuttiConSoloGliIds().setCaricaVociMutuo(true);
 		req.getDatiOpzionaliElencoSubTuttiConSoloGliIds().setCaricaCig(true);
 		req.getDatiOpzionaliElencoSubTuttiConSoloGliIds().setCaricaCup(true);
 		req.getDatiOpzionaliElencoSubTuttiConSoloGliIds().setCaricaDisponibileLiquidareEDisponibilitaInModifica(true);

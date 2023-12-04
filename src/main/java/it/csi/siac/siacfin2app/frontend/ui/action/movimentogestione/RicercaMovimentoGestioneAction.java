@@ -16,9 +16,9 @@ import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
+import it.csi.siac.siaccommonapp.util.paginazione.PaginazioneUtil;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.movimentogestione.RicercaMovimentoGestioneModel;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
@@ -133,7 +133,7 @@ public class RicercaMovimentoGestioneAction extends GenericBilancioAction<Ricerc
 			
 			sessionHandler.setParametro(BilSessionParameter.ACCERTAMENTO, accertamento);
 			sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, request);
-			sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, CollectionUtil.toListaPaginata(response.getAccertamento().getElencoSubAccertamenti(), response.getNumPagina(),response.getNumeroTotaleSub()));
+			sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, PaginazioneUtil.toListaPaginata(response.getAccertamento().getElencoSubAccertamenti(), response.getNumPagina(),response.getNumeroTotaleSub()));
 
 		}
 		
@@ -226,11 +226,7 @@ public class RicercaMovimentoGestioneAction extends GenericBilancioAction<Ricerc
 			impegno = response.getImpegno();
 			// Inizializzazione subimpegni
 			impegno.setElencoSubImpegni(filtraSubImpegniDefinitivi(impegno.getElencoSubImpegni()));
-			impegno.setListaVociMutuo(defaultingList(impegno.getListaVociMutuo()));
-			// Inizializzazione mutui sui subimpegni
-			for(SubImpegno si : impegno.getElencoSubImpegni()) {
-				si.setListaVociMutuo(defaultingList(si.getListaVociMutuo()));
-			}
+
 			if(impegno.getCapitoloUscitaGestione() == null) {
 				// Se il capitolo non e' stato impostato dal servizio, lo imposto io
 				impegno.setCapitoloUscitaGestione(response.getCapitoloUscitaGestione());
@@ -326,17 +322,13 @@ public class RicercaMovimentoGestioneAction extends GenericBilancioAction<Ricerc
 		//TODO: il servizio dovra' restituire i sub gia' filtrati per stato per evitare di sballare la paginazione
 		//impegno.setElencoSubImpegni(filtraSubImpegniDefinitivi(impegno.getElencoSubImpegni()));
 		impegno.setElencoSubImpegni(defaultingList(impegno.getElencoSubImpegni()));
-		impegno.setListaVociMutuo(defaultingList(impegno.getListaVociMutuo()));
-		// Inizializzazione mutui sui subimpegni
-		for(SubImpegno si : impegno.getElencoSubImpegni()) {
-			si.setListaVociMutuo(defaultingList(si.getListaVociMutuo()));
-		}
+
 		if(impegno.getCapitoloUscitaGestione() == null) {
 			// Se il capitolo non e' stato impostato dal servizio, lo imposto io
 			impegno.setCapitoloUscitaGestione(response.getCapitoloUscitaGestione());
 		}
 		sessionHandler.setParametro(BilSessionParameter.IMPEGNO, impegno);
-		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_IMPEGNO_PER_CHIAVE_SUBIMPEGNI, CollectionUtil.toListaPaginata(response.getImpegno().getElencoSubImpegni(), response.getNumPagina(),response.getNumeroTotaleSub()));
+		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_IMPEGNO_PER_CHIAVE_SUBIMPEGNI, PaginazioneUtil.toListaPaginata(response.getImpegno().getElencoSubImpegni(), response.getNumPagina(),response.getNumeroTotaleSub()));
 		return impegno;
 	}
 

@@ -4,7 +4,11 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.util.result;
 
-import org.apache.struts2.dispatcher.StreamResult;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+
+import org.apache.struts2.result.StreamResult;
 
 /**
  * Result per lo stream della stampa
@@ -15,6 +19,7 @@ public class StampaStreamResult extends StreamResult {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1821334476671759764L;
+	private Set<Cookie> cookies;
 
 	/** Costruttore di default */
 	public StampaStreamResult() {
@@ -24,5 +29,18 @@ public class StampaStreamResult extends StreamResult {
 		setContentDisposition("filename=\"${fileName}\"");
 		setBufferSize(1024);
 	}
-	
+
+	/**
+	 * @return the cookies
+	 */
+	public Set<Cookie> getCookies() {
+		return this.cookies;
+	}
+
+	/**
+	 * @param cookies the cookies to set
+	 */
+	public void setCookies(Set<Cookie> cookies) {
+		this.cookies = cookies;
+	}
 }

@@ -20,6 +20,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<include file="struts/struts-capUscitaGestione.xml" />
 	<include file="struts/struts-capUscitaPrevisione.xml" />
 	<include file="struts/struts-selezionaCapitolo.xml" />
+	<include file="struts/struts-previsioneImpegnatoAccertato.xml" />
 
 	<include file="struts/struts-classificatori-ajax.xml" />
 	<include file="struts/struts-classificatori-ricercaSintetica.xml" />
@@ -34,8 +35,11 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<include file="struts/struts-vincoli.xml" />
 
+	<include file="struts/struts-mutuo.xml" />
+
 	<include file="struts/struts-dubbiaEsigibilita.xml" />
 	<include file="struts/struts-dubbiaEsigibilitaRendiconto.xml" />
+	<include file="struts/struts-dubbiaEsigibilitaGestione.xml" />
 
 	<include file="struts/struts-progetto.xml" />
 	<include file="struts/struts-cronoprogramma.xml" />
@@ -149,4 +153,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<!-- SIAC-6881 -->
 	<include file="struts/struts-tipoComponenteImportiCapitolo.xml"/>	
 	<include file="struts/struts-componenteImportiCapitolo.xml" />
+	<include file="struts/struts-componenteImportiCapitoloNelCapitolo.xml" />
+	<!-- SIAC-7556 -->
+	<include file="struts/struts-elaborazioniFlusso.xml" />
+	<!-- SIAC-7557 -->
+	<include file="struts/struts-tipoDocumento.xml" />
 </struts>

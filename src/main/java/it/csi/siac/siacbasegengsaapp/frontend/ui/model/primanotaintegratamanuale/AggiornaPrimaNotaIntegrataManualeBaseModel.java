@@ -430,10 +430,10 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseModel extends BaseIns
 			SubAccertamento sa = (SubAccertamento) acc;
 			prak.setAnnoAccertamento(Integer.valueOf(sa.getAnnoAccertamentoPadre()));
 			prak.setNumeroAccertamento(sa.getNumeroAccertamentoPadre());
-			prak.setNumeroSubDaCercare(sa.getNumero());
+			prak.setNumeroSubDaCercare(sa.getNumeroBigDecimal());
 		} else {
 			prak.setAnnoAccertamento(Integer.valueOf(acc.getAnnoMovimento()));
-			prak.setNumeroAccertamento(acc.getNumero());
+			prak.setNumeroAccertamento(acc.getNumeroBigDecimal());
 		}
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -469,10 +469,10 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseModel extends BaseIns
 			SubImpegno si = (SubImpegno) imp;
 			prik.setAnnoImpegno(Integer.valueOf(si.getAnnoImpegnoPadre()));
 			prik.setNumeroImpegno(si.getNumeroImpegnoPadre());
-			prik.setNumeroSubDaCercare(si.getNumero());
+			prik.setNumeroSubDaCercare(si.getNumeroBigDecimal());
 		} else {
 			prik.setAnnoImpegno(Integer.valueOf(imp.getAnnoMovimento()));
-			prik.setNumeroImpegno(imp.getNumero());
+			prik.setNumeroImpegno(imp.getNumeroBigDecimal());
 		}
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();

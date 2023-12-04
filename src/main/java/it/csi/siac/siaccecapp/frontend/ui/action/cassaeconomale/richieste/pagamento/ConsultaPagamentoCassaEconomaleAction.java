@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.BaseConsultaRichiestaEconomaleAction;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.pagamento.ConsultaPagamentoCassaEconomaleModel;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per la consultazione del pagamento.
@@ -27,7 +27,7 @@ public class ConsultaPagamentoCassaEconomaleAction extends BaseConsultaRichiesta
 	private static final long serialVersionUID = 7388422337725204508L;
 
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_RICERCA, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_ABILITA};
 	}
 }

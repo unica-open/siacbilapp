@@ -24,7 +24,7 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.StornoUEB;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 
@@ -570,7 +570,7 @@ public class InserisciStornoUEBModel extends GenericBilancioModel {
 		
 		storno.setCapitoloSorgente(sorgente);
 		storno.setCapitoloDestinazione(destinazione);
-		storno.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.DEFINITIVA);
+		storno.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio.DEFINITIVA);
 		storno.setDescrizione("");
 		//Nuovo (rifacimento variazioni importi 06/2016)
 		storno.setApplicazioneVariazione(ApplicazioneVariazione.GESTIONE);

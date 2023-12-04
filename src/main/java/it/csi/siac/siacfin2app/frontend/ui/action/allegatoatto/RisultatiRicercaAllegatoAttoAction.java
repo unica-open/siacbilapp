@@ -4,20 +4,20 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InviaAllegatoAtto;
 import it.csi.siac.siaccecser.frontend.webservice.msg.StampaAllegatoAtto;
 import it.csi.siac.siaccecser.frontend.webservice.msg.StampaAllegatoAttoResponse;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.RisultatiRicercaAllegatoAttoModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaAllegatoAtto;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaAllegatoAttoResponse;
@@ -63,6 +63,7 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		return SUCCESS;
 	}
 	
+	
 	/**
 	 * Redirezione al metodo di consultazione.
 	 * 
@@ -93,7 +94,7 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaAllegatoAtto.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -125,7 +126,7 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(ControlloImportiImpegniVincolati.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -157,7 +158,7 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		logServiceRequest(req);
 		
 		// Devo modificare l'azione richiesta (JIRA SIAC-1944)
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_COMPLETA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_COMPLETA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		// Invoco il servizio asincrono
 		AsyncServiceResponse response = allegatoAttoService.completaAllegatoAttoAsync(wrapRequestToAsync(req, azioneRichiesta));
 		logServiceResponse(response);
@@ -165,7 +166,7 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(CompletaAllegatoAtto.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -205,7 +206,7 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(StampaAllegatoAtto.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -238,14 +239,14 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		logServiceRequest(req);
 		
 		// Invocazione del servizio asincrono
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_INVIA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_INVIA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = allegatoAttoService.inviaAllegatoAttoAsync(wrapRequestToAsync(req, azioneRichiesta));
 		logServiceResponse(response);
 		
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(InviaAllegatoAtto.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -284,5 +285,4 @@ public class RisultatiRicercaAllegatoAttoAction extends RisultatiRicercaAllegato
 		// L'uid deve essere valorizzato
 		checkCondition(model.getUidAllegatoAtto() != null && model.getUidAllegatoAtto().intValue() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("allegato"));
 	}
-
 }

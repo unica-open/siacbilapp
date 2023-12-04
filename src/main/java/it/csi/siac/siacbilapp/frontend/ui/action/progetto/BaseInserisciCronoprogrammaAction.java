@@ -10,7 +10,6 @@ import java.util.List;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.model.progetto.InserisciCronoprogrammaModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDeiCronoprogrammiCollegatiAlProgetto;
@@ -24,6 +23,7 @@ import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureExcep
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe base di Action per l'inserimento del Cronoprogramma.
@@ -57,12 +57,9 @@ public abstract class BaseInserisciCronoprogrammaAction<M extends InserisciCrono
 		super.prepare();
 		//SIAC-6255
 		caricaListaTipiAtto();
-		caricaListaTipoProgetto();
 	}
 	
-	private void caricaListaTipoProgetto() {
-		model.setListaTipiProgetto(Arrays.asList(TipoProgetto.values()));
-	}
+	
 
 	/**
 	 * Inserisce il Cronoprogramma.
@@ -103,7 +100,7 @@ public abstract class BaseInserisciCronoprogrammaAction<M extends InserisciCrono
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(InserisceCronoprogramma.class, response));
 		}
 		log.debug(methodName, "Inserito cronoprogramma con uid " + response.getCronoprogramma().getUid());
 	}
@@ -124,7 +121,7 @@ public abstract class BaseInserisciCronoprogrammaAction<M extends InserisciCrono
 	
 	@Override
 	protected void checkCasoDUsoApplicabile(String cdu) {
-		final String codiceAzione = AzioniConsentite.CRONOPROGRAMMA_INSERISCI.getNomeAzione();
+		final String codiceAzione = AzioneConsentitaEnum.CRONOPROGRAMMA_INSERISCI.getNomeAzione();
 		List<AzioneConsentita> list = sessionHandler.getAzioniConsentite();
 		for(AzioneConsentita azioneConsentita : list) {
 			if(azioneConsentita.getAzione().getNome().equalsIgnoreCase(codiceAzione)) {
@@ -156,7 +153,7 @@ public abstract class BaseInserisciCronoprogrammaAction<M extends InserisciCrono
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDeiCronoprogrammiCollegatiAlProgetto.class, response));
 		}
 
 		// popolazione vecchia = senza applicare il filtro sull'anno del bilancio in corso
@@ -265,6 +262,19 @@ public abstract class BaseInserisciCronoprogrammaAction<M extends InserisciCrono
 		// popolazione nuova
 		model.setListaCronoprogrammiDaCopiare(response.getCronoprogrami());
 		return SUCCESS;
+	}
+	
+	//task-170
+	public void caricaListaTipiProgetto() {
+		model.setListaTipiProgetto(Arrays.asList(TipoProgetto.values()));
+	}
+	//task-170
+	public void setTipoProgettoStr(String tipoProgetto) {
+		model.setTipoProgettoRicerca(TipoProgetto.byCodice(tipoProgetto));
+	}
+	//task-170
+	public String getTipoProgettoStr() {
+		return model.getTipoProgettoRicerca().getCodice();
 	}
 	
 }

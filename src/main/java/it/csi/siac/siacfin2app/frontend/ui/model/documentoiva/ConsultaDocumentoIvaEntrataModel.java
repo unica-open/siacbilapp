@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioSubdocumentoIvaEntrata;
 import it.csi.siac.siacfin2ser.model.AliquotaSubdocumentoIva;
 import it.csi.siac.siacfin2ser.model.Subdocumento;

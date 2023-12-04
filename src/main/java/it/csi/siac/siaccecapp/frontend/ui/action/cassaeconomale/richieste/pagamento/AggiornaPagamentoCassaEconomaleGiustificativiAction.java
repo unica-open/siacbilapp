@@ -14,11 +14,11 @@ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.pagamento.AggiornaPagamentoCassaEconomaleModel;
 import it.csi.siac.siaccecser.model.Giustificativo;
 import it.csi.siac.siaccecser.model.TipoGiustificativo;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.Valuta;
 
 /**
@@ -79,7 +79,7 @@ public class AggiornaPagamentoCassaEconomaleGiustificativiAction
 		//checkNotNullNorEmpty(giustificativo.getNumeroGiustificativo(),"Numero");
 		checkNotNull(giustificativo.getImportoGiustificativo(), "Importo");
 		checkCondition(giustificativo.getImportoGiustificativo() == null || giustificativo.getImportoGiustificativo().signum() >= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Importo",": l'importo deve essere positivo"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Importo",": l'importo deve essere positivo"));
 
 		checkValidNoMandatoryDate(giustificativo.getDataEmissione(), "Data emissione");
 		
@@ -145,7 +145,7 @@ public class AggiornaPagamentoCassaEconomaleGiustificativiAction
 	}
 	
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_ABILITA};
 	}
 }

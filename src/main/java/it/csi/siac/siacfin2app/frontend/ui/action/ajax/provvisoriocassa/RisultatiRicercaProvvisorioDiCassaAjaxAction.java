@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -31,7 +31,7 @@ import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaProvvisorioDiCassaAjaxAction extends GenericRisultatiRicercaAjaxAction<ProvvisorioDiCassa,
+public class RisultatiRicercaProvvisorioDiCassaAjaxAction extends PagedDataTableAjaxAction<ProvvisorioDiCassa,
 		RisultatiRicercaProvvisorioDiCassaAjaxModel, ProvvisorioDiCassa, RicercaProvvisoriDiCassa, RicercaProvvisoriDiCassaResponse> {
 		
 	/** Per la serializzazione */
@@ -69,12 +69,12 @@ public class RisultatiRicercaProvvisorioDiCassaAjaxAction extends GenericRisulta
 	}
 	
 	@Override
-	protected ProvvisorioDiCassa ottieniIstanza(ProvvisorioDiCassa e) throws FrontEndBusinessException {
+	protected ProvvisorioDiCassa getInstance(ProvvisorioDiCassa e) throws FrontEndBusinessException {
 		return e;
 	}
 	
 	@Override
-	protected RicercaProvvisoriDiCassaResponse ottieniResponse(RicercaProvvisoriDiCassa request) {
+	protected RicercaProvvisoriDiCassaResponse getResponse(RicercaProvvisoriDiCassa request) {
 		return provvisorioService.ricercaProvvisoriDiCassa(request);
 	}
 	

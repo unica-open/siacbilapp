@@ -50,7 +50,8 @@ SPDX-License-Identifier: EUPL-1.2
 								<div class="control-group">
 									<label class="control-label" for="causaleAllegatoAtto">Causale *</label>
 									<div class="controls">
-										<s:textfield id="causaleAllegatoAtto" name="allegatoAtto.causale" maxlength="150" cssClass="span9" required="true" />
+										<%-- SIAC-8465 si porta a 500 la lunghezza massima --%>
+										<s:textfield id="causaleAllegatoAtto" name="allegatoAtto.causale" maxlength="500" cssClass="span9" required="true" />
 									</div>
 								</div>
 								<div class="control-group">
@@ -197,9 +198,9 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}predocumento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/inserisci_step1.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/inserisci_step1.js"></script>
 	
 </body>
 </html>

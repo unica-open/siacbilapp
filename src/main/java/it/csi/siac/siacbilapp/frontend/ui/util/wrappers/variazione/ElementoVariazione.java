@@ -7,10 +7,13 @@ package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoVariazione;
+import it.csi.siac.siaccorser.model.OperazioneAsincrona;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 
 /**
@@ -34,7 +37,7 @@ public class ElementoVariazione implements Serializable, ModelWrapper {
 	private String provvedimento;
 	// Provvedimento di bilancio
 	private String provvedimentoBilancio;
-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+	private StatoOperativoVariazioneBilancio statoVariazione;
 	//SIAC-6177
 	private ElementoStatoOperativoVariazione elementoStatoOperativoVariazione;
 	
@@ -42,11 +45,11 @@ public class ElementoVariazione implements Serializable, ModelWrapper {
 	private Date dataAperturaProposta;
 	private Date dataChiusuraProposta;
 	private StrutturaAmministrativoContabile strutturaAmministrativoContabileDirezioneProponente;
+	//SIAC-8264
+	private String tipologiaUltimaOperazioneEffettuata="";
+	private String statoUltimaOperazioneEffettuata = "";;
+	private String dataUltimaOperazioneEffettuata = "";
 	
-	private String stringaDataAperturaProposta;
-	
-	private String stringaDataChiusuraProposta;
-
 	/**
 	 * @return the stringaDataAperturaProposta
 	 */
@@ -85,6 +88,7 @@ public class ElementoVariazione implements Serializable, ModelWrapper {
 			StrutturaAmministrativoContabile strutturaAmministrativoContabileDirezioneProponente) {
 		this.strutturaAmministrativoContabileDirezioneProponente = strutturaAmministrativoContabileDirezioneProponente;
 	}
+	
 
 	/** Costruttore vuoto di default */
 	public ElementoVariazione(){
@@ -190,7 +194,7 @@ public class ElementoVariazione implements Serializable, ModelWrapper {
 	/**
 	 * @return the statoVariazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
 		return statoVariazione;
 	}
 
@@ -198,7 +202,7 @@ public class ElementoVariazione implements Serializable, ModelWrapper {
 	 * @param statoVariazione the statoVariazione to set
 	 */
 	public void setStatoVariazione(
-			StatoOperativoVariazioneDiBilancio statoVariazione) {
+			StatoOperativoVariazioneBilancio statoVariazione) {
 		this.statoVariazione = statoVariazione;
 	}
 
@@ -228,6 +232,30 @@ public class ElementoVariazione implements Serializable, ModelWrapper {
 	 */
 	public void setAnno(Integer anno) {
 		this.anno = anno;
+	}
+
+	public String getTipologiaUltimaOperazioneEffettuata() {
+		return tipologiaUltimaOperazioneEffettuata;
+	}
+
+	public void setTipologiaUltimaOperazioneEffettuata(String tipologiaUltimaOperazioneEffettuata) {
+		this.tipologiaUltimaOperazioneEffettuata = tipologiaUltimaOperazioneEffettuata;
+	}
+
+	public String getStatoUltimaOperazioneEffettuata() {
+		return statoUltimaOperazioneEffettuata;
+	}
+
+	public void setStatoUltimaOperazioneEffettuata(String statoUltimaOperazioneEffettuata) {
+		this.statoUltimaOperazioneEffettuata = statoUltimaOperazioneEffettuata;
+	}
+
+	public String getDataUltimaOperazioneEffettuata() {
+		return dataUltimaOperazioneEffettuata;
+	}
+
+	public void setDataUltimaOperazioneEffettuata(String dataUltimaOperazioneEffettuata) {
+		this.dataUltimaOperazioneEffettuata = dataUltimaOperazioneEffettuata;
 	}
 
 }

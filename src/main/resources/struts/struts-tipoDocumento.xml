@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="tipoDocuemnto" extends="capitoloDefault" namespace="/">
+	
+	 
+	<!-- Azioni riferite alla funzionalità di Inserisci Tipo Documento -->
+	<!-- Ingresso nella GUI -->
+		<action name="inserisciTipoDocumento" class="inserisciTipoDocumentoAction">
+            <result name="success">/jsp/anagraficaTipoDocumento/inserisciTipoDocumento.jsp</result>
+             <result name="input">/jsp/failure.jsp</result>
+		</action>
+		
+		
+		  <action name="inserisciTipoDocumentoAction_inserimentoTD" class="inserisciTipoDocumentoAction" method="inserimentoTD">
+            <result name="success">/jsp/anagraficaTipoDocumento/ricercaTipoDocumento.jsp</result>
+            <result name="input">/jsp/anagraficaTipoDocumento/inserisciTipoDocumento.jsp</result>
+        </action>
+        
+          <action name="aggiornaTipoDocumentoAction_aggiornamentoTD" class="aggiornaTipoDocumentoAction" method="aggiornamentoTD">
+            <result name="success" type="redirectAction">risultatiRicercaTipoDocumento</result>
+            <result name="input">/jsp/anagraficaTipoDocumento/aggiornaTipoDocumento.jsp</result>
+        </action>
+         
+		<!-- Annulla Inserimento Tipo Documento -->
+		<action name="annullaInserisciTipoDocumento" class="inserisciTipoDocumentoAction" method="annulla">
+            <result name="input">/jsp/anagraficaTipoDocumento/inserisciTipoDocumento.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">inserisciTipoDocumento</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+	
+		<!-- Annulla aggiornamento Tipo Documento -->
+        <action name="annullaAggiornaTipoDocumento" class="aggiornaTipoDocumentoAction" method="annulla">
+            <result name="success" type="redirectAction">aggiornaTipoDocumento.jsp</result>
+            <result name="input" type="redirectAction">aggiornaTipoDocumento</result>
+        </action>
+	
+	
+		 <!-- Azioni della ricerca -->
+        <action name="ricercaTipoDocumento" class="ricercaTipoDocumentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/anagraficaTipoDocumento/ricercaTipoDocumento.jsp</result>
+        </action>
+          <!-- Risultati di ricerca -->                    
+        
+        <action name="risultatiRicercaTipoDocumento" class="risultatiRicercaTipoDocumentoAction" method="execute">
+            <result name="input">/jsp/anagraficaTipoDocumento/ricercaTipoDocumento.jsp</result>
+            <result name="success">/jsp/anagraficaTipoDocumento/risultatiRicercaTipoDocumento.jsp</result>
+        </action>
+        
+        <action name="aggiornaTipoDocumento" class="aggiornaTipoDocumentoAction" method="execute">
+            <result name="input">/jsp/failure.jsp</result>
+            <result name="success">/jsp/anagraficaTipoDocumento/aggiornaTipoDocumento.jsp</result>
+        </action>
+        
+        
+           <action name="effettuaRicercaTipoDocumento" class="ricercaTipoDocumentoAction" method="ricercaTipoDocumento">
+            <result name="input">/jsp/anagraficaTipoDocumento/ricercaTipoDocumento.jsp</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">risultatiRicercaTipoDocumento</param>
+                <param name="namespace">/</param>
+            </result>
+        </action>
+        
+         <!-- Redirezione verso aggiornamento -->
+        <action name="risultatiRicercaTipoDocumentoAggiorna" class="risultatiRicercaTipoDocumentoAction" method="aggiorna">
+            <result name="success" type="redirectAction">
+                <param name="actionName">aggiornaTipoDocumento</param>
+                <param name="namespace">/</param>
+                <param name="uidDaAggiornare">${uidDaAggiornare}</param>
+            </result>
+        </action>
+        
+        
+         <action name="risultatiRicercaTipoDocumento_aggiorna" class="risultatiRicercaTipoDocumentoAction" method="aggiorna">
+			<result name="success" type="redirectAction">
+				<param name="actionName">aggiornaTipoDocumento</param>
+				<param name="uidTipoDocumento">${uidTipoDocumento}</param>
+			</result>
+		</action>
+		
+	  <action name="risultatiRicercaTipoDocumentoAction_annulla" class="risultatiRicercaTipoDocumentoAction" method="annulla">
+			<result name="input">/jsp/anagraficaTipoDocumento/risultatiRicercaTipoDocumento.jsp</result>
+			<result name="success" type="redirectAction">risultatiRicercaTipoDocumento</result>
+		</action>
+         
+      	<action name="risultatiRicercaTipoDocumentoAjax" class="risultatiRicercaTipoDocumentoAjaxAction">
+			<result name="success" type="dataTable" />
+		</action>
+        
+          <!-- Caricamento AJAX della lista dei 	 -->
+        <action name="inserisciTipoDocumentoAction_caricaTipoDocContabilia" class="inserisciTipoDocumentoAction"  method="caricaTipoDocContabilia"> 
+            <result type="customJSON">
+            	<param name="ignoreHierarchy">false</param>
+                <param name="includeProperties">
+                    listaTipoDocEntrata.*
+					listaTipoDocSpesa.*
+                </param>
+            </result>
+        </action>
+        
+	</package>
+</struts>

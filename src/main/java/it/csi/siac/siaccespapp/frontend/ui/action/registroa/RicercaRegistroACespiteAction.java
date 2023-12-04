@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -47,7 +47,7 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaRegistroA
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaRegistroACespiteResponse;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
@@ -122,7 +122,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		
 		if(res.hasErrori()) {
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioBilancio.class, res));
 		}
 		
 		faseBilancio = res.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
@@ -175,7 +175,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		RicercaSinteticaRegistroACespite req = model.creaRequestRicercaSinteticaRegistroACespite();
 		RicercaSinteticaRegistroACespiteResponse res = cespiteService.ricercaSinteticaRegistroACespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaRegistroACespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -250,7 +250,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		RicercaSinteticaContoResponse res = contoService.ricercaSinteticaConto(req);
 
 		if (res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaConto.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -337,7 +337,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		
 		if(res.hasErrori()) {
 			// Se ho errori esco
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(LeggiElementoPianoDeiContiByCodiceAndAnno.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -382,19 +382,19 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		}
 		if(capitoloParziamenteValorizzato(model.getCapitolo())) {
 			// Il capitolo e' compilato solo in parte
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Capitolo", ": devono essere valorizzati i parametri Capitolo/Articolo" + (model.isGestioneUEB() ? "/UEB" : "")));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Capitolo", ": devono essere valorizzati i parametri Capitolo/Articolo" + (model.isGestioneUEB() ? "/UEB" : "")));
 			return false;
 		}
 		// Il capitolo e' presente
 		if(model.getTipoEvento() == null || model.getTipoEvento().getUid() == 0) {
 			// Il tipo di evento non e' impostato. Esco con errore
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Capitolo", "non e' possibile selezionare un capitolo se non e' selezionato un tipo di evento"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Capitolo", "non e' possibile selezionare un capitolo se non e' selezionato un tipo di evento"));
 			return false;
 		}
 		TipoEvento tipoEvento = ComparatorUtils.searchByUid(model.getListaTipoEvento(), model.getTipoEvento());
 		if(tipoEvento == null) {
 			// Tipo evento non valido
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Tipo evento", "non e' un tipo evento censito per l'ente"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Tipo evento", "non e' un tipo evento censito per l'ente"));
 			return false;
 		}
 		
@@ -440,7 +440,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		
 		if(res.hasErrori()) {
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaPuntualeCapitoloUscitaGestione.class, res));
 			return false;
 		}
 		if(res.getCapitoloUscitaGestione() == null) {
@@ -462,7 +462,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		
 		if(res.hasErrori()) {
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaPuntualeCapitoloEntrataGestione.class, res));
 			return false;
 		}
 		if(res.getCapitoloEntrataGestione() == null) {
@@ -503,7 +503,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, res));
 			return;
 		}
 		if(res.getSoggetto() == null) {
@@ -524,7 +524,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		}
 		checkCondition((aa.getAnno() != 0 && aa.getNumero() != 0 && aa.getTipoAtto() != null && aa.getTipoAtto().getUid() != 0)
 				|| (aa.getAnno() == 0 && aa.getNumero() == 0 && (aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0)),
-			ErroreCore.VALORE_NON_VALIDO.getErrore("Provvedimento", ": e' necessario specificare anno, numero e tipo per effettuare la ricerca"), true);
+			ErroreCore.VALORE_NON_CONSENTITO.getErrore("Provvedimento", ": e' necessario specificare anno, numero e tipo per effettuare la ricerca"), true);
 		
 		// SIAC-4644, modifica: anche il tipo di atto deve essere obbligatorio
 		if(aa.getAnno() == 0 || aa.getNumero() == 0 || aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0) {
@@ -542,7 +542,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, res));
 			return;
 		}
 		List<AttoAmministrativo> sacs = filterSac(res.getListaAttiAmministrativi(), aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0);
@@ -584,7 +584,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		}
 		if(model.getTipoEvento() == null || model.getTipoEvento().getUid() == 0) {
 			// Il tipo di evento non e' impostato. Esco con errore
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Movimento Gestione", "non e' possibile selezionare un movimento gestione se non e' selezionato un tipo di evento"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Movimento Gestione", "non e' possibile selezionare un movimento gestione se non e' selezionato un tipo di evento"));
 			return false;
 		}
 		TipoEvento tipoEvento = ComparatorUtils.searchByUid(model.getListaTipoEvento(), model.getTipoEvento());
@@ -607,7 +607,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 	 * @return se il movimento di gestione non ha dati
 	 */
 	private boolean hasNoDatiMovimentoGestione(MovimentoGestione mg) {
-		return mg == null || mg.getAnnoMovimento() == 0 || mg.getNumero() == null;
+		return mg == null || mg.getAnnoMovimento() == 0 || mg.getNumeroBigDecimal() == null;
 	}
 	
 	/**
@@ -619,7 +619,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		Accertamento accertamento =  model.getAccertamento();
 		SubAccertamento subAccertamento = model.getSubAccertamento();
 		
-		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumero() == null)) {
+		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumeroBigDecimal() == null)) {
 			return false;
 		}
 		
@@ -636,7 +636,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 			return false;
 		}
 		if(res.isFallimento() || res.getAccertamento() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento()+"/"+accertamento.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento()+"/"+accertamento.getNumeroBigDecimal()));
 			return false;
 		}
 		
@@ -644,12 +644,12 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		
 		model.setMovimentoGestione(accertamento);
 		
-		if(subAccertamento != null && subAccertamento.getNumero() != null) {
-			BigDecimal numero = subAccertamento.getNumero();
+		if(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subAccertamento.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subAccertamento = findSubAccertamentoLegatoAccertamentoByNumero(res.getAccertamento(), subAccertamento);
 			if(subAccertamento == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero() + "-" + numero));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal() + "-" + numero));
 				return false;
 			}
 			model.setSubMovimentoGestione(subAccertamento);
@@ -670,7 +670,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		SubAccertamento result = null;
 		if(accertamento.getElencoSubAccertamenti() != null) {
 			for(SubAccertamento s : accertamento.getElencoSubAccertamenti()) {
-				if(s.getNumero().compareTo(subAccertamento.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subAccertamento.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}
@@ -688,8 +688,8 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		Impegno impegno = model.getImpegno();
 		SubImpegno subImpegno = model.getSubImpegno();
 		
-		boolean impegnoValorizzato = impegno != null && impegno.getAnnoMovimento() != 0 && impegno.getNumero() != null;
-		boolean subImpegnoValorizzato = subImpegno != null && subImpegno.getNumero() != null;
+		boolean impegnoValorizzato = impegno != null && impegno.getAnnoMovimento() != 0 && impegno.getNumeroBigDecimal() != null;
+		boolean subImpegnoValorizzato = subImpegno != null && subImpegno.getNumeroBigDecimal() != null;
 
 		
 		checkCondition(impegnoValorizzato || !subImpegnoValorizzato , ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("per indicare un subimpegno e' necessario indicare anche un impegno."), true);
@@ -713,7 +713,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		}
 		
 		if(res.isFallimento() || res.getImpegno() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumeroBigDecimal()));
 			return false;
 		}
 		
@@ -721,8 +721,8 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		
 		model.setMovimentoGestione(impegno);
 		
-		if(subImpegno != null && subImpegno.getNumero() != null) {
-			BigDecimal numero = subImpegno.getNumero();
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subImpegno.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subImpegno = findSubImpegnoLegatoImpegnoByNumero(res.getImpegno(), subImpegno);
 			if(subImpegno == null) {
@@ -747,7 +747,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		SubImpegno result = null;
 		if(impegno.getElencoSubImpegni() != null) {
 			for(SubImpegno s : impegno.getElencoSubImpegni()) {
-				if(s.getNumero().compareTo(subImpegno.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subImpegno.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}
@@ -766,7 +766,7 @@ public class RicercaRegistroACespiteAction extends GenericBilancioAction<Ricerca
 		if(movimentoGestione != null) {
 			sb.append(movimentoGestione.getAnnoMovimento())
 				.append('/')
-				.append(movimentoGestione.getNumero());
+				.append(movimentoGestione.getNumeroBigDecimal());
 		}
 		return sb.toString();
 	}

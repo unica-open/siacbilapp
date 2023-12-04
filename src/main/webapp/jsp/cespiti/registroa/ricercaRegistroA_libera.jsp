@@ -69,11 +69,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<span class="al">
 				<label class="radio inline" for="LIB_dataRegistrazioneDa">Da</label>
 			</span>
-			<s:textfield name="dataRegistrazioneDefinitivaDa" maxLength="10" id="LIB_dataRegistrazioneDa" cssClass="span2 datepicker" tabindex="-1" />
+			<s:textfield name="dataRegistrazioneDefinitivaDa" maxlength="10" id="LIB_dataRegistrazioneDa" cssClass="span2 datepicker" tabindex="-1" />
 			<span class="al">
 				<label class="radio inline" for="LIB_dataRegistrazioneA">A</label>
 			</span>
-			<s:textfield name="dataRegistrazioneDefinitivaA" maxLength="10" id="LIB_dataRegistrazioneA" cssClass="span2 datepicker" tabindex="-1" />
+			<s:textfield name="dataRegistrazioneDefinitivaA" maxlength="10" id="LIB_dataRegistrazioneA" cssClass="span2 datepicker" tabindex="-1" />
 		</div>
 	</div>
 	<div class="control-group">
@@ -82,11 +82,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<span class="al">
 				<label class="radio inline" for="LIB_dataRegistrazioneProvvisoriaDa">Da</label>
 			</span>
-			<s:textfield name="dataRegistrazioneProvvisoriaDa" maxLength="10" id="LIB_dataRegistrazioneProvvisoriaDa" cssClass="span2 datepicker" tabindex="-1" />
+			<s:textfield name="dataRegistrazioneProvvisoriaDa" maxlength="10" id="LIB_dataRegistrazioneProvvisoriaDa" cssClass="span2 datepicker" tabindex="-1" />
 			<span class="al">
 				<label class="radio inline" for="LIB_dataRegistrazioneProvvisoriaA">A</label>
 			</span>
-			<s:textfield name="dataRegistrazioneProvvisoriaA" maxLength="10" id="LIB_dataRegistrazioneProvvisoriaA" cssClass="span2 datepicker" tabindex="-1" />
+			<s:textfield name="dataRegistrazioneProvvisoriaA" maxlength="10" id="LIB_dataRegistrazioneProvvisoriaA" cssClass="span2 datepicker" tabindex="-1" />
 		</div>
 	</div>
 </div>

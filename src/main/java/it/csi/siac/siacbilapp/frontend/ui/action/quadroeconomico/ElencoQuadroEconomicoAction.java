@@ -65,7 +65,7 @@ public class ElencoQuadroEconomicoAction extends GenericBilancioAction <ElencoQu
 			// Se ho errori esco subito
 			if(res.hasErrori()) {
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuadroEconomicoValido.class, res));
 			}
 			listaQuadroEconomico = res.getListaQuadroEconomico();
 			log.debug(methodName, "Impostazione della lista dei risultati in sessione");

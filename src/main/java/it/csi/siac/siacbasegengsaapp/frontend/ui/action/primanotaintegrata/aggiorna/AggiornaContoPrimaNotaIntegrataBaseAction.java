@@ -187,7 +187,7 @@ public abstract class AggiornaContoPrimaNotaIntegrataBaseAction<M extends Aggior
 		if(response.hasErrori()) {
 			// Se ho errori esco
 			addErrori(response);
-			throw new ParamValidationException(createErrorInServiceInvocationString(request, response));
+			throw new ParamValidationException(createErrorInServiceInvocationString(RicercaSinteticaConto.class, response));
 		}
 		
 		return response;

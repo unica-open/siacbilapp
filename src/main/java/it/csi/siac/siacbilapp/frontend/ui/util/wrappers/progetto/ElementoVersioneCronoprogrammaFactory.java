@@ -10,13 +10,13 @@ import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.BaseFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioBaseCronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioEntrataCronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioUscitaCronoprogramma;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Factory per il wrapping dei Cronoprogrammi per la pagina di aggiornamento.
@@ -33,6 +33,7 @@ public final class ElementoVersioneCronoprogrammaFactory extends BaseFactory {
 	private static final String AZIONI_ANNULLA = "<li><a class='pulsanteAnnullaCronoprogramma' href='#'>annulla</a></li>";
 	private static final String AZIONI_CONSULTA = "<li><a class='pulsanteConsultaCronoprogramma' href='#'>consulta</a></li>";
 	private static final String AZIONI_ASSOCIA_FPV= "<li><a class='pulsanteAssociaCronoprogrammaFPV' href='#'>Scegli per FPV</a></li>";
+	private static final String AZIONI_DISASSOCIA_FPV= "<li><a class='pulsanteDisassociaCronoprogrammaFPV' href='#'> annulla scelta per FPV</a></li>";
 	private static final String AZIONI_SIMULA_FPV= "<li><a class='pulsanteSimulaCronoprogrammaFPV' href='#'> Salva e simula FPV</a></li>";
 	private static final String AZIONI_ANNULLA_SIMULA_FPV= "<li><a class='pulsanteAnnullaSimulaCronoprogrammaFPV' href='#'> annulla simula FPV</a></li>";
 
@@ -146,11 +147,13 @@ public final class ElementoVersioneCronoprogrammaFactory extends BaseFactory {
 		Boolean isAggiornaAbilitato = AzioniConsentiteFactory.isAggiornaConsentitoCronoprogrammaNelProgetto(azioniConsentite);
 		Boolean isAnnullaAbilitato = AzioniConsentiteFactory.isAnnullaConsentitoCronoprogrammaNelProgetto(azioniConsentite);
 		Boolean isConsultaAbilitato = AzioniConsentiteFactory.isConsultaConsentitoCronoprogrammaNelProgetto(azioniConsentite);
-		boolean isGestioneFPVProvvisorioConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.CRONOPROGRAMMA_FPV_PROVVISORIO, azioniConsentite);
+		boolean isGestioneFPVProvvisorioConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.CRONOPROGRAMMA_FPV_PROVVISORIO, azioniConsentite);
 		//ahmad l'ho aggiunta per evitare che si schianti quando utilizzo i progetti gia inseriti senza il campo usato per fpv
 		boolean isUsatoPerFPV = instance.getUsatoPerFpv()!=null && Boolean.TRUE.equals(instance.getUsatoPerFpv());
 		//SIAC-6255 : L’azione attualmente presente di 'Scegli per FPV' deve essere abilitata solo per i cronoprogrammi di Previsione.
 		boolean isInstanceCorrettaPerFpv = !isUsatoPerFPV && TipoProgetto.PREVISIONE.equals(instance.getTipoProgetto()) && instance.checkStatoOperativoValido();
+		//SIAC-8877: azione disassocia FPV
+		boolean isInstanceCorrettaPerDisassociaFpv = isUsatoPerFPV && TipoProgetto.PREVISIONE.equals(instance.getTipoProgetto()) && instance.checkStatoOperativoValido();		
 		boolean isFPVPRovvisorio = instance.getUsatoPerFpvProv()!=null && Boolean.TRUE.equals(instance.getUsatoPerFpvProv()); 
 		
 		StringBuilder sb = new StringBuilder();
@@ -172,6 +175,11 @@ public final class ElementoVersioneCronoprogrammaFactory extends BaseFactory {
 		if(isInstanceCorrettaPerFpv) {
 			sb.append(AZIONI_ASSOCIA_FPV);
 		}
+		
+		if(isInstanceCorrettaPerDisassociaFpv) {
+			sb.append(AZIONI_DISASSOCIA_FPV);
+		}
+		
 		
 		if( isGestioneFPVProvvisorioConsentita && isInstanceCorrettaPerFpv && !isFPVPRovvisorio) {
 			sb.append(AZIONI_SIMULA_FPV);

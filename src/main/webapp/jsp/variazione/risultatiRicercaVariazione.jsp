@@ -38,14 +38,19 @@ SPDX-License-Identifier: EUPL-1.2
 									<th scope="col">Tipo</th>
 									<s:if test="tipoVariazioneCodifica">
 										<th scope="col">Provvedimento</th>
+										<th scope="col">Stato</th>
 									</s:if><s:else>
 										<th scope="col">Provvedimento PEG</th>
 										<th scope="col">Provvedimento Variazione di Bilancio</th>
 										<th scope="col">Data apertura proposta</th>
-									<th scope="col">Data chiusura proposta</th>
+										<th scope="col">Data chiusura proposta</th>
+										<th scope="col">Stato</th>
+										<th scope="col">Operazione effettuata </th>
+										<th scope="col">Stato operazione</th>
+										<th scope="col">Data operazione </th>
 									</s:else>
 									
-									<th scope="col">Stato</th>
+									
 									<th scope="col">Azioni</th>
 								</tr>
 							</thead>
@@ -68,8 +73,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/modaleStampaVariazioni.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}variazioni/stampaVariazioni.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/stampaVariazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/risultatiRicerca.js"></script>
 
 </body>
 </html>

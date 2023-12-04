@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
-import it.csi.siac.siaccommonapp.model.GenericModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 
 /**
  * Classe di model per i risultati di ricerca per il provvedimento. Contiene una mappatura dei campi del form dei risultati.
@@ -17,7 +17,7 @@ import it.csi.siac.siaccommonapp.model.GenericModel;
  * @version 1.0.0 - 26/09/2013
  *
  */
-public class RisultatiRicercaProvvedimentoModel extends GenericModel {
+public class RisultatiRicercaProvvedimentoModel extends GenericBilancioModel {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -5574846708985685450L;

@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2app.frontend.ui.model.ajax.predocumento.RisultatiRicercaPreDocumentoAjaxModel;
@@ -37,7 +37,7 @@ import it.csi.siac.siacfin2ser.model.PreDocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaPreDocumentoSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoPreDocumento, 
+public class RisultatiRicercaPreDocumentoSpesaAjaxAction extends PagedDataTableAjaxAction<ElementoPreDocumento, 
 	RisultatiRicercaPreDocumentoAjaxModel, PreDocumentoSpesa, RicercaSinteticaPreDocumentoSpesa, RicercaSinteticaPreDocumentoSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -122,12 +122,12 @@ public class RisultatiRicercaPreDocumentoSpesaAjaxAction extends GenericRisultat
 	}
 	
 	@Override
-	protected ElementoPreDocumento ottieniIstanza(PreDocumentoSpesa e) throws FrontEndBusinessException {
+	protected ElementoPreDocumento getInstance(PreDocumentoSpesa e) throws FrontEndBusinessException {
 		return ElementoPreDocumentoFactory.getInstance(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaPreDocumentoSpesaResponse ottieniResponse(RicercaSinteticaPreDocumentoSpesa req) {
+	protected RicercaSinteticaPreDocumentoSpesaResponse getResponse(RicercaSinteticaPreDocumentoSpesa req) {
 		return preDocumentoSpesaService.ricercaSinteticaPreDocumentoSpesa(req);
 	}
 	
@@ -137,7 +137,7 @@ public class RisultatiRicercaPreDocumentoSpesaAjaxAction extends GenericRisultat
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoPreDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoPreDocumento instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		boolean isAggiornaConsentita = isAggiornaConsentita(listaAzioniConsentite, instance);
@@ -163,8 +163,8 @@ public class RisultatiRicercaPreDocumentoSpesaAjaxAction extends GenericRisultat
 	 * @return se l'aggiornamento &eacute; consentito
 	 */
 	private boolean isAggiornaConsentita(List<AzioneConsentita> listaAzioniConsentite, ElementoPreDocumento instance) {
-		return (AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, listaAzioniConsentite))
+		return (AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, listaAzioniConsentite))
 			&& !instance.isStatoOperativoAnnullato()
 			&& !instance.isStatoOperativoDefinito()
 			&& faseBilancioCoerente;
@@ -177,8 +177,8 @@ public class RisultatiRicercaPreDocumentoSpesaAjaxAction extends GenericRisultat
 	 * @return se l'annullamento &eacute; consentito
 	 */
 	private boolean isAnnullaConsentita(List<AzioneConsentita> listaAzioniConsentite, ElementoPreDocumento instance) {
-		return (AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, listaAzioniConsentite))
+		return (AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, listaAzioniConsentite))
 			&& !instance.isStatoOperativoAnnullato()
 			&& !instance.isStatoOperativoDefinito()
 			&& faseBilancioCoerente;
@@ -190,6 +190,6 @@ public class RisultatiRicercaPreDocumentoSpesaAjaxAction extends GenericRisultat
 	 * @return se la consultazione &eacute; consentita
 	 */
 	private boolean isConsultaConsentita(List<AzioneConsentita> listaAzioniConsentite) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_SPESA_CONSULTA, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_CONSULTA, listaAzioniConsentite);
 	}
 }

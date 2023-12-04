@@ -12,7 +12,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.model.registrazionemovfin.Consu
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.consultazione.ConsultaRegistrazioneMovFinSubAccertamentoHelper;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommonapp.util.paginazione.PaginazioneUtil;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
@@ -64,7 +64,7 @@ public class ConsultaRegistrazioneMovFinSubAccertamentoBaseAction<M extends Cons
 		
 		sessionHandler.setParametro(BilSessionParameter.ACCERTAMENTO, res.getAccertamento());
 		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, req);
-		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, CollectionUtil.toListaPaginata(res.getAccertamento().getElencoSubAccertamenti(), res.getNumPagina(),res.getNumeroTotaleSub()));
+		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, PaginazioneUtil.toListaPaginata(res.getAccertamento().getElencoSubAccertamenti(), res.getNumPagina(),res.getNumeroTotaleSub()));
 
 		return SUCCESS;
 
@@ -81,7 +81,7 @@ public class ConsultaRegistrazioneMovFinSubAccertamentoBaseAction<M extends Cons
 		}
 		for(SubAccertamento sa : listaSubAccertamento) {
 			// Imposto solo la riga del singolo subimpegno ricercato
-			if(sa != null && sa.getNumero() != null && model.getNumeroSub().compareTo(sa.getNumero()) == 0) {
+			if(sa != null && sa.getNumeroBigDecimal() != null && model.getNumeroSub().compareTo(sa.getNumeroBigDecimal()) == 0) {
 				return sa;
 			}
 		}

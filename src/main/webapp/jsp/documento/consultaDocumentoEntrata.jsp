@@ -20,7 +20,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<div class="contentPage">
 					<form method="get" action="#">
 						<h3>Consultazione Documenti di Entrata</h3>
-						<!-- message errore -->
+						<%-- message errore --%>
 						<s:include value="/jsp/include/messaggi.jsp" />
 						<s:hidden name="documento.uid" id="hidden_uidDocumento" />
 						
@@ -78,6 +78,6 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}documento/consultaEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/consultaEntrata.js"></script>
 </body>
 </html>

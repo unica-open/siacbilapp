@@ -29,7 +29,7 @@ public class InserisciProgettoModel extends InserisciCronoprogrammaModel {
 	private boolean fromCronoprogramma;
 //	private String informazioniProvvedimento = "";
 	private boolean abilitaModificaDescrizione = false;
-	
+
 	/** Costruttore vuoto di default */
 	public InserisciProgettoModel() {
 		super();

@@ -269,7 +269,7 @@
             if(+valueToSelect === +val.uid) {
                 tmp += ' selected';
             }
-            tmp += '>' + val.codice + ' - ' + val.descrizione + '</option>';
+            tmp += ' data-codice="'+val.codice+'">' + val.codice + ' - ' + val.descrizione + '</option>';
             return acc + tmp;
         }, initialValue);
         return select.html(str);
@@ -316,7 +316,22 @@
         preselezionaDatiDerivatiTipoElenco(selectedOption);
         handleSelectedOption(selectedOption);
         caricaEvento(mayTriggerChange);
+        disableAnno(selectedOption);
     }
+    
+    //SIAC-8595
+    function disableAnno(selectedOption){
+		var tipoEvento = selectedOption.data('codice');
+		var anno=$("#annoPrimaNota");
+		if(tipoEvento === 'A' || tipoEvento === 'I'){
+			// Tolgo il disabled
+            anno.removeAttr("disabled");
+            $('#annoMovimento')['slideDown']();
+		}else{
+			anno.attr("disabled", true);
+			$('#annoMovimento')['slideUp']();
+		}
+	}
    
     function handleSelectedOption(opt) {
         var txt = opt.text();

@@ -18,7 +18,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<div class="control-group">
 		<label class="control-label" for="cigModale">CIG</label> 
 		<div class="controls">
-			<s:textfield cssClass="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" name="subdocumentoSpesa.cig" id="cigModale" />
+			<s:textfield cssClass="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" name="subdocumentoSpesa.cig" id="cigModale" />
 			<s:if test="impegnoTipoDebitoCommerciale">
 				<span class="al">
 					<label class="radio inline" for="siopeAssenzaMotivazioneModale">Motivo di assenza CIG</label>
@@ -30,14 +30,11 @@ SPDX-License-Identifier: EUPL-1.2
 			</s:else>
 		</div>
 	</div>
+
 	<div class="control-group">
 		<label class="control-label" for="cupModale">CUP</label>
 		<div class="controls">
-			<s:textfield cssClass="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" name="subdocumentoSpesa.cup" id="cupModale" />
-			<span class="al">
-				<label class="radio inline" for="numeroMutuoModale">Mutuo</label>
-			</span>
-			<s:textfield cssClass="span2" name="subdocumentoSpesa.voceMutuo.numeroMutuo" id="numeroMutuoModale" />
+			<s:textfield cssClass="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" name="subdocumentoSpesa.cup" id="cupModale" />
 		</div>
 	</div>
 	<div class="control-group">

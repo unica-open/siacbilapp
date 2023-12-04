@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
@@ -31,7 +31,7 @@ import it.csi.siac.siacfin2app.frontend.ui.model.ajax.capitoli.RisultatiRicercaC
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaCapitoloEntrataGestioneModaleAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoCapitolo,
+public class RisultatiRicercaCapitoloEntrataGestioneModaleAjaxAction extends PagedDataTableAjaxAction<ElementoCapitolo,
 		RisultatiRicercaCapitoloEntrataGestioneAjaxModel, CapitoloEntrataGestione, RicercaSinteticaCapitoloEntrataGestione, RicercaSinteticaCapitoloEntrataGestioneResponse> {
 		
 	/** Per la serializzazione */
@@ -58,12 +58,12 @@ public class RisultatiRicercaCapitoloEntrataGestioneModaleAjaxAction extends Gen
 	}
 
 	@Override
-	protected ElementoCapitolo ottieniIstanza(CapitoloEntrataGestione e) throws FrontEndBusinessException {
+	protected ElementoCapitolo getInstance(CapitoloEntrataGestione e) throws FrontEndBusinessException {
 		return ElementoCapitoloFactory.getInstance(e, false, model.isGestioneUEB());
 	}
 
 	@Override
-	protected RicercaSinteticaCapitoloEntrataGestioneResponse ottieniResponse(RicercaSinteticaCapitoloEntrataGestione request) {
+	protected RicercaSinteticaCapitoloEntrataGestioneResponse getResponse(RicercaSinteticaCapitoloEntrataGestione request) {
 		return capitoloEntrataGestioneService.ricercaSinteticaCapitoloEntrataGestione(request);
 	}
 

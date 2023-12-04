@@ -45,9 +45,21 @@
         opts.oLanguage.sZeroRecords = "Non sono presenti dati iva";
         $("#datiIvaTable").dataTable(opts);
     }
+    
+    /**
+     * Attivazione del dataTable dei dati ritenute.
+     */
+    function attivaDataTableDatiRitenuta() {
+        var opts = $.extend(true, {}, baseOpts);
+        opts.oLanguage.sZeroRecords = "Non sono presenti dati ritenuta";
+        $("#datiRitenutaTable").dataTable(opts);
+    }
+    
+    
 
     $(function() {
         attivaDataTableFattureCollegate();
         attivaDataTableDatiIva();
+        attivaDataTableDatiRitenuta();
     });
 }(jQuery);

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaVincoloAjaxModel;
@@ -35,7 +35,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaVincoloAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoVincolo, 
+public class RisultatiRicercaVincoloAjaxAction extends PagedDataTableAjaxAction<ElementoVincolo, 
 	RisultatiRicercaVincoloAjaxModel, VincoloCapitoli, RicercaVincolo, RicercaVincoloResponse> {
 	
 	/** Per la serializzazione */
@@ -87,12 +87,12 @@ public class RisultatiRicercaVincoloAjaxAction extends GenericRisultatiRicercaAj
 	}
 
 	@Override
-	protected ElementoVincolo ottieniIstanza(VincoloCapitoli e) throws FrontEndBusinessException {
+	protected ElementoVincolo getInstance(VincoloCapitoli e) throws FrontEndBusinessException {
 		return ElementoVincoloFactory.getInstance(e);
 	}
 
 	@Override
-	protected RicercaVincoloResponse ottieniResponse(RicercaVincolo request) {
+	protected RicercaVincoloResponse getResponse(RicercaVincolo request) {
 		return vincoloCapitoloService.ricercaVincolo(request);
 	}
 
@@ -102,7 +102,7 @@ public class RisultatiRicercaVincoloAjaxAction extends GenericRisultatiRicercaAj
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoVincolo instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoVincolo instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isAggiornaConsentitoVincolo(listaAzioniConsentite);

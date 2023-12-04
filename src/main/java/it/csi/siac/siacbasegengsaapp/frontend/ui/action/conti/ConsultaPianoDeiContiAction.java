@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.action.conti;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.conti.ConsultaPianoDeiContiModel;
@@ -42,7 +42,7 @@ public class ConsultaPianoDeiContiAction<M extends ConsultaPianoDeiContiModel> e
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioConto.class, response));
 			addErrori(response);
 			sessionHandler.setParametro(BilSessionParameter.ERRORI_AZIONE_PRECEDENTE, model.getErrori());
 			return INPUT;

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siacfin2ser.model.Causale770;
 import it.csi.siac.siacfin2ser.model.CodiceSommaNonSoggetta;
@@ -113,6 +114,8 @@ public class AggiornaDocumentoModel extends GenericDocumentoModel {
 	private Boolean validazionePrimaNotaDaDocumento;
 	private int uidDaCompletare;
 	
+	//SIAC-8153
+	private StrutturaAmministrativoContabile strutturaCompetenteQuota;
 	
 	/** Costruttore vuoto di default */
 	public AggiornaDocumentoModel() {
@@ -922,6 +925,19 @@ public class AggiornaDocumentoModel extends GenericDocumentoModel {
 	public void setUidDaCompletare(int uidDaCompletare) {
 		this.uidDaCompletare = uidDaCompletare;
 	}
-	
+
+	/**
+	 * @return the strutturaCompetenteQuota
+	 */
+	public StrutturaAmministrativoContabile getStrutturaCompetenteQuota() {
+		return strutturaCompetenteQuota;
+	}
+
+	/**
+	 * @param strutturaCompetenteQuota the strutturaCompetenteQuota to set
+	 */
+	public void setStrutturaCompetenteQuota(StrutturaAmministrativoContabile strutturaCompetenteQuota) {
+		this.strutturaCompetenteQuota = strutturaCompetenteQuota;
+	}
 	
 }

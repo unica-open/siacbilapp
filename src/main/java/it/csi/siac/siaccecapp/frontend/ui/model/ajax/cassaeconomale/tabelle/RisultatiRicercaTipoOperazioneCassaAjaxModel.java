@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.tabelle;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccecser.model.TipoOperazioneCassa;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siaccecser.model.TipoOperazioneCassa;
  * @version 1.0.0 - 03/12/2014
  *
  */
-public class RisultatiRicercaTipoOperazioneCassaAjaxModel extends GenericRisultatiRicercaAjaxModel<TipoOperazioneCassa> {
+public class RisultatiRicercaTipoOperazioneCassaAjaxModel extends PagedDataTableAjaxModel<TipoOperazioneCassa> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -802030838238794647L;

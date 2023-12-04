@@ -116,7 +116,11 @@
         	 optionsBase.aoColumnDefs.push({aTargets: [8], mData: function(source) {
                  return source.elementoStatoOperativoVariazione.descrizione;
              }});
-        	 numColAzione = 9;
+        	 optionsBase.aoColumnDefs.push({aTargets: [9], mData: defaultPerDataTable('tipologiaUltimaOperazioneEffettuata')});
+        	 optionsBase.aoColumnDefs.push({aTargets: [10], mData: defaultPerDataTable('statoUltimaOperazioneEffettuata')});
+			 optionsBase.aoColumnDefs.push({aTargets: [11], mData: defaultPerDataTable('dataUltimaOperazioneEffettuata')});
+        	 
+        	 numColAzione = 12;
         }else{
         	optionsBase.aoColumnDefs.push({aTargets: [2], mData: function(source) {
                 return source.tipoVariazione.codice + " - " + source.tipoVariazione.descrizione;
@@ -125,6 +129,7 @@
         	optionsBase.aoColumnDefs.push({aTargets: [4], mData: function(source) {
                 return source.elementoStatoOperativoVariazione.descrizione;
             }});
+
         	 numColAzione = 5;
         }
         

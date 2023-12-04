@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.anagcomp;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaTipoComponenteImpor
 import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaTipoComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * Action per i risultati di ricerca del TipoComponenteImportiCapitolo
@@ -112,7 +112,7 @@ public class RisultatiRicercaComponenteCapitoloAction  extends GenericBilancioAc
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaTipoComponenteImportiCapitolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}

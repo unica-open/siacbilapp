@@ -11,7 +11,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<ul>
 		<s:if test="hasErrori()">
 			<s:iterator value="errori">
-				<li><s:property value="testo" escape="false" /> </li>
+				<li>  <s:property value="testo" escapeHtml="false" /> 
+				<s:if test="hasDettagliTecnici()">(rif. <s:property value='dettagliTecnici'/>)</s:if>
+				</li>
 			</s:iterator>
 		</s:if>
 	</ul>
@@ -22,7 +24,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<ul>
 		<s:if test="hasMessaggi()">
 			<s:iterator value="messaggi">
-				<li><s:property value="codice"/> - <s:property value="descrizione" escape="false" /> </li>
+				<li><s:property value="codice"/> - <s:property value="descrizione" escapeHtml="false" /> </li>
 			</s:iterator>
 		</s:if>
 	</ul>
@@ -33,7 +35,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<ul>
 		<s:if test="hasInformazioni()">
 			<s:iterator value="informazioni">
-				<li><s:property value="testo" escape="false" /></li>
+				<li><s:property value="testo" escapeHtml="false" /></li>
 			</s:iterator>
 		</s:if>
 	</ul>

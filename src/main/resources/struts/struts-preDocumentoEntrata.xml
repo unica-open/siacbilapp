@@ -130,7 +130,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<param name="actionName">risultatiRicercaPreDocumentoEntrata</param>
 				<param name="namespace">/</param>
 			</result>
-			<result name="input">/jsp/predocumento/ripetiPreDocumentoEntrata.jsp</result>
+			<result name="input">/jsp/predocumento/ .jsp</result>
 		</action>
 		<action name="ripetiPreDocumentoEntrata_inserimentoRipetizione" class="ripetiPreDocumentoEntrataAction" method="inserimentoRipetizione">
 			<result name="success" type="redirectAction">
@@ -152,7 +152,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		<action name="risultatiRicercaPreDocumentoEntrata_apriAssociaConModifiche" class="risultatiRicercaPreDocumentoEntrataAction" method="apriAssociaConModifiche">
-			<result name="success">/jsp/predocumento/imputazioniContabiliPreDocumentoEntrata.jsp</result>
+			<result name="success">/jsp/predocumento/associaImputazioniContabiliPreDocumentoEntrata.jsp</result>
 		</action>
 		<action name="risultatiRicercaPreDocumentoEntrata_associaConModifiche" class="risultatiRicercaPreDocumentoEntrataAction" method="associaConModifiche">
 			<result name="success" type="invocazioneAsincronaJSON" />
@@ -163,24 +163,121 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="input" type="customMessagesJSON" />
 		</action>
 
+		<action name="risultatiRicercaPreDocumentoEntrata_definisciCompleta" class="risultatiRicercaPreDocumentoEntrataAction" method="risultatiDaRicercaPreDoc">
+			<result name="success">/jsp/predocumento/imputazioniContabiliPreDocumentoEntrata.jsp</result>
+		</action>
 		<!-- SIAC-6090 -->
 		<action name="completaDefinisciPreDocumentoEntrata" class="completaDefinisciPreDocumentoEntrataAction">
 			<result name="success">/jsp/predocumento/completaDefinisciPreDocumentoEntrata.jsp</result>
 		</action>
+		
+		<!-- SIAC-6780 -->
+		<action name="riepilogoCompletaDefinisciPreDocumentoEntrata" class="riepilogoCompletaDefinisciPreDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/riepilogoCompletaDefinisciPreDocumentoEntrata.jsp</result>
+		</action>
+		
+		<action name="collegaDocumento" class="collegaDocumentoEntrataAction">
+			<result name="success">/jsp/predocumento/collegaDocumentoEntrata.jsp</result>
+		</action>
+		
+		<action name="riepilogoCompletaDefinisciPreDocumentoEntrata_caricaPredocumentiSelezionati" class="riepilogoCompletaDefinisciPreDocumentoEntrataAction" method="caricaPredocumentiSelezionati">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					importoTotale.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="riepilogoCompletaDefinisciPreDocumentoEntrata_controlloCompletamentoForm" class="riepilogoCompletaDefinisciPreDocumentoEntrataAction" method="controlloCompletamentoForm">
+			<result type="json">
+				<param name="ignoreHierarchy">false</param>
+				<param name="enumAsBean">true</param>
+				<param name="includeProperties">
+					errori.*
+				</param>
+			</result>
+		</action>
+		
+		<action name="riepilogoCompletaDefinisciPreDocumentoEntrataAjax" class="riepilogoCompletaDefinisciPreDocumentoEntrataAjaxAction">
+			<result name="success" type="dataTable"/>
+		</action>
+
+		<action name="ritornoCollegaDocumentoToAggiornaPreDoc" class="aggiornaPreDocumentoEntrataAction" method="ritornoPerAssociaQuotaPreDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="uidSubDocumentoDaAssociare">${uidSubDocumentoDaAssociare}</param>
+				<param name="proseguireConElaborazione">${proseguireConElaborazione}</param>
+			</result>
+			<result name="input">/jsp/predocumento/collegaDocumentoEntrata.jsp</result>
+		</action>
+		
+		<action name="aggiornaPreDocumentoEntrata_cercaQuotePerDocumentoDaAllegare" class="aggiornaPreDocumentoEntrataAction" method="cercaQuotePerAssociaDocumento">
+			<result name="success" type="redirectAction">
+				<param name="actionName">collegaDocumento</param>
+				<param name="namespace">/</param>
+				<param name="annoDocumentoEntrata">${annoDocumentoEntrata}</param>
+				<param name="numeroDocumentoEntrata">${numeroDocumentoEntrata}</param>
+				<param name="uidTipoDocumentoEntrata">${uidTipoDocumentoEntrata}</param>
+				<param name="codiceSoggettoDocumentoEntrata">${codiceSoggettoDocumentoEntrata}</param>
+			</result>
+			<result name="input">/jsp/predocumento/aggiornaPreDocumentoEntrata.jsp</result>
+		</action>
+
+		<action name="risultatiRicercaPreDocumentoEntrata_riepilogoCompletaDefinisci" class="risultatiRicercaPreDocumentoEntrataAction">
+			<result name="success" type="redirectAction">
+				<param name="actionName">riepilogoCompletaDefinisciPreDocumentoEntrata_riepilogoCompletaDefinisci</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="input">/jsp/predocumento/risultatiRicercaPreDocumentoEntrata.jsp</result>
+		</action>
+		
+		<action name="completaDefinisciPreDocumentoEntrata_ricercaPerCompletaDefinisciMassivo" class="completaDefinisciPreDocumentoEntrataAction" method="ricercaPerCompletaDefinisciMassivo">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaPreDocumentoEntrata</param>
+				<param name="namespace">/</param>
+				<param name="fromCompletaDefinisci">true</param>
+			</result>
+			<result name="input">/jsp/predocumento/completaDefinisciPreDocumentoEntrata.jsp</result>
+		</action>
+		
+
 		<action name="completaDefinisciPreDocumentoEntrata_completaDefinisci" class="completaDefinisciPreDocumentoEntrataAction" method="completaDefinisci">
 			<result name="success">/jsp/common/empty.jsp</result>
 			<result name="input">/jsp/predocumento/completaDefinisciPreDocumentoEntrata.jsp</result>
 		</action>
-		<action name="completaDefinisciPreDocumentoEntrata_cercaTotali" class="completaDefinisciPreDocumentoEntrataAction" method="cercaTotali">
+		
+		<action name="riepilogoCompletaDefinisciPreDocumentoEntrataAction_completaDefinisci" class="riepilogoCompletaDefinisciPreDocumentoEntrataAction" method="completaDefinisci">
+			<result name="success">/jsp/common/empty.jsp</result>
+			<result name="input">/jsp/predocumento/riepilogoCompletaDefinisciPreDocumentoEntrata.jsp</result>
+		</action>
+		<!--  -->
+		
+		<action name="riepilogoCompletaDefinisciPreDocumentoEntrataAction_cercaTotaliForRiepilogo" class="riepilogoCompletaDefinisciPreDocumentoEntrataAction" method="cercaTotaliForRiepilogo">
 			<result name="success" type="customJSON">
 				<param name="includeProperties">
 					numeroPreDocumentiIncompleti, numeroPreDocumentiCompleti, numeroPreDocumentiAnnullatiDefiniti, numeroPreDocumentiTotale,
-					importoPreDocumentiIncompleti, importoPreDocumentiCompleti, importoPreDocumentiAnnullatiDefiniti, importoPreDocumentiTotale
+					importoPreDocumentiIncompleti, importoPreDocumentiCompleti, importoPreDocumentiAnnullatiDefiniti, importoPreDocumentiTotale,
+					<!-- SIAC-6780 -->
+					numeroPreDocumentiNoCassaIncompleti, numeroPreDocumentiNoCassaCompleti, numeroPreDocumentiNoCassaAnnullatiDefiniti, numeroPreDocumentiNoCassaTotale,
+					importoPreDocumentiNoCassaIncompleti, importoPreDocumentiNoCassaCompleti, importoPreDocumentiNoCassaAnnullatiDefiniti, importoPreDocumentiNoCassaTotale
 				</param>
 			</result>
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		
+		<action name="completaDefinisciPreDocumentoEntrata_cercaTotali" class="completaDefinisciPreDocumentoEntrataAction" method="cercaTotali">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					numeroPreDocumentiIncompleti, numeroPreDocumentiCompleti, numeroPreDocumentiAnnullatiDefiniti, numeroPreDocumentiTotale,
+					importoPreDocumentiIncompleti, importoPreDocumentiCompleti, importoPreDocumentiAnnullatiDefiniti, importoPreDocumentiTotale,
+					<!-- SIAC-6780 -->
+					numeroPreDocumentiNoCassaIncompleti, numeroPreDocumentiNoCassaCompleti, numeroPreDocumentiNoCassaAnnullatiDefiniti, numeroPreDocumentiNoCassaTotale,
+					importoPreDocumentiNoCassaIncompleti, importoPreDocumentiNoCassaCompleti, importoPreDocumentiNoCassaAnnullatiDefiniti, importoPreDocumentiNoCassaTotale
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
 		
 	</package>
 </struts>

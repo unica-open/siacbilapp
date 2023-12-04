@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegratamanuale.RicercaPrimaNotaIntegrataManualeBaseModel;
@@ -33,7 +33,7 @@ import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
@@ -182,7 +182,7 @@ public abstract class RicercaPrimaNotaIntegrataManualeBaseAction<M extends Ricer
 			RicercaSinteticaModulareCausaleResponse res = causaleService.ricercaSinteticaModulareCausale(req);
 
 			if (res.hasErrori()) {
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaModulareCausale.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -221,7 +221,7 @@ public abstract class RicercaPrimaNotaIntegrataManualeBaseAction<M extends Ricer
 
 			if (res.hasErrori()) {
 				addErrori(res);
-				String msgErrore = createErrorInServiceInvocationString(req, res);
+				String msgErrore = createErrorInServiceInvocationString(RicercaCodifiche.class, res);
 				throw new WebServiceInvocationFailureException(msgErrore);
 			}
 
@@ -258,7 +258,7 @@ public abstract class RicercaPrimaNotaIntegrataManualeBaseAction<M extends Ricer
 		RicercaDettaglioBilancioResponse res = bilancioService.ricercaDettaglioBilancio(req);
 		
 		if(res.hasErrori()) {
-			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(req, res));
+			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(RicercaDettaglioBilancio.class, res));
 		}
 		
 		FaseBilancio faseBilancio = res.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
@@ -284,7 +284,7 @@ public abstract class RicercaPrimaNotaIntegrataManualeBaseAction<M extends Ricer
 		logServiceResponse(res);
 
 		if (res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaConto.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -406,7 +406,7 @@ public abstract class RicercaPrimaNotaIntegrataManualeBaseAction<M extends Ricer
 		if(model.getNumeroSubmovimentoGestione() != null) {
 			// Cerca sub
 			SubAccertamento sa = new SubAccertamento();
-			sa.setNumero(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
+			sa.setNumeroBigDecimal(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
 			sa = ComparatorUtils.findByNumeroMovimentoGestione(res.getAccertamento().getElencoSubAccertamenti(), sa);
 			
 			checkCondition(sa != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubAccertamento", model.getAnnoMovimentoGestione() + "/" + model.getNumeroMovimentoGestione() + "-" + model.getNumeroSubmovimentoGestione()));
@@ -438,7 +438,7 @@ public abstract class RicercaPrimaNotaIntegrataManualeBaseAction<M extends Ricer
 		if(model.getNumeroSubmovimentoGestione() != null) {
 			// Cerca sub
 			SubImpegno si = new SubImpegno();
-			si.setNumero(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
+			si.setNumeroBigDecimal(new BigDecimal(model.getNumeroSubmovimentoGestione().intValue()));
 			si = ComparatorUtils.findByNumeroMovimentoGestione(res.getImpegno().getElencoSubImpegni(), si);
 			
 			checkCondition(si != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", model.getAnnoMovimentoGestione() + "/" + model.getNumeroMovimentoGestione() + "-" + model.getNumeroSubmovimentoGestione()));
@@ -462,7 +462,7 @@ public abstract class RicercaPrimaNotaIntegrataManualeBaseAction<M extends Ricer
 		RicercaSinteticaPrimaNotaIntegrataManualeResponse res = primaNotaService.ricercaSinteticaPrimaNotaIntegrataManuale(req);
 		logServiceResponse(res);
 		if (res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaPrimaNotaIntegrataManuale.class, res));
 			addErrori(res);
 			return INPUT;
 		}

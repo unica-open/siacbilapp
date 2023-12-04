@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -39,7 +39,7 @@ import it.csi.siac.siacfin2ser.model.RegistroIva;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaRegistroIvaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoRegistroIva,
+public class RisultatiRicercaRegistroIvaAjaxAction extends PagedDataTableAjaxAction<ElementoRegistroIva,
 	RisultatiRicercaRegistroIvaAjaxModel, RegistroIva, RicercaSinteticaRegistroIva, RicercaSinteticaRegistroIvaResponse> {
 	
 	/** Per la serializzazione */
@@ -105,12 +105,12 @@ public class RisultatiRicercaRegistroIvaAjaxAction extends GenericRisultatiRicer
 	}
 	
 	@Override
-	protected ElementoRegistroIva ottieniIstanza(RegistroIva e) throws FrontEndBusinessException {
+	protected ElementoRegistroIva getInstance(RegistroIva e) throws FrontEndBusinessException {
 		return new ElementoRegistroIva(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaRegistroIvaResponse ottieniResponse(RicercaSinteticaRegistroIva request) {
+	protected RicercaSinteticaRegistroIvaResponse getResponse(RicercaSinteticaRegistroIva request) {
 		return registroIvaService.ricercaSinteticaRegistroIva(request);
 	}
 	
@@ -120,16 +120,16 @@ public class RisultatiRicercaRegistroIvaAjaxAction extends GenericRisultatiRicer
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoRegistroIva instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoRegistroIva instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		
-		boolean isBackOffice = AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_IVA_AGGIORNA_BACKOFFICE, listaAzioniConsentite);
+		boolean isBackOffice = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_IVA_AGGIORNA_BACKOFFICE, listaAzioniConsentite);
 		boolean isRegistroBloccato = Boolean.TRUE.equals(instance.getFlagBloccato());
 		
-		boolean isAggiornaConsentita = isBackOffice || (AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_IVA_AGGIORNA, listaAzioniConsentite) && !isRegistroBloccato);
-		boolean isEliminaConsentita =  isBackOffice || (AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_IVA_ELIMINA, listaAzioniConsentite) && !isRegistroBloccato);
-		boolean isConsultaConsentita = isBackOffice || (AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_IVA_CONSULTA, listaAzioniConsentite) && !isRegistroBloccato);
+		boolean isAggiornaConsentita = isBackOffice || (AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_IVA_AGGIORNA, listaAzioniConsentite) && !isRegistroBloccato);
+		boolean isEliminaConsentita =  isBackOffice || (AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_IVA_ELIMINA, listaAzioniConsentite) && !isRegistroBloccato);
+		boolean isConsultaConsentita = isBackOffice || (AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_IVA_CONSULTA, listaAzioniConsentite) && !isRegistroBloccato);
 		
 		//CR-3791
 		boolean isBloccaRegistroConsentita = isBackOffice && !isRegistroBloccato;

@@ -16,7 +16,7 @@ import it.csi.siac.siacbilser.model.Macroaggregato;
 import it.csi.siac.siacbilser.model.TipologiaTitolo;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaConciliazionePerTitolo;
 import it.csi.siac.siacgenser.frontend.webservice.msg.EliminaConciliazionePerTitolo;
 import it.csi.siac.siacgenser.frontend.webservice.msg.InserisceConciliazionePerTitolo;

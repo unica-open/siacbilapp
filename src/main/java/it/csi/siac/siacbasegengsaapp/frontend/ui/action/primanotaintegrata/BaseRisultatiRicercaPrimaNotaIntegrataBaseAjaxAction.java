@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.BaseRisultatiRicercaPrimaNotaIntegrataAjaxBaseModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoPrimaNotaIntegrata;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.ServiceRequest;
@@ -32,7 +32,7 @@ import it.csi.siac.siacgenser.model.PrimaNota;
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 public abstract class BaseRisultatiRicercaPrimaNotaIntegrataBaseAjaxAction <M extends BaseRisultatiRicercaPrimaNotaIntegrataAjaxBaseModel, REQ extends ServiceRequest, RES extends ServiceResponse> 
-		extends GenericRisultatiRicercaAjaxAction<ElementoPrimaNotaIntegrata, M, PrimaNota, REQ, RES> {
+		extends PagedDataTableAjaxAction<ElementoPrimaNotaIntegrata, M, PrimaNota, REQ, RES> {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 4233695296021292114L;
@@ -41,7 +41,7 @@ public abstract class BaseRisultatiRicercaPrimaNotaIntegrataBaseAjaxAction <M ex
 	@Autowired protected transient PrimaNotaService primaNotaService;
 	
 	@Override
-	protected ElementoPrimaNotaIntegrata ottieniIstanza(PrimaNota e) throws FrontEndBusinessException {
+	protected ElementoPrimaNotaIntegrata getInstance(PrimaNota e) throws FrontEndBusinessException {
 		return new ElementoPrimaNotaIntegrata(e);
 	}
 

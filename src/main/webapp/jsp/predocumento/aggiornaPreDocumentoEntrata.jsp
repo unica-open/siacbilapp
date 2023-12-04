@@ -19,7 +19,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span12 contentPage">
-				<s:form cssClass="form-horizontal" action="aggiornamentoPreDocumentoEntrata" id="formAggiornamentoPreDocumentoEntrata" novalidate="novalidate" >
+				<s:form cssClass="form-horizontal" action="#" id="formAggiornamentoPreDocumentoEntrata" novalidate="novalidate" >
 					<s:include value="/jsp/include/messaggi.jsp" />
 					<h3><s:property value="titoloPredisposizione" escapeHtml="false" /></h3>
 					<s:hidden id="HIDDEN_uidPredocumento" name="preDocumento.uid" />
@@ -275,11 +275,11 @@ SPDX-License-Identifier: EUPL-1.2
 										<span class="alRight">
 											<label for="annoProvvisorioCassa" class="radio inline">Anno</label>
 										</span>
-										<s:textfield id="annoProvvisorioCassa" name="provvisorioCassa.anno" cssClass="lbTextSmall span2" placeholder="%{'anno'}" disabled="utenteDecentrato" />
+										<s:textfield id="annoProvvisorioCassa" name="provvisorioCassa.anno" cssClass="lbTextSmall span2 soloNumeri" placeholder="%{'anno'}" disabled="utenteDecentrato" />
 										<span class="alRight">
 											<label for="numeroProvvisorioCassa" class="radio inline">Numero</label>
 										</span>
-										<s:textfield id="numeroProvvisorioCassa" name="provvisorioCassa.numero" cssClass="lbTextSmall span2" placeholder="%{'numero'}" maxlength="8" disabled="utenteDecentrato" />
+										<s:textfield id="numeroProvvisorioCassa" name="provvisorioCassa.numero" cssClass="lbTextSmall span2 soloNumeri" placeholder="%{'numero'}" maxlength="8" disabled="utenteDecentrato" />
 										&nbsp;
 										<span id="causaleProvvisorioCassa"></span>
 										<s:if test="!utenteDecentrato">
@@ -338,13 +338,91 @@ SPDX-License-Identifier: EUPL-1.2
 										</div>
 									</div>
 								</div>
+
+								<%-- SIAC-6780 --%>
+								<div id="accordionCollegaDocumentoEntrata" class="accordion">
+									<div class="accordion-group">
+										<div class="accordion-heading">
+											<a href="#collapseCollegaDocumentoEntrata" data-parent="#accordionCollegaDocumentoEntrata" data-toggle="collapse" class="accordion-toggle collapsed">
+												Documento Collegato 
+												<span id="descrizioneCompletaDocumento">
+													<s:if test='%{subdocumento != null && documento != null && (subdocumento.numero ne null && subdocumento.documento.numero != "") && (documento.numero ne null && documento.numero != "") && (documento.anno ne null && documento.anno != "") && (documento.tipoDocumento.codice ne null && documento.tipoDocumento.codice != "")}'>
+														<s:property value="%{documento.tipoDocumento + ' / ' +documento.anno + ' / ' + documento.numero + ' / ' + subdocumento.numero + ' / ' }" />
+													</s:if>
+												</span>
+												<span class="icon">&nbsp;</span>
+											</a>
+										</div>
+										<div class="accordion-body collapse" id="collapseCollegaDocumentoEntrata">
+											  <fieldset class="form-horizontal">
+											  	<h4 class="step-pane">Documento
+													<%-- <span id="descrizioneCompletaDocumento">
+														<s:if test='%{subdocumento != null && documento != null && (subdocumento.numero ne null && subdocumento.documento.numero != "") && (documento.numero ne null && documento.numero != "") && (documento.anno ne null && documento.anno != "") && (documento.tipoDocumento.codice ne null && documento.tipoDocumento.codice != "")}'>
+															<s:property value="%{documento.anno + ' / ' + documento.numero + ' / ' + documento.tipoDocumento}" />
+														</s:if>
+													</span> --%>
+												</h4>
+												<div class="control-group">
+													<label class="control-label" for="annoDocumentoEntrata">Anno documento</label>
+													<div class="controls">
+														<s:textfield id="annoDocumentoEntrata" cssClass="lbTextSmall span2 soloNumeri" name="documento.anno" maxlength="4" placeholder="anno" />
+														<span class="al">
+															<label class="radio inline" style="padding-right:1%" for="numeroDocumentoEntrata">Numero documento</label>
+														</span>
+														<s:textfield id="numeroDocumentoEntrata" cssClass="lbTextSmall span3" name="documento.numero" placeholder="numero" />
+														<span class="al" style="padding-right:1%;">
+															<label class="radio inline" for="tipoDocumento">Tipo documento</label>
+														</span>	
+														<s:select list="listaTipoDocumento" cssClass="span3" name="documento.tipoDocumento.uid" id="uidTipoDocumentoEntrata" headerKey="" headerValue=""
+															listValue="%{codice + ' - ' + descrizione}" listKey="uid" />										
+													</div>
+												</div>
+											</fieldset>
+											<fieldset>
+												<s:hidden id="HIDDEN_documentoDenominazioneDocumentoEntrata" name="soggetto.denominazione" />
+												<s:hidden id="HIDDEN_soggettoCodiceFiscaleDocumentoEntrata" name="soggetto.codiceFiscale" />
+												<s:hidden id="HIDDEN_uidSoggettoDocumentoEntrata" name="soggetto.uid" />
+												<s:hidden id="HIDDEN_collegaDocumento" name="ricercaPerCollegaDocumento" value="'ricercaPerCollegaDocumento'" />
+												<h4 class="step-pane">Soggetto
+													<span id="descrizioneCompletaSoggettoDocumentoEntrata">
+														<s:if test='%{soggetto != null && (soggetto.codice ne null && soggetto.codice != "") && (soggetto.descrizione ne null && soggetto.descrizione != "") && (soggetto.codiceFiscale ne null && soggetto.codiceFiscale != "")}'>
+															<s:property value="%{soggetto.codice + ' - ' + soggetto.descrizione + ' - ' + soggetto.codiceFiscale}" />
+														</s:if>
+													</span>
+												</h4>
+												<div class="control-group">
+													<label class="control-label" for="codiceSoggettoDocumentoEntrata">Codice </label>
+													<div class="controls">
+														<span class="span8">
+															<s:textfield id="codiceSoggettoDocumentoEntrata" cssClass="lbTextSmall span3" name="documento.soggetto.codiceSoggetto" maxlength="20" placeholder="codice" required="required" />
+														</span>
+														<span class="radio guidata span4">
+															<a href="#" id="pulsanteApriModaleSoggettoPreDocumentoEntrata" class="btn btn-primary pull-right">compilazione guidata</a>
+														</span>
+													</div>
+												</div>
+												<div class="control-group">
+													<div class="controls">
+														<span class="radio cerca">
+															<a href="#" id="pulsanteCercaDocumentoEntrata" class="btn btn-primary pull-right">associa documento</a>
+														</span>
+													</div>
+												</div>
+											</fieldset>
+										<%-- <s:include value="/jsp/predocumento/collegaDocumentoEntrata.jsp" /> --%>
+										</div>
+									</div>
+								</div>
+								<%-- --%>
+								
 							</fieldset>
 						</div>
 					</div>
 					<p class="margin-medium">
 						<s:include value="/jsp/include/indietro.jsp" />
 						<button type="button" class="btn reset">annulla</button>
-						<s:submit cssClass="btn btn-primary pull-right" value="aggiorna"/>
+						<%-- <s:submit cssClass="btn btn-primary pull-right" id="pulsanteAggiornaPreDoc" value="aggiorna"/> --%>
+						<a href="#" class="btn btn-primary pull-right" id="pulsanteAggiornaPreDoc">aggiorna</a>
 					</p>
 				</s:form>
 			</div>
@@ -359,16 +437,18 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- MODALE USCITA GESTIONE --%>	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspathexternal}upbootstrap/bootstrap-typeahead.fork.js"></script>
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}provvisorioDiCassa/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_new.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/predocumento.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/aggiornaEntrata.js"></script>
-
+	<script type="text/javascript" src="/siacbilapp/js/external/upbootstrap/bootstrap-typeahead.fork.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.new2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/predocumento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/aggiornaEntrata.js"></script>
+	<%-- SIAC-6780 --%>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/collegaDocumentoEntrata.js"></script>
+	
 </body>
 </html>

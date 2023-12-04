@@ -19,7 +19,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.tipoonere.GenericTipoOnereModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoService;
@@ -99,7 +99,7 @@ public class GenericTipoOnereAction<M extends GenericTipoOnereModel> extends Gen
 			
 			// Controllo gli errori
 			if(response.hasErrori()) {
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaNaturaOnere.class, response));
 			}
 			listaNaturaOnere = response.getElencoNatureOnere();
 			log.debug(methodName, "Lista NaturaOnere caricata. Numero dei risultati: " + listaNaturaOnere.size());
@@ -128,7 +128,7 @@ public class GenericTipoOnereAction<M extends GenericTipoOnereModel> extends Gen
 			
 			// Controllo gli errori
 			if(response.hasErrori()) {
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCausale770.class, response));
 			}
 			listaCausale770 = response.getElencoCausali();
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CAUSALE_770, listaCausale770);
@@ -156,7 +156,7 @@ public class GenericTipoOnereAction<M extends GenericTipoOnereModel> extends Gen
 			
 			// Controllo gli errori
 			if(response.hasErrori()) {
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 			}
 			listaCodiceSommaNonSoggetta = response.getCodifiche(CodiceSommaNonSoggetta.class);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_SOMME_NON_SOGGETTE, listaCodiceSommaNonSoggetta);
@@ -184,7 +184,7 @@ public class GenericTipoOnereAction<M extends GenericTipoOnereModel> extends Gen
 			
 			// Controllo gli errori
 			if(response.hasErrori()) {
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaAttivitaOnere.class, response));
 			}
 			listaAttivitaOnere = response.getElencoAttivitaOnere();
 			sessionHandler.setParametro(BilSessionParameter.LISTA_ATTIVITA_ONERE, listaAttivitaOnere);

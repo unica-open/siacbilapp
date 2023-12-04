@@ -92,7 +92,7 @@ public class CausalePreDocumentoEntrataAjaxAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaDettaglioCausaleEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -116,7 +116,7 @@ public class CausalePreDocumentoEntrataAjaxAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaCausaleEntrata.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}

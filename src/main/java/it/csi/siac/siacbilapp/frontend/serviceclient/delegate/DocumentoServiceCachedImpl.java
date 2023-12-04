@@ -12,6 +12,7 @@ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.CachedServic
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaAttivitaOnereExecutor;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaCausale770Executor;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaCodiceBolloExecutor;
+import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaCodiceCommissioneDocumentoExecutor;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaCodicePCCExecutor;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaCodiceUfficioDestinatarioPCCExecutor;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaNaturaOnereExecutor;
@@ -24,6 +25,7 @@ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor.RicercaTi
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaAttivitaOnereKeyAdapter;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaCausale770KeyAdapter;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaCodiceBolloKeyAdapter;
+import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaCodiceCommissioneDocumentoKeyAdapter;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaCodicePCCKeyAdapter;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaCodiceUfficioDestinatarioPCCKeyAdapter;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.RicercaNaturaOnereKeyAdapter;
@@ -42,6 +44,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCausale770;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCausale770Response;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceBollo;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceBolloResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceCommissioneDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceCommissioneDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodicePCC;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodicePCCResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceUfficioDestinatarioPCC;
@@ -51,6 +55,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNaturaOnereRespons
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNoteTesoriere;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNoteTesoriereResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociare;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociareResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSommaNonSoggetta;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSommaNonSoggettaResponse;
@@ -153,6 +159,16 @@ public class DocumentoServiceCachedImpl implements DocumentoService {
 	@Override
 	public AggiornaRelazioneDocumentiResponse scollegaDocumenti(AggiornaRelazioneDocumenti parameters) {
 		return documentoService.scollegaDocumenti(parameters);
+	}
+
+	@Override
+	public RicercaQuoteDaAssociarePredocumentoResponse ricercaQuoteDaAssociarePredocumento(RicercaQuoteDaAssociarePredocumento parameters) {
+		return documentoService.ricercaQuoteDaAssociarePredocumento(parameters);
+	}
+
+	@Override
+	public RicercaCodiceCommissioneDocumentoResponse ricercaCodiceCommissioneDocumento(RicercaCodiceCommissioneDocumento parameters) {
+		return cachedServiceExecutor.executeService(parameters, new RicercaCodiceCommissioneDocumentoExecutor(documentoService), new RicercaCodiceCommissioneDocumentoKeyAdapter());
 	}
 
 }

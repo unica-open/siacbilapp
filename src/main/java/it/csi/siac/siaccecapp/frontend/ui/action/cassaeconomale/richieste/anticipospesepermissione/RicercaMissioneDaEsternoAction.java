@@ -51,7 +51,7 @@ public class RicercaMissioneDaEsternoAction extends GenericBilancioAction<Ricerc
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				log.info(methodName, createErrorInServiceInvocationString(request, response));
+				log.info(methodName, createErrorInServiceInvocationString(RicercaRichiesteAnticipoMissioniNonErogate.class, response));
 				return INPUT;
 			}
 			log.debug(methodName, "Caricate " + response.getCardinalitaComplessiva() + " missioni da esterno");
@@ -79,7 +79,7 @@ public class RicercaMissioneDaEsternoAction extends GenericBilancioAction<Ricerc
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaRichiesteAnticipoMissioniNonErogate.class, response));
 			return INPUT;
 		}
 		log.debug(methodName, "Caricate " + response.getCardinalitaComplessiva() + " missioni da esterno");

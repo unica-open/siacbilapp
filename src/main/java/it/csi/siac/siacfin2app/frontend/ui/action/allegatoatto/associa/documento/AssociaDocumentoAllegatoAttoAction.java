@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -85,7 +85,7 @@ public class AssociaDocumentoAllegatoAttoAction extends GenericAssociaAllegatoAt
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioAllegatoAtto.class, response));
 			throwExceptionFromErrori(response.getErrori());
 		}
 		model.setAllegatoAtto(response.getAllegatoAtto());
@@ -100,7 +100,7 @@ public class AssociaDocumentoAllegatoAttoAction extends GenericAssociaAllegatoAt
 			log.error(methodName, "Errore nell'invocazione del caricamento di una lista: " + e.getMessage());
 		}
 		
-		model.setGestioneResiduiDisabilitata(AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite()));
+		model.setGestioneResiduiDisabilitata(AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite()));
 		
 		return SUCCESS;
 	}
@@ -205,7 +205,7 @@ public class AssociaDocumentoAllegatoAttoAction extends GenericAssociaAllegatoAt
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorString = createErrorInServiceInvocationString(request, response);
+			String errorString = createErrorInServiceInvocationString(RicercaQuoteDaAssociare.class, response);
 			log.info(methodName, errorString);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorString);
@@ -289,7 +289,7 @@ public class AssociaDocumentoAllegatoAttoAction extends GenericAssociaAllegatoAt
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			// Errori nell'invocazione
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceElenco.class, response));
 			addErrori(response);
 			return INPUT;
 		}

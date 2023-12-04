@@ -266,7 +266,7 @@ SPDX-License-Identifier: EUPL-1.2
 													</div>
 												</s:if>
 												<%-- Classificatori Generici --%>
-												<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+												<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 													<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null && #attr['classificatoreGenerico' + #idx + 'Editabile']}">
 														<div class="control-group">
 															<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">

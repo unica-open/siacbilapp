@@ -59,7 +59,7 @@ public class RicercaElencoDocumentiAllegatoAjaxAction extends GenericBilancioAct
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			// Ho un errore nel servizio: fornisco l'errore ed esco
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaElenco.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

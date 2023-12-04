@@ -17,11 +17,11 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoScritturaPrimaNotaIntegrataFactory;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.importi.ImportiDareAvere;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
-import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.model.messaggio.MessaggioCore;
 import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacgenser.frontend.webservice.ContoService;
@@ -246,7 +246,7 @@ public abstract class AggiornaContoPrimaNotaIntegrataDocumentoBaseAction<M exten
 			//si sono verificati degli errori: esco.
 			// Se ho errori esco
 			addErrori(response);
-			throw new ParamValidationException(createErrorInServiceInvocationString(request, response));
+			throw new ParamValidationException(createErrorInServiceInvocationString(RicercaSinteticaConto.class, response));
 		}
 		
 		return response;
@@ -380,7 +380,7 @@ public abstract class AggiornaContoPrimaNotaIntegrataDocumentoBaseAction<M exten
 		BigDecimal importoMovimento = subdocumento.getImporto();
 		
 		warnCondition(importoMovimento == null || importoMovimento.compareTo(wrapper.getTotaleDare()) == 0,
-				MessaggioBil.MESSAGGIO_DI_SISTEMA.getMessaggio("il totale del movimento (" + FormatUtils.formatCurrency(importoMovimento)
+				MessaggioCore.MESSAGGIO_DI_SISTEMA.getMessaggio("il totale del movimento (" + FormatUtils.formatCurrency(importoMovimento)
 				+ ") e il totale delle scritture (" + FormatUtils.formatCurrency(wrapper.getTotaleDare()) + ") non coincidono. Proseguire con l'elaborazione?"));
 	}
 

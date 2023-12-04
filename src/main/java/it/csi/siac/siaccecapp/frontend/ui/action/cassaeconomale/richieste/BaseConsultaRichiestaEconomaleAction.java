@@ -6,18 +6,18 @@ package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.BaseConsultaRichiestaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.msg.RicercaDettaglioRichiestaEconomale;
 import it.csi.siac.siaccecser.frontend.webservice.msg.RicercaDettaglioRichiestaEconomaleResponse;
 import it.csi.siac.siaccecser.model.RichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe base di action per la consultazione della richiesta economale.
@@ -48,7 +48,7 @@ public abstract class BaseConsultaRichiestaEconomaleAction<M extends BaseConsult
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -66,7 +66,7 @@ public abstract class BaseConsultaRichiestaEconomaleAction<M extends BaseConsult
 	protected void checkCasoDUsoApplicabile() {
 		List<AzioneConsentita> azioniConsentite = sessionHandler.getAzioniConsentite();
 		
-		AzioniConsentite[] azioniRichieste = retrieveAzioniConsentite();
+		AzioneConsentitaEnum[] azioniRichieste = retrieveAzioniConsentite();
 		boolean consentito = AzioniConsentiteFactory.isConsentitoAll(azioniConsentite, azioniRichieste);
 		if(!consentito) {
 			throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("non si dispone dei permessi necessari per l'esecuzione").getTesto(),
@@ -78,7 +78,7 @@ public abstract class BaseConsultaRichiestaEconomaleAction<M extends BaseConsult
 	 * Ottiene le azioni consentite richieste per l'attivazione della funzionalit&agrave;
 	 * @return le azioni richieste
 	 */
-	protected abstract AzioniConsentite[] retrieveAzioniConsentite();
+	protected abstract AzioneConsentitaEnum[] retrieveAzioniConsentite();
 	
 	/**
 	 * Controlla se il tipo di richiesta economale sia valido per la funzionalit&agrave;

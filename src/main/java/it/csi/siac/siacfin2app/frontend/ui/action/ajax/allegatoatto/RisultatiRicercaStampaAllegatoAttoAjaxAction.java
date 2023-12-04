@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -34,7 +34,7 @@ import it.csi.siac.siacfin2ser.model.AllegatoAttoStampa;
 
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaStampaAllegatoAttoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoStampaAllegatoAtto, RisultatiRicercaStampaAllegatoAttoAjaxModel, AllegatoAttoStampa, RicercaSinteticaStampaAllegatoAtto, RicercaSinteticaStampaAllegatoAttoResponse> {
+public class RisultatiRicercaStampaAllegatoAttoAjaxAction extends PagedDataTableAjaxAction<ElementoStampaAllegatoAtto, RisultatiRicercaStampaAllegatoAttoAjaxModel, AllegatoAttoStampa, RicercaSinteticaStampaAllegatoAtto, RicercaSinteticaStampaAllegatoAttoResponse> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 9094901756200404648L;
@@ -67,12 +67,12 @@ public class RisultatiRicercaStampaAllegatoAttoAjaxAction extends GenericRisulta
 	
 
 	@Override
-	protected ElementoStampaAllegatoAtto ottieniIstanza(AllegatoAttoStampa e) throws FrontEndBusinessException {
+	protected ElementoStampaAllegatoAtto getInstance(AllegatoAttoStampa e) throws FrontEndBusinessException {
 		return new ElementoStampaAllegatoAtto(e);
 	}
 
 	@Override
-	protected RicercaSinteticaStampaAllegatoAttoResponse ottieniResponse(RicercaSinteticaStampaAllegatoAtto request) {
+	protected RicercaSinteticaStampaAllegatoAttoResponse getResponse(RicercaSinteticaStampaAllegatoAtto request) {
 		return allegatoAttoService.ricercaSinteticaStampaAllegatoAtto(request);
 	}
 
@@ -82,7 +82,7 @@ public class RisultatiRicercaStampaAllegatoAttoAjaxAction extends GenericRisulta
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoStampaAllegatoAtto instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoStampaAllegatoAtto instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		// Gestione delle azioni consentite
 		Integer uidFile = instance.getUidFile();

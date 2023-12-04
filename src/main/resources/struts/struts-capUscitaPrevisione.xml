@@ -91,6 +91,21 @@ SPDX-License-Identifier: EUPL-1.2
             <result name="success">/jsp/capUscitaPrevisione/aggiornaCapUscPrev.jsp</result>
             <result name="input">/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp</result>
         </action>
+        <!-- SIAC-8256 -->
+        <action name="aggiornaCapUscitaPrevisione_caricaImporti" class="aggiornaCapitoloUscitaPrevisioneAction" method="caricaImporti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+					stanziamentiNegativiPresenti,
+					presentiComponentiNonFresco
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
             <!-- Aggiornamento -->
         <action name="aggiornamentoCapUscitaPrevisione" class="aggiornaCapitoloUscitaPrevisioneAction" method="aggiornaCDU">
 <!--             <result name="success">/jsp/capUscitaPrevisione/inserisciCapUscPrevDISABLED.jsp</result> -->
@@ -108,6 +123,18 @@ SPDX-License-Identifier: EUPL-1.2
             <result name="success">/jsp/cap/include/consulta_vincoli.jsp</result>
         </action>
         
+        <action name="consultaCapUscitaPrevisione_caricaImporti" class="consultaCapitoloUscitaPrevisioneAction" method="caricaImporti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
         
         <!-- Azioni riferite al CDU GESC010 Ricerca Capitolo Uscita Previsione -->
             <!-- Ingresso nella GUI di ricerca con operazioni -->

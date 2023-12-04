@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.capentgest;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -78,7 +78,7 @@ public class ConsultaCapitoloEntrataGestioneAction extends CapitoloEntrataAction
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(methodName, res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioCapitoloEntrataGestione.class, res));
 		}
 		
 		log.debug(methodName, "Impostazione dei dati nel model");
@@ -101,7 +101,7 @@ public class ConsultaCapitoloEntrataGestioneAction extends CapitoloEntrataAction
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDisponibilitaCapitoloEntrataGestione.class, res));
 		}
 		
 		log.debug(methodName, "Impostazione delle disponibilita");

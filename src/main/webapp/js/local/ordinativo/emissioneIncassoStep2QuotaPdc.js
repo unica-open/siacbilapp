@@ -4,7 +4,8 @@
 */
 !function($) {
     "use strict";
-    var $table = $("#tabellaQuote").overlay({rebind: true, loader: true});
+    //SIAC-8200 rebind: false
+    var $table = $("#tabellaQuote").overlay({rebind: false, loader: true});
     var disabled = !!$("#DISABLED").length;
     var selectedDatas = {};
     var isOverlayIn = false;
@@ -13,7 +14,8 @@
      * gestisce l'eventuale disabilitazione della select
      * */
     function gestisciIdsElaborati(){
-    	var $table = $('#tabellaQuote');
+    	//SIAC-8200 $table e' gia' definita
+//    	var $table = $('#tabellaQuote');
     	$table.overlay('show');
     	return $.postJSON('emissioneOrdinativiIncassoQuota_ottieniIdsElementiElaborati.do', {}).then(function(data){
     		var uidsElaborati = data.uidsElaborati;

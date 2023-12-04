@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documento;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -238,7 +239,12 @@ public class ElementoSubdocumentoDaEmettereSpesa extends ElementoSubdocumentoDaE
 			return true;
 		}
 		Date now = new Date();
-		return now.compareTo(dataFineValiditaDurc)>0;
+		
+		//SIAC-7687
+		String dateNow = new SimpleDateFormat("yyyy-MM-dd").format(now);
+		String dateFineDurc = new SimpleDateFormat("yyyy-MM-dd").format(dataFineValiditaDurc);
+		
+		return dateNow.compareTo(dateFineDurc)>0;
 	}
 	
 	/**

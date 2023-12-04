@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.predocumento;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -71,7 +71,7 @@ public class RipetiPreDocumentoEntrataAction extends BaseInserimentoPreDocumento
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioPreDocumentoEntrata.class, res));
 		}
 		PreDocumentoEntrata pde = res.getPreDocumentoEntrata();
 		log.debug(methodName, "Ottengo i dati da ripetere");

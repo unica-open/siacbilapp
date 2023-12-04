@@ -60,7 +60,7 @@ SPDX-License-Identifier: EUPL-1.2
 				 <param name="actionName">aggiornaVariazioneImporti_chooseGestioneUEB</param>
 				<param name="namespace">/</param>
 			</result>
-			<result name="OP-GESC002-aggVar_CODIFICA" type="redirectAction">
+			<result name="OP-GESC002-aggVar_CODIFICHE" type="redirectAction">
 				<param name="actionName">aggiornaVariazioneCodifiche</param>
 				<param name="namespace">/</param>
 			</result>
@@ -69,7 +69,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<param name="actionName">definisciVariazioneImporti_chooseGestioneUEB</param>
 				<param name="namespace">/</param>
 			</result>
-			<result name="OP-GESC003-defVar_CODIFICA" type="redirectAction">
+			<result name="OP-GESC003-defVar_CODIFICHE" type="redirectAction">
 				<param name="actionName">definisciVariazioneCodifiche</param>
 				<param name="namespace">/</param>
 			</result>
@@ -167,6 +167,12 @@ SPDX-License-Identifier: EUPL-1.2
 			</result>
 			<result name="OP-GESC038-annCapEntGest" type="redirectAction">
 				<param name="actionName">annullaCapEntrataGestione</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			<!-- SIAC-8291 -->
+			<result name="OP-GESC090-prevImpegnatoAccertatoCap" type="redirectAction">
+				<param name="actionName">ricercaPrevisioneImpegnatoAccertato</param>
 				<param name="namespace">/</param>
 			</result>
 			
@@ -530,7 +536,20 @@ SPDX-License-Identifier: EUPL-1.2
 			
 			<!-- Fattura elettronica -->
 			<result name="OP-SPE-ricFEL" type="redirectAction">ricercaFatturaElettronica</result>
+
+
+			<!-- SIAC-7557 -->
+			<result name="OP-COM-visTipoDocumento" type="redirectAction">
+				<param name="actionName">ricercaTipoDocumento</param>
+				<param name="namespace">/</param>
+			</result>
 			
+			<result name="OP-COM-gestTipoDocumento" type="redirectAction">
+				<param name="actionName">inserisciTipoDocumento</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- SIAC-7557 -->
+						
 			<!-- Gestione Sanitaria Accentrata (GSA) -->
 			<result name="OP-GEN-ricRegistroRegGSA" type="redirectAction">ricercaRegistrazioneMovFinGSA</result>
 			<result name="OP-GEN-regMassRegistroGSA" type="redirectAction">ricercaRegistrazioneMassivaMovFinGSA</result>
@@ -561,7 +580,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<param name="namespace">/</param>
 			</result>
 			
-			<!-- Dubbia utilita' -->
+			<!-- Dubbia esigibilita' -->
 			<result name="OP-ENT-ConfStpFdce" type="redirectAction">
 				<param name="actionName">inserisciConfigurazioneStampaDubbiaEsigibilita</param>
 				<param name="namespace">/</param>
@@ -569,6 +588,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<!-- SIAC-4422 -->
 			<result name="OP-ENT-ConfStpFdceRen" type="redirectAction">
 				<param name="actionName">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto</param>
+				<param name="namespace">/</param>
+			</result>
+			<!-- SIAC-7858 -->
+			<result name="OP-ENT-ConfStpFdceGes" type="redirectAction">
+				<param name="actionName">inserisciConfigurazioneStampaDubbiaEsigibilitaGestione</param>
 				<param name="namespace">/</param>
 			</result>
 			<!-- SIAC-6881 -->
@@ -681,6 +705,31 @@ SPDX-License-Identifier: EUPL-1.2
 				 <param name="actionName">aggiornaVariazioneImporti_chooseGestioneUEB</param>
 				<param name="namespace">/</param>
 			</result>
+			
+			<!-- SIAC-7559 TODO -->
+			<result name="OP-CRUSCOTTO-PAGOPA" type="redirectAction">
+				<param name="actionName">ricercaElaborazioniFlusso</param>
+				<param name="namespace">/</param>
+			</result>
+			
+			
+			<result name="OP-BKOF019-aggiornaProvvedimentoSistemaEsterno" type="redirectAction">
+				<param name="actionName">ricercaProvvedimento</param>
+				<param name="namespace">/</param>
+			</result>
+
+			<!-- MUTUI -->
+			
+			<result name="OP-MUT-gestisciMutuo" type="redirectAction">
+				<param name="actionName">inserisciMutuo</param>
+				<param name="namespace">/</param>
+			</result>
+
+			<result name="OP-MUT-leggiMutuo" type="redirectAction">
+				<param name="actionName">ricercaMutuo</param>
+				<param name="namespace">/</param>
+			</result>
+			
 		</action>
 
         <action name="logout" class="logoutAction">
@@ -700,6 +749,12 @@ SPDX-License-Identifier: EUPL-1.2
 			<result>/jsp/frontEndMessage.jsp</result>
 		</action>
 		
+		<action name="downloadFile" class="downloadFileAction">
+			<result name="success" type="stream">
+				<param name="contentType">${contentType}</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+			</result>
+		</action>
 		
 	</package>
 </struts>

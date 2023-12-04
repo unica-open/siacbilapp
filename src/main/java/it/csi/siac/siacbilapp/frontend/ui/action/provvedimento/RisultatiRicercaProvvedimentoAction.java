@@ -6,7 +6,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.provvedimento;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,10 +16,11 @@ import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
+import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.provvedimento.RisultatiRicercaProvvedimentoModel;
-import it.csi.siac.siaccommonapp.action.GenericAction;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Action relativa ai risultati della ricerca per il provvedimento.
@@ -30,7 +31,7 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaProvvedimentoAction extends GenericAction<RisultatiRicercaProvvedimentoModel> {
+public class RisultatiRicercaProvvedimentoAction extends GenericBilancioAction<RisultatiRicercaProvvedimentoModel> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -5762798503478748226L;
@@ -121,5 +122,12 @@ public class RisultatiRicercaProvvedimentoAction extends GenericAction<Risultati
 		sessionHandler.setParametro(BilSessionParameter.RIENTRO_POSIZIONE_START, model.getiDisplayStart());
 		return SUCCESS;
 	}
+
 	
+	public boolean isAggiornaAbilitato(AttoAmministrativo attoAmministrativo) {
+		return  isAzioneRichiesta(AzioneConsentitaEnum.AGGIORNA_PROVVEDIMENTO_SISTEMA_ESTERNO) ||
+				! Boolean.TRUE.equals(attoAmministrativo.getBloccoRagioneria())  && 
+				(attoAmministrativo.getProvenienza() == null || "MANUALE".equalsIgnoreCase(attoAmministrativo.getProvenienza()) );
+	}
+
 }

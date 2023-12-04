@@ -217,6 +217,18 @@ SPDX-License-Identifier: EUPL-1.2
 													listValue="%{codice + '-' + descrizione}" headerKey="" headerValue="" />
 											</div>
 										</div>
+										<!-- SIAC-7858 CM 19/05/2021 Inizio -->
+										<div class="control-group">
+											<label for="flagEntrataDubbiaEsigFCDE" class="control-label">Capitolo pertinente per il calcolo FCDE</label>
+											<div class="controls">
+												<select id="flagEntrataDubbiaEsigFCDE" name="flagEntrataDubbiaEsigFCDE">
+													<option value=""  <s:if test='flagEntrataDubbiaEsigFCDE == ""' >selected</s:if>>Non si applica</option>
+													<option value="S" <s:if test='flagEntrataDubbiaEsigFCDE == "S"'>selected</s:if>>S&iacute;</option>
+													<option value="N" <s:if test='flagEntrataDubbiaEsigFCDE == "N"'>selected</s:if>>No</option>
+												</select>
+											</div>
+										</div>
+										<!-- SIAC-7858 CM 19/05/2021 Fine -->
 									</fieldset>
 								</div>
 							</div>
@@ -317,7 +329,7 @@ SPDX-License-Identifier: EUPL-1.2
 															listKey="uid" listValue="%{codice + '-' + descrizione}" />
 												</div>
 											</div>
-											<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+											<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 												<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
 													<div class="control-group">
 														<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
@@ -344,7 +356,11 @@ SPDX-License-Identifier: EUPL-1.2
 										Atti di legge <span class="icon">&nbsp;</span>
 									</a>
 								</div>
-								<div id="collapsefour" class="accordion-body collapse">
+								<s:if test="%{attoDiLegge.anno != null}">
+									<div id="collapsefour" class="accordion-body in collapse">
+								</s:if><s:else>
+									<div id="collapsefour" class="accordion-body collapse">
+								</s:else>
 									<div class="accordion-inner">
 										<fieldset class="form-horizontal">
 											<div class="control-group">
@@ -428,9 +444,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataGestione/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataGestione/ricerca.js"></script>
 </body>
 </html>

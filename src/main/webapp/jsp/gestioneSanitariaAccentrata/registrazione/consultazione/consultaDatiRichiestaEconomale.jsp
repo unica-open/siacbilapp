@@ -93,7 +93,7 @@ SPDX-License-Identifier: EUPL-1.2
 					</li>
 					<li>
 						<dfn>Quote pagate</dfn>
-						<dl><s:property value="consultazioneHelper.quotePagateDocumento" escape="false" /></dl>
+						<dl><s:property value="consultazioneHelper.quotePagateDocumento" escapeHtml="false" /></dl>
 					</li>
 				</ul>
 			</div>

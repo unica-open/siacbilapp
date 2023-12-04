@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
@@ -31,7 +31,7 @@ import it.csi.siac.siacfin2app.frontend.ui.model.ajax.capitoli.RisultatiRicercaC
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaCapitoloUscitaPrevisioneModaleAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoCapitolo,
+public class RisultatiRicercaCapitoloUscitaPrevisioneModaleAjaxAction extends PagedDataTableAjaxAction<ElementoCapitolo,
 		RisultatiRicercaCapitoloUscitaPrevisioneAjaxModel, CapitoloUscitaPrevisione, RicercaSinteticaCapitoloUscitaPrevisione, RicercaSinteticaCapitoloUscitaPrevisioneResponse> {
 		
 	/** Per la serializzazione */
@@ -59,12 +59,12 @@ public class RisultatiRicercaCapitoloUscitaPrevisioneModaleAjaxAction extends Ge
 	}
 
 	@Override
-	protected ElementoCapitolo ottieniIstanza(CapitoloUscitaPrevisione e) throws FrontEndBusinessException {
+	protected ElementoCapitolo getInstance(CapitoloUscitaPrevisione e) throws FrontEndBusinessException {
 		return ElementoCapitoloFactory.getInstance(e, false, model.isGestioneUEB());
 	}
 
 	@Override
-	protected RicercaSinteticaCapitoloUscitaPrevisioneResponse ottieniResponse(RicercaSinteticaCapitoloUscitaPrevisione request) {
+	protected RicercaSinteticaCapitoloUscitaPrevisioneResponse getResponse(RicercaSinteticaCapitoloUscitaPrevisione request) {
 		return capitoloUscitaPrevisioneService.ricercaSinteticaCapitoloUscitaPrevisione(request);
 	}
 

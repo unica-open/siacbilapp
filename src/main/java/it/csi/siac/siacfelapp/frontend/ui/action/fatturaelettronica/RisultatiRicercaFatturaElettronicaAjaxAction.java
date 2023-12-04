@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfelapp.frontend.ui.model.fatturaelettronica.RisultatiRicercaFatturaElettronicaAjaxModel;
@@ -35,7 +35,7 @@ import it.csi.siac.sirfelser.model.FatturaFEL;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaFatturaElettronicaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoFatturaFEL, RisultatiRicercaFatturaElettronicaAjaxModel,
+public class RisultatiRicercaFatturaElettronicaAjaxAction extends PagedDataTableAjaxAction<ElementoFatturaFEL, RisultatiRicercaFatturaElettronicaAjaxModel,
 		FatturaFEL, RicercaSinteticaFatturaElettronica, RicercaSinteticaFatturaElettronicaResponse> {
 
 	/** Per la serializzazione */
@@ -73,12 +73,12 @@ public class RisultatiRicercaFatturaElettronicaAjaxAction extends GenericRisulta
 	}
 
 	@Override
-	protected ElementoFatturaFEL ottieniIstanza(FatturaFEL e) throws FrontEndBusinessException {
+	protected ElementoFatturaFEL getInstance(FatturaFEL e) throws FrontEndBusinessException {
 		return new ElementoFatturaFEL(e);
 	}
 
 	@Override
-	protected RicercaSinteticaFatturaElettronicaResponse ottieniResponse(RicercaSinteticaFatturaElettronica req) {
+	protected RicercaSinteticaFatturaElettronicaResponse getResponse(RicercaSinteticaFatturaElettronica req) {
 		return fatturaElettronicaService.ricercaSinteticaFatturaElettronica(req);
 	}
 
@@ -102,7 +102,7 @@ public class RisultatiRicercaFatturaElettronicaAjaxAction extends GenericRisulta
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoFatturaFEL instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoFatturaFEL instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
@@ -137,7 +137,7 @@ public class RisultatiRicercaFatturaElettronicaAjaxAction extends GenericRisulta
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> altrimenti
 	 */
 	private boolean gestisciConsultazione(List<AzioneConsentita> listaAzioniConsentite) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.FATTURA_ELETTRONICA_RICERCA, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.FATTURA_ELETTRONICA_RICERCA, listaAzioniConsentite);
 
 	}
 
@@ -150,7 +150,7 @@ public class RisultatiRicercaFatturaElettronicaAjaxAction extends GenericRisulta
 	 */
 	private boolean gestisciImportazione(List<AzioneConsentita> listaAzioniConsentite) {
 		return faseBilancioInValues(faseBilancio, FaseBilancio.ESERCIZIO_PROVVISORIO, FaseBilancio.GESTIONE, FaseBilancio.ASSESTAMENTO, FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO)
-				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.FATTURA_ELETTRONICA_GESTISCI, listaAzioniConsentite);
+				&& AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.FATTURA_ELETTRONICA_GESTISCI, listaAzioniConsentite);
 	}
 	
 	/**
@@ -164,7 +164,7 @@ public class RisultatiRicercaFatturaElettronicaAjaxAction extends GenericRisulta
 	private boolean gestisciSospensione(List<AzioneConsentita> listaAzioniConsentite, ElementoFatturaFEL instance) {
 		return instance.isStatoOperativoDaImportare()
 				&& faseBilancioInValues(faseBilancio, FaseBilancio.ESERCIZIO_PROVVISORIO, FaseBilancio.GESTIONE, FaseBilancio.ASSESTAMENTO, FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO)
-				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.FATTURA_ELETTRONICA_GESTISCI, listaAzioniConsentite);
+				&& AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.FATTURA_ELETTRONICA_GESTISCI, listaAzioniConsentite);
 	}
 
 }

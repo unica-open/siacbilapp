@@ -14,9 +14,9 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata.BaseI
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.impegno.GestioneImpegnoPrimaNotaIntegrataBaseModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.consultazione.ConsultaRegistrazioneMovFinImpegnoHelper;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
+import it.csi.siac.siaccommonapp.util.paginazione.PaginazioneUtil;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzatoResponse;
@@ -143,7 +143,7 @@ public abstract class GestioneImpegnoInsPrimaNotaIntegrataBaseAction<M extends G
 		// Imposto la request e la response in sessione
 		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_IMPEGNO_PER_CHIAVE_SUBIMPEGNI, req);
 		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_IMPEGNO_PER_CHIAVE_SUBIMPEGNI,
-				CollectionUtil.toListaPaginata(impegnoServizio.getElencoSubImpegni(), res.getNumPagina(), res.getNumeroTotaleSub()));
+				PaginazioneUtil.toListaPaginata(impegnoServizio.getElencoSubImpegni(), res.getNumPagina(), res.getNumeroTotaleSub()));
 		
 		model.setConsultazioneHelper(new ConsultaRegistrazioneMovFinImpegnoHelper(impegnoServizio, model.isGestioneUEB()));
 	}
@@ -173,7 +173,7 @@ public abstract class GestioneImpegnoInsPrimaNotaIntegrataBaseAction<M extends G
 		descrizione.append("Imp ")
 			.append(impegno.getAnnoMovimento())
 			.append("/")
-			.append(impegno.getNumero().toPlainString());
+			.append(impegno.getNumeroBigDecimal().toPlainString());
 		if(StringUtils.isNotBlank(impegno.getDescrizione())) {
 			// Descrizione se presente
 			descrizione.append(" ")
@@ -182,7 +182,7 @@ public abstract class GestioneImpegnoInsPrimaNotaIntegrataBaseAction<M extends G
 		// Anno e numero (e stringa imp per riconoscerlo)
 		movimento.append(impegno.getAnnoMovimento())
 			.append("/")
-			.append(impegno.getNumero().toPlainString())
+			.append(impegno.getNumeroBigDecimal().toPlainString())
 			.append(" (imp)");
 
 		// Imposto i dati del movimento nel model

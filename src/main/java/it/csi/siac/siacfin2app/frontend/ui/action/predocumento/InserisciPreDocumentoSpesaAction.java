@@ -5,7 +5,7 @@
 package it.csi.siac.siacfin2app.frontend.ui.action.predocumento;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -133,19 +133,18 @@ public class InserisciPreDocumentoSpesaAction extends GenericPreDocumentoSpesaAc
 		
 		// Validazione logica
 		checkCondition(preDocumentoSpesa.getImporto() == null || preDocumentoSpesa.getImporto().signum()>0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("importo",": l'importo deve essere positivo"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo",": l'importo deve essere positivo"));
 		// SIAC-4574: non e' piu' necessario controllare la data di competenza
 		DatiAnagraficiPreDocumentoSpesa datiAnagraficiPreDocumentoSpesa = model.getDatiAnagraficiPreDocumento();
 		
 		// Validazioni specifiche
 		validazioneSoggetto();
 		validazioneCapitolo();
-		validazioneImpegnoSubImpegno();
+		validazioneImpegnoSubImpegno(Integer.valueOf(1));
 		validazioneAttoAmministrativo();
 		
 		//metodi aggiunti in data 05/06/2015
 		validazioneProvvisorioDiCassaPredocumentoDiSpesa();
-		validaNumeroMutuo();
 		
 		controlloConguenzaSoggettoMovimentoGestione(model.getSoggetto(), model.getMovimentoGestione(), model.getSubMovimentoGestione(),
 				"predisposizione di pagamento", "impegno");

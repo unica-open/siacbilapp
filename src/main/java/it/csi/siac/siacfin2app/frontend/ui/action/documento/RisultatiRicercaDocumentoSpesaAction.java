@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.documento;
 
 import java.math.BigDecimal;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -115,7 +115,7 @@ public class RisultatiRicercaDocumentoSpesaAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaDocumentoSpesa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -193,7 +193,7 @@ public class RisultatiRicercaDocumentoSpesaAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaOrdiniDocumento.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -220,7 +220,7 @@ public class RisultatiRicercaDocumentoSpesaAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaOrdine.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -249,7 +249,7 @@ public class RisultatiRicercaDocumentoSpesaAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaOrdine.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -284,7 +284,7 @@ public class RisultatiRicercaDocumentoSpesaAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceOrdine.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -323,7 +323,7 @@ public class RisultatiRicercaDocumentoSpesaAction extends GenericBilancioAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AttivaRegistrazioniContabiliSpesa.class, response));
 			addErrori(response);
 			return INPUT;
 		}

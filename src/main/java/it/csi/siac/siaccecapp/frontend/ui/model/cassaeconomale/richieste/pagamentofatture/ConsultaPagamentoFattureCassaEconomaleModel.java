@@ -11,9 +11,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.Function;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.Reductor;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Function;
+import it.csi.siac.siaccommon.util.collections.Reductor;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.BaseConsultaRichiestaEconomaleModel;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
@@ -114,7 +114,7 @@ public class ConsultaPagamentoFattureCassaEconomaleModel extends BaseConsultaRic
 		});
 		return CollectionUtil.reduce(listaNumeroQuote, new Reductor<String, String>() {
 			@Override
-			public String reduce(String accumulator, String currentValue, int index, Collection<String> collection) {
+			public String reduce(String accumulator, String currentValue, int index) {
 				return accumulator + ", " + currentValue;
 			}
 		});

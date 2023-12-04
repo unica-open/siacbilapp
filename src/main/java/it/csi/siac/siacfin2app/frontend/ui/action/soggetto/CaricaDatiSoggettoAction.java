@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.util.comparator.ComparatorUtil;
 import it.csi.siac.siacfin2app.frontend.ui.model.soggetto.CaricaDatiSoggettoModel;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
@@ -66,7 +66,7 @@ public class CaricaDatiSoggettoAction extends GenericBilancioAction<CaricaDatiSo
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				log.debug(methodName, createErrorInServiceInvocationString(request, response));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 				addErrori(response);
 				return SUCCESS;
 			}
@@ -121,7 +121,7 @@ public class CaricaDatiSoggettoAction extends GenericBilancioAction<CaricaDatiSo
 		log.debug(methodName, "Uid della sede da cercare: " + sss.getUid());
 		List<SedeSecondariaSoggetto> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_SEDE_SECONDARIA_SOGGETTO);
 		
-		sss = ComparatorUtils.searchByUid(listaInSessione, sss);
+		sss = ComparatorUtil.searchByUid(listaInSessione, sss);
 		log.debug(methodName, "Denominazione della sede per cui filtrare: " + sss.getDenominazione());
 		
 		// Filtro sulla base della sede

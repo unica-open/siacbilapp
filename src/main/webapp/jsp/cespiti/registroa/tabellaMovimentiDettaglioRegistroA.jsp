@@ -9,11 +9,12 @@ SPDX-License-Identifier: EUPL-1.2
 	<table class="table tab_left dataTable" id="tabellaMovimentiDettaglioRegistroA">
 		<thead>
 			<tr>
-				<th>Movimento Finanziario</th>
+				<th class="span3">Movimento Finanziario</th>
+				<th class="span3">Atto di liquidazione</th>
 				<th><abbr title="Iva commerciale">Iva Comm.</abbr></th>
 				<th class="tab_Right">Importo finanziario</th>
 				<th>Conto</th>
-				<th>Voce</th>
+				<th class="span3">Voce</th>
 				<th class="tab_Right">Importo da inventariare/alineare</th>
 				<th class="tab_Right">Importo inventariato/ alineato</th>
 				<th class="tab_Right"><abbr title="Numero beni">N. Beni</abbr></th>
@@ -21,4 +22,5 @@ SPDX-License-Identifier: EUPL-1.2
 			</tr>
 		</thead>
 	</table>
+	<s:hidden id="HIDDEN_tipoCausale" name="tipoCausale.codice"/>
 </fieldset>																

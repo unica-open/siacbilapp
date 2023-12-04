@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,11 +21,12 @@ import it.csi.siac.siacbilapp.frontend.ui.model.capuscgest.InserisciCapitoloUsci
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaPrevisioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiUscitaGestioneResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
@@ -39,16 +40,17 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloUsc
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
+import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.model.Account;
-import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di Action per la gestione dell'inserimento del Capitolo di Uscita Gestione.
@@ -124,6 +126,9 @@ public class InserisciCapitoloUscitaGestioneAction extends CapitoloUscitaAction<
 		
 		cug.setCategoriaCapitolo(categoriaCapitoloStandard);
 		cug.setFlagImpegnabile(Boolean.TRUE);
+		//task-55
+		cug.setFlagNonInserireAllegatoA1(Boolean.FALSE);
+		
 		if(!daCduChiamante || !model.isGestioneUEB()) {
 			cug.setNumeroUEB(1);
 			log.debug(methodName, "Default per il capitolo da inserire - UEB " + cug.getNumeroUEB());
@@ -142,6 +147,21 @@ public class InserisciCapitoloUscitaGestioneAction extends CapitoloUscitaAction<
 		
 		importi1.setStanziamento(BigDecimal.ZERO);
 		importi2.setStanziamento(BigDecimal.ZERO);
+		
+		//task-86
+		if(abilitaNumerazioneAutomaticaCapitolo()) {
+			LeggiPropostaNumeroCapitolo req = model.leggiPropostaNumeroCapitolo();
+			logServiceRequest(req);
+			LeggiPropostaNumeroCapitoloResponse response = capitoloService.leggiPropostaNumeroCapitoloService(req);
+			logServiceResponse(response);
+			if(!response.hasErrori()) {
+				model.getCapitoloUscitaGestione().setNumeroCapitolo(response.getNumeroPropostoCapitolo());
+			}else {
+				log.debug(methodName, "Errore nella risposta del servizio");
+				addErrori(methodName, response);
+				log.debug(methodName, "Model: " + model);
+			}
+		}
 		
 		model.setImportiCapitoloUscitaGestione0(importi0);
 		model.setImportiCapitoloUscitaGestione1(importi1);
@@ -175,8 +195,7 @@ public class InserisciCapitoloUscitaGestioneAction extends CapitoloUscitaAction<
 		log.debug(methodName, "Valorizzo i classificatori");
 		model.caricaClassificatoriDaSessione(sessionHandler);
 		
-		Account account = sessionHandler.getAccount();
-		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
+		boolean decentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
 		
 		log.debug(methodName, "Creazione della request");
 		
@@ -475,6 +494,7 @@ public class InserisciCapitoloUscitaGestioneAction extends CapitoloUscitaAction<
 
 	@Override
 	public void validate() {
+
 		CapitoloUscitaGestione cug = model.getCapitoloUscitaGestione();
 		if(cug != null && !model.isGestioneUEB()){
 			cug.setNumeroUEB(Integer.valueOf(1));
@@ -495,9 +515,22 @@ public class InserisciCapitoloUscitaGestioneAction extends CapitoloUscitaAction<
 			checkNotNullNorInvalidUid(model.getTitoloSpesa(), "Titolo");
 			checkNotNullNorInvalidUid(model.getMacroaggregato(), "Macroaggregato");
 			checkNotNullNorInvalidUid(model.getElementoPianoDeiConti(), "Elemento del Piano dei Conti");
+			//task-9
+			checkNotNullNorInvalidUid(model.getClassificazioneCofog(), "Cofog");
+			
 		}
 		
 		checkNotNullNorInvalidUid(model.getStrutturaAmministrativoContabile(), "Struttura Amministrativa Responsabile");
+		
+		//task-55
+		Missione missioneConDati = ComparatorUtils.searchByUid(model.getListaMissione(), model.getMissione());
+		if("20".equals(missioneConDati.getCodice())) {
+			checkNotNull(cug.getFlagNonInserireAllegatoA1(), "Capitolo da non inserire nell'allegato A1");
+		}else {
+			model.getCapitoloUscitaGestione().setFlagNonInserireAllegatoA1(null);
+		}
+		
+		checkCondition(!isMissioneWithCodice(CODICE_MISSIONE_20) || model.idEntitaPresente(model.getRisorsaAccantonata()), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("risorsa accantonata"));
 	}
 	
 	@Override

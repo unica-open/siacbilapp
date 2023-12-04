@@ -5,12 +5,10 @@
 package it.csi.siac.siacbilapp.frontend.ui.action.capuscgest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,8 +18,10 @@ import it.csi.siac.siacbilapp.frontend.ui.action.commons.CapitoloUscitaAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscgest.RicercaCapitoloUscitaGestioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitoloFactory;
-import it.csi.siac.siacbilser.business.utility.helper.ComponenteImportiCapitoloPerAnnoHelper;
+import it.csi.siac.siacbilser.business.utility.capitolo.ComponenteImportiCapitoloPerAnnoHelper;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitoloResponse;
@@ -41,7 +41,9 @@ import it.csi.siac.siacbilser.model.Macroaggregato;
 import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.Programma;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
+import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
+import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
@@ -50,6 +52,7 @@ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Action per la gestione della Ricerca per il Capitolo di Uscita Gestione.
@@ -86,6 +89,7 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 	protected void caricaListaCodificheDiBase(BilConstants codiceTipoElementoBilancio) {
 		super.caricaListaCodificheDiBase(codiceTipoElementoBilancio);
 		caricaListaClassificatoriGenerici(codiceTipoElementoBilancio);
+		caricaListaCodificheUscita();
 	}
 	
 	@Override
@@ -247,6 +251,9 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 	 */
 	public String ricercaDettaglio() {
 		final String methodName = "ricercaDettaglio";
+
+		
+
 		
 		log.debug(methodName, "Validazione dei campi");
 		boolean valido = validaRicercaComeDatoAggiuntivo();
@@ -270,6 +277,7 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 			// Ritorno comunque SUCCESS sì da ottenere gli errori nella risposta JSON
 			return SUCCESS;
 		}
+		
 		
 		// Effettuo la ricerca di dettaglio a partire dall'uid ottenuto dalla ricerca puntuale
 		log.debug(methodName, "Creazione della request per la ricerca dettaglio");
@@ -339,12 +347,22 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 		
 		boolean isSacAfferente = sacAfferente(sacDaAssociare, struttureAccount, ricercaDettaglioVariazione(uidVar).getVariazioneImportoCapitolo().getDirezioneProponente().getCodice());
 		
+		//SIAC-7629 (SIAC-7811) VG
+		Boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA, sessionHandler.getAzioniConsentite());
+		String tipoVarCode="";
+		RicercaDettaglioAnagraficaVariazioneBilancioResponse anagraficaVar = ricercaDettaglioVariazione(uidVar);
+		if(anagraficaVar!= null && anagraficaVar.getVariazioneImportoCapitolo()!= null
+				&& anagraficaVar.getVariazioneImportoCapitolo().getTipoVariazione()!=null){
+			tipoVarCode = anagraficaVar.getVariazioneImportoCapitolo().getTipoVariazione().getCodice();
+		}
+		
 		//boolean isSameSac = ( dirPropVar.getCodice().equals(sac.getCodice()) ? true : false);
 		if(model.isRegionePiemonte()){
 			if(firstChapter && isSacAfferente && isFondiRegionali){ //stessa sac e fondi regionali, mostra il capitolo da aggiungere				
 				model.setCapitoloUscitaGestione(cugDaAssociare);
 				return SUCCESS;
-			}else if (!firstChapter){
+			}
+			if (!firstChapter){
 				//RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse responseDettagli = ricercaDettaglioPrimoCapitoloNellaVariazione(uidVar, BilConstants.CODICE_CAPITOLO_USCITA_GESTIONE.getConstant());
 				int uidPrimoCapitoloInserito = responseDettagliV.getListaDettaglioVariazioneImportoCapitolo().get(0).getCapitolo().getUid();
 				
@@ -357,8 +375,43 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 				Programma programmaPrimoCapitolo = (primoCapDaAssociare.getProgramma() != null) ? primoCapDaAssociare.getProgramma()  : null;
 				//if(primoCapitoloSac != null && sacDaAssociare != null && primoCapitoloSac.getCodice() != null && sacDaAssociare.getCodice() != null 
 				//&&  primoCapitoloSac.getCodice().equals(sacDaAssociare.getCodice()) &&
-				if(isFondiRegionali && isSacAfferente && 
-						tipoFinanziamentoPrimoCapitolo != null && tipoFinanziamentoDaAssociare != null && tipoFinanziamentoDaAssociare.getCodice() != null 
+
+				
+				/*
+				 * BEFORE SIAC-7629 (SIAC-7811) VG
+				 */
+//				if(isFondiRegionali && isSacAfferente && 
+//						tipoFinanziamentoPrimoCapitolo != null && tipoFinanziamentoDaAssociare != null && tipoFinanziamentoDaAssociare.getCodice() != null 
+//						&& tipoFinanziamentoPrimoCapitolo.getCodice() != null && tipoFinanziamentoPrimoCapitolo.getCodice().equals(tipoFinanziamentoDaAssociare.getCodice()) &&
+//								titoloSpesaPrimoCapitolo != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitolo.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
+//								&& titoloSpesaPrimoCapitolo.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
+//								missioneDaAssociare !=null && missionePrimoCapitolo !=null && 
+//										missionePrimoCapitolo.getCodice()!=null && missioneDaAssociare.getCodice()!=null &&
+//												missionePrimoCapitolo.getCodice().equals(missioneDaAssociare.getCodice()) &&
+//														programmaPrimoCapitolo !=null && programmaDaAssociare !=null && 
+//														programmaPrimoCapitolo.getCodice()!=null && programmaDaAssociare.getCodice()!=null &&
+//																programmaPrimoCapitolo.getCodice().equals(programmaDaAssociare.getCodice()) 
+//						){
+//					
+//					model.setCapitoloUscitaGestione(cugDaAssociare);
+//					return SUCCESS;
+//				}else{
+//					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+//					addErrori(responseRicercaPuntuale);
+//					return SUCCESS;
+//				}
+				
+				/*
+				 * SIAC-7629 (SIAC-7811) VG
+				 * SE DECENTRATO E SE LA TIPOLOGIA DELLA VARIAZIONE E' VL
+				 * IL CONTROLLO SU TITOLO, MISSIONE E PROGRAMMA NON VIENE EFFETTUATO 
+				 */
+				//CHECK FONDO REGIONALE E SAC
+				if(isFondiRegionali && isSacAfferente){
+					//SE DECENTRATO E VL CONTROLLIAMO MISSIONE TIPOLOGIA E PROGRAMMA
+					if(!isDecentrato || !TipoVariazione.VARIAZIONE_DECENTRATA_LEGGE.getCodice().equals(tipoVarCode)){
+						//CHECK SU MISSIONE TIPOLOGIA E PROGRAMMA
+						if(tipoFinanziamentoPrimoCapitolo != null && tipoFinanziamentoDaAssociare != null && tipoFinanziamentoDaAssociare.getCodice() != null 
 						&& tipoFinanziamentoPrimoCapitolo.getCodice() != null && tipoFinanziamentoPrimoCapitolo.getCodice().equals(tipoFinanziamentoDaAssociare.getCodice()) &&
 								titoloSpesaPrimoCapitolo != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitolo.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
 								&& titoloSpesaPrimoCapitolo.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
@@ -370,61 +423,107 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 																programmaPrimoCapitolo.getCodice().equals(programmaDaAssociare.getCodice()) 
 						){
 					
+							model.setCapitoloUscitaGestione(cugDaAssociare);
+							return SUCCESS;
+						}
+						responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+						addErrori(responseRicercaPuntuale);
+						return SUCCESS;
+					}
+					//DECENTRATO E TIPOLOGIA VL
 					model.setCapitoloUscitaGestione(cugDaAssociare);
 					return SUCCESS;
-				}else{
-					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
-					addErrori(responseRicercaPuntuale);
-					return SUCCESS;
-				}	
-			}else{
+				}
+				//CHECK FONDO REGIONALE E SAC
 				responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
 				addErrori(responseRicercaPuntuale);
-				return SUCCESS;							
-			}					
-		}else{
-			
-			if(firstChapter && isSacAfferente){ //stessa sac e fondi regionali, mostra il capitolo da aggiungere				
-				model.setCapitoloUscitaGestione(cugDaAssociare);
 				return SUCCESS;
-			
-			}else if (!firstChapter){
-				//RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse responseDettagli = ricercaDettaglioPrimoCapitoloNellaVariazione(uidVar, BilConstants.CODICE_CAPITOLO_USCITA_GESTIONE.getConstant());
-				int uidPrimoCapitoloInserito = responseDettagliV.getListaDettaglioVariazioneImportoCapitolo().get(0).getCapitolo().getUid();
-				RicercaDettaglioCapitoloUscitaGestioneResponse resPrimoCapitolo = ricercaDettaglioCapitolo(uidPrimoCapitoloInserito);
-				CapitoloUscitaGestione primoCapAssociato = resPrimoCapitolo.getCapitoloUscita();
-				//StrutturaAmministrativoContabile primoCapitoloAssociatoSac = (primoCapAssociato.getStrutturaAmministrativoContabile() !=null) ? primoCapAssociato.getStrutturaAmministrativoContabile(): null;
-				TitoloSpesa titoloSpesaPrimoCapitoloAssociato = (primoCapAssociato.getTitoloSpesa() != null) ? primoCapAssociato.getTitoloSpesa(): null;
-				Missione missionePrimoCapitoloAssociato= primoCapAssociato.getMissione() != null ? primoCapAssociato.getMissione() : null ;
-				Macroaggregato macroaggregatoPrimoCapitoloAssociato = (primoCapAssociato.getMacroaggregato() != null) ? primoCapAssociato.getMacroaggregato() : null;
-				Programma programmaPrimoCapitolo = (primoCapAssociato.getProgramma() != null) ? primoCapAssociato.getProgramma()  : null;
-				
-				if(isSacAfferente &&
-								titoloSpesaPrimoCapitoloAssociato != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitoloAssociato.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
-								&& titoloSpesaPrimoCapitoloAssociato.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
-								missionePrimoCapitoloAssociato !=null && missioneDaAssociare !=null && 
-										missionePrimoCapitoloAssociato.getCodice()!=null && missioneDaAssociare.getCodice()!=null &&
-												missionePrimoCapitoloAssociato.getCodice().equals(missioneDaAssociare.getCodice()) &&
-												macroaggregatoPrimoCapitoloAssociato !=null && macroaggregatoDaAssociare !=null && 
-														macroaggregatoPrimoCapitoloAssociato.getCodice()!=null && macroaggregatoDaAssociare.getCodice()!=null &&
-																macroaggregatoPrimoCapitoloAssociato.getCodice().equals(macroaggregatoDaAssociare.getCodice()) &&
-																programmaPrimoCapitolo !=null && programmaDaAssociare !=null && 
-																		programmaPrimoCapitolo.getCodice()!=null && programmaDaAssociare.getCodice()!=null &&
-																				programmaPrimoCapitolo.getCodice().equals(programmaDaAssociare.getCodice())){					
-					model.setCapitoloUscitaGestione(cugDaAssociare);
-					return SUCCESS;
-				}else{
-					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
-					addErrori(responseRicercaPuntuale);
-					return SUCCESS;
-				}	
-			}else{
-				responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
-				addErrori(responseRicercaPuntuale);
-				return SUCCESS;							
-			}
+			}					
+			responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+			addErrori(responseRicercaPuntuale);
+			return SUCCESS;							
 
 		}
+		if(firstChapter && isSacAfferente){ //stessa sac e fondi regionali, mostra il capitolo da aggiungere				
+			model.setCapitoloUscitaGestione(cugDaAssociare);
+			return SUCCESS;
+			
+		}
+		if (!firstChapter){
+			//RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse responseDettagli = ricercaDettaglioPrimoCapitoloNellaVariazione(uidVar, BilConstants.CODICE_CAPITOLO_USCITA_GESTIONE.getConstant());
+			int uidPrimoCapitoloInserito = responseDettagliV.getListaDettaglioVariazioneImportoCapitolo().get(0).getCapitolo().getUid();
+			RicercaDettaglioCapitoloUscitaGestioneResponse resPrimoCapitolo = ricercaDettaglioCapitolo(uidPrimoCapitoloInserito);
+			CapitoloUscitaGestione primoCapAssociato = resPrimoCapitolo.getCapitoloUscita();
+			//StrutturaAmministrativoContabile primoCapitoloAssociatoSac = (primoCapAssociato.getStrutturaAmministrativoContabile() !=null) ? primoCapAssociato.getStrutturaAmministrativoContabile(): null;
+			TitoloSpesa titoloSpesaPrimoCapitoloAssociato = (primoCapAssociato.getTitoloSpesa() != null) ? primoCapAssociato.getTitoloSpesa(): null;
+			Missione missionePrimoCapitoloAssociato= primoCapAssociato.getMissione() != null ? primoCapAssociato.getMissione() : null ;
+			Macroaggregato macroaggregatoPrimoCapitoloAssociato = (primoCapAssociato.getMacroaggregato() != null) ? primoCapAssociato.getMacroaggregato() : null;
+			Programma programmaPrimoCapitolo = (primoCapAssociato.getProgramma() != null) ? primoCapAssociato.getProgramma()  : null;
+			
+			/*
+			 * BEFORE SIAC-7629 (SIAC-7811) VG
+			 */
+//				if(isSacAfferente &&
+//								titoloSpesaPrimoCapitoloAssociato != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitoloAssociato.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
+//								&& titoloSpesaPrimoCapitoloAssociato.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
+//								missionePrimoCapitoloAssociato !=null && missioneDaAssociare !=null && 
+//										missionePrimoCapitoloAssociato.getCodice()!=null && missioneDaAssociare.getCodice()!=null &&
+//												missionePrimoCapitoloAssociato.getCodice().equals(missioneDaAssociare.getCodice()) &&
+//												macroaggregatoPrimoCapitoloAssociato !=null && macroaggregatoDaAssociare !=null && 
+//														macroaggregatoPrimoCapitoloAssociato.getCodice()!=null && macroaggregatoDaAssociare.getCodice()!=null &&
+//																macroaggregatoPrimoCapitoloAssociato.getCodice().equals(macroaggregatoDaAssociare.getCodice()) &&
+//																programmaPrimoCapitolo !=null && programmaDaAssociare !=null && 
+//																		programmaPrimoCapitolo.getCodice()!=null && programmaDaAssociare.getCodice()!=null &&
+//																				programmaPrimoCapitolo.getCodice().equals(programmaDaAssociare.getCodice())){					
+//					model.setCapitoloUscitaGestione(cugDaAssociare);
+//					return SUCCESS;
+//				}else{
+//					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+//					addErrori(responseRicercaPuntuale);
+//					return SUCCESS;
+//				}	
+			
+			
+			/*
+			 * SIAC-7629 (SIAC-7811) VG
+			 * SE DECENTRATO E SE LA TIPOLOGIA DELLA VARIAZIONE E' VL
+			 * IL CONTROLLO SU TITOLO, MISSIONE E PROGRAMMA NON VIENE EFFETTUATO 
+			 */
+			//CHECK SAC AFFERENTE
+			if(isSacAfferente){
+				//SE DECENTRATO E VL CONTROLLIAMO MISSIONE TIPOLOGIA E PROGRAMMA
+				if(!isDecentrato || !TipoVariazione.VARIAZIONE_DECENTRATA_LEGGE.getCodice().equals(tipoVarCode)){
+					//CHECK SU MISSIONE TIPOLOGIA E PROGRAMMA
+					if(titoloSpesaPrimoCapitoloAssociato != null && titoloSpesaDaAssociare != null && titoloSpesaPrimoCapitoloAssociato.getCodice()!=null && titoloSpesaDaAssociare.getCodice()!=null
+							&& titoloSpesaPrimoCapitoloAssociato.getCodice().equals(titoloSpesaDaAssociare.getCodice()) && 
+							missionePrimoCapitoloAssociato !=null && missioneDaAssociare !=null && 
+							missionePrimoCapitoloAssociato.getCodice()!=null && missioneDaAssociare.getCodice()!=null &&
+							missionePrimoCapitoloAssociato.getCodice().equals(missioneDaAssociare.getCodice()) &&
+							macroaggregatoPrimoCapitoloAssociato !=null && macroaggregatoDaAssociare !=null && 
+							macroaggregatoPrimoCapitoloAssociato.getCodice()!=null && macroaggregatoDaAssociare.getCodice()!=null &&
+							macroaggregatoPrimoCapitoloAssociato.getCodice().equals(macroaggregatoDaAssociare.getCodice()) &&
+							programmaPrimoCapitolo !=null && programmaDaAssociare !=null && 
+							programmaPrimoCapitolo.getCodice()!=null && programmaDaAssociare.getCodice()!=null &&
+							programmaPrimoCapitolo.getCodice().equals(programmaDaAssociare.getCodice())){					
+						model.setCapitoloUscitaGestione(cugDaAssociare);
+						return SUCCESS;
+					}
+					responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+					addErrori(responseRicercaPuntuale);
+					return SUCCESS;
+					
+				}
+				//DECENTRATO E TIPOLOGIA VL
+				model.setCapitoloUscitaGestione(cugDaAssociare);
+				return SUCCESS;
+			}
+			responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+			addErrori(responseRicercaPuntuale);
+			return SUCCESS;
+		}
+		responseRicercaPuntuale = setNullInResponse(responseRicercaPuntuale);
+		addErrori(responseRicercaPuntuale);
+		return SUCCESS;							
 				
 	}
 	
@@ -475,7 +574,8 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 				checkAttoDiLegge(model.getAttoDiLegge()) ||
 					// Controllo i flags
 				checkStringaValorizzata(model.getFlagFunzioniDelegate(), "FlagFunzioniDelegate") ||
-				checkStringaValorizzata(model.getFlagRilevanteIva(), "FlagRilevanteIva");
+				checkStringaValorizzata(model.getFlagRilevanteIva(), "FlagRilevanteIva") || 
+				checkPresenzaIdEntita(model.getRisorsaAccantonata());
 		
 		checkCondition(formValido, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore(""));
 		log.debug(methodName, "Ricerca valida? " + formValido);
@@ -537,7 +637,16 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 	//SIAC-6881
 	public String ricercaComponenteImportiCapitolo() {
 		RicercaComponenteImportiCapitolo req = model.creaRequestRicercaComponenteImportiCapitolo();
+		
 		RicercaComponenteImportiCapitoloResponse response =  componenteImportiCapitoloService.ricercaComponenteImportiCapitolo(req);
+		
+		//SIAC-8010 controllo formale per errori del servizio
+		if(!response.getErrori().isEmpty()) {
+			log.debug("ricercaComponenteImportiCapitolo", response.getErrori());
+			addErrori(response.getErrori());
+			return INPUT;
+		}
+		
 		//IMPOSTARE OGGETTI COMPETENZA, CASSA, RESIDUO da mettere nel model (anche in un metodo privato qui dentro)
 		//COMPETENZA
 //		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnno(response.getListaImportiCapitolo());
@@ -546,17 +655,62 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 
 
 		//SIAC-7227
-		if(response.getListaImportiCapitolo().get(0) != null) {
-			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
+//		if(response.getListaImportiCapitolo().get(0) != null) {
+//			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
+//		}
+//		//
+		//SIAC-7349 - Start - SR210 - MR - 08/05/2020 ->devo clonare l'array per evitare il problema del riferimento dell'array in sessione
+		if(!importiComponentiCapitolo.isEmpty()){
+			List<ImportiCapitoloPerComponente> cloneImportiComponentiCapitolo1 = ReflectionUtil.deepClone(importiComponentiCapitolo);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, cloneImportiComponentiCapitolo1);
+		}else{
+			//SIAC-7349 - Start - SR200 - MR - 08/05/2020 ->Sposto prima dell'aver calcolato gli anni precedenti e le componenti non associate
+			sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, importiComponentiCapitolo.isEmpty()? null : importiComponentiCapitolo);
+					//End - SIAC-7349			
 		}
-		//
+		//END SIAC-7349
 		
+		//SIAC-8010 aggiunti controlli formali
+		if(response.getListaImportiCapitolo() != null && !response.getListaImportiCapitolo().isEmpty() && response.getListaImportiCapitolo().get(0) != null ) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedenteNew(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
+		}
+		//SIAC-7349 - SR210 - MR - Start - 12/05/2020 - Nuovo metodo per mostrare componenti negli anni successivi senza stanziamento
+		if(response.getListaImportiCapitoloAnniSuccessiviNoStanz() != null &&  !response.getListaImportiCapitoloAnniSuccessiviNoStanz().isEmpty()) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitolo, response.getListaImportiCapitoloAnniSuccessiviNoStanz());
+		}
+		//SIAC-7349 - End
+		
+		//SIAC-7349 - GS - Start - 21/07/2020 - Nuovo metodo per mostrare componenti nel triennio senza stanziamento
+		if(response.getListaImportiCapitoloTriennioNoStanz() != null &&  !response.getListaImportiCapitoloTriennioNoStanz().isEmpty()) {
+
+			int countDefault = 0;
+			for (ImportiCapitoloPerComponente i : importiComponentiCapitolo) {
+				if (i.isPropostaDefault()) 
+					countDefault++;
+			}  
+			int addIndex = importiComponentiCapitolo.size() - countDefault;
+		
+			Integer annoEsercizio = Integer.valueOf(sessionHandler.getAnnoEsercizio());
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitolo, response.getListaImportiCapitoloTriennioNoStanz(), annoEsercizio, addIndex);
+		}
+		//SIAC-7349 - End
+		
+		importiComponentiCapitolo = impostaDatiInMaschera(importiComponentiCapitolo);	
 		model.setImportiComponentiCapitolo(importiComponentiCapitolo);
-		sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, importiComponentiCapitolo.isEmpty()? null : importiComponentiCapitolo);
+		//sessionHandler.setParametro(BilSessionParameter.LISTA_IMPORTI_COMPONENTE_CAPITOLO_DA_RICERCA, importiComponentiCapitolo.isEmpty()? null : importiComponentiCapitolo);
 		
 		List<ImportiCapitoloPerComponente> competenzaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
 		ComponenteImportiCapitoloPerAnnoHelper.buildCompetenzaRowUG(response.getListaImportiCapitolo(),response.getImportiCapitoloResiduo(),response.getImportiCapitoloAnniSuccessivi(),competenzaComponenti);
+		//SIAC-7349 - SR210 - MR - Start 12.05.2020
+		//per mantenere la retrocompatibilita nel sistema, rimuovo fuori dal metodo la disponibilita ad impegnare della competenza
+		//in quanto non deve essere visualizzata nei casi di CAP-UG		
+		for(int i=0; i<competenzaComponenti.size(); i++){
+			if(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE.equals(competenzaComponenti.get(i).getTipoDettaglioComponenteImportiCapitolo())){
+				competenzaComponenti.remove(competenzaComponenti.get(i));
+			}
+		}
 		model.setCompetenzaComponenti(competenzaComponenti);
+
 		//RESIDUI
 		List<ImportiCapitoloPerComponente> residuiComponenti = new ArrayList<ImportiCapitoloPerComponente>();
 		ComponenteImportiCapitoloPerAnnoHelper.buildResiduiRow( response.getListaImportiCapitolo(),response.getImportiCapitoloResiduo(),response.getImportiCapitoloAnniSuccessivi(), residuiComponenti);
@@ -565,6 +719,7 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 		List<ImportiCapitoloPerComponente> cassaComponenti = new ArrayList<ImportiCapitoloPerComponente>();
 		ComponenteImportiCapitoloPerAnnoHelper.buildCassaRow( response.getListaImportiCapitolo(),response.getImportiCapitoloResiduo(),response.getImportiCapitoloAnniSuccessivi(),cassaComponenti);
 		model.setCassaComponenti(cassaComponenti);
+		model.setTipologiaCapitolo("CAP-UG");
 		return SUCCESS;
 	}
 	
@@ -630,6 +785,48 @@ public class RicercaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<Ri
 			responseRicercaPuntuale.addErrori(errori);	
 			return responseRicercaPuntuale;
 	}
+	
+	//SIAC-7349 - MR - SR210 - 12.05.2020 Questo metodo permette di visualizzare correttamente
+	//i valori di impegnato, disp Variare e disp a Impegnare di ogni singola componente
+	//nella maschera di consultazione
+	private List<ImportiCapitoloPerComponente> impostaDatiInMaschera(List<ImportiCapitoloPerComponente> importiComponentiCapitolo){
+		int sizeImporti = importiComponentiCapitolo.size();
+			
+		List<Integer> indiciDettagliDispImpVar= new ArrayList<Integer>();
+		List<ImportiCapitoloPerComponente> listaDisponibilitaImpegnare = new ArrayList<ImportiCapitoloPerComponente>();
+		List<ImportiCapitoloPerComponente> listaDisponibilitaVariare = new ArrayList<ImportiCapitoloPerComponente>();
+		for(int i=0; i<sizeImporti; i++){
+			TipoDettaglioComponenteImportiCapitolo dettaglioComponente = importiComponentiCapitolo.get(i).getTipoDettaglioComponenteImportiCapitolo();
+			if(dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE)
+					||dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAVARIARE)){
+				indiciDettagliDispImpVar.add(i);							
+			}
+		}
+		for(Integer index : indiciDettagliDispImpVar){
+			TipoDettaglioComponenteImportiCapitolo tipoDettaglioComponente = importiComponentiCapitolo.get(index).getTipoDettaglioComponenteImportiCapitolo();
+				
+			if(tipoDettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE)){
+				listaDisponibilitaImpegnare.add(ReflectionUtil.deepClone(importiComponentiCapitolo.get(index)));				
+			} else if(tipoDettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAVARIARE)){
+				listaDisponibilitaVariare.add(ReflectionUtil.deepClone(importiComponentiCapitolo.get(index)));				
+			}
+		}
+		int j=indiciDettagliDispImpVar.size()-1;
+		while (j>=0) {
+			importiComponentiCapitolo.remove(importiComponentiCapitolo.get(indiciDettagliDispImpVar.get(j)));
+			j--;			
+		}
+			//SIAC-7349 - Start - Sr210 MR 16/04/2020 Setting delle disponibilita impegnare nel model
+		//model.setDisponibilitaImpegnareComponentiCapitolo(listaDisponibilitaImpegnare);
+			//SIAC-7349
+					
+			//SIAC-7349 - Start - Sr210 MR 16/04/2020 Setting delle disponibilita a variare nel model
+		//model.setDisponibilitaVariareComponentiCapitolo(listaDisponibilitaVariare);
+			//SIAC-7349
+			
+		return importiComponentiCapitolo;
+
+		}
 	
 	
 //	private boolean sacAfferente(StrutturaAmministrativoContabile sac, List<StrutturaAmministrativoContabile> struttureAccount, String direzioneProponenteVarSel) {		

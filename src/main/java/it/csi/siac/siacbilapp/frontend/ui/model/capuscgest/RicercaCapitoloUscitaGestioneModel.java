@@ -77,6 +77,10 @@ public class RicercaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 	private int uidVariazione;
 	private String direzioneProponente;
 	//***END SIAC 6884***//
+	
+	//SIAC-7349 - SR210/SR230 - MR - STart - Property necessaria per settare il rowspan nella jsp della tabella
+	private String tipologiaCapitolo;
+	//END SIAC-7349
 		
 	/** Costruttore vuoto di default */
 	public RicercaCapitoloUscitaGestioneModel() {
@@ -84,6 +88,14 @@ public class RicercaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		setTitolo("Ricerca Capitolo Spesa Gestione");
 	}
 	
+	public String getTipologiaCapitolo() {
+		return tipologiaCapitolo;
+	}
+
+	public void setTipologiaCapitolo(String tipologiaCapitolo) {
+		this.tipologiaCapitolo = tipologiaCapitolo;
+	}
+
 	/**
 	 * @return the capitoloUscitaGestione
 	 */
@@ -452,6 +464,8 @@ public class RicercaCapitoloUscitaGestioneModel extends CapitoloUscitaModel {
 		injettaCodiceCodificaNellaRicercaSeValida(utility, getPerimetroSanitarioSpesa(), "setCodicePerimetroSanitarioSpesa");
 		injettaCodiceCodificaNellaRicercaSeValida(utility, getTransazioneUnioneEuropeaSpesa(), "setCodiceTransazioneUnioneEuropeaSpesa");
 		injettaCodiceCodificaNellaRicercaSeValida(utility, getPoliticheRegionaliUnitarie(), "setCodicePoliticheRegionaliUnitarie");
+		//SIAC-7192
+		injettaCodiceCodificaNellaRicercaSeValida(utility, getRisorsaAccantonata(), "setCodiceRisorsaAccantonata");
 		
 		// StrutturaAmministrativoContabile
 		injettaStrutturaAmministrativoContabileNellaRicercaSeValido(utility, getStrutturaAmministrativoContabile(), getStrutturaAmministrativoResponsabile());

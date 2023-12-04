@@ -5,7 +5,7 @@
 package it.csi.siac.siaccespapp.frontend.ui.action.cespite;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -78,7 +78,7 @@ public class RicercaCespiteAction extends GenericCespiteAction<RicercaCespiteMod
 		checkCondition(indicatoUnCriterioDiRicerca, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
 		checkCondition(model.getNumeroInventarioDa() == null || model.getNumeroInventarioA() == null
 				|| model.getNumeroInventarioDa().compareTo(model.getNumeroInventarioA()) <= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("numero inventario da/a", "il numero da non puo' essere superiore al numero a"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("numero inventario da/a", "il numero da non puo' essere superiore al numero a"));
 	}
 	
 	/**

@@ -7,7 +7,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.provvisoriocassa;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.provvisoriocassa.RicercaSinteticaProvvisorioDiCassaModel;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.model.ContoTesoreria;
@@ -41,7 +41,7 @@ public class RicercaSinteticaProvvisorioDiCassaAction extends GenericBilancioAct
 	private static final long serialVersionUID = -8338470732256037965L;
 	
 	@Autowired private transient ProvvisorioService provvisorioService;
-	@Autowired private transient PreDocumentoSpesaService preDocumentoSpesaService;
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
 	
 	@Override
 	@BreadCrumb("%{model.titolo}")
@@ -131,13 +131,13 @@ public class RicercaSinteticaProvvisorioDiCassaAction extends GenericBilancioAct
 		
 		checkCondition(ricercaValida, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
 		checkCondition(model.getDataEmissioneDa() == null || model.getDataEmissioneA() == null || !model.getDataEmissioneDa().after(model.getDataEmissioneA()),
-			ErroreCore.VALORE_NON_VALIDO.getErrore("Data emissione Inizio/Fine", "L'inizio della data di emissione non puo' essere successiva alla data di fine"));
+			ErroreCore.VALORE_NON_CONSENTITO.getErrore("Data emissione Inizio/Fine", "L'inizio della data di emissione non puo' essere successiva alla data di fine"));
 		
 		checkCondition(model.getDataInizioTrasmissione() == null || model.getDataFineTrasmissione() == null || !model.getDataInizioTrasmissione().after(model.getDataFineTrasmissione()),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Data Trasmissione Inizio/Fine", "L'inizio della data di trasmissione non puo' essere successiva alla data di fine"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Data Trasmissione Inizio/Fine", "L'inizio della data di trasmissione non puo' essere successiva alla data di fine"));
 		
 		checkCondition(model.getImportoDa() == null || model.getImportoA() == null || model.getImportoA().subtract(model.getImportoDa()).signum() >= 0,
-			ErroreCore.VALORE_NON_VALIDO.getErrore("Importo Da/A", "L'importo A non puo' essere inferiore all'importo Da"));
+			ErroreCore.VALORE_NON_CONSENTITO.getErrore("Importo Da/A", "L'importo A non puo' essere inferiore all'importo Da"));
 	
 		validateContoEvidenza();
 	}
@@ -161,7 +161,7 @@ public class RicercaSinteticaProvvisorioDiCassaAction extends GenericBilancioAct
 		if(listaInSessione == null) {
 			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
 			logServiceRequest(request);
-			LeggiContiTesoreriaResponse response = preDocumentoSpesaService.leggiContiTesoreria(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
 			logServiceResponse(response);
 			
 			// Controllo gli errori

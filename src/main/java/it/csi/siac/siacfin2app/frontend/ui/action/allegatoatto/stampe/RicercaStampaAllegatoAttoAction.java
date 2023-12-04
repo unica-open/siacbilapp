@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.stampe;
 
 import java.util.Arrays;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;

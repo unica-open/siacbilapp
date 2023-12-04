@@ -15,6 +15,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<th scope="col" role="columnheader">Struttura amministrativa capitolo</th>
 			<th scope="col" role="columnheader">Descrizione capitolo</th>
 			<th scope="col" role="columnheader">Descrizione articolo</th>
+			<th scope="col" role="columnheader">Azioni</th>
 		</tr>
 	</thead>	
 	<tbody>

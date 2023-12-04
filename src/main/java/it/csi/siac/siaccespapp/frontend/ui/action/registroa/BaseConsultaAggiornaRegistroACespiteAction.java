@@ -5,6 +5,7 @@
 package it.csi.siac.siaccespapp.frontend.ui.action.registroa;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +24,8 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaMovimento
 import it.csi.siac.siaccespser.model.Cespite;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
+import it.csi.siac.siacgenser.model.MovimentoDettaglio;
+import it.csi.siac.siacgenser.model.TipoCausale;
 
 /**
  * Action per la consultazione del registro A(prime note verso inventario contabile)
@@ -85,7 +88,22 @@ public abstract class BaseConsultaAggiornaRegistroACespiteAction<M extends BaseC
 		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_MOVIMENTI_DETTAGLIO_REGISTRO_A_CESPITE, response.getMovimentiDettaglio());
 		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_MOVIMENTI_DETTAGLIO_REGISTRO_A_CESPITE, req);
 		sessionHandler.setParametro(BilSessionParameter.RIENTRO_POSIZIONE_START, null);
+		model.setTipoCausale(extractTipoCausale(response.getMovimentiDettaglio()));
 		return movimentiCaricatiCorrettamente;
+	}
+	
+	/**
+	 * Extract tipo causale.
+	 *
+	 * @param movimentoDettaglio the movimento dettaglio
+	 * @return the tipo causale
+	 */
+	private TipoCausale extractTipoCausale(List<MovimentoDettaglio> movimentoDettaglioLista) {
+		MovimentoDettaglio movimentoDettaglio = movimentoDettaglioLista != null && !movimentoDettaglioLista.isEmpty()?  movimentoDettaglioLista.get(0) : null;
+		if(movimentoDettaglio == null || movimentoDettaglio.getMovimentoEP() == null || movimentoDettaglio.getMovimentoEP().getPrimaNota() == null) {
+			return null;
+		}
+		return movimentoDettaglio.getMovimentoEP().getPrimaNota().getTipoCausale();
 	}
 	
 	/**

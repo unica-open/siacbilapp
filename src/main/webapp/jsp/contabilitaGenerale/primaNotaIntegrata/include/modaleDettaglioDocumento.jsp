@@ -49,11 +49,11 @@ SPDX-License-Identifier: EUPL-1.2
 					</li>
 					<li>
 						<dfn>Note credito</dfn>
-						<dl><s:property value="noteCredito" escape="false" /></dl>
+						<dl><s:property value="noteCredito" escapeHtml="false" /></dl>
 					</li>
 					<li>
 						<dfn>Documenti collegati</dfn>
-						<dl><s:property value="documentiCollegati" escape="false" /></dl>
+						<dl><s:property value="documentiCollegati" escapeHtml="false" /></dl>
 					</li>
 					<li>
 						<dfn>Importi</dfn>

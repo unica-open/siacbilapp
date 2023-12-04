@@ -335,7 +335,7 @@ public class AggiornaTestataDocumentoEntrataModel extends AggiornaDocumentoModel
 		
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		utility.setNumeroAccertamento(accertamento.getNumero());
+		utility.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 		
 		return utility;
 	}

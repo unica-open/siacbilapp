@@ -69,7 +69,7 @@ public abstract class InserisciPrimaNotaIntegrataDocumentoEntrataBaseAction<M ex
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoEntrata.class, res));
 		}
 		DocumentoEntrata documento = res.getDocumento();
 		if(documento == null) {

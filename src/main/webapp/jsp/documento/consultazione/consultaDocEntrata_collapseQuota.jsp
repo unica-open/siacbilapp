@@ -178,6 +178,10 @@ SPDX-License-Identifier: EUPL-1.2
 					<dfn>Note</dfn>
 					<dl><s:property value="%{subdocumentoEntrata.note}"/>&nbsp;</dl>
 				</li>
+				<li>
+					<dfn>Predisposizione</dfn>
+					<dl><s:property value="%{subdocumentoEntrata.preDocumentoEntrata.numero}"/> - <s:property value="%{subdocumentoEntrata.preDocumentoEntrata.descrizione}"/></dl>
+				</li>
 			</ul>
 		</div>
 	</div>

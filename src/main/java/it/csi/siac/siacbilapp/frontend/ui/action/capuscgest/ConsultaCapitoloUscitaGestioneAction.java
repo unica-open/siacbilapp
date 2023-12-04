@@ -7,7 +7,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.capuscgest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.commons.CapitoloUscitaAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscgest.ConsultaCapitoloUscitaGestioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilser.business.utility.helper.ComponenteImportiCapitoloPerAnnoHelper;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.TabellaImportiConComponentiCapitoloFactory;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitoloResponse;
@@ -26,7 +26,10 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUs
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloUscitaGestioneResponse;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
+import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.wrapper.EntitaConsultabileFilter;
 
@@ -94,15 +97,20 @@ public class ConsultaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<C
 		if (res.hasErrori()) {
 			// si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioCapitoloUscitaGestione.class, res));
 		}
 		
 		sessionHandler.setParametro(BilSessionParameter.CAPITOLO_PER_RICERCA_DETTAGLIO_VARIAZIONE, res.getCapitoloUscita().getUid());
 
 		// GESC012
+		/*
 		log.debug("ricercaComponenteImportiCapitolo",
 				"Richiamo il WebService di ricerca dettaglio componenti competenza");
 		RicercaComponenteImportiCapitolo reqComponente = model.creaRequestRicercaComponenteImportiCapitolo();
+
+		//SIAC-7349 - Start - SR210 - MR - 16/04/2020 - Abilito la chiamata per la disponibilita da mostrare nella tabella di riepilogo
+		reqComponente.setAbilitaCalcoloDisponibilita(true);
+		//SIAC-7349 - End
 		//Salvo in sessione Richiedente e UidCapitolo
 		RicercaComponenteImportiCapitoloResponse resComponente = componenteImportiCapitoloService
 				.ricercaComponenteImportiCapitolo(reqComponente);
@@ -117,24 +125,55 @@ public class ConsultaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<C
 		}
 
 		log.debug(methodName, "Impostazione dei dati nel model");
-
+		
 		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = new ArrayList<ImportiCapitoloPerComponente>();
 		log.debug("Helper toComponentiImportiCapitoloPerAnno", "Utilizzo Helper");
+	
 		importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
-				.toComponentiImportiCapitoloPerAnno(resComponente.getListaImportiCapitolo());
+				.toComponentiImportiCapitoloPerAnno(resComponente.getListaImportiCapitolo(), resComponente.getImportiCapitoloAnniSuccessivi());
 		log.debug(methodName, "Impostazione degli importi componenti nel model");
 		
 		//SIAC-7227
 //		if(resComponente.getListaImportiCapitolo().get(0) != null) {
 //			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, resComponente.getListaImportiCapitolo().get(0));
 //		}
-		//
+		if(resComponente.getListaImportiCapitolo().get(0) != null ) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedenteNew(importiComponentiCapitolo, resComponente.getListaImportiCapitolo().get(0));
+		}
 		
+		
+		
+		//SIAC-7349 - SR210 - MR - Start - 12/05/2020 - Nuovo metodo per mostrare componenti negli anni successivi senza stanziamento
+		if(resComponente.getListaImportiCapitoloAnniSuccessiviNoStanz() != null &&  !resComponente.getListaImportiCapitoloAnniSuccessiviNoStanz().isEmpty()) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitolo, resComponente.getListaImportiCapitoloAnniSuccessiviNoStanz());
+		}
+		//SIAC-7349 - End
+		
+		//SIAC-7349 - GS - Start - 20/07/2020 - Nuovo metodo per mostrare componenti nel triennio senza stanziamento
+		if(resComponente.getListaImportiCapitoloTriennioNoStanz() != null &&  !resComponente.getListaImportiCapitoloTriennioNoStanz().isEmpty()) {
+			int countDefault = 0;
+			for (ImportiCapitoloPerComponente i : importiComponentiCapitolo) {
+				if (i.isPropostaDefault()) 
+					countDefault++;
+			}  
+			int addIndex = importiComponentiCapitolo.size() - countDefault;
+			Integer annoEsercizio = Integer.valueOf(sessionHandler.getAnnoEsercizio());
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitolo, resComponente.getListaImportiCapitoloTriennioNoStanz(), annoEsercizio, addIndex);
+		}
+		//SIAC-7349 - End
+		
+		//SIAC-7349 End
+		//SIAC-7349 - Start - SR210 - MR - 16/04/2020 
+		//Per non introdurre regressione, viene fatta una deepCopy dell'array, e successivamente
+		//vengono aggiunte le Disponibilita in un nuovo array, e rimosso la disponibilita dall'array master.
+		importiComponentiCapitolo = impostaDatiInMaschera(importiComponentiCapitolo);
 		model.setImportiComponentiCapitolo(importiComponentiCapitolo);
+		*/
+		
 		model.impostaDatiDaResponse(res);
 		
 		//vecchia gestione
-		
+		/*
 		model.setImportiCapitoloSuccessivi(resComponente.getImportiCapitoloAnniSuccessivi());
 		model.setImportiResidui(resComponente.getImportiCapitoloResiduo());
 		
@@ -166,9 +205,45 @@ public class ConsultaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<C
 		model.setCassaStanziato((cassaComponenti.get(0) !=null) ? cassaComponenti.get(0) : null);
 		model.setCassaPagato((cassaComponenti.get(1) !=null) ? cassaComponenti.get(1) : null);
 		
-		
+		*/
 		log.debug(methodName, "Dati impostati nel model");
 		
+		
+	}
+
+	
+	public String caricaImporti() {
+		RicercaComponenteImportiCapitolo reqComponente = model.creaRequestRicercaComponenteImportiCapitolo();
+
+		//SIAC-7349 - Start - SR210 - MR - 16/04/2020 - Abilito la chiamata per la disponibilita da mostrare nella tabella di riepilogo
+		reqComponente.setAbilitaCalcoloDisponibilita(true);
+		//SIAC-7349 - End
+		//Salvo in sessione Richiedente e UidCapitolo
+		RicercaComponenteImportiCapitoloResponse resComponente = componenteImportiCapitoloService
+				.ricercaComponenteImportiCapitolo(reqComponente);
+		log.debug("ricercaComponenteImportiCapitolo",
+				"Richiamo il WebService di ricerca dettaglio componenti competenza");
+
+		// Controllo gli errori
+		if (resComponente.hasErrori()) {
+			// si sono verificati degli errori: esco.
+			addErrori(resComponente);
+			return INPUT;
+		}
+		
+		TabellaImportiConComponentiCapitoloFactory factory = new TabellaImportiConComponentiCapitoloFactory();
+		factory.init(model.getAnnoEsercizioInt(), TipoCapitolo.CAPITOLO_USCITA_GESTIONE, resComponente);
+		factory.elaboraRigheConImportoInizialeEDisponibilita();
+		
+		model.setRigheImportiTabellaImportiCapitolo(factory.getRigheImportoTabellaElaborate());
+		model.setRigheComponentiTabellaImportiCapitolo(factory.getRigheComponentiElaborate());
+		
+		
+		model.setRigheDisponibilitaImpegnareComponenti(factory.getRigheDisponibilitaImpegnareComponenti());
+		model.setRigheDisponibilitaVariareComponenti(factory.getRigheDisponibilitaVariareComponenti());
+		
+		
+		return SUCCESS;
 		
 	}
 
@@ -189,7 +264,7 @@ public class ConsultaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<C
 		if (res.hasErrori()) {
 			// si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDisponibilitaCapitoloUscitaGestione.class, res));
 		}
 
 		log.debug(methodName, "Impostazione delle disponibilita");
@@ -245,6 +320,49 @@ public class ConsultaCapitoloUscitaGestioneAction extends CapitoloUscitaAction<C
 	 */
 	private boolean hasMassimoImpegnabile(ImportiCapitoloUG icug) {
 		return icug != null && icug.getMassimoImpegnabile() != null;
+	}
+	
+	
+	//SIAC-7349 - MR - SR210 - 12.05.2020 Questo metodo permette di visualizzare correttamente
+	//i valori di impegnato, disp Variare e disp a Impegnare di ogni singola componente
+	//nella maschera di consultazione
+	private List<ImportiCapitoloPerComponente> impostaDatiInMaschera(List<ImportiCapitoloPerComponente> importiComponentiCapitolo){
+		int sizeImporti = importiComponentiCapitolo.size();
+		
+		List<Integer> indiciDettagliDispImpVar= new ArrayList<Integer>();
+		List<ImportiCapitoloPerComponente> listaDisponibilitaImpegnare = new ArrayList<ImportiCapitoloPerComponente>();
+		List<ImportiCapitoloPerComponente> listaDisponibilitaVariare = new ArrayList<ImportiCapitoloPerComponente>();
+		for(int i=0; i<sizeImporti; i++){
+			TipoDettaglioComponenteImportiCapitolo dettaglioComponente = importiComponentiCapitolo.get(i).getTipoDettaglioComponenteImportiCapitolo();
+			if(dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE)
+					||dettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAVARIARE)){
+				indiciDettagliDispImpVar.add(i);							
+			}
+		}
+		for(Integer index : indiciDettagliDispImpVar){
+			TipoDettaglioComponenteImportiCapitolo tipoDettaglioComponente = importiComponentiCapitolo.get(index).getTipoDettaglioComponenteImportiCapitolo();
+			
+			if(tipoDettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAIMPEGNARE)){
+				listaDisponibilitaImpegnare.add(ReflectionUtil.deepClone(importiComponentiCapitolo.get(index)));				
+			} else if(tipoDettaglioComponente.equals(TipoDettaglioComponenteImportiCapitolo.DISPONIBILITAVARIARE)){
+				listaDisponibilitaVariare.add(ReflectionUtil.deepClone(importiComponentiCapitolo.get(index)));				
+			}
+		}
+		int j=indiciDettagliDispImpVar.size()-1;
+		while (j>=0) {
+			importiComponentiCapitolo.remove(importiComponentiCapitolo.get(indiciDettagliDispImpVar.get(j)));
+			j--;			
+		}
+		//SIAC-7349 - Start - Sr210 MR 16/04/2020 Setting delle disponibilita impegnare nel model
+		model.setDisponibilitaImpegnareComponentiCapitolo(listaDisponibilitaImpegnare);
+		//SIAC-7349
+				
+		//SIAC-7349 - Start - Sr210 MR 16/04/2020 Setting delle disponibilita a variare nel model
+		model.setDisponibilitaVariareComponentiCapitolo(listaDisponibilitaVariare);
+		//SIAC-7349
+		
+		return importiComponentiCapitolo;
+
 	}
 
 }

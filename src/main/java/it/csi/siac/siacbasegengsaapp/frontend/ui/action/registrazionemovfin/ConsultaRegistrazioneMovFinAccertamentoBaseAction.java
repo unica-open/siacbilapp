@@ -10,7 +10,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.model.registrazionemovfin.Consu
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.consultazione.ConsultaRegistrazioneMovFinAccertamentoHelper;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommonapp.util.paginazione.PaginazioneUtil;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
@@ -58,7 +58,7 @@ public abstract class ConsultaRegistrazioneMovFinAccertamentoBaseAction<M extend
 		
 		sessionHandler.setParametro(BilSessionParameter.ACCERTAMENTO, accertamento);
 		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, req);
-		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, CollectionUtil.toListaPaginata(res.getAccertamento().getElencoSubAccertamenti(), res.getNumPagina(),res.getNumeroTotaleSub()));
+		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_ACCERTAMENTO_PER_CHIAVE_SUBACCERTAMENTI, PaginazioneUtil.toListaPaginata(res.getAccertamento().getElencoSubAccertamenti(), res.getNumPagina(),res.getNumeroTotaleSub()));
 		
 		// SIAC-5294: creo l'helper
 		model.setConsultazioneHelper(new ConsultaRegistrazioneMovFinAccertamentoHelper(accertamento, model.isGestioneUEB()));

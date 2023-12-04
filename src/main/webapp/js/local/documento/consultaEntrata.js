@@ -416,6 +416,27 @@
         }).always(tr.overlay.bind(tr, 'hide'));
         
     }
+    
+    //SIAC-7557
+    /**
+     * Caricamento degli ordini.
+     *
+     * @param e (Event) l'evento scatenante l'invocazione
+     */
+    function caricaOrdini(e) {
+        var overlay = $('#accordionOrdini').overlay('show');
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        $.post('consultaDocumentoEntrata_caricaOrdini.do')
+        .then(function(data) {
+            var opts = $.extend(true, {}, optionsBase, {oLanguage: {sZeroRecords: 'Non sono presenti ordini associati'}});
+            $('#collapseOrdini').html(data);
+            $('#tabellaOrdini').dataTable(opts);
+            $('#collapseOrdini').collapse('show');
+        }).always(overlay.overlay.bind(overlay, 'hide'));
+    }
 
     // SIAC-3965
     /**
@@ -580,6 +601,7 @@
         impostaTabellaDatiIva();
         
         $('div[id^="accordionQuote"]').on('click', '.accordion-toggle', caricaQuota);
+        $('a.accordion-toggle', '#accordionOrdini').one('click', caricaOrdini);
         $('#accordionQuote').on('click', '.accordion-toggle', caricaQuota);
         $('#quotePagateTable').on('click', '.dettaglioRegistrazione', caricaDettaglioRegistrazione);
     });

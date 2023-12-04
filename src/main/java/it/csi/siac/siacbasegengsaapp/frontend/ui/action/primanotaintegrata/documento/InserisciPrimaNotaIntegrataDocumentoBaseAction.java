@@ -128,7 +128,7 @@ public abstract class InserisciPrimaNotaIntegrataDocumentoBaseAction<D extends D
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSinteticaRegistrazioneMovFin.class, res));
 		}
 		
 		// Di per se', mi andrebbe bene anche avere una sola registrazione
@@ -542,7 +542,7 @@ public abstract class InserisciPrimaNotaIntegrataDocumentoBaseAction<D extends D
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RegistraPrimaNotaIntegrata.class, res));
 			addErrori(res);
 			return INPUT;
 		}

@@ -281,7 +281,7 @@ public class RisultatiRicercaPreDocumentoSpesaModel extends RisultatiRicercaPreD
 		RicercaImpegnoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaImpegnoPerChiaveOttimizzato.class);
 		
 		request.setEnte(getEnte());
-		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null);
+		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -291,8 +291,8 @@ public class RisultatiRicercaPreDocumentoSpesaModel extends RisultatiRicercaPreD
 		RicercaImpegnoK pRicercaImpegnoK = new RicercaImpegnoK();
 		pRicercaImpegnoK.setAnnoEsercizio(getAnnoEsercizioInt());
 		pRicercaImpegnoK.setAnnoImpegno(getMovimentoGestione().getAnnoMovimento());
-		pRicercaImpegnoK.setNumeroImpegno(getMovimentoGestione().getNumero());
-		pRicercaImpegnoK.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null) ? getSubMovimentoGestione().getNumero() : null);
+		pRicercaImpegnoK.setNumeroImpegno(getMovimentoGestione().getNumeroBigDecimal());
+		pRicercaImpegnoK.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null) ? getSubMovimentoGestione().getNumeroBigDecimal() : null);
 		request.setpRicercaImpegnoK(pRicercaImpegnoK);
 		
 		return request;

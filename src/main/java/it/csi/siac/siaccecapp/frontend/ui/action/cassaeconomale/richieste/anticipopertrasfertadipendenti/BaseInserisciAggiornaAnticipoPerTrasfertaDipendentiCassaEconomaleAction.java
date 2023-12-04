@@ -85,7 +85,7 @@ public abstract class BaseInserisciAggiornaAnticipoPerTrasfertaDipendentiCassaEc
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaMezziDiTrasporto.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaMezziDiTrasporto = response.getMezziDiTrasporto();
@@ -114,7 +114,7 @@ public abstract class BaseInserisciAggiornaAnticipoPerTrasfertaDipendentiCassaEc
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaTipoGiustificativo.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaTipoGiustificativo = response.getTipiGiustificativi();
@@ -152,7 +152,7 @@ public abstract class BaseInserisciAggiornaAnticipoPerTrasfertaDipendentiCassaEc
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaValuta.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaValuta = response.getListaValuta();

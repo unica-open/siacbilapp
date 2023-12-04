@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.richiestaeconomale.ElementoRichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per i risultati di ricerca per l'anticipo spese per missione, gestione dell'AJAX.
@@ -36,7 +36,7 @@ public class RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction ex
 				&& !instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, listaAzioniConsentite)
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction ex
 		return isStatoOperativoPrenotataEvasaOrDaRendicontare(instance)
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 
 	@Override
 	protected boolean gestisciConsultazione(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
 		// SIAC-5623: aggiunto controllo abilitazione
 //		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_RICERCA, listaAzioniConsentite);
-		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_RICERCA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 	
 	@Override
@@ -60,7 +60,7 @@ public class RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction ex
 				&& !instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI_RENDICONTO, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction ex
 		return instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA_RENDICONTO, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_AGGIORNA_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 	
 	@Override
@@ -76,7 +76,7 @@ public class RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction ex
 		return instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_CONSULTA_RENDICONTO, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_CONSULTA_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_CONSULTA_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 	
 	@Override
@@ -84,7 +84,7 @@ public class RisultatiRicercaAnticipoSpesePerMissioneCassaEconomaleAjaxAction ex
 		return instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_STAMPA_RICEVUTA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 	
 	@Override

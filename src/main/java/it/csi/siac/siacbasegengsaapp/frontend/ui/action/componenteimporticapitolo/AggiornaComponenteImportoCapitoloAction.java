@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.model.componenteimporticapitolo.AggiornaComponenteImportoCapitoloModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.helper.ComponenteImportiCapitoloPerAnnoHelper;
+import it.csi.siac.siacbilser.business.utility.capitolo.ComponenteImportiCapitoloPerAnnoHelper;
 import it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.TipoComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaComponenteImportiCapitolo;
@@ -30,6 +30,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoComponenteImpor
 import it.csi.siac.siacbilser.frontend.webservice.msg.base.BaseComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.DettaglioComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.StatoTipoComponenteImportiCapitolo;
@@ -39,9 +40,15 @@ import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
+/**
+ * The Class AggiornaComponenteImportoCapitoloAction.
+ * @deprecated in base alla segnalazione SIAC-7799. Usare GestioneComponenteImportoCapitoloNelCapitoloAction
+ * Viene lasciata perche' viene ancora usata  nella pagina di aggiornamento (perche'?)
+ */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 @PutModelInSession
+@Deprecated
 public class AggiornaComponenteImportoCapitoloAction
 		extends GenericBilancioAction<AggiornaComponenteImportoCapitoloModel> {
 
@@ -84,12 +91,16 @@ public class AggiornaComponenteImportoCapitoloAction
 		List<TipoComponenteImportiCapitolo> listaDefaultPrevisione = new ArrayList<TipoComponenteImportiCapitolo>();
 		// per la response del capitolo
 		RicercaComponenteImportiCapitolo req = model.creaRequestRicercaComponenteImportiCapitolo();
+		//test!!!
 		BaseComponenteImportiCapitoloResponse response = componenteImportiCapitoloService
 				.ricercaComponenteImportiCapitolo(req);
 
 		if (response.getErrori().isEmpty()) {
+			//SIAC-7349 - Start - MR - 22/04/2020 - Patch Nullpointer Exception per modifica stanziamenti anni precedenti
+//			response = inibisciEditabilitaAnniPrecedenti(response);
+			//SIAC-7349 End
 			listaDefaultPrevisione = allComponentiDefaultPrevisione(response);
-			response = addDefaultToResponse(response, listaDefaultPrevisione);
+			response = (BaseComponenteImportiCapitoloResponse) addDefaultToResponseNew(response, listaDefaultPrevisione);
 			buildStanziamentoTabellaModel(response);
 			
 		} else {
@@ -98,7 +109,7 @@ public class AggiornaComponenteImportoCapitoloAction
 
 		return SUCCESS;
 	}
-
+	
 	/**
 	 * Elimina componente capitolo
 	 * 
@@ -112,7 +123,7 @@ public class AggiornaComponenteImportoCapitoloAction
 
 		if (response.getErrori().isEmpty()) {
 			listaDefaultPrevisione = allComponentiDefaultPrevisione(response);
-			response = addDefaultToResponse(response, listaDefaultPrevisione);
+			response = (BaseComponenteImportiCapitoloResponse) addDefaultToResponseNew(response, listaDefaultPrevisione);
 			buildStanziamentoTabellaModel(response);
 		} else {
 			model.setErrori(response.getErrori());
@@ -133,7 +144,7 @@ public class AggiornaComponenteImportoCapitoloAction
 
 		if (response.getErrori().isEmpty()) {
 			listaDefaultPrevisione = allComponentiDefaultPrevisione(response);
-			response = addDefaultToResponse(response, listaDefaultPrevisione);
+			response = (BaseComponenteImportiCapitoloResponse) addDefaultToResponseNew(response, listaDefaultPrevisione);
 			buildStanziamentoTabellaModel(response);
 			/* Aggiungo l'informazione di completamento */
 			model.addInformazione(new Informazione("CRU_CON_2001", "L'operazione e' stata completata con successo"));
@@ -177,7 +188,7 @@ public class AggiornaComponenteImportoCapitoloAction
 
 			if (response.getErrori().isEmpty()) {
 				listaDefaultPrevisione = allComponentiDefaultPrevisione(response);
-				response = addDefaultToResponse(response, listaDefaultPrevisione);
+				response = (BaseComponenteImportiCapitoloResponse) addDefaultToResponseNew(response, listaDefaultPrevisione);
 				buildStanziamentoTabellaModel(response);
 			} else {
 				model.setErrori(response.getErrori());
@@ -211,7 +222,7 @@ public class AggiornaComponenteImportoCapitoloAction
 						.inserisceComponenteImportiCapitolo(req);
 				if (response.getErrori().isEmpty()) {
 					listaDefaultPrevisione = allComponentiDefaultPrevisione(response);
-					response = addDefaultToResponse(response, listaDefaultPrevisione);
+					response = (BaseComponenteImportiCapitoloResponse) addDefaultToResponseNew(response, listaDefaultPrevisione);
 					buildStanziamentoTabellaModel(response);
 				} else {
 					model.setErrori(response.getErrori());
@@ -229,11 +240,21 @@ public class AggiornaComponenteImportoCapitoloAction
 	 * @return
 	 */
 	public String aggiornaResiduo() {
+		//SIAC-7349 - Start - MR - 22/04/2020
+		/*
+		 * Patch che permette di visualizzare le componenti di defualto all'aggiornamento della cassa e residui
+		 * Parte mancante a differenza dell'aggiornamento delle componenti
+		 * */
+		List<TipoComponenteImportiCapitolo> listaDefaultPrevisione = new ArrayList<TipoComponenteImportiCapitolo>();
 		validateImportiResiduo();
 		if (model.getErrori() == null || model.getErrori().isEmpty()) {
 			AggiornaImportiCapitolo req = model.creaAggiornaResiduo();
 			AggiornaImportiCapitoloResponse response = componenteImportiCapitoloService.aggiornaImportiCapitolo(req);
 			if (response.getErrori().isEmpty()) {
+				//SIAC-7349 - Start - MR - 22/04/2020
+				listaDefaultPrevisione = allComponentiDefaultPrevisione(response);
+				response = (AggiornaImportiCapitoloResponse) addDefaultToResponseNew(response, listaDefaultPrevisione);
+				//SIAC-7349 - End
 				buildStanziamentoTabellaModel(response);
 			} else {
 				model.setErrori(response.getErrori());
@@ -246,11 +267,21 @@ public class AggiornaComponenteImportoCapitoloAction
 	 * Aggiornamento valori cassa
 	 */
 	public String aggiornaCassa() {
+		//SIAC-7349 - Start - MR - 22/04/2020
+		/*
+		* Patch che permette di visualizzare le componenti di defualto all'aggiornamento della cassa e residui
+		* Parte mancante a differenza dell'aggiornamento delle componenti
+		* */
+		List<TipoComponenteImportiCapitolo> listaDefaultPrevisione = new ArrayList<TipoComponenteImportiCapitolo>();
 		validateImportiCassa();
 		if (model.getErrori() == null || model.getErrori().isEmpty()) {
 			AggiornaImportiCapitolo req = model.creaAggiornaCassa();
 			AggiornaImportiCapitoloResponse response = componenteImportiCapitoloService.aggiornaImportiCapitolo(req);
 			if (response.getErrori().isEmpty()) {
+				//SIAC-7349 - Start - MR - 22/04/2020
+				listaDefaultPrevisione = allComponentiDefaultPrevisione(response);
+				response = (AggiornaImportiCapitoloResponse) addDefaultToResponseNew(response, listaDefaultPrevisione);
+				//SIAC-7349 - End
 				buildStanziamentoTabellaModel(response);
 			} else {
 				model.setErrori(response.getErrori());
@@ -317,17 +348,46 @@ public class AggiornaComponenteImportoCapitoloAction
 	}
 
 	private void buildStanziamentoTabellaModel(BaseComponenteImportiCapitoloResponse response) {
+		
 		List<ImportiCapitoloPerComponente> importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper
 				.toComponentiImportiCapitoloPerAnno(response.getListaImportiCapitolo(),
 						response.getImportiCapitoloResiduo(), response.getImportiCapitoloAnniSuccessivi());
 		
 		//SIAC-7227
 		//passo la nuova lista al model con il match delle varie componenti
+//		if(response.getListaImportiCapitolo().get(0) != null) {
+//			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
+//		}
+		
+		//SIAC-7349 - Start - MR - 22/04/2020 - Commento quello sopra e utilizzo nuovo metodo in helper per mostrare le componenti
+		//solo se hanno un impegnato nell'anno precedente.
 		if(response.getListaImportiCapitolo().get(0) != null) {
-			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedente(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnnoPrecedenteNew(importiComponentiCapitolo, response.getListaImportiCapitolo().get(0));
 		}
+		//SIAC-7349 - Start - MR - 07/05/2020 - Metodo per mostrare le componenti senza stanziamento anni succ
+		if(response.getListaImportiCapitoloAnniSuccessiviNoStanz() != null &&  !response.getListaImportiCapitoloAnniSuccessiviNoStanz().isEmpty()) {
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerAnniSuccNoStanz(importiComponentiCapitolo, response.getListaImportiCapitoloAnniSuccessiviNoStanz());
+		}
+		//SIAC-7349 - END
+		
+		
+
+		//SIAC-7349 - Start - GS - 21/07/2020 - Metodo per mostrare le componenti senza stanziamento triennio
+
+		if(response.getListaImportiCapitoloTriennioNoStanz() != null &&  !response.getListaImportiCapitoloTriennioNoStanz().isEmpty()) {
+			int countDefault = 0;
+			for (ImportiCapitoloPerComponente i : importiComponentiCapitolo) {
+				if (i.isPropostaDefault()) 
+					countDefault++;
+			}  
+			int addIndex = importiComponentiCapitolo.size() - countDefault;
+			Integer annoEsercizio = Integer.valueOf(sessionHandler.getAnnoEsercizio());
+			importiComponentiCapitolo = ComponenteImportiCapitoloPerAnnoHelper.toComponentiImportiCapitoloPerTriennioNoStanz(importiComponentiCapitolo, response.getListaImportiCapitoloTriennioNoStanz(), annoEsercizio, addIndex);
+		}
+		//SIAC-7349 - END
+		
 		//
-		//passo la lista al frontend sotto formato JSON (tramite action)
+		//passo la lista al frontend sotto formato JSON (tramite action)    
 		model.setImportiComponentiCapitolo(importiComponentiCapitolo);
 		// IMPOSTARE OGGETTI COMPETENZA, CASSA, RESIDUO da mettere nel model
 		// (anche in un metodo privato qui dentro)
@@ -464,13 +524,28 @@ public class AggiornaComponenteImportoCapitoloAction
 				listaUidAssociati.add(response.getListaImportiCapitolo().get(1).getListaComponenteImportiCapitolo()
 						.get(k).getTipoComponenteImportiCapitolo().getUid());
 			}
+		}	
+	
+		//SIAC-7349 - GS - 23/07/2020 - INIZIO -  Associo anche le componenti che non hanno stanziato ma hanno impegnato nel triennio
+		if (response.getListaImportiCapitoloTriennioNoStanz() != null) {
+			for (int k = 0; k < response.getListaImportiCapitoloTriennioNoStanz()
+					.size(); k++) {
+				listaUidAssociati.add(response.getListaImportiCapitoloTriennioNoStanz().get(k).getIdComp());
+			}
 		}
+		//SIAC-7349 - GS - 23/07/2020 - FINE
+
 
 		return listaUidAssociati;
 	}
 
 	// aggiunge le componenti filtrate alla response
-	protected BaseComponenteImportiCapitoloResponse addDefaultToResponse(BaseComponenteImportiCapitoloResponse response,
+	//SIAC-7349 - Start - MR - 22/04/2020
+	/*
+	 * 
+	 * Commentato per non duplicare codice
+	 * Se presenta problemi in futuro decommentare e riutilizzare questo*/
+	/*protected BaseComponenteImportiCapitoloResponse addDefaultToResponse(BaseComponenteImportiCapitoloResponse response,
 			List<TipoComponenteImportiCapitolo> listaDefaultPrevisione) {
 		if (listaDefaultPrevisione != null && !listaDefaultPrevisione.isEmpty()) {
 			for (int j = 0; j < listaDefaultPrevisione.size(); j++) {
@@ -506,7 +581,7 @@ public class AggiornaComponenteImportoCapitoloAction
 
 		return response;
 
-	}
+	}*/
 
 	// Controlla se gli importi sono a zero.
 	protected boolean zeroAllImport(List<ComponenteImportiCapitolo> listaComponenteImportiCapitolo) {
@@ -522,6 +597,56 @@ public class AggiornaComponenteImportoCapitoloAction
 			}
 		}
 		return i == 0;
+	}
+	//SIAC-7349 - Start - MR - 22/04/2020
+	/*
+	* Patch che permette di visualizzare le componenti di defualt all'aggiornamento della cassa e residui
+	* Parte mancante a differenza dell'aggiornamento delle componenti
+	* Metodo per diverse tipologie di parametri input, e tipo di ritorno
+	* 
+	* */
+	private Object addDefaultToResponseNew(Object response,
+			List<TipoComponenteImportiCapitolo> listaDefaultPrevisione) {
+		List<ImportiCapitolo> listaPerResponse = new ArrayList<ImportiCapitolo>();
+		if(response instanceof BaseComponenteImportiCapitoloResponse){			 
+			 listaPerResponse = ((BaseComponenteImportiCapitoloResponse) response).getListaImportiCapitolo();
+		}else if(response instanceof AggiornaImportiCapitoloResponse){
+			 listaPerResponse = ((AggiornaImportiCapitoloResponse) response).getListaImportiCapitolo();
+		}
+		
+		if (listaDefaultPrevisione != null && !listaDefaultPrevisione.isEmpty()) {
+			for (int j = 0; j < listaDefaultPrevisione.size(); j++) {
+
+				// aggiunta componenti default nella response
+				for (int i = 1; i < listaPerResponse.size(); i++) {
+
+					ComponenteImportiCapitolo cip = new ComponenteImportiCapitolo();
+					cip.setTipoComponenteImportiCapitolo(listaDefaultPrevisione.get(j));
+
+					DettaglioComponenteImportiCapitolo dcic = new DettaglioComponenteImportiCapitolo();
+					dcic.setImporto(BigDecimal.ZERO);
+					dcic.setPropostaDefault(true);
+					dcic.setTipoDettaglioComponenteImportiCapitolo(TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO);
+					// deve essere editabile??
+					dcic.setEditabile(true);
+					cip.getListaDettaglioComponenteImportiCapitolo().add(dcic);
+
+					DettaglioComponenteImportiCapitolo dcic1 = new DettaglioComponenteImportiCapitolo();
+					dcic1.setImporto(BigDecimal.ZERO);
+					dcic1.setPropostaDefault(true);
+					dcic1.setTipoDettaglioComponenteImportiCapitolo(TipoDettaglioComponenteImportiCapitolo.IMPEGNATO);
+					cip.getListaDettaglioComponenteImportiCapitolo().add(dcic1);
+
+					// aggiungo il nuovo componente, alla lista dell'item
+					// i-esimo
+					listaPerResponse.get(i).getListaComponenteImportiCapitolo().add(cip);
+				}
+
+			}
+
+		}
+
+		return response;
 	}
 
 

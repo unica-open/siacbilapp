@@ -11,15 +11,13 @@ import java.util.List;
 import javax.xml.bind.JAXB;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.variazione.DefinisceVariazioneImportiModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazioneFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaVariazioneBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.DefinisceAnagraficaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettagliVariazioneImportoCapitoloNellaVariazione;
@@ -30,14 +28,12 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSingoloDettaglioVar
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSingoloDettaglioVariazioneImportoCapitoloNellaVariazioneResponse;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancioResponse;
-import it.csi.siac.siaccommonapp.util.exception.UtenteNonLoggatoException;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReportResponse;
 import it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.frontend.webservice.msg.GetDettaglioOperazioneAsincrona;
 import it.csi.siac.siaccorser.frontend.webservice.msg.GetDettaglioOperazioneAsincronaResponse;
-import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.DettaglioOperazioneAsincrona;
 import it.csi.siac.siaccorser.model.Informazione;
@@ -85,7 +81,8 @@ public abstract class DefinisceVariazioneImportiBaseAction extends DefinisceVari
 		log.debug(methodName, "Ottengo l'azione richiesta dalla sessione");
 		AzioneRichiesta azioneRichiesta = sessionHandler.getAzioneRichiesta();
 		log.debug(methodName, "Injetto le variabili del processo");
-		model.injettaVariabiliProcesso(azioneRichiesta);
+		model.impostaDatiNelModel(azioneRichiesta);
+//		model.injettaVariabiliProcesso(azioneRichiesta);
 
 		log.debug(methodName, "Creo la request per la ricerca del capitolo");
 		if(model.getUidVariazione() == null) {
@@ -102,11 +99,15 @@ public abstract class DefinisceVariazioneImportiBaseAction extends DefinisceVari
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioAnagraficaVariazioneBilancio.class, response));
 			addErrori(response);
 			throwExceptionFromErrori(model.getErrori());
 		}
 
+		//SIAC-7555
+		controllaStatoOperativoVariazione(response.getVariazioneImportoCapitolo());
+		//
+		
 		log.debug(methodName, "Impostazione dei dati nel model e in sessione");
 		model.impostaDatiDaResponseESessione(response, sessionHandler);
 		log.debug(methodName, "Dati impostati nel model e nella sessione");
@@ -164,7 +165,9 @@ public abstract class DefinisceVariazioneImportiBaseAction extends DefinisceVari
 			addErrori(response);
 			return INPUT;
 		}
-		
+		//SIAC-8261
+		addInformazione(new Informazione("CRU_CON_2001", "L'operazione di definizione e' stata correttamente avviata. &Egrave; possibile rimanere sulla pagina oppure tornare alla home: il risultato sar&agrave; disponibile dal cruscotto delle operazioni asincrone o ricercando la variazione."));
+
 		model.setIdOperazioneAsincrona(response.getIdOperazioneAsincrona());
 
 		return SUCCESS;
@@ -220,7 +223,8 @@ public abstract class DefinisceVariazioneImportiBaseAction extends DefinisceVari
 		}
 		
 		log.debug(methodName, "Invocazione terminata con successo");
-	    addInformazione(new Informazione("COR_INF_0006", "Operazione effettuata correttamente"));
+		cleanErroriMessaggiInformazioni();
+	    addInformazione(new Informazione("COR_INF_0006", "Operazione di definizione effettuata correttamente."));
 	
 	    return SUCCESS;
 	}
@@ -241,7 +245,7 @@ public abstract class DefinisceVariazioneImportiBaseAction extends DefinisceVari
 		RicercaDettagliVariazioneImportoCapitoloNellaVariazioneResponse response = variazioneDiBilancioService.ricercaDettagliVariazioneImportoCapitoloNellaVariazione(request);
 		
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettagliVariazioneImportoCapitoloNellaVariazione.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -298,8 +302,8 @@ public abstract class DefinisceVariazioneImportiBaseAction extends DefinisceVari
 	public String download() {
 		final String methodName = "download";
 		
-		StampaExcelVariazioneDiBilancio req = model.creaRequestStampaExcelVariazioneDiBilancio();
-		StampaExcelVariazioneDiBilancioResponse res = variazioneDiBilancioService.stampaExcelVariazioneDiBilancio(req);
+		VariazioneBilancioExcelReport req = model.creaRequestStampaExcelVariazioneDiBilancio();
+		VariazioneBilancioExcelReportResponse res = variazioneDiBilancioService.variazioneBilancioExcelReport(req);
 		
 		// Controllo gli errori
 		if(res.hasErrori()) {
@@ -310,7 +314,7 @@ public abstract class DefinisceVariazioneImportiBaseAction extends DefinisceVari
 		}
 		
 		byte[] bytes = res.getReport();
-		model.setContentType(res.getContentType());
+		model.setContentType(res.getContentType() == null ? null : res.getContentType().getMimeType());
 		model.setContentLength(Long.valueOf(bytes.length));
 		model.setFileName("esportazioneVariazione" + model.getAnnoCompetenza() + "_" + model.getNumeroVariazione() + "." + res.getExtension());
 		model.setInputStream(new ByteArrayInputStream(bytes));

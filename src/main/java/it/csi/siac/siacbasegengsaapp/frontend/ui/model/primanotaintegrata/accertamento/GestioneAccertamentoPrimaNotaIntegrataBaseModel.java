@@ -65,7 +65,7 @@ public abstract class GestioneAccertamentoPrimaNotaIntegrataBaseModel extends Ba
 		RicercaAccertamentoK ricercaAccertamentoK = new RicercaAccertamentoK();
 		ricercaAccertamentoK.setAnnoEsercizio(getAnnoEsercizioInt());
 		ricercaAccertamentoK.setAnnoAccertamento(acc.getAnnoMovimento());
-		ricercaAccertamentoK.setNumeroAccertamento(acc.getNumero());
+		ricercaAccertamentoK.setNumeroAccertamento(acc.getNumeroBigDecimal());
 		
 		req.setpRicercaAccertamentoK(ricercaAccertamentoK);
 		req.setEnte(getEnte());

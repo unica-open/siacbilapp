@@ -16,10 +16,10 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
 
 /**
@@ -58,28 +58,28 @@ public class RisultatiRicercaPrimaNotaIntegrataFINAjaxAction extends RisultatiRi
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaValidaPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_VALIDA_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaValidaPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_VALIDA_GEN;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_RICERCA_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_RICERCA_GEN;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestisciPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_GESTISCI_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestisciPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_GESTISCI_GEN;
 	}
 	
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRateiRisconti() {
-		return AzioniConsentite.RATEI_RISCONTI;
+	protected AzioneConsentitaEnum getAzioneConsentitaRateiRisconti() {
+		return AzioneConsentitaEnum.RATEI_RISCONTI;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaAggiornaPrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_AGGIORNA_GEN;
+	protected AzioneConsentitaEnum getAzioneConsentitaAggiornaPrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_AGGIORNA_GEN;
 	}
 
 	@Override
@@ -178,5 +178,22 @@ public class RisultatiRicercaPrimaNotaIntegrataFINAjaxAction extends RisultatiRi
 	private boolean bilancioPrecedenteNonChiuso(){
 		FaseBilancio faseBilancioPrecedente = sessionHandler.getParametro(BilSessionParameter.FASE_BILANCIO_PRECEDENTE);
 		return !faseBilancioInValues(faseBilancioPrecedente, FaseBilancio.CHIUSO);
+	}
+	
+	//SIAC-8323
+	protected boolean isFaseBilancioCompatibileConAggiornamento() {
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO);
+	}
+
+	protected boolean isFaseBilancioCompatibileConValidazione() {
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO);
+	}
+
+	protected boolean isFaseBilancioCompatibileConAnnullamento() {
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.PLURIENNALE, FaseBilancio.PREVISIONE, FaseBilancio.CHIUSO);
+	}
+	
+	protected boolean isFaseBilancioCompatibileConCollegamento() {
+		return !faseBilancioInValues(faseBilancio, FaseBilancio.CHIUSO);
 	}
 }

@@ -151,11 +151,11 @@ SPDX-License-Identifier: EUPL-1.2
 															<span class="al">
 																<label class="radio inline" for="numeroMovimentoEntrata">Numero</label>
 															</span>
-															<si:plainstringtextfield id="numeroMovimentoEntrata" name="accertamento.numero" cssClass="lbTextSmall span2 soloNumeri" />
+															<s:textfield id="numeroMovimentoEntrata" name="accertamento.numero" cssClass="lbTextSmall span2 soloNumeri" />
 															<span class="al">
 																<label class="radio inline" for="numeroSubMovimentoEntrata">Sub</label>
 															</span>
-															<si:plainstringtextfield id="numeroSubMovimentoEntrata" name="subAccertamento.numero" cssClass="lbTextSmall span2 soloNumeri" />
+															<s:textfield id="numeroSubMovimentoEntrata" name="subAccertamento.numero" cssClass="lbTextSmall span2 soloNumeri" />
 														</div>
 													</div>
 													<div class="control-group">	
@@ -239,11 +239,11 @@ SPDX-License-Identifier: EUPL-1.2
 															<span class="al">
 																<label class="radio inline" for="numeroMovimentoSpesa">Numero</label>
 															</span>
-															<si:plainstringtextfield id="numeroMovimentoSpesa" name="impegno.numero" cssClass="lbTextSmall span2 soloNumeri" />
+															<s:textfield id="numeroMovimentoSpesa" name="impegno.numero" cssClass="lbTextSmall span2 soloNumeri" />
 															<span class="al">
 																<label class="radio inline" for="numeroSubMovimentoSpesa">Sub</label>
 															</span>
-															<si:plainstringtextfield id="numeroSubMovimentoSpesa" name="subImpegno.numero" cssClass="lbTextSmall span2 soloNumeri" />
+															<s:textfield id="numeroSubMovimentoSpesa" name="subImpegno.numero" cssClass="lbTextSmall span2 soloNumeri" />
 															<span class="radio guidata">
 																<a class="btn btn-primary" id="pulsanteAggiungiSpesa">aggiungi</a>
 															</span>
@@ -347,10 +347,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}tipoOnere/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/tipoOnere/aggiorna.js"></script>
 
 </body>
 </html>

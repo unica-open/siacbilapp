@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,12 +18,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
 import it.csi.siac.siaccommonapp.util.exception.FrontEndCheckedException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
@@ -187,7 +187,7 @@ public class AggiornaDocumentoIvaEntrataAction extends GenericDocumentoIvaEntrat
 	 * */
 	private boolean isUtenteBackOffice() {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_IVA_AGGIORNA_ENTRATA_BACKOFFICE, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_IVA_AGGIORNA_ENTRATA_BACKOFFICE, listaAzioniConsentite);
 	}
 	
 	/**
@@ -419,7 +419,7 @@ public class AggiornaDocumentoIvaEntrataAction extends GenericDocumentoIvaEntrat
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String msg = createErrorInServiceInvocationString(req, res);
+			String msg = createErrorInServiceInvocationString(ContaDatiCollegatiSubdocumentoIvaEntrata.class, res);
 			throw new WebServiceInvocationFailureException(msg);
 		}
 		

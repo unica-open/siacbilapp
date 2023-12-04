@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.causali.RicercaCausaleEPBaseModel;
@@ -26,7 +26,7 @@ import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
@@ -168,7 +168,7 @@ public abstract class RicercaCausaleEPBaseAction <M extends RicercaCausaleEPBase
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaConto.class, response));
 			addErrori(response);
 			return false;
 		}
@@ -201,7 +201,7 @@ public abstract class RicercaCausaleEPBaseAction <M extends RicercaCausaleEPBase
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(LeggiElementoPianoDeiContiByCodiceAndAnno.class, response));
 			addErrori(response);
 			return false;
 		}
@@ -240,7 +240,7 @@ public abstract class RicercaCausaleEPBaseAction <M extends RicercaCausaleEPBase
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				log.debug(methodName, createErrorInServiceInvocationString(request, response));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 				addErrori(response);
 				return false;
 			}
@@ -280,7 +280,7 @@ public abstract class RicercaCausaleEPBaseAction <M extends RicercaCausaleEPBase
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaSinteticaCausale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -313,7 +313,7 @@ public abstract class RicercaCausaleEPBaseAction <M extends RicercaCausaleEPBase
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoriByTipoElementoBil.class, response));
 		}
 		return response;
 	}

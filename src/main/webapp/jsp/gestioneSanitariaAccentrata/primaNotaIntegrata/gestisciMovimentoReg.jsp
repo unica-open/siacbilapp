@@ -21,7 +21,7 @@ SPDX-License-Identifier: EUPL-1.2
 				<s:form cssClass="form-horizontal" action="%{urlSalva}" novalidate="novalidate" id="formGestisciPrimaNotaintegrata">
 					<s:include value="/jsp/include/messaggi.jsp" />
 					<h3>Inserimento prima nota integrata</h3>
-					<h4><s:property value="intestazioneRichiesta" escape="false"/></h4>
+					<h4><s:property value="intestazioneRichiesta" escapeHtml="false"/></h4>
 					
 					<div class="accordion" id="accordionMovimento">
 						<div class="accordion-group">
@@ -150,11 +150,11 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/classifgsa/ztree.classifgsa.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.movimento.reg.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin${consultazioneSubpath}.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/classifgsa/ztree.classifgsa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/primaNotaIntegrata/gestisci.movimento.reg.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/registrazione/consultaRegistrazioneMovFin${consultazioneSubpath}.js"></script>
 
 </body>
 </html>

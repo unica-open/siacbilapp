@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.convalida.provvisorio;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
@@ -128,12 +128,12 @@ public class ConvalidaAllegatoAttoPerProvvisorioCassaAction extends GenericAlleg
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuotaSpesa.class, response));
 		}
 		// Controllo di avere elementi nella response
 		if(response.getTotaleElementi() == 0) {
 			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore());
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuotaSpesa.class, response));
 		}
 		model.setNumeroDocumentiCollegati(response.getTotaleElementi());
 		model.setTotaleDocumentiCollegati(response.getTotaleImporti());
@@ -157,12 +157,12 @@ public class ConvalidaAllegatoAttoPerProvvisorioCassaAction extends GenericAlleg
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuotaEntrata.class, response));
 		}
 		// Controllo di avere elementi nella response
 		if(response.getTotaleElementi() == 0) {
 			addErrore(ErroreCore.NESSUN_DATO_REPERITO.getErrore());
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaQuotaEntrata.class, response));
 		}
 		model.setNumeroDocumentiCollegati(response.getTotaleElementi());
 		model.setTotaleDocumentiCollegati(response.getTotaleImporti());
@@ -201,7 +201,7 @@ public class ConvalidaAllegatoAttoPerProvvisorioCassaAction extends GenericAlleg
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvisorioDiCassaPerChiave.class, response));
 			addErrori(response);
 			return;
 		}
@@ -243,14 +243,14 @@ public class ConvalidaAllegatoAttoPerProvvisorioCassaAction extends GenericAlleg
 		logServiceRequest(request);
 		
 		// SIAC-5575: l'operazione asincrona deve essere sotto nome 'CONVALIDA'
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_CONVALIDA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_CONVALIDA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = allegatoAttoService.convalidaAllegatoAttoPerProvvisorioAsync(wrapRequestToAsync(request, azioneRichiesta));
 		logServiceResponse(response);
 		
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(ConvalidaAllegatoAttoPerProvvisorio.class, response));
 			addErrori(response);
 			return INPUT;
 		}

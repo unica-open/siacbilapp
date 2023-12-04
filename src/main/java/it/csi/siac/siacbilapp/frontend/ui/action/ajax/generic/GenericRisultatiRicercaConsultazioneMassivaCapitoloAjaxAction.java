@@ -12,7 +12,7 @@ import org.springframework.core.GenericTypeResolver;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaConsultazioneMassivaCapitoloAjaxModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.WrapperAzioniConsentite;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteWrapper;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitoloFactory;
 import it.csi.siac.siacbilser.model.Capitolo;
@@ -89,7 +89,7 @@ public abstract class GenericRisultatiRicercaConsultazioneMassivaCapitoloAjaxAct
 		// Valuta la lista delle azioni consentite per
 		// costruire il pannello di operazioni utente sul capitolo 
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		WrapperAzioniConsentite wpAzioniConsentite = ottieniWrapperAzioniConsentite(listaAzioniConsentite);
+		AzioniConsentiteWrapper wpAzioniConsentite = ottieniWrapperAzioniConsentite(listaAzioniConsentite);
 		
 		boolean isAggiornaAbilitato = wpAzioniConsentite.isAggiornaAbilitato();
 		// Consulta è abilitato sempre!
@@ -214,8 +214,8 @@ public abstract class GenericRisultatiRicercaConsultazioneMassivaCapitoloAjaxAct
 	 * 
 	 * @return il wrapper
 	 */
-	protected WrapperAzioniConsentite ottieniWrapperAzioniConsentite(List<AzioneConsentita> listaAzioniConsentite) {
-		return new WrapperAzioniConsentite(nomeAzione, listaAzioniConsentite);
+	protected AzioniConsentiteWrapper ottieniWrapperAzioniConsentite(List<AzioneConsentita> listaAzioniConsentite) {
+		return new AzioniConsentiteWrapper(nomeAzione, listaAzioniConsentite);
 	}
 	
 	/**

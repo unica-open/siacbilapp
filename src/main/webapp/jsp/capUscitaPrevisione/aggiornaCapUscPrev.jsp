@@ -94,12 +94,42 @@ SPDX-License-Identifier: EUPL-1.2
 										<div class="control-group">
 											<label for="missione" class="control-label">Missione *</label>
 											<div class="controls">
-												<s:select list="listaMissione" id="missione" name="missione.uid" required="true" cssClass="span10"
+												<%-- <s:select list="listaMissione" id="missione" name="missione.uid" required="true" cssClass="span10"
 													headerKey="" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="%{!missioneEditabile}"
-													data-original-uid="%{missione.uid}" />
+													data-original-uid="%{missione.uid}" /> --%>
+												<select id="missione" name="missione.uid" required <s:if test="%{!missioneEditabile}"> disabled</s:if> class="span10">
+													<option value="0"></option>
+													<s:iterator value="listaMissione" var="mm">
+														<option data-codice="<s:property value="#mm.codice" />" value="<s:property value="#mm.uid"/>" <s:if test="%{missione.uid == #mm.uid}">selected</s:if>>
+															<s:property value="%{#mm.codice + ' - ' + #mm.descrizione}"/>
+														</option>
+													</s:iterator>
+												</select>
 												<s:if test="!missioneEditabile">
 													<s:hidden name="missione.uid" />
 												</s:if>
+											</div>
+										</div>
+										
+										<!-- task-55 -->
+										<div id="containerFlagCapitoloDaNonInserireA1" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+											<div class="control-group">
+												<label for="flagCapitoloDaNonInserireA1" class="control-label">Capitolo da non inserire nell'allegato A1 *
+													<!-- task-55 -->
+													<a class="tooltip-test" title="Risorse Accantonate per Risultato di Amministrazione - Allegato a1" href="#">
+														<i class="icon-info-sign">&nbsp;
+															<span class="nascosto">Risorse Accantonate per Risultato di Amministrazione - Allegato a1</span>
+														</i>
+													</a>
+												</label>
+												<div class="controls">
+													<label class="radio inline">
+														<s:radio theme="simple" name="capitoloUscitaPrevisione.flagNonInserireAllegatoA1" list="#{true:'Sì'}"/>
+													</label>
+													<label class="radio inline">
+														<s:radio theme="simple" name="capitoloUscitaPrevisione.flagNonInserireAllegatoA1" list="#{false:'No'}"/>
+													</label>
+												</div>
 											</div>
 										</div>
 										<div class="control-group">
@@ -119,7 +149,8 @@ SPDX-License-Identifier: EUPL-1.2
 											</div>
 										</div>
 										<div class="control-group">
-											<label for="classificazioneCofog" class="control-label">Cofog
+										<!-- task-9 obbligatorio cofog -->
+											<label for="classificazioneCofog" class="control-label">Cofog *
 												<a class="tooltip-test" title="selezionare prima il Programma" href="#">
 													<i class="icon-info-sign">&nbsp; <span class="nascosto">selezionare prima il Programma</span></i>
 												</a>
@@ -267,6 +298,23 @@ SPDX-License-Identifier: EUPL-1.2
 												<input type="hidden" id="categoriaCapitoloHidden" name="capitoloUscitaPrevisione.categoriaCapitolo.uid" value="" disabled>
 											</div>
 										</div>
+										
+										<div id="containerRisorsaAccantonata" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+											<div class="control-group">
+												<label for="risorsaAccantonata" class="control-label">Risorsa accantonata * </label>
+												<div class="controls">
+													<select id="risorsaAccantonata" name="risorsaAccantonata.uid"  <s:if test='%{!missioneFondi}'>disabled</s:if> class="span10">
+														<option value="0" <s:if test="%{risorsaAccantonata == null || risorsaAccantonata.uid == 0}">selected</s:if> ></option>
+														<s:iterator value="listaRisorsaAccantonata" var="dd">
+															<option data-codice="<s:property value="#dd.codice" />" value="<s:property value="#dd.uid"/>" <s:if test="%{risorsaAccantonata != null && risorsaAccantonata.uid == #dd.uid}">selected</s:if>>
+																<s:property value="%{#dd.codice + ' - ' + #dd.descrizione}"/>
+															</option>
+														</s:iterator>
+													</select>
+												</div>
+											</div>
+										</div>
+										
 										<div class="control-group">
 											<label for="flagImpegnabile" class="control-label">Impegnabile</label>
 											<div class="controls">
@@ -462,91 +510,10 @@ SPDX-License-Identifier: EUPL-1.2
 									<h4>Stanziamenti</h4>
 									
 										<s:hidden value="%{stanziamentiNegativiPresenti}" id="stanziamentiNegativiPresentiHidden"/>
-											<table class="table table-hover table-condensed table-bordered"
-										id="tabellaStanziamentiTotaliComponenti">
-										<tr>
-											<th>&nbsp;</th>
-											<th>&nbsp;</th>
-											<th class="text-right">${annoEsercizioInt - 1}</th>
-											<th class="text-right">Residui ${annoEsercizioInt + 0}</th>
-											<th class="text-right">${annoEsercizioInt + 0}</th>
-											<th class="text-right">${annoEsercizioInt + 1}</th>
-											<th class="text-right">${annoEsercizioInt + 2}</th>
-											<th class="text-right">>${annoEsercizioInt + 2}</th>
-										</tr>
-										<tr  class="componentiRowFirst">
-											<th rowspan="3" class="stanziamenti-titoli">
-												<a id="competenzaTotale" href="#" class="disabled">Competenza</a>
-											</th>
-											<td class="text-center">Stanziamento</td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-										</tr>
-										<tr class="componentiRowOther">
-											<td class="text-center">Impegnato</td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-										</tr>
-										<tr class="componentiRowOther">
-											<td class="text-center">Disponibilit&agrave; Impegnare</td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-										</tr>
-										<tr class="componentiRowFirst">
-											<th rowspan="2" class="stanziamenti-titoli">
-												Residuo
-											</th>
-											<td class="text-center">Presunto</td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-										</tr>
-										<tr class="componentiRowOther">
-											<td class="text-center">Effettivo</td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-										</tr>
-										<tr class="componentiRowFirst">
-											<th rowspan="2" class="stanziamenti-titoli">
-												Cassa
-											</th>
-											<td class="text-center">Stanziamento</td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-										</tr>
-										<tr class="componentiRowOther">
-											<td class="text-center">Pagato</td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-											<td class="text-right"></td>
-										</tr>
-									</table>
+										<s:include value="/jsp/cap/include/tabella_stanziamenti_con_componenti_spesa.jsp">
+											<s:param name="visualizzaImportoIniziale">false</s:param>
+										</s:include>
+	
 	
 	
 	
@@ -567,12 +534,20 @@ SPDX-License-Identifier: EUPL-1.2
 												name="action:visualizzaTotaliPrevisioneCapUscitaPrevisione" />
 									</div>
 									<p>
-										<s:include value="/jsp/include/indietro.jsp" />
+										
+										<!-- SIAC-8859-->
+										<!--<s:include value="/jsp/include/indietro.jsp" />-->
+										<s:a cssClass="btn" action="risultatiRicercaCapUscitaPrevisione.do"
+											id="pulsanteRedirezioneIndietro">
+											<!--<s:param name="uidDaAggiornare" value="%{capitoloUscitaPrevisione.uid}"/>-->
+											<s:param name="daAggiornamento" value="true"/>
+										indietro</s:a>
+										
 										<button type="button" class="btn reset">annulla</button>
 										<s:submit cssClass="btn btn-primary pull-right" value="salva"/>
 										
-										<!--SIAC-6884-cambia valore inviato alla action-->
-										<s:a action="aggiornaComponenteImportoCapitolo" cssClass="btn btn-primary pull-right" id="tastoStanziamenti">
+										<!--SIAC-6884-cambia valore inviato alla action, modificato SIAC-7799-->
+										<s:a action="gestioneComponenteImportoCapitoloNelCapitolo" cssClass="btn btn-primary pull-right" id="tastoStanziamenti">
 											<s:param name="uidCapitolo" value="%{capitoloUscitaPrevisione.uid}"/>
 											<s:param name="isCapitoloFondino" value="%{capitoloFondino}"/>
 											<s:param name="fromPage">MODIFY</s:param>
@@ -654,10 +629,11 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloUscita.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloUscitaPrevisione/aggiorna.js"></script>
-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/tabellaComponenteImportiCapitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloUscita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloUscitaPrevisione/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attoDiLegge/attoDiLegge.js"></script>
 </body>
 </html>

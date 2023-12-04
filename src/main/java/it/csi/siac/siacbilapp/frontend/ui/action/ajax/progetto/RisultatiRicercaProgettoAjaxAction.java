@@ -14,22 +14,24 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.RisultatiRicercaProgettoAjaxModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto.ElementoProgetto;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto.ElementoProgettoFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.ProgettoService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaProgettoResponse;
 import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siacbilser.model.TipoProgetto;
+import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Action per i risultati di ricerca del progetto.
@@ -40,7 +42,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoProgetto, 
+public class RisultatiRicercaProgettoAjaxAction extends PagedDataTableAjaxAction<ElementoProgetto, 
 	RisultatiRicercaProgettoAjaxModel, Progetto, RicercaSinteticaProgetto, RicercaSinteticaProgettoResponse> {
 	
 	/** Per la serializzazione */
@@ -106,12 +108,12 @@ public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaA
 	}
 
 	@Override
-	protected ElementoProgetto ottieniIstanza(Progetto e) throws FrontEndBusinessException {
+	protected ElementoProgetto getInstance(Progetto e) throws FrontEndBusinessException {
 		return ElementoProgettoFactory.getInstance(e);
 	}
 
 	@Override
-	protected RicercaSinteticaProgettoResponse ottieniResponse(RicercaSinteticaProgetto request) {
+	protected RicercaSinteticaProgettoResponse getResponse(RicercaSinteticaProgetto request) {
 		return progettoService.ricercaSinteticaProgetto(request);
 	}
 
@@ -121,8 +123,8 @@ public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaA
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoProgetto instance, boolean daRientro, boolean isAggiornaAbilitato,
-			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoProgetto instance, boolean daRientro, boolean isAggiornaAbilitato,
+			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {//SIAC-8900
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		
 		// Gestione delle azioni consentite
@@ -143,12 +145,25 @@ public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaA
 	 * @param listaAzioniConsentite la lista delle azioni consentite
 	 * @param instance l'istanza
 	 * @return se l'aggiornamento sia consentito
+	 * @throws WebServiceInvocationFailureException 
 	 */
-	private boolean isAggiornaConsentito(List<AzioneConsentita> listaAzioniConsentite, ElementoProgetto instance) {
-		return (AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROGETTO_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROGETTO_AGGIORNA_DECENTRATO, listaAzioniConsentite))
-			&& isTipoProgettoCoerenteConFaseBilancio(instance)
-				&& instance.checkStatoOperativoValido();
+	private boolean isAggiornaConsentito(List<AzioneConsentita> listaAzioniConsentite, ElementoProgetto instance)  {
+		boolean azioneConsentita = (AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROGETTO_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROGETTO_AGGIORNA_DECENTRATO, listaAzioniConsentite));
+		
+		//SIAC-8900
+		boolean progettoCoerenteConFaseBilancio = true;
+		
+		if(abilitaAzioneAggiornaProgetto()) {  
+			if(!"E".equals(sessionHandler.getFaseBilancio())) {
+				progettoCoerenteConFaseBilancio = isTipoProgettoCoerenteConFaseBilancio(instance);
+			}
+		}else {
+			progettoCoerenteConFaseBilancio = isTipoProgettoCoerenteConFaseBilancio(instance);
+		}
+		
+		boolean statoOperativo = instance.checkStatoOperativoValido();
+		return azioneConsentita && progettoCoerenteConFaseBilancio && statoOperativo;
 	}
 	
 	/**
@@ -163,6 +178,12 @@ public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaA
 		return tipoProgetto != null && tipoProgetto.getCodice().equalsIgnoreCase(instance.getCodiceTipoProgetto());
 	}
 	
+	//SIAC-8900
+	public boolean abilitaAzioneAggiornaProgetto() {
+		return Boolean.TRUE.equals(Boolean.parseBoolean(getParametroConfigurazioneEnte(
+				ParametroConfigurazioneEnteEnum.PROGETTO_ABILITA_GESTIONE_ESERCIZIO_PROVVISORIO)));
+	}
+	
 	/**
 	 * Controlla se l'annullamento sia consentito
 	 * @param listaAzioniConsentite la lista delle azioni consentite
@@ -170,7 +191,7 @@ public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaA
 	 * @return se l'annullamento sia consentito
 	 */
 	private boolean isAnnullaConsentito(List<AzioneConsentita> listaAzioniConsentite, ElementoProgetto instance) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROGETTO_AGGIORNA, listaAzioniConsentite)
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROGETTO_AGGIORNA, listaAzioniConsentite)
 				&& instance.checkStatoOperativoValido();
 	}
 
@@ -181,7 +202,7 @@ public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaA
 	 * @return se la consultazione sia consentita
 	 */
 	private boolean isConsultaConsentito(List<AzioneConsentita> listaAzioniConsentite) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROGETTO_CONSULTA, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROGETTO_CONSULTA, listaAzioniConsentite);
 	}
 
 	/**
@@ -191,7 +212,7 @@ public class RisultatiRicercaProgettoAjaxAction extends GenericRisultatiRicercaA
 	 * @return se la riattivazione sia consentita
 	 */
 	private boolean isRiattivaConsentito(List<AzioneConsentita> listaAzioniConsentite, ElementoProgetto instance) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROGETTO_AGGIORNA, listaAzioniConsentite)
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROGETTO_AGGIORNA, listaAzioniConsentite)
 				&& instance.checkStatoOperativoAnnullato();
 	}
 }

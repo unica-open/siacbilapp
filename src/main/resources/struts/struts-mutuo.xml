@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="mutuo" extends="capitoloDefault" namespace="/">
+
+		<action name="inserisciMutuo" class="inserisciMutuoAction">
+			<result name="success" type="redirectAction">inserisciMutuo_enterPage</result>
+		</action>
+
+		<action name="inserisciMutuo_enterPage" class="inserisciMutuoAction"  method="enterPage">
+			 <result name="success">/jsp/mutuo/inserisciMutuo.jsp</result>
+		</action>
+
+		<action name="inserisciMutuo_salva" class="inserisciMutuoAction" method="salva">
+			<result name="input">/jsp/mutuo/inserisciMutuo.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+
+		<action name="ricercaMutuo" class="ricercaMutuoAction">
+			<result name="success" type="redirectAction">ricercaMutuo_enterPage</result>
+		</action>
+
+		<action name="ricercaMutuo_enterPage" class="ricercaMutuoAction"  method="enterPage">
+			<result name="success">/jsp/mutuo/ricercaMutuo.jsp</result>
+		</action>
+
+		<action name="ricercaMutuo_ricerca" class="ricercaMutuoAction" method="ricerca">
+			<result name="input">/jsp/mutuo/ricercaMutuo.jsp</result>
+			<result name="success" type="redirectAction">risultatiRicercaMutuo</result>
+		</action>
+
+		<action name="risultatiRicercaMutuo" class="risultatiRicercaMutuoAction">
+			<result name="success" type="redirectAction">risultatiRicercaMutuo_enterPage</result>
+		</action>
+
+		<action name="risultatiRicercaMutuo_enterPage" class="risultatiRicercaMutuoAction"  method="enterPage">
+			<result name="success">/jsp/mutuo/risultatiRicercaMutuo.jsp</result>
+		</action>
+
+        <action name="risultatiRicercaMutuo_aggiorna" class="risultatiRicercaMutuoAction" method="aggiorna">
+            <result name="input">/jsp/mutuo/risultatiRicercaMutuo.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaMutuo_annulla" class="risultatiRicercaMutuoAction" method="annulla">
+            <result name="success">/jsp/mutuo/risultatiRicercaMutuo.jsp</result>
+            <result name="input">/jsp/mutuo/risultatiRicercaMutuo.jsp</result>
+        </action>
+        
+        <action name="risultatiRicercaMutuo_consulta" class="risultatiRicercaMutuoAction" method="consulta">
+            <result name="input">/jsp/mutuo/risultatiRicercaMutuo.jsp</result>
+            <result name="success" type="redirectAction">
+            	<param name="actionName">consultaMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+        </action>
+        
+        <action name="risultatiRicercaMutuo_effettuaVariazioneTassoMutuiSelezionati" class="risultatiRicercaMutuoAction" method="effettuaVariazioneTassoMutuiSelezionati">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+        
+		<action name="risultatiRicercaMutuoAjax" class="risultatiRicercaMutuoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*, sEcho, iTotalRecords, iTotalDisplayRecords, iDisplayStart, iDisplayLength, aaData.*
+            	</param>
+            </result>
+        </action>
+        
+        
+
+		<action name="aggiornaMutuo" class="aggiornaMutuoAction">
+            <result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		        
+		<action name="aggiornaMutuo_enterPage" class="aggiornaMutuoAction" method="enterPage">
+			<result name="input">/jsp/mutuo/aggiornaMutuo.jsp</result>
+			<result name="success">/jsp/mutuo/aggiornaMutuo.jsp</result>
+		</action>
+
+		<action name="aggiornaMutuo_salva" class="aggiornaMutuoAction" method="salva">
+			<result name="input">/jsp/mutuo/aggiornaMutuo.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">aggiornaMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="aggiornaMutuo_annulla" class="aggiornaMutuoAction" method="annulla">
+			<result name="input">/jsp/mutuo/aggiornaMutuo.jsp</result>
+			<result name="success" type="redirectAction">risultatiRicercaMutuo_enterPage</result>
+		</action>
+        
+        <action name="consultaMutuo" class="consultaMutuoAction">
+            <result name="success">/jsp/mutuo/consultaMutuo.jsp</result>
+			<result name="input">/jsp/mutuo/consultaMutuo.jsp</result>
+        </action>
+ 
+		<action name="consultaMutuo_scaricaPianoAmmortamentoExcel" class="consultaMutuoAction" method="scaricaPianoAmmortamentoExcel">
+			<result name="input">/jsp/mutuo/consultaMutuo.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+		<action name="consultaMutuo_scaricaMovimentiGestioneAssociatiExcel" class="consultaMutuoAction" method="scaricaMovimentiGestioneAssociatiExcel">
+			<result name="input">/jsp/mutuo/consultaMutuo.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+		<action name="consultaMutuo_scaricaProgettiAssociatiExcel" class="consultaMutuoAction" method="scaricaProgettiAssociatiExcel">
+			<result name="input">/jsp/mutuo/consultaMutuo.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+		<action name="consultaMutuo_scaricaRipartizioneExcel" class="consultaMutuoAction" method="scaricaRipartizioneExcel">
+			<result name="input">/jsp/mutuo/consultaMutuo.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+		<action name="pianoAmmortamentoMutuoTassoVariabile" class="pianoAmmortamentoMutuoTassoVariabileAction">
+			  <result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoVariabile_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoVariabile_enterPage" class="pianoAmmortamentoMutuoTassoVariabileAction" method="enterPage">
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+		</action>
+		
+		
+		
+		<action name="pianoAmmortamentoMutuoTassoVariabile_calcolaRate" class="pianoAmmortamentoMutuoTassoVariabileAction" method="calcolaRate">
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoVariabile_caricaRateDaFile" class="pianoAmmortamentoMutuoTassoVariabileAction" method="caricaRateDaFile">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoVariabile_aggiungiRata" class="pianoAmmortamentoMutuoTassoVariabileAction" method="aggiungiRata">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoVariabile_eliminaRata" class="pianoAmmortamentoMutuoTassoVariabileAction" method="eliminaRata">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+		</action>
+
+		<action name="pianoAmmortamentoMutuoTassoVariabile_salva" class="pianoAmmortamentoMutuoTassoVariabileAction" method="salva">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			 <result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoVariabile_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoVariabile_annullaPiano" class="pianoAmmortamentoMutuoTassoVariabileAction" method="annulla">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+		 	<result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoVariabile_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+        </action>
+
+		<action name="pianoAmmortamentoMutuoTassoVariabile_scaricaModelloCsv" class="pianoAmmortamentoMutuoTassoVariabileAction" method="scaricaModelloCsv">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+		<action name="pianoAmmortamentoMutuoTassoVariabile_scaricaPianoExcel" class="pianoAmmortamentoMutuoTassoVariabileAction" method="scaricaPianoExcel">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+
+		<action name="pianoAmmortamentoMutuoTassoVariabile_scaricaPianoCsv" class="pianoAmmortamentoMutuoTassoVariabileAction" method="scaricaPianoCsv">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoVariabile.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+		
+		<action name="pianoAmmortamentoMutuoTassoFisso" class="pianoAmmortamentoMutuoTassoFissoAction">
+			  <result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoFisso_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+
+		<action name="pianoAmmortamentoMutuoTassoFisso_enterPage" class="pianoAmmortamentoMutuoTassoFissoAction" method="enterPage">
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+		</action>
+
+		<action name="pianoAmmortamentoMutuoTassoFisso_calcolaRate" class="pianoAmmortamentoMutuoTassoFissoAction" method="calcolaRate">
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoFisso_caricaRateDaFile" class="pianoAmmortamentoMutuoTassoFissoAction" method="caricaRateDaFile">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoFisso_aggiungiRata" class="pianoAmmortamentoMutuoTassoFissoAction" method="aggiungiRata">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoFisso_eliminaRata" class="pianoAmmortamentoMutuoTassoFissoAction" method="eliminaRata">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoFisso_salva" class="pianoAmmortamentoMutuoTassoFissoAction" method="salva">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoFisso_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoFisso_annullaPiano" class="pianoAmmortamentoMutuoTassoFissoAction" method="annulla">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoFisso_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>			
+		</action>
+
+		<action name="pianoAmmortamentoMutuoTassoFisso_scaricaModelloCsv" class="pianoAmmortamentoMutuoTassoFissoAction" method="scaricaModelloCsv">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+		
+		<action name="pianoAmmortamentoMutuoTassoFisso_scaricaPianoExcel" class="pianoAmmortamentoMutuoTassoFissoAction" method="scaricaPianoExcel">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+		<action name="pianoAmmortamentoMutuoTassoFisso_scaricaPianoCsv" class="pianoAmmortamentoMutuoTassoFissoAction" method="scaricaPianoCsv">
+			<result name="input">/jsp/mutuo/pianoAmmortamentoMutuoTassoFisso.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+
+
+
+
+
+		 <action name="variazionePianoMutuo" class="variazionePianoMutuoAction">
+			<result name="success" type="redirectAction">
+            	<param name="actionName">variazionePianoMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+
+  		<action name="variazionePianoMutuo_enterPage" class="variazionePianoMutuoAction" method="enterPage">
+			<result name="success">/jsp/mutuo/variazionePianoMutuo.jsp</result>
+			<result name="input">/jsp/mutuo/variazionePianoMutuo.jsp</result>
+		</action>
+
+  		<action name="variazionePianoMutuo_salva" class="variazionePianoMutuoAction" method="salva">
+			<result name="input">/jsp/mutuo/variazionePianoMutuo.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoFisso_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+
+
+		<action name="variazioneTassoMutuo" class="variazioneTassoMutuoAction">
+			<result name="success" type="redirectAction">
+            	<param name="actionName">variazioneTassoMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+
+  		<action name="variazioneTassoMutuo_enterPage" class="variazioneTassoMutuoAction" method="enterPage">
+			<result name="success">/jsp/mutuo/variazioneTassoMutuo.jsp</result>
+		</action>
+		
+  		<action name="variazioneTassoMutuo_salva" class="variazioneTassoMutuoAction" method="salva">
+			<result name="input">/jsp/mutuo/variazioneTassoMutuo.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">pianoAmmortamentoMutuoTassoVariabile_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+
+
+		<action name="movimentiGestioneAssociatiMutuo" class="movimentiGestioneAssociatiMutuoAction">
+			  <result name="success" type="redirectAction">
+            	<param name="actionName">movimentiGestioneAssociatiMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="movimentiGestioneAssociatiMutuo_enterPage" class="movimentiGestioneAssociatiMutuoAction" method="enterPage">
+			<result name="success">/jsp/mutuo/movimentiGestioneAssociatiMutuo.jsp</result>
+			<result name="input">/jsp/mutuo/movimentiGestioneAssociatiMutuo.jsp</result>
+		</action>
+		
+		<action name="movimentiGestioneAssociatiMutuo_eliminaAssociazione" class="movimentiGestioneAssociatiMutuoAction" method="eliminaAssociazione">
+			<result name="input">/jsp/mutuo/movimentiGestioneAssociatiMutuo.jsp</result>
+			  <result name="success" type="redirectAction">
+            	<param name="actionName">movimentiGestioneAssociatiMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="movimentiGestioneAssociatiMutuo_scaricaElencoExcel" class="movimentiGestioneAssociatiMutuoAction" method="scaricaElencoExcel">
+			<result name="input">/jsp/mutuo/movimentiGestioneAssociatiMutuo.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+		
+		<action name="ricercaMovimentoGestioneMutuo" class="ricercaMovimentoGestioneMutuoAction">
+			<result name="success" type="redirectAction">
+            	<param name="actionName">ricercaMovimentoGestioneMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+                <param name="movimentoGestione.tipoMovimento">I</param>
+            </result>
+		</action>
+
+		<action name="ricercaMovimentoGestioneMutuo_enterPage" class="ricercaMovimentoGestioneMutuoAction"  method="enterPage">
+			 <result name="input">/jsp/mutuo/ricercaMovimentoGestioneMutuo.jsp</result>
+			 <result name="success">/jsp/mutuo/ricercaMovimentoGestioneMutuo.jsp</result>
+		</action>
+
+		<action name="ricercaMovimentoGestioneMutuo_ricerca" class="ricercaMovimentoGestioneMutuoAction" method="ricerca">
+			<result name="input">/jsp/mutuo/ricercaMovimentoGestioneMutuo.jsp</result>
+			<result name="risultatiRicercaImpegnoMutuo" type="redirectAction">
+			    <param name="actionName">risultatiRicercaImpegnoMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+			</result>
+			<result name="risultatiRicercaAccertamentoMutuo" type="redirectAction">
+			    <param name="actionName">risultatiRicercaAccertamentoMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaImpegnoMutuo" class="risultatiRicercaImpegnoMutuoAction">
+			<result name="success" type="redirectAction">
+			    <param name="actionName">risultatiRicercaImpegnoMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>			
+			</result>
+		</action>
+
+		<action name="risultatiRicercaImpegnoMutuo_enterPage" class="risultatiRicercaImpegnoMutuoAction"  method="enterPage">
+			<result name="success">/jsp/mutuo/risultatiRicercaImpegnoMutuo.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaImpegnoMutuoAjax" class="risultatiRicercaImpegnoMutuoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*, sEcho, iTotalRecords, iTotalDisplayRecords, iDisplayStart, iDisplayLength, aaData.*
+            	</param>
+            </result>
+        </action>
+        
+		<action name="risultatiRicercaAccertamentoMutuo_indietro" class="ricercaMovimentoGestioneMutuoAction">
+			<result name="success" type="redirectAction">
+          	<param name="actionName">ricercaMovimentoGestioneMutuo_enterPage</param>
+          	<param name="namespace">/</param>
+              <param name="mutuo.uid">${mutuo.uid}</param>
+              <param name="movimentoGestione.tipoMovimento">A</param>
+          </result>
+		</action>
+
+		<action name="risultatiRicercaAccertamentoMutuo" class="risultatiRicercaAccertamentoMutuoAction">
+			<result name="success" type="redirectAction">
+			    <param name="actionName">risultatiRicercaAccertamentoMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>			
+			</result>
+		</action>
+		
+		<action name="risultatiRicercaAccertamentoMutuo_enterPage" class="risultatiRicercaAccertamentoMutuoAction"  method="enterPage">
+			<result name="success">/jsp/mutuo/risultatiRicercaAccertamentoMutuo.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaAccertamentoMutuoAjax" class="risultatiRicercaAccertamentoMutuoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*, sEcho, iTotalRecords, iTotalDisplayRecords, iDisplayStart, iDisplayLength, aaData.*
+            	</param>
+            </result>
+        </action>
+        
+		<action name="dettaglioImpegnoMutuoAjax" class="dettaglioImpegnoMutuoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*, sEcho, iTotalRecords, iTotalDisplayRecords, aaData.*
+            	</param>
+            </result>
+        </action>
+        
+		<action name="dettaglioAccertamentoMutuoAjax" class="dettaglioAccertamentoMutuoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*, sEcho, iTotalRecords, iTotalDisplayRecords, aaData.*
+            	</param>
+            </result>
+        </action>
+		
+        <action name="risultatiRicercaImpegnoMutuo_associaMovimentiGestioneSelezionati"
+			class="risultatiRicercaImpegnoMutuoAction" method="associaMovimentiGestioneSelezionati">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+        <action name="risultatiRicercaAccertamentoMutuo_associaMovimentiGestioneSelezionati"
+			class="risultatiRicercaAccertamentoMutuoAction" method="associaMovimentiGestioneSelezionati">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+
+		<action name="ripartizioneMutuo" class="ripartizioneMutuoAction">
+			  <result name="success" type="redirectAction">
+            	<param name="actionName">ripartizioneMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="ripartizioneMutuo_enterPage" class="ripartizioneMutuoAction" method="enterPage">
+			<result name="input">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+			<result name="success">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+		</action>
+		
+		<action name="ripartizioneMutuo_eliminaRipartizione" class="ripartizioneMutuoAction" method="eliminaRipartizione">
+			<result name="input">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+			<result name="success">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+		</action>
+		
+		<action name="ripartizioneMutuo_aggiungiRipartizione" class="ripartizioneMutuoAction" method="aggiungiRipartizione">
+			<result name="input">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+			<result name="success">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+		</action>
+		
+		<action name="ripartizioneMutuo_salva" class="ripartizioneMutuoAction" method="salva">
+			<result name="input">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">ripartizioneMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>            
+            </result>
+		</action>
+		
+		<action name="ripartizioneMutuo_annulla" class="ripartizioneMutuoAction" method="annulla">
+			<result name="input">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+			<result name="success" type="redirectAction">
+            	<param name="actionName">ripartizioneMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+			</result>
+		</action>		
+
+		<action name="ripartizioneMutuo_scaricaRipartizioneExcel" class="ripartizioneMutuoAction" method="scaricaRipartizioneExcel">
+			<result name="input">/jsp/mutuo/ripartizioneMutuo.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+		
+		<action name="progettiAssociatiMutuo" class="progettiAssociatiMutuoAction">
+			  <result name="success" type="redirectAction">
+            	<param name="actionName">progettiAssociatiMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		
+		<action name="progettiAssociatiMutuo_enterPage" class="progettiAssociatiMutuoAction" method="enterPage">
+			<result name="success">/jsp/mutuo/progettiAssociatiMutuo.jsp</result>
+			<result name="input">/jsp/mutuo/progettiAssociatiMutuo.jsp</result>
+		</action>
+
+		
+		<action name="progettiAssociatiMutuo_eliminaAssociazione" class="progettiAssociatiMutuoAction" method="eliminaAssociazione">
+			<result name="input">/jsp/mutuo/progettiAssociatiMutuo.jsp</result>
+			  <result name="success" type="redirectAction">
+            	<param name="actionName">progettiAssociatiMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+		<action name="progettiAssociatiMutuo_scaricaElencoExcel" class="progettiAssociatiMutuoAction" method="scaricaElencoExcel">
+			<result name="input">/jsp/mutuo/progettiAssociatiMutuo.jsp</result>
+			<result name="success" type="chain">
+				<param name="actionName">downloadFile</param>
+				<param name="namespace">/</param>
+				<param name="method">execute</param>
+			</result>
+		</action>
+				
+		<action name="ricercaProgettoMutuo" class="ricercaProgettoMutuoAction">
+			<result name="success" type="redirectAction">
+            	<param name="actionName">ricercaProgettoMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+            </result>
+		</action>
+
+		<action name="ricercaProgettoMutuo_enterPage" class="ricercaProgettoMutuoAction"  method="enterPage">
+			 <result name="input">/jsp/mutuo/ricercaProgettoMutuo.jsp</result>
+			 <result name="success">/jsp/mutuo/ricercaProgettoMutuo.jsp</result>
+		</action>
+
+	
+		<action name="ricercaProgettoMutuo_ricerca" class="ricercaProgettoMutuoAction" method="ricerca">
+			<result name="input">/jsp/mutuo/ricercaProgettoMutuo.jsp</result>
+			<result name="risultatiRicercaProgettoMutuo" type="redirectAction">
+				<param name="actionName">risultatiRicercaProgettoMutuo</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaProgettoMutuo" class="risultatiRicercaProgettoMutuoAction">
+			<result name="success" type="redirectAction">
+				<param name="actionName">risultatiRicercaProgettoMutuo_enterPage</param>
+            	<param name="namespace">/</param>
+                <param name="mutuo.uid">${mutuo.uid}</param>
+			</result>
+		</action>
+
+		<action name="risultatiRicercaProgettoMutuo_enterPage" class="risultatiRicercaProgettoMutuoAction"  method="enterPage">
+			<result name="success">/jsp/mutuo/risultatiRicercaProgettoMutuo.jsp</result>
+		</action>
+		
+		<action name="risultatiRicercaProgettoMutuoAjax" class="risultatiRicercaProgettoMutuoAjaxAction">
+            <result type="json">
+            	<param name="ignoreHierarchy">false</param>
+            	<param name="includeProperties">
+            		errori.*, sEcho, iTotalRecords, iTotalDisplayRecords, iDisplayStart, iDisplayLength, aaData.*
+            	</param>
+            </result>
+        </action>
+        
+ 		<action name="risultatiRicercaProgettoMutuo_associaProgettiSelezionati"
+			class="risultatiRicercaProgettoMutuoAction" method="associaProgettiSelezionati">
+			<result name="success" type="customMessagesJSON" />
+			<result name="input" type="customMessagesJSON" />
+		</action>
+ 		
+	</package>
+</struts>

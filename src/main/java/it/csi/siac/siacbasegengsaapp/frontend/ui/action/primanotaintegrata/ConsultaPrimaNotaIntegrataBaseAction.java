@@ -17,12 +17,12 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.Consul
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenapp.frontend.ui.util.ElementoMovimentoConsultazionePrimaNotaIntegrata;
 import it.csi.siac.siacgenapp.frontend.ui.util.ElementoMovimentoConsultazionePrimaNotaIntegrataFactory;
@@ -142,7 +142,7 @@ public abstract class ConsultaPrimaNotaIntegrataBaseAction<M extends ConsultaPri
 	 * Ottiene l'azione consentita per la validazione della prima nota integrata
 	 * @return l'azione consentita
 	 */
-	protected abstract AzioniConsentite getAzioneConsentitaValidaPrimaNotaIntegrata();
+	protected abstract AzioneConsentitaEnum getAzioneConsentitaValidaPrimaNotaIntegrata();
 	
 	/**
 	 * Ottiene il parametro di request per la ricerca dei dati finanziari associati alla prima nota integrata
@@ -225,7 +225,7 @@ public abstract class ConsultaPrimaNotaIntegrataBaseAction<M extends ConsultaPri
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(req, res);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioPrimaNota.class, res);
 			log.info(methodName, errorMsg);
 			addErrori(res);
 			throw new WebServiceInvocationFailureException(errorMsg);
@@ -287,7 +287,7 @@ public abstract class ConsultaPrimaNotaIntegrataBaseAction<M extends ConsultaPri
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(ValidaPrimaNota.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -315,7 +315,7 @@ public abstract class ConsultaPrimaNotaIntegrataBaseAction<M extends ConsultaPri
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(OttieniEntitaCollegatePrimaNota.class, res));
 			addErrori(res);
 			return INPUT;
 		}

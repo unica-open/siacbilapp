@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.provvedimento;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -51,7 +51,7 @@ public class ConsultaProvvedimentoAction extends GenericBilancioAction<ConsultaP
 		
 		if(response.hasErrori()) {
 			// Non dovrebbe succedere
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, response));
 			return INPUT;
 		}
 		

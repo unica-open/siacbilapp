@@ -19,6 +19,93 @@ var Documento = (function($) {
         modale.modal("hide");
         anchor.trigger("click");
     }
+    
+    /**
+     * SIAC-7567
+     * Funzione di controllo per determinare il submit o la chiamata asincrona per 
+     * il controllo del cig e del cup per le pubbliche assistenze.
+     * In caso di mancata valorizzazione di uno o più campi, (cig e/o cup) per una PA, 
+     * apro la modale e chiedo conferma all'utente.
+     *
+     * @param e     (jQuery) l'evento chiamante
+     *
+     * @returns     (jQuery) il modale aperto
+     */
+    exports.asyncCheckPA = function(e){
+        var $overlay = $(document.body);
+        var $alertWarning = $("#modaleConfermaProsecuzioneSuAzione");
+        var $fieldset = $("#fieldset_AggiornaDocumentoEntrata");
+        var oggettoPerChiamataAjax = $fieldset.serializeObject();
+        var url = "aggiornamentoDocumentoEntrata_aggiornamentoAnagraficaAsincrono.do";
+        var pulsanteSalva = $("#salvaAggiornamento");
+        var $checkCanale = $('#HIDDEN_checkCanale').val();
+        
+        e && e.preventDefault();
+
+        if(typeof($checkCanale) == 'undefined'){
+            //se sono qui il soggetto non e' una PA 
+            //pertanto posso procedere in maniera sincrona
+            $('#formAggiornamentoDatiDocumento').submit();
+            return;
+        }
+        //SIAC-7770: sposto qui, se faccio il submit la gestione deve essere quella precedente a SIAC-7516
+        pulsanteSalva.addClass("disabled");
+        pulsanteSalva.attr("disabled", true);
+        pulsanteSalva.prop("disabled", true);
+        
+        $overlay.overlay('show');
+        $alertWarning.slideUp();
+        $fieldset.addClass('form-submitted');
+
+        //chiamata asincrona di validazione per le PA
+        $.postJSON(url, oggettoPerChiamataAjax, function(data) {
+            if(data.errori && data.errori.length) {
+                //se l'overlay è ancora mostrato lo rimuovo
+                $(document.body).overlay('hide');
+                impostaDatiNegliAlert(data.errori, $('#ERRORI'));
+                return;
+            }
+            if(impostaDatiNegliAlert(data.errori, $alertWarning)) {
+                //se l'overlay è ancora mostrato lo rimuovo
+                $(document.body).overlay('hide');
+                return;
+            }
+        }).done(function(data){
+            if(data.messaggi && data.messaggi.length) {
+                //tolgo l'overlay per mostrare la modale del messaggio
+                $(document.body).overlay('hide');
+                //costruisco il messaggio in caso di messaggi
+                var messaggioConfermaPA = '<li>Il debitore è una Pubblica Amministrazione';
+                data.messaggi.length > 1 ? messaggioConfermaPA += ', i seguenti campi: ' : messaggioConfermaPA += ' ed il seguente campo: ';
+                for(var i = 0; i < data.messaggi.length; i++){
+                    messaggioConfermaPA += (data.messaggi[i].descrizione.substring('Dato obbligatorio omesso: '.length) + (data.messaggi.length-1 === i ? '' : ', '));
+                }
+                messaggioConfermaPA += data.messaggi.length > 1 ? ' non sono valorizzati,' : ' non &eacute; valorizzato,';
+                messaggioConfermaPA += ' proseguire comunque con l\'inserimento del documento?</li>';
+                //
+                impostaRichiestaConfermaUtente(messaggioConfermaPA, function() {
+                    //passo la conferma
+                    $fieldset.find('input[name="proseguireConElaborazioneCheckPA"]').val(true);
+                    //submit del form
+                    $('#formAggiornamentoDatiDocumento').submit();
+                }, undefined, "Si, prosegui", "no, indietro");
+                return;
+            }
+            //eseguo il submit del form solo se non ho avuto errori o messagi in risposta
+            if(!(data.errori && data.errori.length)) {
+                $('#formAggiornamentoDatiDocumento').submit();
+            }
+        }).fail(function(data){
+            //tento di gestire il fallimento della validazione
+            $('#ERRORI').val(data.error);
+        }).always(function() {
+            //NON tolgo l'overlay poiche' ci pensa il ricaricamento della pagina
+            pulsanteSalva.removeClass("disabled");
+            pulsanteSalva.removeAttr("disabled");
+            pulsanteSalva.removeProp("disabled");
+            $fieldset.removeClass('form-submitted');
+        });
+    }
 
     /**
      * Apre il modale per la conferma del cambiamento di tab.
@@ -144,6 +231,9 @@ $(function() {
         this.reset();
         Documento.puliziaMascheraSoggetto();
     });
+
+    //SIAC-7567
+    $('#salvaAggiornamento').on('click', Documento.asyncCheckPA);
 
     Documento.salvaVecchiNettoArrotondamento();
 });

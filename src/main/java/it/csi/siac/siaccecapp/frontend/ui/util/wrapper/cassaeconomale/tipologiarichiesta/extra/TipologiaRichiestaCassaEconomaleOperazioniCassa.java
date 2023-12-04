@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologia
 
 import java.util.List;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 
 /**
@@ -31,7 +31,7 @@ public class TipologiaRichiestaCassaEconomaleOperazioniCassa extends TipologiaRi
 		
 		populateTipoRichiestaEconomale("Operazioni cassa");
 		addAbilitazioneRichiestaCassaEconomale("gestisci", "cassaEconomaleOperazioniCassaGestione.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_GESTIONE_OPERAZIONI_CASSA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_GESTIONE_OPERAZIONI_CASSA);
 	}
 
 }

@@ -35,51 +35,88 @@ SPDX-License-Identifier: EUPL-1.2
 					<div class="step-content">
 						<div class="step-pane active" id="step1">
 							<fieldset class="form-horizontal" id="#fieldsetStep2">
-								<div class="control-group margin-medium">
-									<label class="control-label" for="importoDaRegistrare">Importo da registrare</label>
-									<div class="controls">
-										<s:textfield id="importoDaRegistrare" name="importoDaRegistrare" cssClass="span2 soloNumeri decimale tab_Right" disabled="%{aggiornamento}"/>
-										<s:if test="%{aggiornamento}">
-											<s:hidden name="importoDaRegistrare" />
-										</s:if>
-									</div>
-								</div>
-								<div class="control-group margin-medium">
-									<label class="control-label" for="daRegistrare">Da registrare (D - A)</label>
-									<div class="controls">
-										<s:textfield id="daRegistrare" name="daRegistrare" cssClass="span2 soloNumeri decimale tab_Right" readonly="true" />
-									</div>
-								</div>
-								<div id="accordionPrimeNoteCollegate" class="accordion">
-									<div class="accordion-group">
-										<div class="accordion-heading">
-											<a href="#divPrimeNoteCollegate" data-parent="#accordionPrimeNoteCollegate" data-toggle="collapse" class="accordion-toggle collapsed">
-												Prime note collegate<span id="spanTotaleNoteCollegate"></span>
-												<span class="icon">&nbsp;</span>
-											</a>
+								<div class="span12">
+									<div class="span4">
+										<div class="control-group margin-medium">
+											<label class="control-label" for="importoDaRegistrare">Importo da registrare</label>
+											<div class="controls">
+												<s:textfield id="importoDaRegistrare" name="importoDaRegistrare" cssClass="span2 soloNumeri decimale tab_Right" disabled="%{aggiornamento}"/>
+												<s:if test="%{aggiornamento}">
+													<s:hidden name="importoDaRegistrare" />
+												</s:if>
+											</div>
 										</div>
-										<div class="accordion-body collapse" id="divPrimeNoteCollegate">
-											<div class="accordion-inner">
-												<table class="table table-hover tab_left" id="tabellaPrimeNoteCollegate">
-													<thead>
-														<tr>
-															<th>Tipo</th>
-															<th>Anno</th>
-															<th>Numero</th>
-															<th>Motivazione</th>
-															<th>Stato</th>
-															<th class="tab_Right span2">&nbsp;</th>
-														</tr>
-													</thead>
-													<tbody>
-													</tbody>
-												</table>
-												<p>
-													<button type="button" id="pulsanteCollegamentoPrimeNote" class="btn btn-secondary">
-														collega prima nota&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteCollegamentoPrimeNote"></i>
-													</button>
-												</p>
-												<s:include value="/jsp/contabilitaGenerale/primaNotaLibera/include/collapseCollegamentoPrimaNota.jsp" />
+										<div class="control-group margin-medium">
+											<label class="control-label" for="daRegistrare">Da registrare (D - A)</label>
+											<div class="controls">
+												<s:textfield id="daRegistrare" name="daRegistrare" cssClass="span2 soloNumeri decimale tab_Right" readonly="true" />
+											</div>
+										</div>
+									</div>
+									<%-- SIAC-8134 --%>
+									<div class="span8">
+									<%-- <div id="fieldsetStrutturaCompetente">
+											<s:hidden name="nomeAzioneSAC" id="nomeAzioneSAC" />
+											<div class="control-group margin-medium">
+												<label class="control-label">Struttura competente *</label>
+												<div class="controls">
+													<div class="accordion w-95 struttAmm whitespace-nowrap">
+														<div class="accordion-group">
+															<div class="accordion-heading">
+																<a class="accordion-toggle" id="accordionPadreStrutturaAmministrativa_PRIMA_NOTA_LIBERA_GSA_SD" href="#struttAmm_PRIMA_NOTA_LIBERA_GSA">
+																	<span id="SPAN_StrutturaAmministrativoContabile_PRIMA_NOTA_LIBERA_GSA">
+																		Seleziona la Struttura competente <i class="icon-spin icon-refresh spinner" id="SPINNER_StrutturaAmministrativoContabile"></i>
+																	</span>
+																</a>
+															</div>
+															<div id="struttAmm_PRIMA_NOTA_LIBERA_GSA" class="accordion-body collapse">
+																<div class="accordion-inner">
+																	<ul id="treeStruttAmm_PRIMA_NOTA_LIBERA_GSA" class="ztree treeStruttAmm"></ul>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<s:hidden id="HIDDEN_StrutturaAmministrativoContabileUid_PRIMA_NOTA_LIBERA_GSA" name="strutturaCompetentePrimaNotaLibera.uid" />
+											<s:hidden id="HIDDEN_StrutturaAmministrativoContabileCodice_PRIMA_NOTA_LIBERA_GSA" name="strutturaCompetentePrimaNotaLibera.codice" />
+											<s:hidden id="HIDDEN_StrutturaAmministrativoContabileDescrizione_PRIMA_NOTA_LIBERA_GSA" name="strutturaCompetentePrimaNotaLibera.descrizione" />
+										</div> --%>
+									</div> 
+									<%-- SIAC-8134 --%>
+								</div>
+								<div class="span12">
+									<div id="accordionPrimeNoteCollegate" class="accordion w-95">
+										<div class="accordion-group">
+											<div class="accordion-heading">
+												<a href="#divPrimeNoteCollegate" data-parent="#accordionPrimeNoteCollegate" data-toggle="collapse" class="accordion-toggle collapsed">
+													Prime note collegate<span id="spanTotaleNoteCollegate"></span>
+													<span class="icon">&nbsp;</span>
+												</a>
+											</div>
+											<div class="accordion-body collapse" id="divPrimeNoteCollegate">
+												<div class="accordion-inner">
+													<table class="table table-hover tab_left" id="tabellaPrimeNoteCollegate">
+														<thead>
+															<tr>
+																<th>Tipo</th>
+																<th>Anno</th>
+																<th>Numero</th>
+																<th>Motivazione</th>
+																<th>Stato</th>
+																<th class="tab_Right span2">&nbsp;</th>
+															</tr>
+														</thead>
+														<tbody>
+														</tbody>
+													</table>
+													<p>
+														<button type="button" id="pulsanteCollegamentoPrimeNote" class="btn btn-secondary">
+															collega prima nota&nbsp;<i class="icon-spin icon-refresh spinner" id="SPINNER_pulsanteCollegamentoPrimeNote"></i>
+														</button>
+													</p>
+													<s:include value="/jsp/contabilitaGenerale/primaNotaLibera/include/collapseCollegamentoPrimaNota.jsp" />
+												</div>
 											</div>
 										</div>
 									</div>
@@ -132,9 +169,11 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaPrimaNota.js"></script>
-	<script type="text/javascript" src="${jspath}gestioneSanitariaAccentrata/primaNotaLibera/inserisci.aggiorna.step2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaPrimaNota.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztreeSAC.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/strutturaAmministrativaContabile/strutturaAmministrativoContabile.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/gestioneSanitariaAccentrata/primaNotaLibera/inserisci.aggiorna.step2.js"></script>
 	
 </body>
 </html>

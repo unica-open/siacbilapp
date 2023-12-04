@@ -63,7 +63,7 @@ SPDX-License-Identifier: EUPL-1.2
 												<td><s:property value="#cds.trasmesso"/></td>
 												<td><s:property value="#cds.dataInvio"/></td>
 												<td>											
-													<a href="#" data-trigger="hover"  data-placement="left"  rel="popover" data-original-title="Descrizione esito" data-content="<s:property value='#cds.descrizioneEsito'/>">
+													<a href="#" data-trigger="hover"  data-placement="left"  data-toggle="popover" data-original-title="Descrizione esito" data-content="<s:property value='#cds.descrizioneEsito'/>">
 														<s:property value='#cds.codiceEsito'/>
 													</a>											 
 												</td>
@@ -99,7 +99,7 @@ SPDX-License-Identifier: EUPL-1.2
 												<td><s:property value="#cds.trasmesso"/></td>
 												<td><s:property value="#cds.dataInvio"/></td>
 												<td>											
-													<a href="#" data-trigger="hover"  data-placement="left" rel="popover" data-original-title="Descrizione esito" data-content="<s:property value='#cds.descrizioneEsito'/>">
+													<a href="#" data-trigger="hover"  data-placement="left" data-toggle="popover" data-original-title="Descrizione esito" data-content="<s:property value='#cds.descrizioneEsito'/>">
 														<s:property value='#cds.codiceEsito'/>
 													</a>											 
 												</td>
@@ -129,7 +129,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}registroComunicazioniPCC/consultaSubdocumentoSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/registroComunicazioniPCC/consultaSubdocumentoSpesa.js"></script>
 
 </body>
 </html>

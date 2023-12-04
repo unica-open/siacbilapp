@@ -403,15 +403,24 @@ var Documento = (function($, doc) {
                     mData: function(source) {
                         if(source.gestioneStatoNota) {
                             if(!source.azioni) {
-                                source.azioni = "<div class='btn-group'>" +
-                                        "<button data-toggle='dropdown' class='btn dropdown-toggle'>Azioni<span class='caret'></span></button>" +
-                                        "<ul class='dropdown-menu pull-right'>" +
-                                            "<li><a href='#' class='consultaNotaCredito'>consulta</a></li>" +
-                                            "<li><a href='#' class='scollegaNotaCredito'>scollega</a></li>" +
-                                            "<li><a href='#' class='aggiornaNotaCredito'>aggiorna</a></li>" +
-                                            "<li><a href='#' class='annullaNotaCredito'>annulla</a></li>" +
-                                        "</ul>" +
-                                    "</div>";
+                            	if(source.gestioneStatoSDINota) {   //SIAC-6988
+                            		source.azioni = "<div class='btn-group'>" +
+                                    "<button data-toggle='dropdown' class='btn dropdown-toggle'>Azioni<span class='caret'></span></button>" +
+                                    "<ul class='dropdown-menu pull-right'>" +  
+                                        "<li><a href='#' class='consultaNotaCredito'>consulta</a></li>" +
+                                    "</ul>" +
+                                "</div>";
+                            	}else{
+                            		source.azioni = "<div class='btn-group'>" +
+                                    "<button data-toggle='dropdown' class='btn dropdown-toggle'>Azioni<span class='caret'></span></button>" +
+                                    "<ul class='dropdown-menu pull-right'>" +  
+                                        "<li><a href='#' class='consultaNotaCredito'>consulta</a></li>" +
+                                        "<li><a href='#' class='scollegaNotaCredito'>scollega</a></li>" +
+                                        "<li><a href='#' class='aggiornaNotaCredito'>aggiorna</a></li>" +
+                                        "<li><a href='#' class='annullaNotaCredito'>annulla</a></li>" +
+                                    "</ul>" +
+                                "</div>";	
+                            	}
                             }
                         } else {
                             source.azioni = "";

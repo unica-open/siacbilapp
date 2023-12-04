@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.pagamentofatture;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -13,7 +13,6 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.pagamentofatture.InserisciPagamentoFattureCassaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomale;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomaleResponse;
@@ -23,6 +22,7 @@ import it.csi.siac.siaccecser.model.RichiestaEconomale;
 import it.csi.siac.siaccecser.model.TipoDiCassa;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDocumentiCollegatiByDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDocumentiCollegatiByDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
@@ -104,7 +104,7 @@ public class InserisciPagamentoFattureCassaEconomaleAction extends BaseInserisci
 	 * @return se i dati sono correttamente popolati
 	 */
 	private boolean hasDatiPopolati(boolean isSub, MovimentoGestione mg) {
-		return mg != null && (isSub || mg.getAnnoMovimento() != 0) && mg.getNumero() != null;
+		return mg != null && (isSub || mg.getAnnoMovimento() != 0) && mg.getNumeroBigDecimal() != null;
 	}
 	
 	/**
@@ -182,7 +182,7 @@ public class InserisciPagamentoFattureCassaEconomaleAction extends BaseInserisci
 				
 			}
 		}
-		checkCondition(valid && validModPagamento, ErroreCore.VALORE_NON_VALIDO.getErrore("quote da associare", ": sono collegate a impegni o subimpegni differenti o differisce la  modalit&agrave; pagamento"));
+		checkCondition(valid && validModPagamento, ErroreCore.VALORE_NON_CONSENTITO.getErrore("quote da associare", ": sono collegate a impegni o subimpegni differenti o differisce la  modalit&agrave; pagamento"));
 	}
 	
 	
@@ -192,7 +192,7 @@ public class InserisciPagamentoFattureCassaEconomaleAction extends BaseInserisci
 	private void controlloPagato() {
 		int i = 1;
 		for(SubdocumentoSpesa ss : model.getListaSubdocumentoSpesa()) {
-			checkCondition(!Boolean.TRUE.equals(ss.getPagatoInCEC()), ErroreCore.VALORE_NON_VALIDO.getErrore("quota " + i + " da associare", ": e' gia' stata pagata in CEC"));
+			checkCondition(!Boolean.TRUE.equals(ss.getPagatoInCEC()), ErroreCore.VALORE_NON_CONSENTITO.getErrore("quota " + i + " da associare", ": e' gia' stata pagata in CEC"));
 			i++;
 		}
 	}
@@ -262,7 +262,7 @@ public class InserisciPagamentoFattureCassaEconomaleAction extends BaseInserisci
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceRichiestaEconomale.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -428,11 +428,11 @@ public class InserisciPagamentoFattureCassaEconomaleAction extends BaseInserisci
 	 * @return <code>true</code> se l'entita &eacute; non-<code>null</code> e con uid diverso da 0; <code>false</code> altrimenti
 	 */
 	private boolean isMovimentoGestioneValorizzato(MovimentoGestione movimentoGestione) {
-		return movimentoGestione != null && movimentoGestione.getNumero() != null && movimentoGestione.getAnnoMovimento() != 0;
+		return movimentoGestione != null && movimentoGestione.getNumeroBigDecimal() != null && movimentoGestione.getAnnoMovimento() != 0;
 	}
 
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_FATTURE_INSERISCI, AzioniConsentite.CASSA_ECONOMALE_PAGAMENTO_FATTURE_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_FATTURE_INSERISCI, AzioneConsentitaEnum.CASSA_ECONOMALE_PAGAMENTO_FATTURE_ABILITA};
 	}
 }

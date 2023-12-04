@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.BaseConsultaRichiestaEconomaleAction;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospese.ConsultaAnticipoSpeseCassaEconomaleModel;
 import it.csi.siac.siaccecser.model.RichiestaEconomale;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per la consultazione della richiesta.
@@ -34,8 +34,8 @@ public class ConsultaAnticipoSpeseCassaEconomaleAction extends BaseConsultaRichi
 	}
 
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_RICERCA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_ABILITA};
 	}
 	
 }

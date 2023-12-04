@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.stampe;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.stampe.ElementoStampeCassaFile;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.stampe.Ele
  * @version 1.0.0 03/06/2014
  *
  */
-public class RisultatiRicercaStampaCassaEconomaleAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoStampeCassaFile> {
+public class RisultatiRicercaStampaCassaEconomaleAjaxModel extends PagedDataTableAjaxModel<ElementoStampeCassaFile> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -6731953175593275491L;

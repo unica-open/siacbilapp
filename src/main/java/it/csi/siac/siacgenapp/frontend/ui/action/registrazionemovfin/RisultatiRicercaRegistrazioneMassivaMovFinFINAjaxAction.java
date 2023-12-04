@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.registrazionemovfin.RisultatiRicercaRegistrazioneMovFinBaseAjaxAction;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.risultatiricerca.ElementoRegistrazioneMovFin;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 
 /**
@@ -42,22 +42,22 @@ public class RisultatiRicercaRegistrazioneMassivaMovFinFINAjaxAction extends Ris
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoRegistrazioneMovFin instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoRegistrazioneMovFin instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		// Nothing to do
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestionePrimaNotaIntegrata() {
+	protected AzioneConsentitaEnum getAzioneConsentitaGestionePrimaNotaIntegrata() {
 		return null;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestioneRegistrazioneMovFin() {
+	protected AzioneConsentitaEnum getAzioneConsentitaGestioneRegistrazioneMovFin() {
 		return null;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaMovFin() {
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaMovFin() {
 		return null;
 	}
 	

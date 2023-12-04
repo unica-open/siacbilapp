@@ -79,6 +79,19 @@ SPDX-License-Identifier: EUPL-1.2
             <result name="success">/jsp/capUscitaGestione/aggiornaCapUscGest.jsp</result>
             <result name="input">/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp</result>
         </action>
+         <!-- SIAC-8256 -->
+        <action name="aggiornaCapUscitaGestione_caricaImporti" class="aggiornaCapitoloUscitaGestioneAction" method="caricaImporti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
             <!-- Aggiornamento -->
         <action name="aggiornamentoCapUscitaGestione" class="aggiornaCapitoloUscitaGestioneAction" method="aggiornaCDU">
             <result name="success">/jsp/capUscitaGestione/inserisciCapUscGestDISABLED.jsp</result>
@@ -105,6 +118,22 @@ SPDX-License-Identifier: EUPL-1.2
             <result name="input" type="customMessagesJSON" />
             <result name="success">/jsp/cap/include/consulta_vincoli.jsp</result>
         </action>
+        
+        <action name="consultaCapUscitaGestione_caricaImporti" class="consultaCapitoloUscitaGestioneAction" method="caricaImporti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+					righeDisponibilitaVariareComponenti.*,
+					righeDisponibilitaImpegnareComponenti.*
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+        
         
         
         <!-- Azioni riferite al CDU GESC006 Ricerca Capitolo Uscita Gestione -->

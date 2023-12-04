@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -30,7 +30,7 @@ import it.csi.siac.siacfin2ser.model.AllegatoAtto;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaAllegatoAttoOperazioniMultipleAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoAllegatoAtto, 
+public class RisultatiRicercaAllegatoAttoOperazioniMultipleAjaxAction extends PagedDataTableAjaxAction<ElementoAllegatoAtto, 
 		RisultatiRicercaAllegatoAttoOperazioniMultipleAjaxModel, AllegatoAtto, RicercaAllegatoAtto, RicercaAllegatoAttoResponse> {
 	
 	/** Per la serializzazione*/
@@ -64,12 +64,12 @@ public class RisultatiRicercaAllegatoAttoOperazioniMultipleAjaxAction extends Ge
 	}
 	
 	@Override
-	protected ElementoAllegatoAtto ottieniIstanza(AllegatoAtto e) throws FrontEndBusinessException {
+	protected ElementoAllegatoAtto getInstance(AllegatoAtto e) throws FrontEndBusinessException {
 		return new ElementoAllegatoAtto(e);
 	}
 	
 	@Override
-	protected RicercaAllegatoAttoResponse ottieniResponse(RicercaAllegatoAtto request) {
+	protected RicercaAllegatoAttoResponse getResponse(RicercaAllegatoAtto request) {
 		return allegatoAttoService.ricercaAllegatoAtto(request);
 	}
 	

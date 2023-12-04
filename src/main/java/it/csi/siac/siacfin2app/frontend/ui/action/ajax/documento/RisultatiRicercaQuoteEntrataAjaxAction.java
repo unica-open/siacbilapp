@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -28,7 +28,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaQuoteEntrataAjaxAction extends GenericRisultatiRicercaAjaxAction<SubdocumentoEntrata, 
+public class RisultatiRicercaQuoteEntrataAjaxAction extends PagedDataTableAjaxAction<SubdocumentoEntrata, 
 		RisultatiRicercaQuoteEntrataAjaxModel, SubdocumentoEntrata, RicercaQuotaEntrata, RicercaQuotaEntrataResponse> {
 	
 	/** Per la serializzazione */
@@ -55,12 +55,12 @@ public class RisultatiRicercaQuoteEntrataAjaxAction extends GenericRisultatiRice
 	}
 	
 	@Override
-	protected SubdocumentoEntrata ottieniIstanza(SubdocumentoEntrata e) {
+	protected SubdocumentoEntrata getInstance(SubdocumentoEntrata e) {
 		return e;
 	}
 	
 	@Override
-	protected RicercaQuotaEntrataResponse ottieniResponse(RicercaQuotaEntrata request) {	
+	protected RicercaQuotaEntrataResponse getResponse(RicercaQuotaEntrata request) {	
 		return documentoEntrataService.ricercaQuotaEntrata(request);
 	}
 	

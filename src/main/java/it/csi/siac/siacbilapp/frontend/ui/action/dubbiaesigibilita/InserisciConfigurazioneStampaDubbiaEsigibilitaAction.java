@@ -7,34 +7,40 @@ package it.csi.siac.siacbilapp.frontend.ui.action.dubbiaesigibilita;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.dubbiaesigibilita.InserisciConfigurazioneStampaDubbiaEsigibilitaModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
-import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilitaResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaAnnoPrecedente;
-import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaAnnoPrecedenteResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilitaResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilitaResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente;
-import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAzionePerChiave;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAzionePerChiaveResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaResponse;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.BaseAccantonamentoFondiDubbiaEsigibilitaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.RicercaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.RicercaAccantonamentoFondiDubbiaEsigibilitaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.SalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.SalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.AggiornaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.AggiornaAccantonamentoFondiDubbiaEsigibilitaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.EliminaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.EliminaAccantonamentoFondiDubbiaEsigibilitaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.InserisceAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.InserisceAccantonamentoFondiDubbiaEsigibilitaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.RipristinaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.RipristinaAccantonamentoFondiDubbiaEsigibilitaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImportResponse;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
+import it.csi.siac.siacbilser.model.errore.ErroreBil;
+import it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.model.fcde.StatoAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.model.fcde.TipoAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.model.fcde.TipoImportazione;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
-import it.csi.siac.siaccorser.model.Informazione;
-import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.model.Esito;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * Classe di action per la gestione della configurazioen delle stampe dei fondi a dubbia e difficile esazione
@@ -52,39 +58,57 @@ public class InserisciConfigurazioneStampaDubbiaEsigibilitaAction extends Inseri
 	private static final long serialVersionUID = 1048555718689347461L;
 	
 	@Override
-	protected void executeOtherLoading() throws WebServiceInvocationFailureException {
-		RicercaAzionePerChiave req = model.creaRequestRicercaAzionePerChiave(AzioniConsentite.REPORTISTICA_PREVISIONE.getNomeAzione());
-		RicercaAzionePerChiaveResponse res = azioneService.ricercaAzionePerChiave(req);
-		
-		if(res.hasErrori()) {
-			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
-		}
-		model.setAzioneReportistica(res.getAzione());
-		model.setGruppoAzioniReportistica(res.getGruppoAzioni());
+	public boolean isConsentitoTornaInBozza() {
+		return Boolean.TRUE;
 	}
-
+	
+	@Override
+	protected boolean checkCompatibilitaFaseBilancio(FaseBilancio faseBilancio) {
+		//SIAC-8565 e SIAC-8572
+		return FaseBilancio.PREVISIONE.equals(faseBilancio) || FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) || FaseBilancio.GESTIONE.equals(faseBilancio); 
+	}
+	
 	@Override
 	public String caricaListaAccantonamentoFondi() {
-		final String methodName = "caricaListaAccantonamentoFondi";
-		RicercaSinteticaFondiDubbiaEsigibilita req = model.creaRequestRicercaSinteticaFondiDubbiaEsigibilita();
+		RicercaAccantonamentoFondiDubbiaEsigibilita req = model.creaRequestRicercaAccantonamentoFondiDubbiaEsigibilita();
 		logServiceRequest(req);
-		
-		RicercaSinteticaFondiDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.ricercaSinteticaFondiDubbiaEsigibilita(req);
+
+		RicercaAccantonamentoFondiDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.ricercaAccantonamentoFondiDubbiaEsigibilita(req);
 		logServiceResponse(res);
 	
-		if (res.hasErrori()) {
+		if (res.hasErrori()) { 
 			addErrori(res);
 			return INPUT;
 		}
-		log.debug(methodName, "Imposto in sessione la request.");
-		sessionHandler.setParametroXmlType(BilSessionParameter.REQUEST_RICERCA_SINTETICA_ACCANTONAMENTO_FONDI_DUBBIA_ESIGIBILITA, req);
-		log.debug(methodName, "Imposto in sessione i risultati.");
-		sessionHandler.setParametro(BilSessionParameter.RISULTATI_RICERCA_SINTETICA_ACCANTONAMENTO_FONDI_DUBBIA_ESIGIBILITA, res.getAccantonamentiFondiDubbiaEsigibilita());
+		extractAccantonamenti(res);
 		
 		return SUCCESS;
 	}
 
+	public String salvaAttributi() {
+		final String methodName = "salvaAttributi";
+		
+		SalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio req = model.creaRequestSalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(
+				TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE, StatoAccantonamentoFondiDubbiaEsigibilita.BOZZA);
+		logServiceRequest(req);
+	
+		SalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioResponse res = fondiDubbiaEsigibilitaService.salvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(req);
+		logServiceResponse(res);
+	
+		if (res.hasErrori()) {
+			addErrori(res);
+			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio");
+			return INPUT;
+		}
+		
+		return caricaListaAccantonamentoFondi();
+	}
+	
+	public String ricercaCapitoli() {
+		caricaListaAccantonamentoFondi();
+		return SUCCESS;
+	}
+	
 	@Override
 	public String confermaCapitoli() {
 		List<AccantonamentoFondiDubbiaEsigibilita> listaAccantonamentoFondiDubbiaEsigibilitaTemp = model.getListaAccantonamentoFondiDubbiaEsigibilitaTemp();
@@ -107,53 +131,62 @@ public class InserisciConfigurazioneStampaDubbiaEsigibilitaAction extends Inseri
 	
 	@Override
 	public String salvaCapitoli() {
-		final String methodName = "salvaCapitoli";
-	
-		InserisceFondiDubbiaEsigibilita req = model.creaRequestInserisceFondiDubbiaEsigibilita();
+
+		AggiornaAccantonamentoFondiDubbiaEsigibilita req = model.creaRequestAggiornaAccantonamentoFondiDubbiaEsigibilita();
+		
 		logServiceRequest(req);
 	
-		InserisceFondiDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.inserisceFondiDubbiaEsigibilita(req);
+		AggiornaAccantonamentoFondiDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.aggiornaAccantonamentoFondiDubbiaEsigibilita(req);
+		logServiceResponse(res);
+	
+		// SIAC-8356 warning in caso di lista vuota al salvataggio
+		if(Esito.FALLIMENTO.equals(res.getEsito()) && CollectionUtils.isEmpty(req.getListaAccantonamentoFondiDubbiaEsigibilita())) {
+			addMessaggio(ErroreBil.NESSUN_ELEMENTO_SALVATO.getErrore());
+			log.debug("salvaCapitoli", "Nessun elemento e' stato salvato, lista vuota");
+			return INPUT;
+		}
+		
+		if (res.hasErrori()) { 
+			addErrori(res);
+			log.debug("salvaCapitoli", "Si sono verificati errori nell'invocazione del servizio");
+			return INPUT;
+		}
+		
+		extractAccantonamenti(res);
+		
+		return SUCCESS;
+	}
+
+	@Override
+	public String ripristinaAccantonamento() {
+
+		final String methodName = "ripristinaAccantonamento";
+
+		RipristinaAccantonamentoFondiDubbiaEsigibilita req = model.creaRequestRipristinaAccantonamentoFondiDubbiaEsigibilita();
+		logServiceRequest(req);
+	
+		RipristinaAccantonamentoFondiDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.ripristinaAccantonamentoFondiDubbiaEsigibilita(req);
 		logServiceResponse(res);
 	
 		if (res.hasErrori()) {
 			addErrori(res);
-			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio.");
+			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio");
 			return INPUT;
 		}
-		
-		model.rimuoviCapitoliDaTemp();
-		
-		// SIAC-5481: aggiunta del messaggio di successo
-		addInformazione(new Informazione("CRU_CON_2001", "L'operazione e' stata completata con successo<br/>Per la stampa del \"Report di controllo - Simulazione FCDE\" - Menu "
-				+ model.getGruppoAzioniReportistica().getTitolo() + ", azione " + model.getAzioneReportistica().getTitolo()));
-	
+		extractAccantonamenti(res);
+
 		return SUCCESS;
 	}
-	
-	@Override
-	public void validateSalvaCapitoli() {
-		List<AccantonamentoFondiDubbiaEsigibilita> listaNelModel = model.getListaAccantonamentoFondiDubbiaEsigibilitaSelezionati();
-		checkCondition(!listaNelModel.isEmpty(), ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("fondi a dubbia e difficile esazione"));
-		for(AccantonamentoFondiDubbiaEsigibilita accantonamento : listaNelModel){
-			checkNotNullNorInvalidUid(accantonamento.getCapitolo(), "capitolo entrata previsione");
-			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
-			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi1(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
-			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi2(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
-			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi3(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
-			checkNotNull(accantonamento.getPercentualeAccantonamentoFondi4(), "percentuale accantonamento fondi per capitolo con uid: " + accantonamento.getCapitolo().getUid());
-			checkNotNull(accantonamento.getPercentualeDelta(), "percentuale delta per capitolo con uid: " + accantonamento.getCapitolo().getUid());
-		}
-	}
-	
 
 	@Override
 	public String eliminaAccantonamento() {
+
 		final String methodName = "eliminaAccantonamento";
-	
-		EliminaFondoDubbiaEsigibilita req = model.creaRequestEliminaFondoDubbiaEsigibilita();
+
+		EliminaAccantonamentoFondiDubbiaEsigibilita req = model.creaRequestEliminaAccantonamentoFondiDubbiaEsigibilita();
 		logServiceRequest(req);
 	
-		EliminaFondoDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.eliminaFondoDubbiaEsigibilita(req);
+		EliminaAccantonamentoFondiDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.eliminaAccantonamentoFondiDubbiaEsigibilita(req);
 		logServiceResponse(res);
 	
 		if (res.hasErrori()) {
@@ -162,104 +195,11 @@ public class InserisciConfigurazioneStampaDubbiaEsigibilitaAction extends Inseri
 			return INPUT;
 		}
 		
+		extractAccantonamenti(res);
+
 		return SUCCESS;
 	}
 
-	@Override
-	public String aggiornaAccantonamento() {
-		final String methodName = "aggiornaAccantonamento";
-	
-		AggiornaFondoDubbiaEsigibilita req = model.creaRequestAggiornaFondoDubbiaEsigibilita();
-		logServiceRequest(req);
-	
-		AggiornaFondoDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.aggiornaFondoDubbiaEsigibilita(req);
-		logServiceResponse(res);
-	
-		if (res.hasErrori()) {
-			addErrori(res);
-			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio");
-			return SUCCESS;
-		}
-		
-		return SUCCESS;
-	}
-
-	@Override
-	protected void caricaDatiAnnoPrecedente() throws WebServiceInvocationFailureException {
-		final String methodName = "caricaDatiAnnoPrecedente";
-		if(!model.isAttributiBilancioPresenti()) {
-			log.debug(methodName, "Gli attributi non sono presenti: non permetto il caricamento");
-			model.setDatiAnnoPrecedentePresenti(false);
-			return;
-		}
-		
-		ControllaFondiDubbiaEsigibilitaAnnoPrecedente req = model.creaRequestControllaFondiDubbiaEsigibilitaAnnoPrecedente();
-		ControllaFondiDubbiaEsigibilitaAnnoPrecedenteResponse res = fondiDubbiaEsigibilitaService.controllaFondiDubbiaEsigibilitaAnnoPrecedente(req);
-		
-		// Controllo gli errori
-		if(res.hasErrori()) {
-			//si sono verificati degli errori: esco.
-			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
-		}
-		
-		Long numeroFondi = res.getNumeroFondiAnnoPrecedente();
-		Long numeroFondiGestione = res.getNumeroFondiGestioneAnnoPrecedente();
-		log.debug(methodName, "Numero fondi anno precedente: " + numeroFondi + ", numero fondi di gestione: " + numeroFondiGestione);
-		model.setDatiAnnoPrecedentePresenti(numeroFondi != null && numeroFondi.longValue() > 0L);
-		model.setDatiAnnoPrecedenteGestionePresenti(numeroFondiGestione != null && numeroFondiGestione.longValue() > 0L);
-	}
-
-	/**
-	 * Preparazione per il metodo {@link #popolaDaAnnoPrecedente()}
-	 */
-	public void preparePopolaDaAnnoPrecedente() {
-		model.setIdOperazioneAsincrona(null);
-	}
-
-	@Override
-	public String popolaDaAnnoPrecedente() {
-		final String methodName = "popolaDaAnnoPrecedente";
-		
-		PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente req = model.creaRequestPopolaFondiDubbiaEsigibilitaDaAnnoPrecedente();
-		AsyncServiceResponse res = fondiDubbiaEsigibilitaService.popolaFondiDubbiaEsigibilitaDaAnnoPrecedenteAsync(wrapRequestToAsync(req, model.getAzioneRichiesta()));
-		
-		// Controllo gli errori
-		if(res.hasErrori()) {
-			//si sono verificati degli errori: esco.
-			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
-			return INPUT;
-		}
-		log.debug(methodName, "Inizializzata operazione asincrona con id " + res.getIdOperazioneAsincrona());
-		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
-		
-		return SUCCESS;
-	}
-	
-	/**
-	 * Popolamento dei fondi a partire dai capitoli di gestione dell'anno precedente
-	 * @return una stringa corrispondente al risultato dell'invocazione
-	 */
-	public String popolaDaAnnoPrecedenteGestione() {
-		final String methodName = "popolaDaAnnoPrecedenteGestione";
-		
-		PopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente req = model.creaRequestPopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente();
-		AsyncServiceResponse res = fondiDubbiaEsigibilitaService.popolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedenteAsync(wrapRequestToAsync(req, model.getAzioneRichiesta()));
-		
-		// Controllo gli errori
-		if(res.hasErrori()) {
-			//si sono verificati degli errori: esco.
-			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
-			return INPUT;
-		}
-		log.debug(methodName, "Inizializzata operazione asincrona con id " + res.getIdOperazioneAsincrona());
-		model.setIdOperazioneAsincrona(res.getIdOperazioneAsincrona());
-		
-		return SUCCESS;
-	}
-	
 	/**
 	 * Annullamento dei dati in pagina
 	 * @return una stringa corrispondente al risultato dell'invocazione
@@ -268,5 +208,217 @@ public class InserisciConfigurazioneStampaDubbiaEsigibilitaAction extends Inseri
 		model.setListaAccantonamentoFondiDubbiaEsigibilitaSelezionati(null);
 		model.setListaAccantonamentoFondiDubbiaEsigibilitaTemp(null);
 		return SUCCESS;
+	}
+	
+//	//SIAC-7858 CM 04/06/2021 Inizio
+//	public String modificaStatoInDefinitivo() {
+//		return modificaStato(StatoAccantonamentoFondiDubbiaEsigibilita.DEFINITIVA);
+//	}
+//	public String modificaStatoInBozza() {
+//		return modificaStato(StatoAccantonamentoFondiDubbiaEsigibilita.BOZZA);
+//	}
+//	//SIAC-7858 CM 04/06/2021 Fine
+//
+//	private String modificaStato(StatoAccantonamentoFondiDubbiaEsigibilita stato) {
+//		final String methodName = "modificaStato";
+//		
+//		ModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio req = model.creaRequestModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(stato);
+//		logServiceRequest(req);
+//		
+//		ModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioResponse res = fondiDubbiaEsigibilitaService.modificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(req);
+//		logServiceResponse(res);
+//	
+//		// Controllo gli errori
+//		if(res.hasErrori()) {
+//			//si sono verificati degli errori: esco.
+//			addErrori(res);
+//			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio di modifica stato in " + stato);
+//			return INPUT;
+//		}
+//		
+//		return SUCCESS;
+//	}
+	
+	//SIAC-7858 CM 08/06/2021 Inizio
+	
+	public String confermaCapitoliModale() {
+		
+		final String methodName = "confermaCapitoliModale";
+		
+		//vedi confermaCapitoli
+		List<AccantonamentoFondiDubbiaEsigibilita> listaAccantonamentoFondiDubbiaEsigibilitaTemp = new ArrayList<AccantonamentoFondiDubbiaEsigibilita>();
+		
+		for (CapitoloEntrataPrevisione c : model.getListaCapitoloEntrataPrevisione()) {
+			AccantonamentoFondiDubbiaEsigibilita afde = new AccantonamentoFondiDubbiaEsigibilita();
+			afde.setCapitolo(c);
+			listaAccantonamentoFondiDubbiaEsigibilitaTemp.add(afde);
+		}
+		
+		model.setListaCapitoloEntrataPrevisione(new ArrayList<CapitoloEntrataPrevisione>());
+		model.setListaAccantonamentoFondiDubbiaEsigibilitaTemp(listaAccantonamentoFondiDubbiaEsigibilitaTemp);
+		
+		InserisceAccantonamentoFondiDubbiaEsigibilita req = model.creaRequestCopiaCapitoliModaleAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio();
+		logServiceRequest(req);
+		
+		InserisceAccantonamentoFondiDubbiaEsigibilitaResponse res = fondiDubbiaEsigibilitaService.inserisceAccantonamentoFondiDubbiaEsigibilita(req);
+		logServiceResponse(res);
+		
+		// Controllo gli errori
+		if(res.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			addErrori(res);
+			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio");
+			return INPUT;
+		}
+		extractAccantonamenti(res);
+		
+		return SUCCESS;
+	}
+	//SIAC-7858 CM 08/06/2021 Fine
+	
+	public void preSimulaPopolaDaPrevisione() {
+		model.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa(null);
+	}
+	
+	public String simulaPopolaDaPrevisione() {
+		return simulaPopolaDa(TipoImportazione.DA_PREVISIONE);
+	}
+	
+	public void preSimulaPopolaDaRendiconto() {
+		model.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa(null);
+	}
+	
+	public String simulaPopolaDaRendiconto() {
+		return simulaPopolaDa(TipoImportazione.DA_RENDICONTO);
+	}
+	
+	public void preSimulaPopolaDaGestione() {
+		model.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa(null);
+	}
+	
+	public String simulaPopolaDaGestione() {
+		return simulaPopolaDa(TipoImportazione.DA_GESTIONE);
+	}
+	
+	public void preSimulaPopolaDaAnagraficaCapitoli() {
+		model.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa(null);
+	}
+	
+	public String simulaPopolaDaAnagraficaCapitoli() {
+		return simulaPopolaDa(TipoImportazione.DA_ANAGRAFICA_CAPITOLI);
+	}
+	
+	public void preSimulaPopolaDaElaborazione() {
+		model.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa(null);
+	}
+	
+	public String simulaPopolaDaElaborazione() {
+		return simulaPopolaDa(TipoImportazione.DA_VERSIONE_PRECEDENTE);
+	}
+	
+	public void validateSimulaPopolaDaElaborazione() {
+		checkNotNullNorInvalidUid(model.getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa(), "accantonamento da copiare");
+	}
+
+	private String simulaPopolaDa(TipoImportazione tipoImportazione) {
+		final String methodName = "simulaPopolaDa";
+		SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport req = model.creaRequestSimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport(tipoImportazione);
+		logServiceRequest(req);
+		
+		SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImportResponse res = fondiDubbiaEsigibilitaService.simulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport(req);
+		logServiceResponse(res);
+		
+		if(res.hasErrori()) {
+			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio per tipo " + tipoImportazione);
+			addErrori(res);
+			return INPUT;
+		}
+		
+		model.setListaAccantonamentoFondiDubbiaEsigibilitaTemp(res.extractByType(AccantonamentoFondiDubbiaEsigibilita.class));
+		model.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa(res.getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio());
+
+		return SUCCESS;
+	}
+	
+	public String nuovaVersione() {
+		final String methodName = "nuovaVersione";
+		SalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio req = model.creaRequestSalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioNuovo(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+		logServiceRequest(req);
+		SalvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioResponse res = fondiDubbiaEsigibilitaService.salvaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(req);
+		logServiceResponse(res);
+		if(res.hasErrori()) {
+			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio");
+			addErrori(res);
+			return INPUT;
+		}
+		model.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(res.getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio());
+		try {
+			caricaAttributiPerCopia();
+			// In una nuova versione l'accantonamento graduale e' sempre a 100
+			resetAccantonamentoGradualePerNuovaVersione();
+		} catch(WebServiceInvocationFailureException wsife) {
+			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio: " + wsife.getMessage());
+			return INPUT;
+		}
+		model.setListaAccantonamentoFondiDubbiaEsigibilita(new ArrayList<AccantonamentoFondiDubbiaEsigibilita>());
+		return SUCCESS;
+	}
+	
+	@Override
+	public String estraiInFoglioDiCalcolo() {
+		return estraiInFoglioDiCalcolo(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+	}
+	
+	/**
+	 * Estrazione degli accantonamenti dalle response
+	 * @param res la reponse con i dati da popolare
+	 */
+	private void extractAccantonamenti(BaseAccantonamentoFondiDubbiaEsigibilitaResponse res) {
+		model.setListaAccantonamentoFondiDubbiaEsigibilita(res.extractByType(AccantonamentoFondiDubbiaEsigibilita.class));
+	}
+	
+	/**
+	 * Preparazione per {@link #contaAccantonamentiDefinitivi()}
+	 */
+	public void prepareContaAccantonamentiDefinitivi() {
+		model.setNumeroAccantonamentiDefinitivi(null);
+	}
+	
+	/**
+	 * Conto degli accantonamenti definitivi
+	 * @return il risultato dell'invocazione
+	 */
+	public String contaAccantonamentiDefinitivi() {
+		final String methodName = "contaAccantonamentiDefinitivi";
+		RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio req = model.creaRequestRicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioDefinitivi();
+		logServiceRequest(req);
+		RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioResponse res = fondiDubbiaEsigibilitaService.ricercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(req);
+		logServiceResponse(res);
+		if(res.hasErrori()) {
+			log.debug(methodName, "Si sono verificati errori nell'invocazione del servizio");
+			addErrori(res);
+			return INPUT;
+		}
+		log.debug(methodName, "Elementi trovati: " + res.getTotaleElementi());
+		model.setNumeroAccantonamentiDefinitivi(res.getTotaleElementi());
+		return SUCCESS;
+	}
+	
+	/**
+	 * Classe di Result specifica per la simulazione del popolamento.
+	 * @author interlogic
+	 * @version 1.0.0 - 20/07/2021
+	 */
+	public static class SimulaPopolaDaJSONResult extends CustomJSONResult {
+		/** Per la serializzazione */
+		private static final long serialVersionUID = -2623614405784634055L;
+		/** Propriet&agrave; da includere nel JSON creato */
+		private static final String INCLUDE_PROPERTIES = "errori.*,informazioni.*,accantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa.*,listaAccantonamentoFondiDubbiaEsigibilitaTemp.*";
+
+		/** Empty default constructor */
+		public SimulaPopolaDaJSONResult() {
+			super();
+			setIncludeProperties(INCLUDE_PROPERTIES);
+		}
 	}
 }

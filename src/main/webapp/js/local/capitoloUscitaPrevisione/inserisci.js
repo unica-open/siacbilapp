@@ -176,7 +176,8 @@ $(
         $("#categoriaCapitolo").change();
 
         // Lego le azioni agli elementi
-        $("#missione").on("change", CapitoloUscita.caricaProgramma.bind(null, false));
+        //SIAC-7192
+        $("#missione").on("change", CapitoloUscita.gestisciChangeMissione.bind(null, false));
         $("#programma").on("change", CapitoloUscita.caricaCofogTitolo.bind(null, false));
         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
         $("#macroaggregato").on("change", function() {

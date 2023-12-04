@@ -7,7 +7,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.documento;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,16 +19,25 @@ import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureExcep
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.documento.RisultatiRicercaDocumentoEntrataModel;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoEntrataService;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.OrdineService;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaOrdine;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaOrdineResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AttivaRegistrazioniContabiliEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AttivaRegistrazioniContabiliEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.EliminaOrdine;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.EliminaOrdineResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmettiFatturaFelEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmettiFatturaFelEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceOrdine;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceOrdineResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOrdiniDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOrdiniDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.model.ContoTesoreria;
@@ -49,7 +58,10 @@ public class RisultatiRicercaDocumentoEntrataAction extends GenericBilancioActio
 	
 	@Autowired private transient DocumentoEntrataService documentoEntrataService;
 	
-	@Autowired private transient PreDocumentoSpesaService preDocumentoSpesaService;
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
+	
+	//SIAC-7557
+	@Autowired private transient OrdineService ordineService;
 
 	@Override
 	public void prepare() throws Exception {
@@ -83,7 +95,7 @@ public class RisultatiRicercaDocumentoEntrataAction extends GenericBilancioActio
 		if(listaInSessione == null) {
 			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
 			logServiceRequest(request);
-			LeggiContiTesoreriaResponse response = preDocumentoSpesaService.leggiContiTesoreria(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
 			logServiceResponse(response);
 			
 			// Controllo gli errori
@@ -154,7 +166,7 @@ public class RisultatiRicercaDocumentoEntrataAction extends GenericBilancioActio
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaDocumentoEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -231,7 +243,7 @@ public class RisultatiRicercaDocumentoEntrataAction extends GenericBilancioActio
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AttivaRegistrazioniContabiliEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -266,7 +278,7 @@ public class RisultatiRicercaDocumentoEntrataAction extends GenericBilancioActio
 		
 		// Controllo gli errori
 		if(reqResp.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, reqResp));
+			log.info(methodName, createErrorInServiceInvocationString(EmettiFatturaFelEntrata.class, reqResp));
 			addErrori(reqResp);
 			return INPUT;
 		}
@@ -278,4 +290,135 @@ public class RisultatiRicercaDocumentoEntrataAction extends GenericBilancioActio
 		return SUCCESS;
 	}
 	
+	//SIAC-7557
+	/**
+	 * Ottiene la lista degli ordini
+	 * 
+	 * @return la String corrispondente al risultato dell'invocazione
+	 */
+	public String ottieniListaOrdine(){
+		final String methodName = "ottieniListaOrdine";
+		log.debug(methodName, "Uid del documento di cui ottenere gli ordini: " + model.getUidDaConsultare());
+		
+		RicercaOrdiniDocumento request = model.creaRequestRicercaOrdiniDocumento();
+		logServiceRequest(request);
+		
+		RicercaOrdiniDocumentoResponse response = ordineService.ricercaOrdiniDocumento(request);
+		logServiceResponse(response);
+		
+		// Controllo gli errori
+		if(response.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			log.info(methodName, createErrorInServiceInvocationString(RicercaOrdiniDocumento.class, response));
+			addErrori(response);
+			return SUCCESS;
+		}
+		
+		model.setListaOrdine(response.getOrdini());
+		return SUCCESS;
+	}
+	
+	/**
+	 * Aggiorna l'ordine.
+	 * 
+	 * @return la String corrispondente al risultato dell'invocazione
+	 */
+	public String aggiornaOrdine(){
+		final String methodName = "aggiornaOrdine";
+		log.debug(methodName, "Uid dell'ordine: " + model.getOrdine().getUid());
+		
+		AggiornaOrdine request = model.creaRequestAggiornaOrdine();
+		logServiceRequest(request);
+		
+		AggiornaOrdineResponse response = ordineService.aggiornaOrdine(request);
+		logServiceResponse(response);
+		
+		// Controllo gli errori
+		if(response.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaOrdine.class, response));
+			addErrori(response);
+			return INPUT;
+		}
+		
+		log.debug(methodName, "Ordine con uid " + model.getOrdine().getUid() + " aggiornato");
+		impostaInformazioneSuccesso();
+		return SUCCESS;
+	}
+	
+	
+	/**
+	 * Elimina l'ordine.
+	 * 
+	 * @return la String corrispondente al risultato dell'invocazione
+	 */
+	public String eliminaOrdine(){
+		final String methodName = "eliminaOrdine";
+		log.debug(methodName, "Uid dell'ordine: " + model.getOrdine().getUid());
+		
+		EliminaOrdine request = model.creaRequestEliminaOrdine();
+		logServiceRequest(request);
+		
+		EliminaOrdineResponse response = ordineService.eliminaOrdine(request);
+		logServiceResponse(response);
+		
+		// Controllo gli errori
+		if(response.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			log.info(methodName, createErrorInServiceInvocationString(EliminaOrdine.class, response));
+			addErrori(response);
+			return INPUT;
+		}
+		
+		log.debug(methodName, "Ordine con uid " + model.getOrdine().getUid() + " eliminato.");
+		impostaInformazioneSuccesso();
+		return SUCCESS;
+	}
+	
+	/**
+	 * Validazione per il metodo {@link #eliminaOrdine()}.
+	 */
+	public void validateEliminaOrdine() {
+		checkNotNullNorInvalidUid(model.getOrdine(), "Ordine");
+	}
+	
+	/**
+	 * Inserisce l'ordine.
+	 * 
+	 * @return la String corrispondente al risultato dell'invocazione
+	 */
+	public String inserisceOrdine(){
+		final String methodName = "inserisceOrdine";
+		log.debug(methodName, "Uid dell'ordine: " + model.getOrdine().getUid());
+		
+		InserisceOrdine request = model.creaRequestInserisceOrdine();
+		logServiceRequest(request);
+		
+		InserisceOrdineResponse response = ordineService.inserisceOrdine(request);
+		logServiceResponse(response);
+		
+		// Controllo gli errori
+		if(response.hasErrori()) {
+			//si sono verificati degli errori: esco.
+			log.info(methodName, createErrorInServiceInvocationString(InserisceOrdine.class, response));
+			addErrori(response);
+			return INPUT;
+		}
+		
+		log.debug(methodName, "Ordine con uid " + model.getOrdine().getUid() + " inserito.");
+		impostaInformazioneSuccesso();
+		return SUCCESS;
+	}
+	
+	
+	
+	/**
+	 * Validazione per il metodo {@link #aggiornaOrdine()}.
+	 */
+	public void validateAggiornaOrdine() {
+		checkNotNullNorInvalidUid(model.getOrdine(), "ordine", true);
+		checkNotNullNorInvalidUid(model.getOrdine().getDocumento(), "documento");
+		checkNotNullNorEmpty(model.getOrdine().getNumeroOrdine(), "numero ordine");
+	}
+	//FINE SIAC-7557
 }

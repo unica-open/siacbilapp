@@ -17,14 +17,18 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
+import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaContoVincolatoCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatori;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiSottoContiVincolatiCapitoloBySubdoc;
 import it.csi.siac.siacbilser.model.ClassificatoreStipendi;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
+import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceBollo;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceCommissioneDocumento;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElencoDaEmettere;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
@@ -38,6 +42,7 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.Liste;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.model.Distinta;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
+import it.csi.siac.siacfinser.model.codifiche.CommissioneDocumento;
 import it.csi.siac.siacfinser.model.codifiche.TipiLista;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaSoggettoK;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -103,8 +108,9 @@ public abstract class GenericEmissioneOrdinativiModel extends GenericBilancioMod
 	
 	private List<ElencoDocumentiAllegato> listElenchi = new ArrayList<ElencoDocumentiAllegato>();
 	private List<CodiceBollo> listaBollo = new ArrayList<CodiceBollo>();
+	private List<CommissioneDocumento> listaCommissioniDocumento = new ArrayList<CommissioneDocumento>();
 	private CodiceBollo codiceBollo;
-	private CommissioniDocumento commissioneDocumento;
+	private CommissioneDocumento commissioneDocumento;
 	private Date dataScadenza;
 	private Boolean flagNoDataScadenza;
 	//SIAC-5302
@@ -117,6 +123,9 @@ public abstract class GenericEmissioneOrdinativiModel extends GenericBilancioMod
 	//SIAC-6206
 	private List<ClassificatoreStipendi> listaClassificatoreStipendi = new ArrayList<ClassificatoreStipendi>();
 	private ClassificatoreStipendi classificatoreStipendi;
+	//SIAC-8784
+	private Integer uidContoDaSelezionare;
+	private List<Integer> uidsSubdocumentiSelezionati;
 	
 
 	/**
@@ -453,11 +462,14 @@ public abstract class GenericEmissioneOrdinativiModel extends GenericBilancioMod
 		this.listaBollo =listaBollo !=null ? listaBollo :new ArrayList<CodiceBollo>() ;
 	}
 
-	/**
-	 * @return the listaCommissioni
-	 */
-	public List<CommissioniDocumento> getListaCommissioni() {
-		return  Arrays.asList(CommissioniDocumento.values());
+	//task-291
+	public List<CommissioneDocumento> getListaCommissioniDocumento() {
+		return listaCommissioniDocumento;
+	}
+	
+	//task-291
+	public void setListaCommissioniDocumento(List<CommissioneDocumento> listaCommissioniDocumento) {
+		this.listaCommissioniDocumento = listaCommissioniDocumento;
 	}
 		
 	/**
@@ -477,13 +489,13 @@ public abstract class GenericEmissioneOrdinativiModel extends GenericBilancioMod
 	/**
 	 * @return the commissioneDocumento
 	 */
-	public CommissioniDocumento getCommissioneDocumento() {
+	public CommissioneDocumento getCommissioneDocumento() {
 		return commissioneDocumento;
 	}
 	/**
 	 * @param commissioneDocumento the commissioneDocumento to set
 	 */
-	public void setCommissioneDocumento(CommissioniDocumento commissioneDocumento) {
+	public void setCommissioneDocumento(CommissioneDocumento commissioneDocumento) {
 		this.commissioneDocumento = commissioneDocumento;
 	}
 	/**
@@ -592,6 +604,20 @@ public abstract class GenericEmissioneOrdinativiModel extends GenericBilancioMod
 	public void setClassificatoreStipendi(ClassificatoreStipendi classificatoreStipendi) {
 		this.classificatoreStipendi = classificatoreStipendi;
 	}
+	
+	public Integer getUidContoDaSelezionare() {
+		return uidContoDaSelezionare;
+	}
+	public void setUidContoDaSelezionare(Integer uidContoDaSelezionare) {
+		this.uidContoDaSelezionare = uidContoDaSelezionare;
+	}
+	
+	public List<Integer> getUidsSubdocumentiSelezionati() {
+		return uidsSubdocumentiSelezionati;
+	}
+	public void setUidsSubdocumentiSelezionati(List<Integer> uidsSubdocumentiSelezionati) {
+		this.uidsSubdocumentiSelezionati = uidsSubdocumentiSelezionati;
+	}
 	/**
 	 * Popola ids elenchi elaborati.
 	 */
@@ -685,6 +711,14 @@ public abstract class GenericEmissioneOrdinativiModel extends GenericBilancioMod
 	 */
 	public RicercaCodiceBollo creaRequestRicercaCodiceBollo() {
 		RicercaCodiceBollo request = creaRequest(RicercaCodiceBollo.class);
+		
+		request.setEnte(getEnte());
+		
+		return request;
+	}
+	
+	public RicercaCodiceCommissioneDocumento creaRequestRicercaCodiceCommissioneDocumento() {
+		RicercaCodiceCommissioneDocumento request = creaRequest(RicercaCodiceCommissioneDocumento.class);
 		
 		request.setEnte(getEnte());
 		
@@ -907,17 +941,32 @@ public abstract class GenericEmissioneOrdinativiModel extends GenericBilancioMod
 	 * @return the leggi classificatori by tipologie classificatori
 	 */
 	public LeggiClassificatoriByTipologieClassificatori	creaRequestLeggiClassificatoriByTipologieClassificatori(){
-		//CR-6206
-		LeggiClassificatoriByTipologieClassificatori request = creaRequest(LeggiClassificatoriByTipologieClassificatori.class);
-		request.setEnte(getEnte());
-		request.setBilancio(getBilancio());
-		
 		List<TipologiaClassificatore> listaTipologieClassificatori = new ArrayList<TipologiaClassificatore>();
 		listaTipologieClassificatori.add(TipologiaClassificatore.CLASSIFICATORE_STIPENDI);
-		
-		request.setListaTipologieClassificatori(listaTipologieClassificatori);
-		
+		return creaRequestLeggiClassificatoriByTipologieClassificatori(listaTipologieClassificatori);
+	}
+	public ControllaDisponibilitaCassaContoVincolatoCapitolo creaRequestControllaDisponibilitaCassaContoVincolato() {
+		ControllaDisponibilitaCassaContoVincolatoCapitolo request = creaRequest(ControllaDisponibilitaCassaContoVincolatoCapitolo.class);
+		impostaSubdocumentiSuRequestContoVincolato(request);
+		request.impostaContoTesoreriaFromContoTesoreriaBil(getContoTesoreria());
 		return request;
+	}
+	//SIAC-8017-CMTO
+	protected abstract void impostaSubdocumentiSuRequestContoVincolato(ControllaDisponibilitaCassaContoVincolatoCapitolo request);
+	
+	public boolean isGestioneContiVincolati() {
+		return "TRUE".equals(getEnte().getGestioneLivelli().get(TipologiaGestioneLivelli.GESTIONE_CONTI_VINCOLATI));	
+	}
+	
+	/**
+	 * Crea request carica sotto conti vincolati capitolo.
+	 *
+	 * @return the carica sotto conti vincolati capitolo
+	 */
+	public LeggiSottoContiVincolatiCapitoloBySubdoc creaRequestCaricaSottoContiVincolatiCapitolo() {
+		LeggiSottoContiVincolatiCapitoloBySubdoc req = creaRequest(LeggiSottoContiVincolatiCapitoloBySubdoc.class);
+		req.setIdsSubdocumenti(getUidsSubdocumentiSelezionati());
+		return req;
 	}
 	
 }

@@ -22,7 +22,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloService;
@@ -60,6 +60,7 @@ import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.ClassificatoreGerarchico;
 import it.csi.siac.siaccorser.model.Codifica;
 import it.csi.siac.siaccorser.model.Errore;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipoClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
@@ -475,11 +476,19 @@ public abstract class CapitoloAction<M extends CapitoloModel> extends GenericBil
 		// Gli importi sono valorizzati
 		checkImporto(importi.getStanziamento(), "Competenza", anno);
 		if(controlloGlobale) {
-			checkImporto(importi.getStanziamentoResiduo(), "Residui", anno);
-			checkImporto(importi.getStanziamentoCassa(), "Cassa", anno);
+			//SIAC-7517
+			//effettuo il controllo solo se valorizzati
+			//altrimenti assegnrero' il valore  di default successivamente
+			if(importi.getStanziamentoResiduo() != null) {
+				checkImporto(importi.getStanziamentoResiduo(), "Residui", anno);
+			}
+			if(importi.getStanziamentoCassa() != null) {
+				checkImporto(importi.getStanziamentoCassa(), "Cassa", anno);
+			}
+			//
 			if(forceCassaCoherence && importi.getStanziamento() != null && importi.getStanziamentoResiduo() != null && importi.getStanziamentoCassa() != null) {
 				checkCondition(importi.getStanziamentoCassa().subtract(importi.getStanziamento()).subtract(importi.getStanziamentoResiduo()).signum() <= 0,
-						ErroreCore.VALORE_NON_VALIDO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
+						ErroreCore.VALORE_NON_CONSENTITO.getErrore("Cassa per anno " + anno, ": deve essere inferiore o uguale alla somma di competenza e residuo ("
 							+ FormatUtils.formatCurrency(importi.getStanziamento().add(importi.getStanziamentoResiduo())) + ")"));
 			}
 		}
@@ -516,7 +525,7 @@ public abstract class CapitoloAction<M extends CapitoloModel> extends GenericBil
 			//si sono verificati degli errori: esco.
 			addErrori(response);
 			// Ignoro e proseguo
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(ContaClassificatoriERestituisciSeSingolo.class, response));
 			return null;
 		}
 		log.debug(methodName, "Numero di classificatori trovati: " + response.getCount());
@@ -571,7 +580,7 @@ public abstract class CapitoloAction<M extends CapitoloModel> extends GenericBil
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoreGerarchicoByCodiceAndTipoAndAnno.class, res));
 		}
 		if(res.getClassificatore() == null) {
 			Errore errore = ErroreCore.ENTITA_NON_TROVATA.getErrore(tipoClassificatore, classificatore.getCodice());
@@ -678,5 +687,11 @@ public abstract class CapitoloAction<M extends CapitoloModel> extends GenericBil
 				return true;
 			}
 			return false;
+		}
+		
+		// task-86
+		public boolean abilitaNumerazioneAutomaticaCapitolo() {
+			return Boolean.TRUE.equals(Boolean.parseBoolean(getParametroConfigurazioneEnte(
+					ParametroConfigurazioneEnteEnum.NUMERAZIONE_AUTOMATICA_CAPITOLO)));
 		}
 }

@@ -7,6 +7,10 @@ SPDX-License-Identifier: EUPL-1.2
 <struts>
 	<package name="dubbiaEsigibilitaRendiconto" extends="capitoloDefault" namespace="/">
 
+		<result-types>
+			<result-type name="simulaPopolaDaJSON" class="it.csi.siac.siacbilapp.frontend.ui.action.dubbiaesigibilita.InserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction$SimulaPopolaDaJSONResult"></result-type>
+		</result-types>
+
 		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
 			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
 		</action>
@@ -20,7 +24,49 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto</result>
 		</action>
 
+		<action name="inserisciConfigurazioneStampaDubbiaRendiconto_eliminaAccantonamento" method="eliminaAccantonamento" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_ripristinaAccantonamento" method="ripristinaAccantonamento" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_salvaAttributi" method="salvaAttributi" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_calcolaCreditiStralciati" method="calcolaCreditiStralciati" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, accantonamentoFondiDubbiaEsigibilitaAttributiBilancio.*</param>
+			</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_salvaCampiReport" method="salvaCampiReport" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">errori.*, informazioni.*, accantonamentoFondiDubbiaEsigibilitaAttributiBilancio.*</param>
+			</result>
+		</action>
+		
 		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_aggiornaAttributiBilancio" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="aggiornaAttributiBilancio">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_modificaStatoInDefinitivo" method="modificaStatoInDefinitivo" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_modificaStatoInBozza" method="modificaStatoInBozza" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_confermaCapitoliModale" method="confermaCapitoliModale" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
 			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
 			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
 		</action>
@@ -38,23 +84,24 @@ SPDX-License-Identifier: EUPL-1.2
 			</result>
 		</action>
 
-		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_salvaCapitoli" method="salvaCapitoli"
-			class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
-			<result name="input" type="customMessagesJSON" />
-			<result name="success" type="customJSON">
-				<param name="includeProperties">errori.*,informazioni.*,listaAccantonamentoFondiDubbiaEsigibilitaRendiconto.*</param>
-			</result>
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_selezionaVersione" method="selezionaVersione" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
 		</action>
 
-		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_eliminaAccantonamento" method="eliminaAccantonamento"
-			class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
-			<result name="input" type="customMessagesJSON" />
-			<result name="success" type="customMessagesJSON" />
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_nuovaVersione" method="nuovaVersione" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
 		</action>
 
-		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_aggiornaAccantonamento" method="aggiornaAccantonamento"
-			class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
-			<result name="success" type="customMessagesJSON" />
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_salvaCapitoli" method="salvaCapitoli" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
+		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_eliminaAccantonamento" method="eliminaAccantonamento" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction">
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+			<result name="success" type="redirectAction">inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_enterPage</result>
 		</action>
 
 		<action name="selezionaCapitoliFondiDubbiaEsigibilitaRendiconto" class="selezionaCapitoloAction" method="selezionaCapitoloFondiDubbiaEsigibilitaRendiconto">
@@ -73,6 +120,31 @@ SPDX-License-Identifier: EUPL-1.2
 		<action name="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaRendicontoAjax" class="risultatiRicercaAccantonamentoFondiDubbiaEsigibilitaRendicontoAjaxAction">
 			<result name="success" type="dataTable" />
 		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_simulaPopolaDaPrevisione" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="simulaPopolaDaPrevisione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="simulaPopolaDaJSON" />
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_simulaPopolaDaRendiconto" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="simulaPopolaDaRendiconto">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="simulaPopolaDaJSON" />
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_simulaPopolaDaGestione" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="simulaPopolaDaGestione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="simulaPopolaDaJSON" />
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_simulaPopolaDaAnagraficaCapitoli" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="simulaPopolaDaAnagraficaCapitoli">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="simulaPopolaDaJSON" />
+		</action>
+		
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_simulaPopolaDaElaborazione" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="simulaPopolaDaElaborazione">
+			<result name="input" type="customMessagesJSON" />
+			<result name="success" type="simulaPopolaDaJSON" />
+		</action>
 		
 		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_popolaDaAnnoPrecedente" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="popolaDaAnnoPrecedente">
 			<result name="success" type="customJSON">
@@ -80,5 +152,32 @@ SPDX-License-Identifier: EUPL-1.2
 			</result>
 			<result name="input" type="customMessagesJSON" />
 		</action>
+
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_estraiInFoglioDiCalcolo" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="estraiInFoglioDiCalcolo">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="myStack"/>
+  			<interceptor-ref name="cookieProvider"/>
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+		</action>
+
+		<!-- SIAC-8679 -->
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_estraiFoglioDiCalcoloCreditiStralciati" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="estraiFoglioDiCalcoloCreditiStralciati">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="myStack"/>
+  			<interceptor-ref name="cookieProvider"/>
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+		</action>
+
+		<!-- SIAC-8679 -->
+		<action name="inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto_estraiFoglioDiCalcoloAccertamentiAnniSuccessivi" class="inserisciConfigurazioneStampaDubbiaEsigibilitaRendicontoAction" method="estraiFoglioDiCalcoloAccertamentiAnniSuccessivi">
+			<!-- SIAC-8222 interceptor -->
+			<interceptor-ref name="myStack"/>
+  			<interceptor-ref name="cookieProvider"/>
+			<result name="success" type="stampaStream" />
+			<result name="input">/jsp/dubbiaEsigibilita/inserisciConfigurazioneStampaDubbiaEsigibilitaRendiconto.jsp</result>
+		</action>
+
 	</package>
 </struts>

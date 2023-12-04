@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.capitoli;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.ElementoCapitolo;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.ricerca.Element
  * @version 1.0.0 - 06/07/2016
  * 
  */
-public class RisultatiRicercaCapitoloEntrataGestioneAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoCapitolo> {
+public class RisultatiRicercaCapitoloEntrataGestioneAjaxModel extends PagedDataTableAjaxModel<ElementoCapitolo> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -5645177165696759094L;

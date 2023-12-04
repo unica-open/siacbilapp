@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionBilUtil;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
@@ -135,7 +135,7 @@ public final class ElementoCapitoloVariazioneFactory {
 			// Controllo se la classe del capitolo fornito in input sia effettivamente quella della superclasse, o sia quella di una sottoclasse
 			if(Capitolo.class.equals(capitolo.getClass())) {
 				// Sono nella superclasse. Innanzitutto, devo creare una nuova istanza del capitolo sì da non avere problemi di invocazione circolare
-				nuovaIstanza = ReflectionUtil.getInstanceFromCapitoloBaseClass(capitolo);
+				nuovaIstanza = ReflectionBilUtil.getInstanceFromCapitoloBaseClass(capitolo);
 			}
 			// Ho un'istanza di una sottoclasse del capitolo
 			Method method = ElementoCapitoloVariazioneFactory.class.getMethod("getInstance", nuovaIstanza.getClass(), Boolean.class, Boolean.class);
@@ -227,10 +227,22 @@ public final class ElementoCapitoloVariazioneFactory {
 			instance.setCompetenza2(capitolo.getStanziamento2());
 			instance.setCompetenzaOriginale2(capitolo.getCapitolo().getImportiCapitolo().getStanziamento());
 			
+			// SIAC-8003
+			instance.setCodiceCategoriaCapitolo(getCodiceCategoriaCapitolo(capitolo));
+			
 			
 			impostaDatiAccessorii(instance, capitolo.getFlagAnnullaCapitolo(), capitolo.getFlagNuovoCapitolo());
 			
 			return instance;
+	}
+
+	private static String getCodiceCategoriaCapitolo(DettaglioVariazioneImportoCapitolo capitolo) {
+		try {
+			return capitolo.getCapitolo().getCategoriaCapitolo().getCodice();
+		}
+		catch (NullPointerException e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -266,7 +278,7 @@ public final class ElementoCapitoloVariazioneFactory {
 		
 		if(Boolean.TRUE.equals(impostazioneImporti)) {
 			// FIXME: SIAC-6883
-//			importi = ComparatorUtils.searchByAnno(capitolo.getListaImportiCapitolo(), annoImporti);
+//			importi = ComparatorUtil.searchByAnno(capitolo.getListaImportiCapitolo(), annoImporti);
 			// Fallback nel caso in cui la lista sia vuota
 			if(importi == null) {
 				importi = capitolo.getImportiCapitolo();

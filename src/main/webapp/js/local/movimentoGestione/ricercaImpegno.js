@@ -16,7 +16,6 @@ var Impegno = (function () {
     var campoInCuiApplicareLaDescrizione;
     var campoInCuiApplicareCig;
     var campoInCuiApplicareCup;
-    var campoInCuiApplicareMutuo;
     var campoInCuiApplicareDisponibilita;
 
     var campoRicercaEffettuataConSuccesso = $("#hidden_ricercaEffettuataConSuccessoModaleImpegno");
@@ -98,52 +97,6 @@ var Impegno = (function () {
             .dataTable(options);
     }
 
-    /**
-     * Imposta la tabella dei mutui.
-     */
-    function impostaMutuiNellaTabella(lista) {
-        var zero = 0;
-        var opts = {
-                aaData: lista,
-                oLanguage: {
-                    sZeroRecords : "Non sono presenti mutui associati",
-                    oPaginate : {
-                        sEmptyTable : "Nessun mutuo disponibile"
-                    }
-                },
-                aoColumnDefs : [
-                    {aTargets: [0], mData: function(source) {
-                        if(!source.stringaRadio) {
-                            source.stringaRadio = "<input type='radio' name='radio_mutuo_modale_impegno' />";
-                        }
-                        return source.stringaRadio;
-                    }, fnCreatedCell: function(nTd, sData, oData) {
-                        $("input", nTd).data("originalMutuo", oData);
-                    }},
-                    {aTargets: [1], mData: function(source) {
-                        return source.numeroMutuo || "";
-                    }},
-                    {aTargets: [2], mData: function(source) {
-                        return source.descrizioneMutuo || "";
-                    }},
-                    {aTargets: [3], mData: function(source) {
-                        return source.istitutoMutuante && source.istitutoMutuante.denominazione || "";
-                    }},
-                    {aTargets: [4], mData: function(source) {
-                        return source.importoAttualeVoceMutuo ? source.importoAttualeVoceMutuo.formatMoney() : zero.formatMoney();
-                    }, fnCreatedCell: function(nTd) {
-                        $(nTd).addClass("tab_Right");
-                    }},
-                    {aTargets: [5], mData: function(source) {
-                        return source.importoDisponibileLiquidareVoceMutuo ? source.importoDisponibileLiquidareVoceMutuo.formatMoney() : zero.formatMoney();
-                    }, fnCreatedCell: function(nTd) {
-                        $(nTd).addClass("tab_Right");
-                    }}
-                ]
-            };
-            var options = $.extend(true, {}, baseOpts, opts);
-            $("#tabellaMutuiModale").dataTable(options);
-    }
 
     /**
      * Imposta i dati dell'impegno nella tabella
@@ -236,7 +189,6 @@ var Impegno = (function () {
                 }
                 impostaImpegnoNellaTabella(data.impegno);
                 impostaSubimpegniNellaTabella(data.impegno);
-                impostaMutuiNellaTabella(data.impegno.listaVociMutuo);
                 // Copia dei campi dell'impegno
                 $("#hidden_cigImpegno").val(data.impegno.cig);
                 $("#hidden_cupImpegno").val(data.impegno.cup);
@@ -245,7 +197,6 @@ var Impegno = (function () {
                 campoRicercaEffettuataConSuccesso.val("true");
 
                 $("#divImpegniTrovati").slideDown();
-                $("#divMutui").slideDown();
             }
         ).always(function() {
             spinner.removeClass("activated");
@@ -267,11 +218,10 @@ var Impegno = (function () {
         var str;
         var zero = 0;
 
-        var checkedMutuoRadio;
-        var mutuo;
+
         var cig;
         var cup;
-        var numeroMutuo;
+
         var disponibilita;
         var tipoDebitoSIOPE;
         var event;
@@ -293,13 +243,11 @@ var Impegno = (function () {
         numeroImpegno = $("#numeroImpegnoModale").val();
         numeroSubimpegno = !!subimpegno ? subimpegno.numero : "";
 
-        checkedMutuoRadio = $("#tabellaMutuiModale").find("input[name='radio_mutuo_modale_impegno']:checked");
-        mutuo = checkedMutuoRadio.data("originalMutuo");
+       
         cig = $("#hidden_cigImpegno").val();
         cup = $("#hidden_cupImpegno").val();
 
         disponibilita = ((!!subimpegno ? subimpegno.disponibilitaLiquidare : parseFloat($("#hidden_disponibileImpegno").val())) || zero).formatMoney();
-        numeroMutuo = mutuo && mutuo.numeroMutuo || "";
 
         campoInCuiApplicareAnnoMovimento.val(annoImpegno).attr("readOnly", true);
         campoInCuiApplicareNumeroMovimento.val(numeroImpegno).attr("readOnly", true);
@@ -307,7 +255,6 @@ var Impegno = (function () {
 
         campoInCuiApplicareCig.val(cig);
         campoInCuiApplicareCup.val(cup);
-        campoInCuiApplicareMutuo.val(numeroMutuo);
         campoInCuiApplicareDisponibilita.html(disponibilita);
 
         str = ": " + annoImpegno + " / " + numeroImpegno;
@@ -336,10 +283,9 @@ var Impegno = (function () {
      *
      * @param campoCig                (String) il campo ove impostare il CIG (Optional - default: '')
      * @param campoCup                (String) il campo ove impostare il CUP (Optional - default: '')
-     * @param campoMutuo              (String) il campo ove impostare il mutuo (Optional - default: '')
      * @param spanDisponibilita       (String) il campo ove impostare la disponibilita (Optional - default: '')
      */
-    exports.inizializza = function(campoAnnoMovimento, campoNumeroMovimento, campoNumeroSubMovimento, campoDescrizione, campoCig, campoCup, campoMutuo, spanDisponibilita) {
+    exports.inizializza = function(campoAnnoMovimento, campoNumeroMovimento, campoNumeroSubMovimento, campoDescrizione, campoCig, campoCup, spanDisponibilita) {
         campoInCuiApplicareAnnoMovimento = $(campoAnnoMovimento || "#annoMovimentoMovimentoGestione");
         campoInCuiApplicareNumeroMovimento = $(campoNumeroMovimento || "#numeroMovimentoGestione");
         campoInCuiApplicareNumeroSubMovimento = $(campoNumeroSubMovimento || "#numeroSubMovimentoGestione");
@@ -347,12 +293,11 @@ var Impegno = (function () {
 
         campoInCuiApplicareCig = $(campoCig || "");
         campoInCuiApplicareCup = $(campoCup || "");
-        campoInCuiApplicareMutuo = $(campoMutuo || "");
         campoInCuiApplicareDisponibilita = $(spanDisponibilita || "");
 
         $("#pulsanteRicercaImpegnoModale").substituteHandler("click", ricercaImpegno);
         $("#pulsanteConfermaModaleImpegno").substituteHandler("click", confermaImpegno);
-        $("#divMutui, #divImpegniTrovati").on("shown hidden", function(e) {
+        $("#divImpegniTrovati").on("shown hidden", function(e) {
             e.stopPropagation();
         });
 
@@ -363,9 +308,6 @@ var Impegno = (function () {
             alertErroriModale.slideUp();
         }).on("change", "#modaleImpegno input[name='radio_modale_impegno']", function() {
             var subimpegno = $(this).data("originalSubImpegno");
-            var div = $("#divMutui").overlay("show");
-            impostaMutuiNellaTabella(subimpegno && subimpegno.listaVociMutuo || []);
-            div.overlay("hide");
         });
     };
 

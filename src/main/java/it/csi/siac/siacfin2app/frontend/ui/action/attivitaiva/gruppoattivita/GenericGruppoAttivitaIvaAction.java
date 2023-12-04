@@ -16,7 +16,7 @@ import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacfin2app.frontend.ui.model.attivitaiva.gruppoattivita.GenericGruppoAttivitaIvaModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoIvaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.GruppoAttivitaIvaService;
@@ -96,7 +96,7 @@ public class GenericGruppoAttivitaIvaAction<M extends GenericGruppoAttivitaIvaMo
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				// TODO: lanciare un'eccezione
-				log.debug(methodName, createErrorInServiceInvocationString(request, response));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaAttivitaIva.class, response));
 				return;
 			}
 			log.debug(methodName, "Caricate attivitaIva dal servizio");

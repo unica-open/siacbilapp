@@ -70,6 +70,24 @@ public class AggiornaCapitoloEntrataPrevisioneModel extends CapitoloEntrataPrevi
 	// SIAC-5582
 	private boolean flagAccertatoPerCassaEditabile;
 	
+	//SIAC-7858 CM 18/05/2021 Inizio
+	private boolean flagEntrataDubbiaEsigFCDE;
+	
+	/**
+	 * @return the flagEntrataDubbiaEsigFCDE
+	 */
+	public boolean isFlagEntrataDubbiaEsigFCDE() {
+		return flagEntrataDubbiaEsigFCDE;
+	}
+
+	/**
+	 * @param flagEntrataDubbiaEsigFCDE the flagEntrataDubbiaEsigFCDE to set
+	 */
+	public void setFlagEntrataDubbiaEsigFCDE(boolean flagEntrataDubbiaEsigFCDE) {
+		this.flagEntrataDubbiaEsigFCDE = flagEntrataDubbiaEsigFCDE;
+	}
+	//SIAC-7858 CM 18/05/2021 Fine
+	
 	/** Costruttore vuoto di default */
 	public AggiornaCapitoloEntrataPrevisioneModel() {
 		super();
@@ -304,6 +322,11 @@ public class AggiornaCapitoloEntrataPrevisioneModel extends CapitoloEntrataPrevi
 		capitoloEntrataPrevisione.setPerimetroSanitarioEntrata(perimetroSanitarioEntrataDaInjettare);
 		capitoloEntrataPrevisione.setTransazioneUnioneEuropeaEntrata(transazioneUnioneEuropeaEntrataDaInjettare);
 		
+		
+		//SIAC-7858 CM 12/05/2021 Inizio
+		capitoloEntrataPrevisione.setFlagEntrataDubbiaEsigFCDE(isFlagEntrataDubbiaEsigFCDE());
+		//SIAC-7858 CM 12/05/2021 Fine
+		
 		// Gli importi sono obbligatori
 		capitoloEntrataPrevisione.setListaImportiCapitoloEP(getListaImportiCapitolo());
 		
@@ -454,21 +477,21 @@ public class AggiornaCapitoloEntrataPrevisioneModel extends CapitoloEntrataPrevi
 			setRicorrenteEntrataEditabile(false);
 			setPerimetroSanitarioEntrataEditabile(false);
 			setTransazioneUnioneEuropeaEntrataEditabile(false);
-			setClassificatoreGenerico1Editabile(false);
-			setClassificatoreGenerico2Editabile(false);
-			setClassificatoreGenerico3Editabile(false);
-			setClassificatoreGenerico4Editabile(false);
-			setClassificatoreGenerico5Editabile(false);
-			setClassificatoreGenerico6Editabile(false);
-			setClassificatoreGenerico7Editabile(false);
-			setClassificatoreGenerico8Editabile(false);
-			setClassificatoreGenerico9Editabile(false);
-			setClassificatoreGenerico10Editabile(false);
-			setClassificatoreGenerico11Editabile(false);
-			setClassificatoreGenerico12Editabile(false);
-			setClassificatoreGenerico13Editabile(false);
-			setClassificatoreGenerico14Editabile(false);
-			setClassificatoreGenerico15Editabile(false);
+			setClassificatoreGenerico36Editabile(false);
+			setClassificatoreGenerico37Editabile(false);
+			setClassificatoreGenerico38Editabile(false);
+			setClassificatoreGenerico39Editabile(false);
+			setClassificatoreGenerico40Editabile(false);
+			setClassificatoreGenerico41Editabile(false);
+			setClassificatoreGenerico42Editabile(false);
+			setClassificatoreGenerico43Editabile(false);
+			setClassificatoreGenerico44Editabile(false);
+			setClassificatoreGenerico45Editabile(false);
+			setClassificatoreGenerico46Editabile(false);
+			setClassificatoreGenerico47Editabile(false);
+			setClassificatoreGenerico48Editabile(false);
+			setClassificatoreGenerico49Editabile(false);
+			setClassificatoreGenerico50Editabile(false);
 		} else {
 			super.valutaModificabilitaClassificatori(response, isMassivo);
 			

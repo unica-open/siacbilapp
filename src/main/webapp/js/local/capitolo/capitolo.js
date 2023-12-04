@@ -238,9 +238,15 @@ var Capitolo = (function() {
         /* Attiva lo spinner */
         spinner.addClass("activated");
 
+		//SIAC-8191
+		var oggettoPerChiamataAjax = {};
+		if($('#nomeAzioneSAC').val() !== undefined && $('#nomeAzioneSAC').val() !== null){
+			oggettoPerChiamataAjax['nomeAzioneDecentrata'] = $('#nomeAzioneSAC').val();
+		}
+
         return $.postJSON(
                 "ajax/strutturaAmministrativoContabileAjax.do",
-                {},
+                oggettoPerChiamataAjax,
                 function (data) {
                     var listaStrutturaAmministrativoContabile = (data.listaElementoCodifica);
                     impostaZTree("treeStruttAmm", zTreeSettingStrutturaAmministrativoContabile, listaStrutturaAmministrativoContabile);
@@ -471,6 +477,7 @@ var Capitolo = (function() {
         $("#HIDDEN_" + idCampoHidden + "Stringa").val(stringa);
         $("#HIDDEN_" + idCampoHidden + "CodiceTipoClassificatore").val(treeNode.codiceTipo);
         $("#SPAN_" + idCampoHidden).html(stringa);
+		//$("#HIDDEN_" + idCampoHidden + "Codice").val(treeNode.codice);
     }
 
     /**
@@ -760,24 +767,54 @@ var Capitolo = (function() {
     /** Gestione del flag impegnabile a seconda del tipo di capitolo */
     exports.gestioneFlagImpegnabile = function() {
         var checkbox = $("#flagImpegnabile");
+        var cassa = $("#cassa0");
         
         var codiceCategoriaCapitolo;
         var tipoCapitoloFPV;
         var tipoCapitoloSTD;
+        //SIAC-7192
+        var isRisorsaAccantonata;
+        var codiceMissione = $('#missione option:selected').data('codice');
         if(checkbox.data('editabile') !== undefined && checkbox.data('editabile') !== true) {
             return;
         }
         codiceCategoriaCapitolo = $("option:selected", "#categoriaCapitolo").data("codice");
         tipoCapitoloFPV = codiceCategoriaCapitolo === "FPV";
         tipoCapitoloSTD = codiceCategoriaCapitolo === "STD";
-
-        checkbox[tipoCapitoloFPV ? "attr" : "removeAttr"]("disabled", true);
+        isRisorsaAccantonata = codiceMissione && codiceMissione == '20'
+        
+        checkbox[(tipoCapitoloFPV || isRisorsaAccantonata)? "attr" : "removeAttr"]("disabled", true);
         if(tipoCapitoloSTD) {
-            checkbox.prop('checked', true);
+            checkbox.prop('checked', !isRisorsaAccantonata);
         }
         if(tipoCapitoloFPV) {
             checkbox.removeProp('checked');
         }
+        //SIAC-8003
+		//task-275
+		if(codiceCategoriaCapitolo != null){
+			if(codiceCategoriaCapitolo.match(/FPV.*/) || codiceCategoriaCapitolo === "AAM"){
+				cassa.attr("disabled", "disabled");
+				$("#importoCassa").hide();
+				//task-275 
+				//task-244
+				checkbox.val(false);
+				checkbox.attr("disabled", "disabled");
+				checkbox.removeProp('checked');
+			}else{
+				cassa.removeAttr("disabled", "disabled");
+				$("#importoCassa").show();
+				//task-275
+				//task-244
+				checkbox.removeAttr("disabled", "disabled");
+			}
+		}else{
+			cassa.removeAttr("disabled", "disabled");
+			$("#importoCassa").show();		
+			//task-244	
+			checkbox.removeAttr("disabled", "disabled");
+		}
+       
     };
 
     //START -----> SIAC-6884-VariazioneDecentrate
@@ -857,6 +894,12 @@ var Capitolo = (function() {
         } else {
             classificatoreFondino.removeAttr("disabled");
         }
+
+        //SIAC-7793
+        //controllo che non sia una ricercaCapUscGest o ricercaCapUscPre
+        // if(typeof $('form[id^="effettuaRicercaConOperazioniCapUscita"]') !== undefined){
+        //     $('#classificatoreGenerico3').removeAttr('disabled');
+        // }
     };
 
     //END -----> SIAC-6884-VariazioneDecentrate
@@ -915,7 +958,7 @@ var Capitolo = (function() {
         $form.attr('action', url)
             .submit();
     };
-
+    
 
     // Definizione dei settings
     zTreeSettingStrutturaAmministrativoContabile = $.extend(true, {}, zTreeSettingsBase, {callback: {onCheck: impostaValueStrutturaAmministrativoContabile}});
@@ -943,11 +986,14 @@ $(
             $("#deselezionaSIOPE").attr("disabled", "disabled");
         }
         
-        //SIAC-6884-VariazioneDecentrate
-        $("#categoriaCapitolo").click(Capitolo.gestioneFlagImpegnabile);
-        $("#categoriaCapitolo").click(Capitolo.gestioneFondinoFromCategoria);
-        $("#flagImpegnabile").click(Capitolo.gestioneFondinoFromCheckImpegnabile);
-
+        //SIAC-7793
+        //controllo che non sia una ricercaCapitoloUscita
+        if($('form')[0] && $('form')[0].id.indexOf('effettuaRicercaConOperazioniCapUscita') === -1){
+            //SIAC-6884-VariazioneDecentrate
+            $("#categoriaCapitolo").change(Capitolo.gestioneFlagImpegnabile);
+            $("#categoriaCapitolo").change(Capitolo.gestioneFondinoFromCategoria);
+            $("#flagImpegnabile").click(Capitolo.gestioneFondinoFromCheckImpegnabile);
+        }
         
         $('#buttonCopia').click(Capitolo.effettuaCopia);
         
@@ -975,6 +1021,17 @@ $(
             return;
         }
 
+        //SIAC-7793
+        //controllo che non sia una ricercaCapUscGest o ricercaCapUscPre
+        if($('form')[0] && $('form')[0].id.indexOf('effettuaRicercaConOperazioniCapUscita') !== -1){
+            $('#classificatoreGenerico3').removeAttr('disabled');
+        }
 
-    }
+    },
+    //SIAC-7722 impedisco l'inserimento di "a capo"
+    $("textarea[id^='descrizione']").keypress(function(e){
+        if(e.wich === 13 || e.key === "Enter"){
+            e && e.preventDefault();
+        }
+    })
 );

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -29,7 +29,7 @@ import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaElencoDocumentiAllegatoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElencoDocumentiAllegato, 
+public class RisultatiRicercaElencoDocumentiAllegatoAjaxAction extends PagedDataTableAjaxAction<ElencoDocumentiAllegato, 
 		RisultatiRicercaElencoDocumentiAllegatoAjaxModel, ElencoDocumentiAllegato, RicercaElenco, RicercaElencoResponse> {
 		
 	/** Per la serializzazione */
@@ -55,12 +55,12 @@ public class RisultatiRicercaElencoDocumentiAllegatoAjaxAction extends GenericRi
 	}
 	
 	@Override
-	protected ElencoDocumentiAllegato ottieniIstanza(ElencoDocumentiAllegato e) throws FrontEndBusinessException {
+	protected ElencoDocumentiAllegato getInstance(ElencoDocumentiAllegato e) throws FrontEndBusinessException {
 		return e;
 	}
 	
 	@Override
-	protected RicercaElencoResponse ottieniResponse(RicercaElenco request) {
+	protected RicercaElencoResponse getResponse(RicercaElenco request) {
 		return allegatoAttoService.ricercaElenco(request);
 	}
 	

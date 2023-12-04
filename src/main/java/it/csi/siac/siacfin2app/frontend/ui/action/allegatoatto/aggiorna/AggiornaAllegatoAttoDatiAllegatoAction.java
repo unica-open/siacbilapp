@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InviaAllegatoAtto;
 import it.csi.siac.siaccecser.frontend.webservice.msg.StampaAllegatoAtto;
 import it.csi.siac.siaccecser.frontend.webservice.msg.StampaAllegatoAttoResponse;
@@ -96,7 +96,7 @@ public class AggiornaAllegatoAttoDatiAllegatoAction extends AggiornaAllegatoAtto
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaAllegatoAtto.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -153,7 +153,7 @@ public class AggiornaAllegatoAttoDatiAllegatoAction extends AggiornaAllegatoAtto
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(StampaAllegatoAtto.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -181,14 +181,14 @@ public class AggiornaAllegatoAttoDatiAllegatoAction extends AggiornaAllegatoAtto
 		logServiceRequest(req);
 		
 		// Invocazione del servizio asincrono
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.ALLEGATO_ATTO_INVIA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.ALLEGATO_ATTO_INVIA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse res = allegatoAttoService.inviaAllegatoAttoAsync(wrapRequestToAsync(req, azioneRichiesta));
 		logServiceResponse(res);
 		
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(InviaAllegatoAtto.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -225,7 +225,7 @@ public class AggiornaAllegatoAttoDatiAllegatoAction extends AggiornaAllegatoAtto
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaMassivaDatiSoggettoAllegatoAtto.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -270,7 +270,7 @@ public class AggiornaAllegatoAttoDatiAllegatoAction extends AggiornaAllegatoAtto
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDatiSospensioneAllegatoAtto.class, res));
 			addErrori(res);
 			return INPUT;
 		}

@@ -26,6 +26,7 @@ import it.csi.siac.siacfin2ser.model.DatiAnagraficiPreDocumento;
 import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.StatoOperativoCausale;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
+import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.model.Accertamento;
@@ -60,6 +61,9 @@ public class GenericPreDocumentoEntrataModel extends GenericPreDocumentoModel {
 	private List<CausaleEntrata> listaCausaleEntrata = new ArrayList<CausaleEntrata>();
 	//CR-4483, il conto corrente diventa classificatore
 	private List<ContoCorrentePredocumentoEntrata> listaContoCorrente = new ArrayList<ContoCorrentePredocumentoEntrata>();
+	
+	//SIAC-6780
+	private List<TipoDocumento> listaTipoDocumento = new ArrayList<TipoDocumento>();
 
 	//CR-4310: prevedo la possibilita' di aggiornare l'accertamento previa conferma dell'operatore
 	private boolean richiediConfermaUtente;
@@ -250,6 +254,20 @@ public class GenericPreDocumentoEntrataModel extends GenericPreDocumentoModel {
 	}
 	
 	/**
+	 * @return the listaTipoDocumento
+	 */
+	public List<TipoDocumento> getListaTipoDocumento() {
+		return listaTipoDocumento;
+	}
+
+	/**
+	 * @param listaTipoDocumento the listaTipoDocumento to set
+	 */
+	public void setListaTipoDocumento(List<TipoDocumento> listaTipoDocumento) {
+		this.listaTipoDocumento = listaTipoDocumento;
+	}
+
+	/**
 	 * Imposta il messaggio da mostrare per richiedere la conferma di prosecuzione dell'azione a partire dai messaggi presenti nel modello
 	 */
 	public void impostaMessaggioRichiestaConfermaProsecuzioneFromMessaggi(){
@@ -370,7 +388,7 @@ public class GenericPreDocumentoEntrataModel extends GenericPreDocumentoModel {
 		
 		request.setEnte(getEnte());
 		request.setpRicercaAccertamentoK(creaPRicercaAccertamentoK());
-		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null);
+		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -470,10 +488,10 @@ public class GenericPreDocumentoEntrataModel extends GenericPreDocumentoModel {
 		
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoAccertamento(getMovimentoGestione().getAnnoMovimento());
-		utility.setNumeroAccertamento(getMovimentoGestione().getNumero());
+		utility.setNumeroAccertamento(getMovimentoGestione().getNumeroBigDecimal());
 		
 		//riga in piu rispetto alla vecchia versione 
-		utility.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null) ? getSubMovimentoGestione().getNumero() : null);
+		utility.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null) ? getSubMovimentoGestione().getNumeroBigDecimal() : null);
 
 		return utility;
 	}
@@ -507,5 +525,4 @@ public class GenericPreDocumentoEntrataModel extends GenericPreDocumentoModel {
 		this.movimentoGestioneOrdinativo = movimentoGestioneOrdinativo;
 	}
 
-	
 }

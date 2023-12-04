@@ -80,6 +80,82 @@
         }
     }
 
+	function getTd(tdContent, stile){ // :alignment
+		var result = '<td ';
+		if(stile){
+			result += 'style="' + stile + '"';
+		}
+		
+		return result + '>' + tdContent + '</td>';
+	}
+
+	function impostaDisponibilitaComponenti(righe, selector, e){
+		var rowDisp = $(selector).closest('tr');
+		e && e.preventDefault() && e.stopPropagation() && e.stopImmediatePropagation();
+		
+		if(!rowDisp.data('loaded')){
+			var rows ="";
+			for(var j in righe){
+				var riga = righe[j];
+				for (var i in riga.sottoRighe){
+					var rd = riga.sottoRighe[i];
+					var rigaTabella  = '<tr class="componenti-riepilogo hide">';
+					rigaTabella += riga.firstCellString;
+					
+					rigaTabella += getTd(rd.formattedImportoAnno0, 'text-align:right;');
+					rigaTabella += getTd(rd.formattedImportoAnno1, 'text-align:right;');
+					rigaTabella += getTd(rd.formattedImportoAnno2, 'text-align:right;');
+					rigaTabella += getTd("");
+					rigaTabella += '</tr>';
+					
+					rows += rigaTabella;
+				}
+				
+			}
+			
+			rowDisp.after(rows);
+			rowDisp.data('loaded', true);	
+			
+		}
+		
+		rowDisp.parent().find('.componenti-riepilogo').slideToggle();
+		
+	}
+
+	function caricaTabellaImportiComponenti(urlbase){
+			var overlay = $('#tabellaStanziamentiPerComponenti').overlay({usePosition: true});
+			var url = urlbase + "_caricaImporti.do";
+			var uidCapitolo = $('#HIDDEN_uidCapitolo').val();
+			var capitolo={uid: uidCapitolo};
+			overlay.overlay('show');
+			$.postJSON(
+				url,
+				qualify({'capitolo': capitolo}),
+				function(data) {
+					var righeComp;
+					var righeImporti;
+					var righeDispImpegnare;
+					var righeDispVariare;
+					// Controllo gli eventuali errori, messaggi, informazioni
+					if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))) {return;	}
+					if(impostaDatiNegliAlert( data.messaggi, $('#MEAASGGI'))) {return;	}
+					if(impostaDatiNegliAlert(data.informazioni, $('#INFORMAZIONI'))) {return;	}
+					righeComp = data.righeComponentiTabellaImportiCapitolo;
+					righeImporti = data.righeImportiTabellaImportiCapitolo;
+					righeDispImpegnare = data.righeDisponibilitaImpegnareComponenti;
+					righeDispVariare = data.righeDisponibilitaVariareComponenti;
+					
+					TabellaImportiComponenteCapitolo.creaEPosizionaRigheImporti(righeImporti, true);
+					$('#competenzaCella').substituteHandler('click', TabellaImportiComponenteCapitolo.creaEPosizionaRigheComponenti.bind(undefined, righeComp, true, false));
+					
+					$("#disponibilitaVariareComponenti").substituteHandler("click", impostaDisponibilitaComponenti.bind(undefined,righeDispVariare, '#disponibilitaVariareComponenti'));
+					$("#disponibilitaImpegnareComponenti").substituteHandler("click", impostaDisponibilitaComponenti.bind(undefined,righeDispImpegnare, '#disponibilitaImpegnareComponenti'));
+				
+				}
+			).always(overlay.overlay.bind(overlay, 'hide'));
+		}
+
+
     $(function() {
 
         
@@ -98,12 +174,12 @@
 
          //SIAC-6881
 
-         $("#componentiCompetenza").hide();
+/*         $("#componentiCompetenza").hide();
 
          $("#competenzaTotale").click(function(){
              $("#componentiCompetenza").slideToggle();
          });
-
+*/
         //  $("#componentiCompetenza").hide();
 
         //  $("#competenzaTotale").click(function(){
@@ -118,7 +194,25 @@
             });
           });*/
 
-          getDescriptions();
+        //SIAC-7349 Start SR210 MR 16/04/2020 Funzioni per il toggle delle componenti nel riepilogo  
+       /* $("#componentiDisponibilitaVariare").hide();
+
+        $("#disponibilitaVariareComponenti").click(function(){
+            $("#componentiDisponibilitaVariare").slideToggle();
+        });
+
+        $("#componentiDisponibilitaImpegnare").hide();
+
+        $("#disponibilitaImpegnareComponenti").click(function(){
+            $("#componentiDisponibilitaImpegnare").slideToggle();
+        });*/
+
+
+
+        //SIAC-7349 End
+
+        getDescriptions();
+		caricaTabellaImportiComponenti("consultaCapUscitaGestione");
 
         
 

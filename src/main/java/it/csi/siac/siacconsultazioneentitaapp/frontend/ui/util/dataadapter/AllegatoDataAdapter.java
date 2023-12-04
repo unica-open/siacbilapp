@@ -25,7 +25,8 @@ public class AllegatoDataAdapter extends EntitaConsultabileDataAdapter {
 						new DateDataInfo("Data scadenza", "attoal_data_scadenza"),
 						new SimpleDataInfo("Stato", "attoal_stato"),
 						new SimpleDataInfo("Versione invio firma", "attoal_versione_invio_firma"),
-						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc")
+						//SIAC-8188 "attoamm_oggetto", "attoal_causale"
+						new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc", "attoamm_oggetto", "attoal_causale")
 				),
 				asList(
 						//SIAC-3760

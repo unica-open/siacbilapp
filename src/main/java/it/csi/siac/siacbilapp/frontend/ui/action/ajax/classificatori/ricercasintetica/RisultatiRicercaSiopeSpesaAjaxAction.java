@@ -36,7 +36,7 @@ public class RisultatiRicercaSiopeSpesaAjaxAction extends RisultatiRicercaClassi
 	}
 	
 	@Override
-	protected SiopeSpesa ottieniIstanza(Codifica e) throws FrontEndBusinessException {
+	protected SiopeSpesa getInstance(Codifica e) throws FrontEndBusinessException {
 		if(e instanceof SiopeSpesa) {
 			return (SiopeSpesa) e;
 		}

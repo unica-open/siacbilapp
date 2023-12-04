@@ -7,7 +7,7 @@ package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.stampe;
 import java.util.Arrays;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ import it.csi.siac.siaccecser.model.TipoStampa;
 import it.csi.siac.siaccecser.model.errore.ErroreCEC;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 
@@ -37,9 +37,7 @@ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
  * @param <M> la tipizzazione del model
  *
  */
-@Component
-@Scope(WebApplicationContext.SCOPE_REQUEST)
-public class GenericStampaCECAction <M extends GenericStampaCECModel> extends CassaEconomaleBaseAction<M> {
+public abstract class GenericStampaCECAction <M extends GenericStampaCECModel> extends CassaEconomaleBaseAction<M> {
 
 	/** per serializzazione */
 	private static final long serialVersionUID = -2778146591196752725L;

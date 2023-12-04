@@ -8,7 +8,7 @@
     var alertErrori = $('#ERRORI');
     var alertInformazioni  = $('#INFORMAZIONI');
     var ricercheModale = {};
-    var tipiRicercheModale = ['Capitolo', 'Accertamento', 'Soggetto', 'Provvedimento'];
+    var tipiRicercheModale = ['Capitolo', 'Accertamento', 'Soggetto', 'Provvedimento','ProvvisorioDiCassa'];
     // SIAC-4957 : per permettere la selezione multipagina
     var selectedDatas = {};
 
@@ -40,6 +40,29 @@
         });
         modal.modal('hide');
     }
+
+    /**
+     * Definisce la predisposizione di incasso per i preDocumenti.
+     *
+     * @param param (Object) il parametro per la chiamata asincrona
+     * @param modal (jQuery) il modale da chiudere
+     */
+    function completaDefinisciPredisposizioneIncasso(param, modal) {
+        var $form = $('#risultatiRicercaPreDocEntrataForm');
+        var paramsKeys = Object.keys(param);
+        if(param.inviaTutti === true){
+            $('#HIDDEN_inviaTutti').val(param.inviaTutti);
+        } else {
+            for(var i = 0; i < paramsKeys.length; i++) {
+                $form.append('<input type="hidden" name="' + paramsKeys[i] + '" value="' + param[paramsKeys[i]] + '" />');
+            }
+        }
+        $('#HIDDEN_riepilogoCompletaDefinisci').val('true');
+        $form.attr('action','riepilogoCompletaDefinisciPreDocumentoEntrata.do');
+        $form.submit();
+
+        modal.modal('hide');
+    };
 
     /**
      * Definisce la predisposizione di incasso per i preDocumenti.
@@ -205,8 +228,11 @@
         
         $.post('risultatiRicercaPreDocumentoEntrata_apriAssociaConModifiche.do')
         .then(function(data) {
+            console.log('SIAC-7423 data', data);
             var idCapitolo;
             var idProvvedimento;
+            var idProvvisorio;
+
             $('#containerImputazioni').html(data);
             $('input[name="forzaDisponibilitaAccertamento"]').val(adeguaDisponibilita.length>0? adeguaDisponibilita.val() : 'false');
             
@@ -215,14 +241,22 @@
             idProvvedimento = Provvedimento.inizializzazione(Ztree, {}, 'AttoAmministrativo');
             Accertamento.inizializza('#annoMovimentoMovimentoGestione', '#numeroMovimentoGestione', '#numeroSubMovimentoGestione', '#datiRiferimentoImpegnoSpan', undefined, undefined, '#pulsanteCompilazioneGuidataMovimentoGestione');
             Soggetto.inizializza('#codiceSoggettoSoggetto', '#HIDDEN_codiceFiscaleSoggetto', '#HIDDEN_denominazioneSoggetto', '#datiRiferimentoSoggettoSpan', '#pulsanteCompilazioneSoggetto');
-
-            Provvedimento.bindApriModaleAttoAmministrativo(idProvvedimento);
             
+            Provvedimento.bindApriModaleAttoAmministrativo(idProvvedimento);
+
+            // Provvisorio
+            $('#modale_hidden_tipoProvvisorioDiCassa').val('E');
+            idProvvisorio = ProvvisorioDiCassa.inizializzazione('#pulsanteCompilazioneGuidataProvvisorioCassa','#HIDDEN_TipoProvvisorioCassa','#annoProvvisorioCassa','#numeroProvvisorioCassa','#HIDDEN_CausaleProvvisorioCassa');
+            // ProvvisorioDiCassa.inizializza;
+            // $('#pulsanteCompilazioneGuidataProvvisorioCassa').substituteHandler('click', ProvvisorioDiCassa.apriModale);
+
+
             // Imposto i valori a 1 per permetterne la distruzione: viene ignorato dalla funzionalita'
             ricercheModale.Capitolo = idCapitolo;
             ricercheModale.Provvedimento = idProvvedimento;
             ricercheModale.Accertamento = 1;
             ricercheModale.Soggetto = 1;
+            ricercheModale.ProvvisorioDiCassa = idProvvisorio;
 
             collapseImputazioniContabili.slideDown();
             modale.modal('hide');
@@ -386,6 +420,26 @@
         lavoraConTutti(e, 'Definisci', 'Definire', definisciPredisposizioneIncasso);
     }
 
+    //SIAC-6780
+    /**
+     * Definisce la predisposizione di incasso per i preDocumenti selezionati.
+     *
+     * @param e (Event) l'evento scatenante l'invocazione
+     */
+    function completaDefinisciPredisposizioneIncassoSelezionati(e) {
+        lavoraConSelezionati(e, 'CompletaDefinisci', 'definire', 'CompletaDefinisci', completaDefinisciPredisposizioneIncasso);
+    }
+
+    /**
+     * Definisce la predisposizione di incasso per tutti i preDocumenti.
+     *
+     * @param e (Event) l'evento scatenante l'invocazione
+     */
+    function completaDefinisciPredisposizioneIncassoTutti(e) {
+        lavoraConTutti(e, 'CompletaDefinisci', 'CompletaDefinisci', completaDefinisciPredisposizioneIncasso);
+    }
+    //
+
     /**
      * Associa le imputazioni contabili ai preDocumenti selezionati.
      *
@@ -478,6 +532,41 @@
         .always(collapseImputazioni.overlay.bind(collapseImputazioni, 'hide'));
     }
 
+    //SIAC-6780
+    function completaDefinisci() {
+        var collapseCompletaDefinisci = $('#collapseCompletaDefinisci');
+        var oggettoPerInvocazioneAsincrona = collapseCompletaDefinisci.serializeObject();
+        var arrayUid;
+
+        alertErrori.slideUp();
+
+        if(oggettoPerInvocazioneAsincrona.inviaTutti !== 'true') {
+            arrayUid = getPreDocumentiSelezionati().map(function(el) {
+                return el.uid;
+            });
+            if(!arrayUid.length) {
+                impostaDatiNegliAlert(['Necessario selezionare almeno una predisposizione da associare'], alertErrori);
+                return;
+            }
+            oggettoPerInvocazioneAsincrona.listaUid = arrayUid;
+        }
+        collapseCompletaDefinisci.overlay('show');
+        
+
+        $.postJSON('risultatiRicercaPreDocumentoEntrata_completaDefinisciPreDoc.do', qualify(oggettoPerInvocazioneAsincrona))
+        .then(function(data){
+            //impostoErrorineglialert se ci sono errori
+            if(impostaDatiNegliAlert(data.errori, alertErrori)) {
+                return $.Deferred().reject().promise();
+            }
+            // //altrimenti, imposto il messaggio operazione asincrona avviata
+            // impostaDatiNegliAlert(['COR_INF_0037 - L\'elaborazione asincrona e\' stata avviata e sarà disponibile nel cruscotto una volta conclusa'], alertInformazioni);
+        })
+        .then(collapseCompletaDefinisci.slideUp.bind(collapseCompletaDefinisci))
+        .always(collapseCompletaDefinisci.overlay.bind(collapseCompletaDefinisci, 'hide'));
+    }
+    //
+
     // SIAC-4384
     /**
      * Aggiorna la data di trasmissione per tutti i predoc
@@ -531,7 +620,20 @@
         obj.forzaDisponibilitaAccertamento = res;
     }
 
+    //SIAC-6780
+    function checkIsfromConvalidaDefinisci(){
+        var hiddenVal = $('#HIDDEN_fromConvalidaDefinisci').val();
+        if(hiddenVal){
+            $('#risultatiRicercaPreDocEntrataForm').attr('action','');
+        }
+    }
+
     $(function() {
+        //SIAC-7440
+        if($('#fromRiepilogoCompletaDefinisci').val() === 'true'){
+            $('#divAzioni').find('a.accordion-toggle').prop('disabled', true);
+        }
+
         var collapseImputazioni = $('#collapseImputazioniContabili');
         $('#checkboxSelezionaTutti').change(function() {
             $(this).trigger('selezionaTutti');
@@ -547,6 +649,12 @@
 
         $('#pulsanteDefinisciTutti').click(definisciPredisposizioneIncassoTutti);
         $('#pulsanteDefinisciSelezionati').click(definisciPredisposizioneIncassoSelezionati);
+
+        //SIAC-6780
+        checkIsfromConvalidaDefinisci();
+        $('#pulsanteCompletaDefinisciTutti').click(completaDefinisciPredisposizioneIncassoTutti);
+        $('#pulsanteCompletaDefinisciSelezionati').click(completaDefinisciPredisposizioneIncassoSelezionati);
+        //
         
         $('#pulsanteDataTrasmissioneTutti').click(dataTrasmissionePredisposizioneIncassoTutti);
         $('#pulsanteDataTrasmissioneSelezionati').click(dataTrasmissionePredisposizioneIncassoSelezionati);

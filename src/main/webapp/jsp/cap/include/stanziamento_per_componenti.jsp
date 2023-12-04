@@ -20,7 +20,13 @@ SPDX-License-Identifier: EUPL-1.2
 		
 			<tr <s:if test="%{#statusComp.first}"> class="componentiRowFirst" </s:if><s:else> class="componentiRowOther"</s:else>>
 			<s:if test="%{#statusComp.first}">
-				<th rowspan="3" class="stanziamenti-titoli">
+				<!--<th rowspan="3" class="stanziamenti-titoli">--> <!--SIAC-7349 setto il rowspan a 2 in quanto non ho piu la riga della disponibilita-->
+				<s:if test="%{tipologiaCapitolo.equals('CAP-UP')}">
+					<th rowspan="3" class="stanziamenti-titoli">
+				</s:if>
+				<s:else>
+					<th rowspan="2" class="stanziamenti-titoli">
+				</s:else>
 					<a id="competenzaTotaleInserimento" href="#tabellaComponentiInserimento"  class="disabled" >Competenza</a>
 				</th>
 			</s:if>
@@ -35,7 +41,7 @@ SPDX-License-Identifier: EUPL-1.2
 	</s:iterator>
 	<s:if test="%{importiComponentiCapitolo != null && importiComponentiCapitolo.size() > 0 }">
 		<s:iterator value="importiComponentiCapitolo" var="compon" status="statusCompon">
-			<tr class="righeComponenti hide componentiRowOther">
+			<tr class="righeComponenti hide componentiCompetenzaRow <s:if test="#compon.tipoDettaglioComponenteImportiCapitolo.descrizione == 'Stanziamento'"> previsione-default-stanziamento</s:if>">
 				<s:if test="%{#statusCompon.odd}">
 					<s:set var="cnt" value="%{#statusCompon.index}" />
 					<td class="componenti-competenza" id="tipoComTD0" rowspan="2">

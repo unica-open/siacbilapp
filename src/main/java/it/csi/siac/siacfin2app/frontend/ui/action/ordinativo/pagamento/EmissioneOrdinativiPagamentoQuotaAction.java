@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
+import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
@@ -19,6 +20,7 @@ import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.action.ordinativo.GenericEmissioneOrdinativiAction;
@@ -26,6 +28,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiPagamentoDaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereSpesaResponse;
+import it.csi.siac.siacfin2ser.model.CommissioniDocumento;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
@@ -45,7 +48,13 @@ public class EmissioneOrdinativiPagamentoQuotaAction extends EmissioneOrdinativi
 	private static final long serialVersionUID = 6671268924302470133L;
 	
 	@Autowired private transient DocumentoSpesaService documentoSpesaService;
-	
+
+	/*
+	@PostConstruct
+	protected void postConstruct() {
+		provvedimentoActionHelper = new ProvvedimentoActionHelper(this);
+	}
+	*/
 	@Override
 	public void prepareCompleteStep1() {
 		// Svuoto i campi
@@ -79,7 +88,7 @@ public class EmissioneOrdinativiPagamentoQuotaAction extends EmissioneOrdinativi
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaQuoteDaEmettereSpesa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -111,12 +120,22 @@ public class EmissioneOrdinativiPagamentoQuotaAction extends EmissioneOrdinativi
 	/**
 	 * Validazione per il metodo {@link #completeStep1()}.
 	 */
+	
+	
 	public void validateCompleteStep1() {
 		checkCondition(model.getTipoEmissioneOrdinativo() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Tipo emissione"), true);
 		// SIAC-5133: popolo la SAC
 		popolaStrutturaAmministrativoContabile();
 		// Indicatore della presenza di almeno un criterio di ricerca
-		boolean formValido = validazioneAttoAmministrativo()
+
+		//task-288
+		if(model.getAttoAmministrativo() != null ) {
+			if(model.getAttoAmministrativo().getAnno() != 0 || model.getAttoAmministrativo().getNumero() != 0 || model.getAttoAmministrativo().getTipoAtto() != null)
+				//task-259
+				checkAttoAmministrativo(StatoOperativoAtti.DEFINITIVO.name());	
+		}
+		
+		boolean formValido = model.getAttoAmministrativo().getUid() > 0
 				|| validazioneElenco()
 				|| validazioneCapitolo()
 				|| validazioneSoggetto()
@@ -241,6 +260,13 @@ public class EmissioneOrdinativiPagamentoQuotaAction extends EmissioneOrdinativi
 			caricaListaBollo();
 			caricaDataScadenza();
 			caricaListaClassificatoreStipendi();
+			//task-291
+			caricaListaCommissioniDocumento();
+			//task-259
+			//task-293
+			caricaCommissioniDefault();
+			
+			
 		} catch(WebServiceInvocationFailureException wsife) {
 			log.info(methodName, "Errore nel caricamento delle liste: " + wsife.getMessage());
 		}
@@ -274,7 +300,7 @@ public class EmissioneOrdinativiPagamentoQuotaAction extends EmissioneOrdinativi
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EmetteOrdinativiDiPagamentoDaElenco.class, response));
 			addErrori(response);
 			return INPUT;
 		}

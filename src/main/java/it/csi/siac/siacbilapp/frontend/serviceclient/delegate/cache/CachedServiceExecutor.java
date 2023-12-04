@@ -31,6 +31,7 @@ import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.rollingpolic
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.rollingpolicy.DefaultCacheRollingPolicy;
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.keyadapter.KeyAdapter;
 import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonapp.util.log.LogWebUtil;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 
@@ -50,7 +51,8 @@ import it.csi.siac.siaccorser.model.ServiceResponse;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class CachedServiceExecutor {
 	
-	private final LogUtil log = new LogUtil(this.getClass());
+	private final LogUtil baseLog = new LogUtil(this.getClass());
+	private final LogWebUtil log = new LogWebUtil(this.getClass());
 	
 	/** The application-level cache */
 	private final Map<String, Reference<ServiceResponseCache>> cache = new ConcurrentHashMap<String, Reference<ServiceResponseCache>>();
@@ -73,7 +75,7 @@ public class CachedServiceExecutor {
 	@PostConstruct
 	public void init() {
 		final String methodName = "init";
-		log.info(methodName, "CachedServiceExecutor created...");
+		baseLog.info(methodName, "CachedServiceExecutor created...");
 		
 		initDefaultCacheRollingPolicy();
 		
@@ -97,7 +99,7 @@ public class CachedServiceExecutor {
 			defaultCacheRollingPolicy = DefaultCacheRollingPolicy.NEVER.getRollingPolicy();
 		}
 		
-		log.info(methodName, "defaultCacheRollingPolicy: " + defaultCacheRollingPolicy.getClass().getName());
+		baseLog.info(methodName, "defaultCacheRollingPolicy: " + defaultCacheRollingPolicy.getClass().getName());
 	}
 	
 	/**

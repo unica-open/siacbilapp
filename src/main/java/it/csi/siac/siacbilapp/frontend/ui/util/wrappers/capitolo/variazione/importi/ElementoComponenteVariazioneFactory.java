@@ -67,7 +67,7 @@ public final class ElementoComponenteVariazioneFactory {
 		DettaglioVariazioneComponenteImportoCapitolo dett1 = buildDettaglioVariazioneComponenteImportoCapitolo(dettaglioComponenteImportiCapitolo1.getComponenteImportiCapitolo(), tp, dettaglioComponenteImportiCapitolo1.getTipoDettaglioComponenteImportiCapitolo(), importoAnno1);
 		DettaglioVariazioneComponenteImportoCapitolo dett2 = buildDettaglioVariazioneComponenteImportoCapitolo(dettaglioComponenteImportiCapitolo2.getComponenteImportiCapitolo(), tp, dettaglioComponenteImportiCapitolo2.getTipoDettaglioComponenteImportiCapitolo(), importoAnno2);
 		
-		return getInstance(dett0, dett1, dett2, importoModificabile.getInserimentoAnno0(), importoModificabile.getInserimentoAnniSuccessivi(), dettaglioComponenteImportiCapitolo.getImporto(), dettaglioComponenteImportiCapitolo1.getImporto(), dettaglioComponenteImportiCapitolo2.getImporto(), flagEliminaComponenteCapitolo, nuovaComponente);
+		return getInstance(dett0, dett1, dett2, importoModificabile.getInserimentoAnno0(), importoModificabile.getInserimentoAnniSuccessivi(), dettaglioComponenteImportiCapitolo.getImporto(), dettaglioComponenteImportiCapitolo1.getImporto(), dettaglioComponenteImportiCapitolo2.getImporto(), flagEliminaComponenteCapitolo, nuovaComponente, Boolean.TRUE);
 	}
 
 	
@@ -201,53 +201,122 @@ public final class ElementoComponenteVariazioneFactory {
 			DettaglioVariazioneComponenteImportoCapitolo dettAnno0 = el.getDettaglioAnno0();
 			DettaglioVariazioneComponenteImportoCapitolo dettAnno1 = el.getDettaglioAnno1();
 			DettaglioVariazioneComponenteImportoCapitolo dettAnno2 = el.getDettaglioAnno2();
-			
-			if(eliminaComponentiConImportiAZero && BigDecimal.ZERO.equals(dettAnno0.getImporto()) && BigDecimal.ZERO.equals(dettAnno1.getImporto()) && BigDecimal.ZERO.equals(dettAnno2.getImporto()) ) {
+			//SIAC-7692
+			if(eliminaComponentiConImportiAZero &&  BigDecimal.ZERO.compareTo(dettAnno0.getImporto()) ==0 && BigDecimal.ZERO.compareTo(dettAnno1.getImporto()) == 0 && BigDecimal.ZERO.compareTo(dettAnno2.getImporto()) == 0) {
 				//per la gestione delle componenti di default, quando inserisco un nuovo componente, elimino quelle a zero.
 				continue;
 			}
 			
-			TipoDettaglioComponenteImportiCapitolo tipoDettaglioComponenteImportiCapitolo = dettAnno0.getTipoDettaglioComponenteImportiCapitolo();
-			TipoComponenteImportiCapitolo tipoComponenteImportiCapitolo = dettAnno0.getComponenteImportiCapitolo().getTipoComponenteImportiCapitolo();
+			popolaDettagli(dettAnno0, dettAnno1, dettAnno2, el.getEliminaSuTuttiGliAnni(), el.getNuovaComponente());
+			
+			addDettagliSuMappa(map, dettAnno0, dettAnno1, dettAnno2);
 			
 			
-			//popolo i dati mancanti dell'anno 0
-			dettAnno0.setFlagEliminaComponenteCapitolo(Boolean.TRUE.equals(el.getEliminaSuTuttiGliAnni()));
-			dettAnno0.setFlagNuovaComponenteCapitolo(Boolean.TRUE.equals(el.getNuovaComponente()));
-			
-			//popolo i dati mancanti sull'anno 2
-			
-			if(dettAnno1.getComponenteImportiCapitolo() == null ) {
-				dettAnno1.setComponenteImportiCapitolo(new ComponenteImportiCapitolo());
-			}
-			dettAnno1.getComponenteImportiCapitolo().setTipoComponenteImportiCapitolo(tipoComponenteImportiCapitolo);
-			dettAnno1.setTipoDettaglioComponenteImportiCapitolo(tipoDettaglioComponenteImportiCapitolo);
-			dettAnno1.setFlagEliminaComponenteCapitolo(Boolean.TRUE.equals(el.getEliminaSuTuttiGliAnni()));
-			dettAnno1.setFlagNuovaComponenteCapitolo(Boolean.TRUE.equals(el.getNuovaComponente()));
-			
-			//popolo i dati mancanti sull'anno 1
-			
-			if(dettAnno2.getComponenteImportiCapitolo() == null ) {
-				dettAnno2.setComponenteImportiCapitolo(new ComponenteImportiCapitolo());
-			}
-			dettAnno2.getComponenteImportiCapitolo().setTipoComponenteImportiCapitolo(tipoComponenteImportiCapitolo);
-			dettAnno2.setTipoDettaglioComponenteImportiCapitolo(tipoDettaglioComponenteImportiCapitolo);
-			dettAnno2.setFlagEliminaComponenteCapitolo(Boolean.TRUE.equals(el.getEliminaSuTuttiGliAnni()));
-			dettAnno2.setFlagNuovaComponenteCapitolo(Boolean.TRUE.equals(el.getNuovaComponente()));
-			
-			map.get(KEY_ANNO_0).add(dettAnno0);
-			map.get(KEY_ANNO_1).add(dettAnno1);
-			map.get(KEY_ANNO_2).add(dettAnno2);
-			
+		}
+		if(map.get(KEY_ANNO_0).isEmpty()) {
+			popolaMappaConValoriDefault(map, lista);
 		}
 		
 		return map;
+	}
+
+
+	/**
+	 * @param map
+	 * @param dettAnno0
+	 * @param dettAnno1
+	 * @param dettAnno2
+	 */
+	private static void addDettagliSuMappa(Map<String, List<DettaglioVariazioneComponenteImportoCapitolo>> map,	DettaglioVariazioneComponenteImportoCapitolo dettAnno0,
+			DettaglioVariazioneComponenteImportoCapitolo dettAnno1,
+			DettaglioVariazioneComponenteImportoCapitolo dettAnno2) {
+		map.get(KEY_ANNO_0).add(dettAnno0);
+		map.get(KEY_ANNO_1).add(dettAnno1);
+		map.get(KEY_ANNO_2).add(dettAnno2);
+	}
+	
+
+
+
+	private static void popolaMappaConValoriDefault(Map<String, List<DettaglioVariazioneComponenteImportoCapitolo>> map, List<ElementoComponenteVariazione> lista) {
+		//SIAC-7384: la gestione delle componenti cosi' come e' non va bene, ma per ora fixo cosi' in attesa di risoluzioni migliori, mi tappo il naso anche se non e' tanto la soluzione migliore
+		DettaglioVariazioneComponenteImportoCapitolo dettAnno0Default = null;
+		DettaglioVariazioneComponenteImportoCapitolo dettAnno1Default = null;
+		DettaglioVariazioneComponenteImportoCapitolo dettAnno2Default = null;
+		
+		for (int i = 0; i < lista.size(); i++) {
+			ElementoComponenteVariazione el = lista.get(i);
+			
+			if(Boolean.TRUE.equals(el.getLegataAlCapitolo())) {
+				popolaDettagli(el.getDettaglioAnno0(),  el.getDettaglioAnno1(), el.getDettaglioAnno2(), el.getEliminaSuTuttiGliAnni(), el.getNuovaComponente());
+				addDettagliSuMappa(map, el.getDettaglioAnno0(), el.getDettaglioAnno1(), el.getDettaglioAnno2());
+				return;
+			}
+			
+			if(i == 0) {
+				dettAnno0Default = el.getDettaglioAnno0();
+				dettAnno1Default = el.getDettaglioAnno1();
+				dettAnno2Default = el.getDettaglioAnno2();
+				popolaDettagli(dettAnno0Default, dettAnno1Default, dettAnno2Default, el.getEliminaSuTuttiGliAnni(), el.getNuovaComponente());
+				addDettagliSuMappa(map, dettAnno0Default, dettAnno1Default, dettAnno2Default);
+			}
+			
+		}
+	}
+
+
+	/**
+	 * @param el
+	 * @param dettAnno0
+	 * @param dettAnno1
+	 * @param dettAnno2
+	 * @param nuovaComponente 
+	 * @param eliminaSuTuttiGliAnni 
+	 * @param tipoDettaglioComponenteImportiCapitolo
+	 * @param tipoComponenteImportiCapitolo
+	 */
+	private static void popolaDettagli(DettaglioVariazioneComponenteImportoCapitolo dettAnno0, DettaglioVariazioneComponenteImportoCapitolo dettAnno1,DettaglioVariazioneComponenteImportoCapitolo dettAnno2, Boolean eliminaSuTuttiGliAnni, Boolean nuovaComponente) {
+		TipoDettaglioComponenteImportiCapitolo tipoDettaglioComponenteImportiCapitolo = dettAnno0.getTipoDettaglioComponenteImportiCapitolo() != null? dettAnno0.getTipoDettaglioComponenteImportiCapitolo() : TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO;
+		TipoComponenteImportiCapitolo tipoComponenteImportiCapitolo = dettAnno0.getComponenteImportiCapitolo().getTipoComponenteImportiCapitolo();
+		//popolo i dati mancanti dell'anno 0
+		dettAnno0.setFlagEliminaComponenteCapitolo(Boolean.TRUE.equals(eliminaSuTuttiGliAnni));
+		dettAnno0.setFlagNuovaComponenteCapitolo(Boolean.TRUE.equals(nuovaComponente));
+		
+		dettAnno0.setTipoDettaglioComponenteImportiCapitolo(tipoDettaglioComponenteImportiCapitolo);
+		
+		//popolo i dati mancanti sull'anno 2
+		
+		if(dettAnno1.getComponenteImportiCapitolo() == null ) {
+			dettAnno1.setComponenteImportiCapitolo(new ComponenteImportiCapitolo());
+		}
+		dettAnno1.getComponenteImportiCapitolo().setTipoComponenteImportiCapitolo(tipoComponenteImportiCapitolo);
+		dettAnno1.setTipoDettaglioComponenteImportiCapitolo(tipoDettaglioComponenteImportiCapitolo);
+		dettAnno1.setFlagEliminaComponenteCapitolo(Boolean.TRUE.equals(eliminaSuTuttiGliAnni));
+		dettAnno1.setFlagNuovaComponenteCapitolo(Boolean.TRUE.equals(nuovaComponente));
+		
+		//popolo i dati mancanti sull'anno 1
+		
+		if(dettAnno2.getComponenteImportiCapitolo() == null ) {
+			dettAnno2.setComponenteImportiCapitolo(new ComponenteImportiCapitolo());
+		}
+		dettAnno2.getComponenteImportiCapitolo().setTipoComponenteImportiCapitolo(tipoComponenteImportiCapitolo);
+		dettAnno2.setTipoDettaglioComponenteImportiCapitolo(tipoDettaglioComponenteImportiCapitolo);
+		dettAnno2.setFlagEliminaComponenteCapitolo(Boolean.TRUE.equals(eliminaSuTuttiGliAnni));
+		dettAnno2.setFlagNuovaComponenteCapitolo(Boolean.TRUE.equals(nuovaComponente));
 	}
 	
 	
 	private static ElementoComponenteVariazione getInstance(DettaglioVariazioneComponenteImportoCapitolo dett0,	DettaglioVariazioneComponenteImportoCapitolo dett1, DettaglioVariazioneComponenteImportoCapitolo dett2,
 			Boolean modificabileAnno0, Boolean modificabileAnniSuccessivi, boolean eliminaSuTuttiGliAnni, boolean nuovaComponente) {
 		return getInstance(dett0,	dett1, dett2, modificabileAnno0, modificabileAnniSuccessivi, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, eliminaSuTuttiGliAnni, nuovaComponente);
+	}
+	
+	
+	private static ElementoComponenteVariazione getInstance(DettaglioVariazioneComponenteImportoCapitolo dett0,	DettaglioVariazioneComponenteImportoCapitolo dett1, DettaglioVariazioneComponenteImportoCapitolo dett2,
+			Boolean modificabileAnno0, Boolean modificabileAnniSuccessivi, BigDecimal importoComponenteOriginaleCapitoloAnno0, BigDecimal importoComponenteOriginaleCapitoloAnno1, BigDecimal importoComponenteOriginaleCapitoloAnno2,  boolean eliminaSuTuttiGliAnni, boolean nuovaComponente) {
+		return getInstance( dett0,	 dett1, dett2, modificabileAnno0, 
+				modificabileAnniSuccessivi,  importoComponenteOriginaleCapitoloAnno0,  importoComponenteOriginaleCapitoloAnno1,
+				importoComponenteOriginaleCapitoloAnno2,   eliminaSuTuttiGliAnni, nuovaComponente, Boolean.FALSE);
 	}
 	
 	/**
@@ -261,7 +330,7 @@ public final class ElementoComponenteVariazioneFactory {
 	 * @return
 	 */
 	private static ElementoComponenteVariazione getInstance(DettaglioVariazioneComponenteImportoCapitolo dett0,	DettaglioVariazioneComponenteImportoCapitolo dett1, DettaglioVariazioneComponenteImportoCapitolo dett2,
-			Boolean modificabileAnno0, Boolean modificabileAnniSuccessivi, BigDecimal importoComponenteOriginaleCapitoloAnno0, BigDecimal importoComponenteOriginaleCapitoloAnno1, BigDecimal importoComponenteOriginaleCapitoloAnno2,  boolean eliminaSuTuttiGliAnni, boolean nuovaComponente) {
+			Boolean modificabileAnno0, Boolean modificabileAnniSuccessivi, BigDecimal importoComponenteOriginaleCapitoloAnno0, BigDecimal importoComponenteOriginaleCapitoloAnno1, BigDecimal importoComponenteOriginaleCapitoloAnno2,  boolean eliminaSuTuttiGliAnni, boolean nuovaComponente, Boolean legataAlCapitolo) {
 		ElementoComponenteVariazione instance = new ElementoComponenteVariazione();
 		instance.setDettaglioAnno0(dett0);
 		instance.setImportoModificabileAnno0(modificabileAnno0);
@@ -276,27 +345,17 @@ public final class ElementoComponenteVariazioneFactory {
 		
 		instance.setEliminaSuTuttiGliAnni(Boolean.valueOf(eliminaSuTuttiGliAnni));
 		instance.setNuovaComponente(Boolean.valueOf(nuovaComponente));
-		
+		//SIAC-8198 refuso nel ternario veniva sempre usato l'importo importoComponenteOriginaleCapitoloAnno0 in tutte e tre le annualita'
 		instance.setImportoComponenteOriginaleCapitoloAnno0(importoComponenteOriginaleCapitoloAnno0 != null ? importoComponenteOriginaleCapitoloAnno0.setScale(2, RoundingMode.HALF_DOWN) : BigDecimal.ZERO);
-		instance.setImportoComponenteOriginaleCapitoloAnno1(importoComponenteOriginaleCapitoloAnno1 != null ? importoComponenteOriginaleCapitoloAnno0.setScale(2, RoundingMode.HALF_DOWN) : BigDecimal.ZERO);
-		instance.setImportoComponenteOriginaleCapitoloAnno2(importoComponenteOriginaleCapitoloAnno2 != null ? importoComponenteOriginaleCapitoloAnno0.setScale(2, RoundingMode.HALF_DOWN) : BigDecimal.ZERO);
+		instance.setImportoComponenteOriginaleCapitoloAnno1(importoComponenteOriginaleCapitoloAnno1 != null ? importoComponenteOriginaleCapitoloAnno1.setScale(2, RoundingMode.HALF_DOWN) : BigDecimal.ZERO);
+		instance.setImportoComponenteOriginaleCapitoloAnno2(importoComponenteOriginaleCapitoloAnno2 != null ? importoComponenteOriginaleCapitoloAnno2.setScale(2, RoundingMode.HALF_DOWN) : BigDecimal.ZERO);
+		
+		instance.setLegataAlCapitolo(legataAlCapitolo != null? legataAlCapitolo : null);
 		
 		return instance;
 	}
 
 
-	/**
-	 * Calcola importi originali.
-	 *
-	 * @param instance the instance
-	 */
-	private static void calcolaImportiOriginali(ElementoComponenteVariazione instance) {
-		instance.setImportoComponenteOriginaleCapitoloAnno0(getImportoComponenteOriginaleFromDettaglio(instance.getDettaglioAnno0()));
-		instance.setImportoComponenteOriginaleCapitoloAnno1(getImportoComponenteOriginaleFromDettaglio(instance.getDettaglioAnno1()));
-		instance.setImportoComponenteOriginaleCapitoloAnno2(getImportoComponenteOriginaleFromDettaglio(instance.getDettaglioAnno2()));
-	}
-	
-	
 	/**
 	 * Gets the importo componente originale from dettaglio.
 	 *

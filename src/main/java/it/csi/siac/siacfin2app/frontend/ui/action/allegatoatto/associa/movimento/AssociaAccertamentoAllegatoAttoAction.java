@@ -18,6 +18,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
 import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siacfin2app.frontend.ui.util.helper.VerificaBloccoRORHelper;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
@@ -69,9 +70,9 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 		BigDecimal totaleSuImpegno = BigDecimal.ZERO;
 		for(SubdocumentoEntrata s : model.getListaSubdocumentoEntrata()){
 			if(model.getUidMovimento() == s.getAccertamento().getUid() &&  
-				 ( (model.getNumeroSubmovimento() == null && (s.getSubAccertamento() == null || s.getSubAccertamento().getNumero() == null))
+				 ( (model.getNumeroSubmovimento() == null && (s.getSubAccertamento() == null || s.getSubAccertamento().getNumeroBigDecimal() == null))
 					 || 
-				   (model.getNumeroSubmovimento() != null && s.getSubAccertamento() != null && model.getNumeroSubmovimento().equals(s.getSubAccertamento().getNumero()))
+				   (model.getNumeroSubmovimento() != null && s.getSubAccertamento() != null && model.getNumeroSubmovimento().equals(s.getSubAccertamento().getNumeroBigDecimal()))
 				 )
 			  ){
 				totaleSuImpegno = totaleSuImpegno.add(s.getImporto());
@@ -105,6 +106,9 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 		Accertamento accertamento = se.getAccertamento();
 		
 		checkCondition(accertamento.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno"));
+		//SIAC-7470: rimosso il seguente controllo al fine di effettuare i controlli su bloccoROR che prevedono l'inserimento di un  movimento
+		//di annualità antecedente all'esercizio.
+		//01/04/2020: il controllo è stato ripristinato, verrà gestito tramite le azioni (ne è stata creata una nuova "...noResImp") per evitare il conflitto 
 		//CR-4440
 		if(accertamento.getAnnoMovimento() != 0 && !isMovgestAssociabileDaUtente( accertamento)){
 			addErrore(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Account utente non abilitato alla gestione dei Residui negli Elenchi."));
@@ -115,7 +119,7 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 		// Minore o uguale all'anno di esercizio
 		checkCondition(accertamento.getAnnoMovimento() <= model.getAnnoEsercizioInt(),
 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'anno del movimento deve essere minore o uguale all'anno di esercizio"));
-		checkNotNull(accertamento.getNumero(), "Numero");
+		checkNotNull(accertamento.getNumeroBigDecimal(), "Numero");
 		checkNotNull(se.getImporto(), "Importo in atto");
 		checkCondition(se.getImporto() == null || se.getImporto().signum() > 0,
 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'importo in atto deve essere positivo"));
@@ -162,6 +166,21 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 			log.info(methodName, "Fallita validazione sul provvisorio di cassa");
 		}
 		
+		//SIAC-7470 bloccoROR: devo controllare l'impegno prima di associarlo
+		boolean result = VerificaBloccoRORHelper.escludiAccertamentoPerBloccoROR(sessionHandler.getAzioniConsentite(), accertamento, model.getAnnoEsercizioInt());
+		if(result){
+			checkCondition(!result, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Accertamento/sub accertamento residuo non utilizzabile"));
+		}else if(accertamento.getElencoSubAccertamenti() != null && !accertamento.getElencoSubAccertamenti().isEmpty()){
+			for(int k = 0; k < accertamento.getElencoSubAccertamenti().size(); k++){
+				result = VerificaBloccoRORHelper.escludiAccertamentoPerBloccoROR(sessionHandler.getAzioniConsentite(), accertamento.getElencoSubAccertamenti().get(k), model.getAnnoEsercizioInt());
+				if(result)
+					break;
+			}
+			if(result){
+				checkCondition(!result, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Accertamento/sub accertamento residuo non utilizzabile"));
+			}
+		}
+		
 		// Se ho errori, esco
 		if(hasErrori()) {
 			throw new ParamValidationException();
@@ -184,13 +203,13 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, response));
 			addErrori(response);
 			return response;
 		}
 		if(response.isFallimento()) {
 			log.info(methodName, "Fallimento nell'invocazione del servizio RicercaAccertamentoPerChiaveOttimizzato");
-			addErrore(ErroreCore.ERRORE_DI_SISTEMA.getErrore(createErrorInServiceInvocationString(request, response)));
+			addErrore(ErroreCore.ERRORE_DI_SISTEMA.getErrore(createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, response)));
 		}
 		return response;
 	}
@@ -261,15 +280,15 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 	private BigDecimal validationSubAccertamento(List<SubAccertamento> subaccertamenti) {
 		final String methodName = "validationSubAccertamento";
 		// Se un movimento ha dei sub si deve necessariamente indicarne uno
-		checkCondition(model.getSubdocumentoEntrata().getSubAccertamento() != null && model.getSubdocumentoEntrata().getSubAccertamento().getNumero() != null,
+		checkCondition(model.getSubdocumentoEntrata().getSubAccertamento() != null && model.getSubdocumentoEntrata().getSubAccertamento().getNumeroBigDecimal() != null,
 				ErroreFin.ACCERTAMENTO_CON_SUBACCERTAMENTI.getErrore());
 		BigDecimal disponibilita = null;
 		// Se ho errori, esco subito. In caso contrario, continuo con i controlli
 		if(!hasErrori()) {
 			SubAccertamento subAccertamento = null;
-			BigDecimal numeroSubAccertamento = model.getSubdocumentoEntrata().getSubAccertamento().getNumero();
+			BigDecimal numeroSubAccertamento = model.getSubdocumentoEntrata().getSubAccertamento().getNumeroBigDecimal();
 			for(SubAccertamento sa : subaccertamenti) {
-				if(sa.getNumero().compareTo(numeroSubAccertamento) == 0) {
+				if(sa.getNumeroBigDecimal().compareTo(numeroSubAccertamento) == 0) {
 					subAccertamento = sa;
 					break;
 				}
@@ -334,7 +353,7 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 		List<SubdocumentoEntrata> list = model.getListaSubdocumentoEntrata();
 		if(row < 0 || row >= list.size()) {
 			log.debug(methodName, "Riga non valida: " + row + " non e' compreso tra 0 e " + list.size());
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Riga da eliminare", "deve essere compreso tra 0 e " + list.size()));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Riga da eliminare", "deve essere compreso tra 0 e " + list.size()));
 		}
 	}
 	
@@ -379,7 +398,7 @@ public class AssociaAccertamentoAllegatoAttoAction extends AssociaMovimentoAlleg
 		List<SubdocumentoEntrata> list = model.getListaSubdocumentoEntrata();
 		if(row < 0 || row >= list.size()) {
 			log.debug(methodName, "Riga non valida: " + row + " non e' compreso tra 0 e " + list.size());
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Riga da aggiornare", "deve essere compreso tra 0 e " + list.size()));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Riga da aggiornare", "deve essere compreso tra 0 e " + list.size()));
 			return;
 		}
 		SubdocumentoEntrata se = model.getSubdocumentoEntrata();

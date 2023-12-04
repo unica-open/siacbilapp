@@ -20,7 +20,7 @@ import it.csi.siac.siaccecser.model.TipoStampa;
  * @version 1.0.1 - 01/04/2015
  */
 
-public class GenericStampaCECModel extends CassaEconomaleBaseModel {
+public abstract class GenericStampaCECModel extends CassaEconomaleBaseModel {
 
 	/* per serializzazione */
 	private static final long serialVersionUID = -1851080829775459775L;

@@ -29,8 +29,13 @@ SPDX-License-Identifier: EUPL-1.2
 								<div class="control-group">
 									<label class="control-label" for="tipoDocumentoFELFatturaFEL">Tipo documento FEL</label>
 									<div class="controls">
-										<s:select list="listaTipoDocumentoFEL" id="tipoDocumentoFELFatturaFEL" name="fatturaFEL.tipoDocumentoFEL" cssClass="span6"
-											headerKey="" headerValue="" listValue="%{codice + ' - ' + descrizione}" />
+									<%-- SIAC-7557 Estraggo i valori dal db 
+										<s:select list="listaTipoDocumentoFELDB" id="tipoDocumentoFELFatturaFEL" name="fatturaFEL.tipoDocFEL" cssClass="span6"
+											headerKey="" headerValue="" listValue="%{codice + ' - ' + descrizione}" />--%>
+											
+									 <s:select list="listaTipoDocumentoFELDB" cssClass="span6" id="tipoDocumentoFELFatturaFEL" name="fatturaFEL.tipoDocFEL.codice"  headerValue=""   headerKey="" 
+												listKey="codice" listValue="%{codice + ' - ' + descrizione}"  />		
+											
 									</div>
 								</div>
 								<div class="control-group">

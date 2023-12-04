@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.antic
 
 import java.math.BigDecimal;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -14,9 +14,8 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException.Level;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospese.AggiornaRendicontoAnticipoSpeseCassaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.msg.AggiornaRendicontoRichiesta;
 import it.csi.siac.siaccecser.frontend.webservice.msg.AggiornaRendicontoRichiestaResponse;
@@ -27,6 +26,7 @@ import it.csi.siac.siaccecser.model.RendicontoRichiesta;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per l'aggiornamento del rendiconto dell'anticipo spese.
@@ -102,7 +102,7 @@ public class AggiornaRendicontoAnticipoSpeseCassaEconomaleAction extends BaseIns
 		logServiceResponse(res);
 		
 		// Controllo gli errori
-		checkServiceResponseException(methodName, req, res);
+		checkServiceResponseException(methodName, RicercaDettaglioRendicontoRichiesta.class, res);
 		// Response senza errori
 		log.debug(methodName, "Rendiconto con uid " + model.getRendicontoRichiesta().getUid() + " trovato");
 		
@@ -189,7 +189,7 @@ public class AggiornaRendicontoAnticipoSpeseCassaEconomaleAction extends BaseIns
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaRendicontoRichiesta.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -228,7 +228,7 @@ public class AggiornaRendicontoAnticipoSpeseCassaEconomaleAction extends BaseIns
 	public String annullaStep2(){
 		// Ripristino il movimento e il submovimento di gestione
 		String methodName = "annullaStep2";
-		log.debug(methodName, "mov: " + model.getMovimentoGestione().getNumero() + " copia: " + model.getMovimentoGestioneCopia().getNumero());
+		log.debug(methodName, "mov: " + model.getMovimentoGestione().getNumeroBigDecimal() + " copia: " + model.getMovimentoGestioneCopia().getNumeroBigDecimal());
 		model.setMovimentoGestione(model.getMovimentoGestioneCopia());
 		model.setSubMovimentoGestione(model.getSubMovimentoGestioneCopia());
 		return SUCCESS;
@@ -260,8 +260,8 @@ public class AggiornaRendicontoAnticipoSpeseCassaEconomaleAction extends BaseIns
 	}
 	
 	@Override
-	protected AzioniConsentite[] retrieveAzioniConsentite() {
-		return new AzioniConsentite[] {AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_AGGIORNA_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_ABILITA};
+	protected AzioneConsentitaEnum[] retrieveAzioniConsentite() {
+		return new AzioneConsentitaEnum[] {AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_AGGIORNA_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_ABILITA};
 	}
 
 }

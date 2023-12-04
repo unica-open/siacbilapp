@@ -11,11 +11,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.categoriacespiti.RisultatiRicercaCategoriaCespitiAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.categoriacespiti.ElementoCategoriaCespiti;
 import it.csi.siac.siaccespser.frontend.webservice.ClassificazioneCespiteService;
@@ -25,13 +24,14 @@ import it.csi.siac.siaccespser.model.CategoriaCespiti;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * The Class RisultatiRicercaCategoriaCespitiAjaxAction.
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaCategoriaCespitiAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoCategoriaCespiti, RisultatiRicercaCategoriaCespitiAjaxModel, CategoriaCespiti, RicercaSinteticaCategoriaCespiti, RicercaSinteticaCategoriaCespitiResponse> {
+public class RisultatiRicercaCategoriaCespitiAjaxAction extends PagedDataTableAjaxAction<ElementoCategoriaCespiti, RisultatiRicercaCategoriaCespitiAjaxModel, CategoriaCespiti, RicercaSinteticaCategoriaCespiti, RicercaSinteticaCategoriaCespitiResponse> {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 5748224382213088260L;
@@ -79,12 +79,12 @@ public class RisultatiRicercaCategoriaCespitiAjaxAction extends GenericRisultati
 	}
 
 	@Override
-	protected ElementoCategoriaCespiti ottieniIstanza(CategoriaCespiti e) throws FrontEndBusinessException {
+	protected ElementoCategoriaCespiti getInstance(CategoriaCespiti e) throws FrontEndBusinessException {
 		return new ElementoCategoriaCespiti(e);
 	}
 
 	@Override
-	protected RicercaSinteticaCategoriaCespitiResponse ottieniResponse(RicercaSinteticaCategoriaCespiti req) {
+	protected RicercaSinteticaCategoriaCespitiResponse getResponse(RicercaSinteticaCategoriaCespiti req) {
 		return classificazioneCespiteService.ricercaSinteticaCategoriaCespiti(req);
 	}
 
@@ -94,9 +94,9 @@ public class RisultatiRicercaCategoriaCespitiAjaxAction extends GenericRisultati
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoCategoriaCespiti instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoCategoriaCespiti instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioniConsentite.CATEGORIA_CESPITI_AGGIORNA, listaAzioniConsentite);
+		boolean aggiornaConsentito = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.CATEGORIA_CESPITI_AGGIORNA, listaAzioniConsentite);
 		StringBuilder azioniBuilder = new StringBuilder()
 		    .append(AZIONI_CONSENTITE_BEGIN)
 		    .append(aggiornaConsentito ? AZIONI_CONSENTITE_AGGIORNA : "")

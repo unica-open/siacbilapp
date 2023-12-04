@@ -58,6 +58,7 @@ var Provvedimento = (function(w, exports) {
         this.idSuffix = suffix;
         this.idInfix = infix;
         this.$alertErrori = $("#ERRORI_MODALE_PROVVEDIMENTO" + this.idSuffix);
+        this.$campoUid = $("#uidAttoAmministrativo" + this.idSuffix);
         this.$campoAnno = $(campoAnno + this.idSuffix);
         this.$campoNumero = $(campoNumero + this.idSuffix);
         this.$campoTipoAtto = $(campoTipoAtto + this.idSuffix);
@@ -248,6 +249,7 @@ var Provvedimento = (function(w, exports) {
 
         provvedimento = checkedProvvedimento.data("sourceProvvedimento");
 
+        this.$campoUid.val(provvedimento.uid);
         this.$campoAnno.val(provvedimento.anno).attr("readonly", "readonly");
         this.$campoNumero.val(provvedimento.numero)
                 .attr("readonly", "readonly");

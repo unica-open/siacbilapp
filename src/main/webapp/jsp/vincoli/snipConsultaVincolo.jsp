@@ -45,7 +45,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<s:iterator value="listaCapitoliEntrata" var="entry">
 			<tr>
 				<td>
-					<a href="#" data-trigger="hover" rel="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
+					<a href="#" data-trigger="hover" data-toggle="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
 						<s:property value="%{#entry.capitolo}"/>
 					</a>
 				</td>
@@ -85,7 +85,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<s:iterator value="listaCapitoliUscita" var="entry">
 			<tr>
 				<td>
-					<a href="#" data-trigger="hover" rel="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
+					<a href="#" data-trigger="hover" data-toggle="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
 						<s:property value="%{#entry.capitolo}"/>
 					</a>
 				</td>

@@ -14,8 +14,8 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoScritturaPrimaNotaIntegrataFactory;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.importi.ImportiDareAvere;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
-import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.model.messaggio.MessaggioCore;
 import it.csi.siac.siacgenser.frontend.webservice.RegistrazioneMovFinService;
 import it.csi.siac.siacgenser.frontend.webservice.msg.CalcolaImportoMovimentoCollegato;
 import it.csi.siac.siacgenser.frontend.webservice.msg.CalcolaImportoMovimentoCollegatoResponse;
@@ -160,7 +160,7 @@ public abstract class AggiornaPrimaNotaIntegrataBaseAction<M extends AggiornaPri
 		
 		BigDecimal importoMovimento = res.getImporto();
 		warnCondition(importoMovimento == null || importoMovimento.compareTo(wrapper.getTotaleDare()) == 0,
-				MessaggioBil.MESSAGGIO_DI_SISTEMA.getMessaggio("il totale del movimento (" + FormatUtils.formatCurrency(importoMovimento)
+				MessaggioCore.MESSAGGIO_DI_SISTEMA.getMessaggio("il totale del movimento (" + FormatUtils.formatCurrency(importoMovimento)
 				+ ") e il totale delle scritture (" + FormatUtils.formatCurrency(wrapper.getTotaleDare()) + ") non coincidono. Proseguire con l'elaborazione?"));
 	}
 	

@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.cespite.ElementoCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaMovimentoDettaglioRegistroACespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaMovimentoEPRegistroACespite;
 import it.csi.siac.siaccespser.model.CespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
+import it.csi.siac.siacfin2ser.model.LiquidazioneModelDetail;
+import it.csi.siac.siacfin2ser.model.SubdocumentoEntrataModelDetail;
+import it.csi.siac.siacfin2ser.model.SubdocumentoSpesaModelDetail;
 import it.csi.siac.siacgenser.model.CausaleEPModelDetail;
 import it.csi.siac.siacgenser.model.ContoModelDetail;
 import it.csi.siac.siacgenser.model.MovimentoDettaglio;
@@ -23,6 +26,7 @@ import it.csi.siac.siacgenser.model.MovimentoEPModelDetail;
 import it.csi.siac.siacgenser.model.PrimaNota;
 import it.csi.siac.siacgenser.model.PrimaNotaModelDetail;
 import it.csi.siac.siacgenser.model.RegistrazioneMovFinModelDetail;
+import it.csi.siac.siacgenser.model.TipoCausale;
 
 /**
  * The Class ConsultaRegistroACespiteModel.
@@ -44,6 +48,9 @@ public abstract class BaseConsultaAggiornaRegistroACespiteModel extends GenericB
 	private Boolean abilitaInserimentoCespite = Boolean.FALSE;
 	
 	private List<ElementoCespite> listaCespitiCollegatiAMovimentoEP = new ArrayList<ElementoCespite>();
+	
+	//SIAC-7142
+	private TipoCausale tipoCausale;
 	
 	/**
 	 * @return the primaNota
@@ -102,6 +109,14 @@ public abstract class BaseConsultaAggiornaRegistroACespiteModel extends GenericB
 		this.abilitaInserimentoCespite = abilitaInserimentoCespite;
 	}
 	
+	public TipoCausale getTipoCausale() {
+		return tipoCausale;
+	}
+
+	public void setTipoCausale(TipoCausale tipoCausale) {
+		this.tipoCausale = tipoCausale;
+	}
+
 	/**
 	 * @return the listaCespitiCollegatiAMovimentoEP
 	 */
@@ -153,7 +168,7 @@ public abstract class BaseConsultaAggiornaRegistroACespiteModel extends GenericB
 		RicercaSinteticaMovimentoEPRegistroACespite req = creaRequest(RicercaSinteticaMovimentoEPRegistroACespite.class);
 		req.setParametriPaginazione(creaParametriPaginazione());
 		req.setPrimaNota(getPrimaNota());
-		req.setModelDetails(new ModelDetail[] {
+		req.setModelDetails(new ModelDetailEnum[] {
 				MovimentoEPModelDetail.RegistrazioneMovFinModelDetail, MovimentoEPModelDetail.PrimaNotaModelDetail, MovimentoEPModelDetail.MovimentoDettaglioModelDetail, 
 				MovimentoEPModelDetail.CausaleEPModelDetail, CausaleEPModelDetail.Evento, CausaleEPModelDetail.Conto,
 				MovimentoDettaglioModelDetail.Cespiti, MovimentoDettaglioModelDetail.ContoModelDetail,
@@ -187,12 +202,17 @@ public abstract class BaseConsultaAggiornaRegistroACespiteModel extends GenericB
 		RicercaSinteticaMovimentoDettaglioRegistroACespite req = creaRequest(RicercaSinteticaMovimentoDettaglioRegistroACespite.class);
 		req.setParametriPaginazione(creaParametriPaginazione());
 		req.setPrimaNota(getPrimaNota());
-		req.setModelDetails(new ModelDetail[] {MovimentoEPModelDetail.RegistrazioneMovFinModelDetail, MovimentoEPModelDetail.PrimaNotaModelDetail,
+		req.setModelDetails(new ModelDetailEnum[] {MovimentoEPModelDetail.RegistrazioneMovFinModelDetail, MovimentoEPModelDetail.PrimaNotaModelDetail,
 				MovimentoEPModelDetail.CausaleEPModelDetail, CausaleEPModelDetail.Evento, CausaleEPModelDetail.Conto,
 				MovimentoDettaglioModelDetail.MovimentoEPModelDetail,
 				MovimentoDettaglioModelDetail.Cespiti, MovimentoDettaglioModelDetail.ContoModelDetail,
 				MovimentoDettaglioModelDetail.ImportoInventariato,
-				RegistrazioneMovFinModelDetail.EventoMovimento,
+				RegistrazioneMovFinModelDetail.EventoMovimentoModelDetail,
+				SubdocumentoSpesaModelDetail.AttoAmm,
+				SubdocumentoSpesaModelDetail.TestataDocumento,
+				SubdocumentoEntrataModelDetail.AttoAmm,
+				SubdocumentoEntrataModelDetail.TestataDocumento,
+				LiquidazioneModelDetail.AttoAmm,
 				PrimaNotaModelDetail.TipoCausale,
 				ContoModelDetail.TipoConto});
 		

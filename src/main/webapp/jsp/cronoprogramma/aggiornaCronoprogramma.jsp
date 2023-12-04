@@ -22,7 +22,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<s:form id="formAggiornaCronoprogramma" cssClass="form-horizontal" novalidate="novalidate" action="aggiornamentoCronoprogramma">
 
 						<h3 class="h3">Progetto: <s:property value="progetto.codice" /> - <s:property value="progetto.tipoProgetto.descrizione" /> </h3>&nbsp;
-						<a rel="popover" data-trigger="hover" data-original-title="Descrizione" data-content="<s:property value="progetto.descrizione" />" >
+						<a data-toggle="popover" data-trigger="hover" data-original-title="Descrizione" data-content="<s:property value="progetto.descrizione" />" >
 							<i class="icon-info-sign h3">&nbsp;<span class="nascosto">selezionare prima la Missione</span></i>
 						</a>
 						<!-- message errore -->
@@ -42,7 +42,7 @@ SPDX-License-Identifier: EUPL-1.2
 							<s:include value="/jsp/include/indietro.jsp" />
 							<s:a action="%{baseUrlCronoprogramma + 'Clean'}" cssClass="btn btn-link">annulla</s:a>
 							<s:if test="%{cronoAggiornabile}">
-								<s:submit value="Salva" cssClass="btn btn-primary pull-right" />
+								<s:submit value="Salva" id="salvaCrono" cssClass="btn btn-primary pull-right" />
 							</s:if>
 						</p>
 					</s:form>
@@ -74,11 +74,11 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ztree/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricercaProvvedimento_collapse.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-	<script type="text/javascript" src="${jspath}cronoprogramma/cronoprogramma.js"></script>
-	<script type="text/javascript" src="${jspath}cronoprogramma/aggiorna.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricercaProvvedimento_collapse.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cronoprogramma/cronoprogramma.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cronoprogramma/aggiorna.js"></script>
 	
 </body>
 </html>

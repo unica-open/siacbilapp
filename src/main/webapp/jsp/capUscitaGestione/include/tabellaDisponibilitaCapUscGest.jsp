@@ -5,7 +5,7 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<h4>Disponibilit&agrave;</h4>
+<h4 id="titleDisponibilita">Disponibilit&agrave;</h4>
 <table class="table table-hover table-bordered">
 	<thead>
 		<tr class="row-slim-bottom">
@@ -23,18 +23,31 @@ SPDX-License-Identifier: EUPL-1.2
 	</thead>
 	<tbody>
 		<tr>
-			<td><strong>Disponibilit&agrave; a variare</strong></td>
+			<td><a id="disponibilitaVariareComponenti" href="#titleDisponibilita"  class="disabled" ><strong>Disponibilit&agrave; a variare</strong></a></td>
 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno0.disponibilitaVariare"/></td>
 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno1.disponibilitaVariare"/></td>
 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno2.disponibilitaVariare"/></td>
 			<td></td>
 		</tr>
+		<!--SIAC-7349 Start SR210 MR 14/04/2020 visualizzazione disponibilita per singola componente-->
+		<tbody id="componentiDisponibilitaVariare">
+			<s:iterator value="disponibilitaVariareComponentiCapitolo" var="dispVar" status="dispVarComponentiCapitolo">
+				<tr class="componenti-riepilogo">
+					<td><s:property value="#dispVar.tipoComponenteImportiCapitolo.descrizione"/></td>
+					<td class="text-right"><s:property value="#dispVar.dettaglioAnno0.importo"/></td>
+					<td class="text-right"><s:property value="#dispVar.dettaglioAnno1.importo"/></td>
+					<td class="text-right"><s:property value="#dispVar.dettaglioAnno2.importo"/></td>
+					<td></td>
+				</tr>
+			</s:iterator>
+		</tbody>
+		<!--SIAC-7349 End-->
 		<tr>
 			<td colspan="5" class="row-small"></td>
 		</tr>
 
 		<tr>
-			<th colspan="5">Impegni</th>
+			<th id="titleImpegni" colspan="5">Impegni</th>
 		</tr>
 		<tr>
 			<td><strong><abbr title="Numero">N.</abbr> totale</strong></td>
@@ -80,6 +93,16 @@ SPDX-License-Identifier: EUPL-1.2
 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno2.finanziatoDaAvanzo"/></td>
 			<td></td>
 		</tr>
+		
+		<!-- SIAC-8838 -->
+		<tr>
+			<td><strong>- cancellazioni/economie che non liberano disponibile</strong></td>
+			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno0.cancellazioniEconomie"/></td>
+			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno1.cancellazioniEconomie"/></td>
+			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno2.cancellazioniEconomie"/></td>
+			<td></td>
+		</tr>
+		
 		<!-- FINE FILIPPO SIAC-6899 -->
 		<s:if test="prenotazioneAbilitato">
 			<tr>
@@ -91,12 +114,25 @@ SPDX-License-Identifier: EUPL-1.2
 			</tr>
 		</s:if>
 		<tr>
-			<td><strong>Disponibilit&agrave; ad impegnare</strong></td>
+			<td><a id="disponibilitaImpegnareComponenti" href="#titleImpegni"  class="disabled" ><strong>Disponibilit&agrave; ad impegnare</strong></a></td>
 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno0.disponibilitaImpegnare"/></td>
 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno1.disponibilitaImpegnare"/></td>
 			<td class="text-right"><s:property value="disponibilitaCapitoloUscitaGestioneAnno2.disponibilitaImpegnare"/></td>
 			<td></td>
 		</tr>
+		<!--SIAC-7349 Start SR210 MR 14/04/2020 visualizzazione disponibilita per singola componente-->
+		<tbody id="componentiDisponibilitaImpegnare">
+			<s:iterator value="disponibilitaImpegnareComponentiCapitolo" var="dispImp" status="dispImpComponentiCapitolo">
+				<tr class="componenti-riepilogo">
+					<td><s:property value="#dispImp.tipoComponenteImportiCapitolo.descrizione"/></td>
+					<td class="text-right"><s:property value="#dispImp.dettaglioAnno0.importo"/></td>
+					<td class="text-right"><s:property value="#dispImp.dettaglioAnno1.importo"/></td>
+					<td class="text-right"><s:property value="#dispImp.dettaglioAnno2.importo"/></td>
+					<td></td>
+				</tr>
+			</s:iterator>	
+		</tbody>
+		<!--SIAC-7349 End-->
 		<s:if test="faseProvvisoria">
 			<tr>
 				<td><strong>12° in regime provvisorio</strong>

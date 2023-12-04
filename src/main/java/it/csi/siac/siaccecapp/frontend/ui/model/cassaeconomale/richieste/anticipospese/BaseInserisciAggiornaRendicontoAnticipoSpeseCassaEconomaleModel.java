@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceRichiestaEconomale;
 import it.csi.siac.siaccecser.frontend.webservice.msg.RicercaTipoGiustificativo;

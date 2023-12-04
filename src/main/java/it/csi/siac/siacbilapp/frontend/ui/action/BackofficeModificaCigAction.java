@@ -7,7 +7,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,13 +18,14 @@ import it.csi.siac.siacbilapp.frontend.ui.model.BackofficeModificaCigModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilser.frontend.webservice.BackofficeModificaCigService;
 import it.csi.siac.siacbilser.frontend.webservice.CodificheService;
+import it.csi.siac.siacbilser.frontend.webservice.FondiDubbiaEsigibilitaService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ModificaCigBackoffice;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ModificaCigBackofficeResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodificheResponse;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
 
@@ -96,14 +97,14 @@ public class BackofficeModificaCigAction extends GenericBilancioAction<Backoffic
 		checkCondition(!(checkUidImpegno && checkUidSubImpegno), ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("Sono compilati entrambi gli uid"));
 		
 		checkCondition(model.getImpegno().getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno"));
-		checkNotNull(model.getImpegno().getNumero(), "Numero");
+		checkNotNull(model.getImpegno().getNumeroBigDecimal(), "Numero");
 		
 		checkNotNull(model.getTipoModifica(), "Tipo modifica");
 		
 		SiopeTipoDebito tipoDebito = ComparatorUtils.searchByUidEventuallyNull(model.getListaSiopeTipoDebito(), model.getSiopeTipoDebito());
 		checkNotNullNorInvalidUid(tipoDebito, "Tipo debito SIOPE", true);
 		
-		if(Constanti.SIOPE_CODE_COMMERCIALE.equals(tipoDebito.getCodice())) {
+		if(CostantiFin.SIOPE_CODE_COMMERCIALE.equals(tipoDebito.getCodice())) {
 			// Tipo Debito Commerciale
 			if(!checkSiopeAssenzaMotivazione && !checkCig) {
 				addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("CIG o Motivazione assenza del CIG"));
@@ -120,9 +121,17 @@ public class BackofficeModificaCigAction extends GenericBilancioAction<Backoffic
 		
 	}
 	
+	
+
 	@Override
 	@BreadCrumb("%{model.titolo}")
 	public String execute() throws Exception {
+		
+		
+		RicercaCodifiche req = model.creaRequestRicercaCodifiche(SiopeTipoDebito.class, SiopeAssenzaMotivazione.class);
+		RicercaCodificheResponse res = codificheService.ricercaCodifiche(req);
+		
+		
 		return SUCCESS;
 	}
 	

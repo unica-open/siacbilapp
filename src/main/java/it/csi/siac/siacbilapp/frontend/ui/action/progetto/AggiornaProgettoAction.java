@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -26,7 +26,6 @@ import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto.ElementoVersioneCronoprogramma;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.progetto.ElementoVersioneCronoprogrammaFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaProgettoResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaCronoprogramma;
@@ -37,8 +36,6 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVin
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoEntrataResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoSpesa;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoSpesaResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogramma;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CambiaFlagUsatoPerFpvCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CambiaFlagUsatoPerFpvCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.OttieniFondoPluriennaleVincolatoCronoprogramma;
@@ -47,6 +44,10 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCronoprogr
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioProgettoResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaAggiorna;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaAggiornaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsulta;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsultaResponse;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
 import it.csi.siac.siacbilser.model.FondoPluriennaleVincolatoCronoprogramma;
 import it.csi.siac.siacbilser.model.FondoPluriennaleVincolatoEntrata;
@@ -61,8 +62,10 @@ import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di Action per la gestione della consultazione del Progetto.
@@ -111,7 +114,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		RicercaDettaglioProgettoResponse response = progettoService.ricercaDettaglioProgetto(request);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioProgetto.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -139,7 +142,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 	 * Controlla se l'utente &eacute; decentrato
 	 */
 	private void checkDecentrato() {
-		boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PROGETTO_AGGIORNA_DECENTRATO, sessionHandler.getAzioniConsentite());
+		boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PROGETTO_AGGIORNA_DECENTRATO, sessionHandler.getAzioniConsentite());
 		model.setDecentrato(isDecentrato);
 	}
 
@@ -150,7 +153,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 	private void impostaDatiProgetto(Progetto progetto) {
 		//SIAC-6255, per il pregresso
 		if(progetto.getTipoProgetto() == null) {
-			progetto.setTipoProgetto(obtainTipoProgettoByFaseBilancio());
+			progetto.setTipoProgetto(getTipoProgettoByFaseBilancio());
 		}
 		
 		model.setProgetto(progetto);
@@ -173,14 +176,14 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		evc.setUid(-1);
 		ElementoVersioneCronoprogrammaFactory.impostaAzioniCronoprogrammaGestione(evc, listaAzioniConsentite);
 		
-		CalcoloProspettoRiassuntivoCronoprogramma request = model.creaRequestCalcoloProspettoRiassuntivoCronoprogramma(model.getUidDaAggiornare());
+		CalcoloProspettoRiassuntivoCronoprogrammaAggiorna request = model.creaRequestCalcoloProspettoRiassuntivoCronoprogrammaAggiorna(model.getUidDaAggiornare());
 		logServiceRequest(request);
 
-		CalcoloProspettoRiassuntivoCronoprogrammaResponse response = progettoService.calcoloProspettoRiassuntivoCronoprogramma(request);
+		CalcoloProspettoRiassuntivoCronoprogrammaAggiornaResponse response = progettoService.calcoloProspettoRiassuntivoCronoprogrammaAggiorna(request);
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(CalcoloProspettoRiassuntivoCronoprogrammaAggiorna.class, response));
 			addErrori(response);
 			return;
 		}
@@ -190,15 +193,23 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 			for(ProspettoRiassuntivoCronoprogramma prc : result){
 				if(prc.getAnno().intValue() == model.getAnnoEsercizioInt().intValue()){
 					evc.setCompetenzaSpesaAnno0(prc.getTotaliSpese());
+					//SIAC-8847
+					evc.setCompetenzaEntrataAnno0(prc.getTotaliEntrate());
 				}
 				if(prc.getAnno().intValue() == model.getAnnoEsercizioInt().intValue()+1){
 					evc.setCompetenzaSpesaAnno1(prc.getTotaliSpese());
+					//SIAC-8847
+					evc.setCompetenzaEntrataAnno1(prc.getTotaliEntrate());
 				}
 				if(prc.getAnno().intValue() == model.getAnnoEsercizioInt().intValue()+2){
 					evc.setCompetenzaSpesaAnno2(prc.getTotaliSpese());
+					//SIAC-8847
+					evc.setCompetenzaEntrataAnno2(prc.getTotaliEntrate());
 				}
 				if(prc.getAnno().intValue() > model.getAnnoEsercizioInt().intValue()+2){
 					evc.setCompetenzaSpesaAnnoSucc(evc.getCompetenzaSpesaAnnoSucc().add(prc.getTotaliSpese()));
+					//SIAC-8847
+					evc.setCompetenzaEntrataAnnoSucc(evc.getCompetenzaEntrataAnnoSucc().add(prc.getTotaliEntrate()));
 				}
 			}
 			
@@ -250,13 +261,38 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 	 */
 	private void effettuaAggiornamento() throws WebServiceInvocationFailureException  {
 		AggiornaAnagraficaProgetto req = model.creaRequestAggiornaAnagraficaProgetto();
+		
+		//SIAC-8900
+		req.setByPassFaseBilancioProgetto(isBilancioEsercizioProvvisorio());
+		
 		AggiornaAnagraficaProgettoResponse res = progettoService.aggiornaAnagraficaProgetto(req);
 
-		if (res.hasErrori()) {
-			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
-		}
+		checkServiceResponse(AggiornaAnagraficaProgetto.class, res);
+		
 		model.setModificabileInvestimentoInCorsoDiDefinizione(Boolean.TRUE.equals(res.getProgetto().getInvestimentoInCorsoDiDefinizione()));
+	}
+ 
+	public boolean disabilitaAggiornamentoCampi() throws WebServiceInvocationFailureException {
+		return Boolean.TRUE.equals(Boolean.parseBoolean(getParametroConfigurazioneEnte(
+				ParametroConfigurazioneEnteEnum.OOPP_PROGETTO_AGGIORNA_DISABILITA_CAMPI)));
+	}
+
+	private void preserveFieldsFromUpdate() {
+		RicercaDettaglioProgetto ricercaDettaglioProgetto = model.creaRequestRicercaDettaglioProgetto();
+		ricercaDettaglioProgetto.setChiaveProgetto(model.getProgetto().getUid());
+		RicercaDettaglioProgettoResponse ricercaDettaglioProgettoResponse = progettoService.ricercaDettaglioProgetto(ricercaDettaglioProgetto);
+
+		Progetto progetto = ricercaDettaglioProgettoResponse.getProgetto();
+		Progetto modelProgetto = model.getProgetto();
+
+		modelProgetto.setNote(progetto.getNote());
+		modelProgetto.setCodice(progetto.getCodice());
+		modelProgetto.setCup(progetto.getCup());
+		modelProgetto.setValoreComplessivo(progetto.getValoreComplessivo());
+		modelProgetto.setDescrizione(progetto.getDescrizione());
+		modelProgetto.setTipoAmbito(progetto.getTipoAmbito());
+		modelProgetto.setResponsabileUnico(progetto.getResponsabileUnico());
+		modelProgetto.setStrutturaAmministrativoContabile(progetto.getStrutturaAmministrativoContabile());
 	}
 
 	/**
@@ -269,7 +305,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		RicercaProvvedimentoResponse res = provvedimentoService.ricercaProvvedimento(req);
 		if (res.hasErrori()) {
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaProvvedimento.class, res));
 		}
 		if(res.getListaAttiAmministrativi().isEmpty()) {
 			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Atto amministrativo", "uid " + model.getAttoAmministrativo().getUid()));
@@ -373,13 +409,13 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		log.debug(methodName, "Consultazione cronoprogrammaGestione");
 
 	
-		CalcoloProspettoRiassuntivoCronoprogramma request = model.creaRequestCalcoloProspettoRiassuntivoCronoprogramma();
+		CalcoloProspettoRiassuntivoCronoprogrammaConsulta request = model.creaRequestCalcoloProspettoRiassuntivoCronoprogrammaConsulta();
 		
 
-		CalcoloProspettoRiassuntivoCronoprogrammaResponse response = progettoService.calcoloProspettoRiassuntivoCronoprogramma(request);
+		CalcoloProspettoRiassuntivoCronoprogrammaConsultaResponse response = progettoService.calcoloProspettoRiassuntivoCronoprogrammaConsulta(request);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(CalcoloProspettoRiassuntivoCronoprogrammaConsulta.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -415,7 +451,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(OttieniFondoPluriennaleVincolatoCronoprogramma.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -525,8 +561,14 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 
 	/**
 	 * Validazione per il metodo di aggiornamento.
+	 * @throws WebServiceInvocationFailureException 
 	 */
-	public void validateAggiornaProgetto() {
+	public void validateAggiornaProgetto() throws WebServiceInvocationFailureException {
+		// SIAC-8703
+		if (disabilitaAggiornamentoCampi()) {
+			preserveFieldsFromUpdate();
+		}
+
 		Progetto p = model.getProgetto();
 		checkNotNull(p, "progetto");
 		
@@ -536,7 +578,9 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		checkNotNullNorInvalidUid(model.getAttoAmministrativo(), "Provvedimento");
 		checkCondition(!model.isProvvedimentoValorizzato() || !"ANNULLATO".equalsIgnoreCase(model.getAttoAmministrativo().getStatoOperativo()), ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore());
 		//SIAC-6255
-		TipoProgetto tipoProgetto = obtainTipoProgettoByFaseBilancio();
+		//SIAC-8900
+		caricaFaseBilancio();
+		TipoProgetto tipoProgetto = getTipoProgettoByFaseBilancio();
 		checkCondition(tipoProgetto.equals(p.getTipoProgetto()) , ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Tipo progetto, atteso " + tipoProgetto.getDescrizione()));
 	}
 
@@ -544,7 +588,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 
 	@Override
 	protected void checkCasoDUsoApplicabile(String cdu) {
-		final String codiceAzione = AzioniConsentite.PROGETTO_AGGIORNA.getNomeAzione();
+		final String codiceAzione = AzioneConsentitaEnum.PROGETTO_AGGIORNA.getNomeAzione();
 		List<AzioneConsentita> list = sessionHandler.getAzioniConsentite();
 		for (AzioneConsentita azioneConsentita : list) {
 			if (azioneConsentita.getAzione().getNome().equalsIgnoreCase(codiceAzione)) {
@@ -586,7 +630,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(CalcoloFondoPluriennaleVincolatoComplessivo.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -613,7 +657,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(CalcoloFondoPluriennaleVincolatoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -640,7 +684,7 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(CalcoloFondoPluriennaleVincolatoSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -670,6 +714,29 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		
 		model.getCronoprogrammaDaAggiornare().setUsatoPerFpv(Boolean.TRUE);
 		model.getCronoprogrammaDaAggiornare().setUsatoPerFpvProv(Boolean.TRUE);
+		
+		return chiamaCambiaFlagPerFpvCronoprogramma(methodName);
+	}
+	
+	/**
+	 * Preparazione per il metodo {@link #disassociaCronoprogrammaComeUsatoPerFPV()}.
+	 */
+	public void prepareDisassociaCronoprogrammaComeUsatoPerFPV() {
+		model.setUidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV(null);
+	}
+	
+	/**
+	 * disassocia il cronoprogramma da come usato per fpv ---->cambio il flag e richiama il servizio di aggiornamento
+	 * 
+	 * @return una Stringa corrispondente al risultato dell'invocazione
+	 */
+	public String disassociaCronoprogrammaComeUsatoPerFPV() {
+		final String methodName = "disassociaCronoprogrammaComeUsatoPerFPV";
+		log.debug(methodName, "disassocia cronoprogramma come usato per fpv");
+		log.debug(methodName, "uid cronoprogramma da settare " + model.getUidCronoprogrammaDaSettareComeUsatoPerCalcoloFPV());
+		
+		model.getCronoprogrammaDaAggiornare().setUsatoPerFpv(Boolean.FALSE);
+		model.getCronoprogrammaDaAggiornare().setUsatoPerFpvProv(Boolean.FALSE);
 		
 		return chiamaCambiaFlagPerFpvCronoprogramma(methodName);
 	}
@@ -712,6 +779,30 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 				ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Stato del cronoprogramma ("+ cronoprogramma.getStatoOperativoCronoprogramma() + ") non congruente."));
 		checkCondition(!Boolean.TRUE.equals(cronoprogramma.getUsatoPerFpv()),
 				ErroreBil.CRONOPROGRAMMA_CHE_NON_SI_PUO_USARE_PER_IL_CALCOLO_FPV_PERCHE_GIA_UTILIZZATO_NEL_CALCOLO_FPV.getErrore());
+		return cronoprogramma;
+	}
+	
+	
+	/**
+	 * @return
+	 */
+	private Cronoprogramma innerValidateDisassociaFPV() {
+		checkNotNull(model.getUidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV(), "Cronoprogramma", true);
+		
+		Cronoprogramma cronoprogramma = new Cronoprogramma();
+		cronoprogramma.setUid(model.getUidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV().intValue());
+		
+		// Cerco nella lista
+		cronoprogramma = ComparatorUtils.searchByUidEventuallyNull(model.getListaCronoprogrammiCollegatiAlProgetto(), cronoprogramma);
+		checkNotNullNorInvalidUid(cronoprogramma, "Cronoprogramma", true);
+		
+		checkCondition(StatoOperativoCronoprogramma.VALIDO.equals(cronoprogramma.getStatoOperativoCronoprogramma()),
+				ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Stato del cronoprogramma ("+ cronoprogramma.getStatoOperativoCronoprogramma() + ") non congruente."));
+		checkCondition(Boolean.TRUE.equals(cronoprogramma.getUsatoPerFpv()),
+				ErroreBil.CRONOPROGRAMMA_CHE_NON_SI_PUO_USARE_PER_IL_DISASSOCIA_FPV.getErrore());
+		
+		// imposto setUidCronoprogrammaDaSettareComeUsatoPerCalcoloFPV
+		model.setUidCronoprogrammaDaSettareComeUsatoPerCalcoloFPV(model.getUidCronoprogrammaDaDisassociareComeUsatoPerCalcoloFPV());
 		return cronoprogramma;
 	}
 	
@@ -816,6 +907,25 @@ public class AggiornaProgettoAction extends GenericProgettoAction<AggiornaProget
 		
 	}
 
+
+	/** 
+	 * Validazione per il metodo {@link #disassociaCronoprogrammaComeUsatoPerFPV()}.
+	 * <br/>
+	 * Il cronoprogramma &eacute; disassociabile solo se &eacute; gi&agrave; associato ad un FPV
+	 * (<code>Cronoprogramma.usato per calcolo FPV = 'Si'</code>).
+	 * SIAC-8870
+	 * <br/>
+	 */
+	public void validateDisassociaCronoprogrammaComeUsatoPerFPV() {
+		Cronoprogramma cronoprogramma = innerValidateDisassociaFPV();
+		
+		// Imposto il dato nel model
+		if(!hasErrori()) {
+			model.setCronoprogrammaDaAggiornare(cronoprogramma);
+		}
+		
+	}
+	
 	/**
 	 * Controlla che nessun altro cronoprogramma sia utilizzato per l'FPV.
 	 * 

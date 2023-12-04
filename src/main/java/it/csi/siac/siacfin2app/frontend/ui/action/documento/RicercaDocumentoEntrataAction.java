@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.documento;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -149,12 +149,13 @@ public class RicercaDocumentoEntrataAction extends GenericDocumentoAction<Ricerc
 					 checkStringaValorizzata(documento.getNumeroRepertorio(), "Numero protocollo") ||
 					 checkCampoValorizzato(documento.getDataRepertorio(), "Data protocollo") ||
 					 checkStringaValorizzata(documento.getRegistroRepertorio(), "Registro protocollo") ||
-					 checkStringaValorizzata(documento.getStatoSDI(),"stato SDI");
+					 checkStringaValorizzata(documento.getStatoSDI(),"stato SDI") ||
+					 (model.getPredocumento() != null && checkStringaValorizzata(model.getPredocumento().getNumero(), "numero predisposizione"));
 
 		model.setCampoFormPrincipalePresente(formValido);
 						
 		boolean movimentoPresente = (model.getAccertamento().getAnnoMovimento() != 0 && Integer.toString(model.getAccertamento().getAnnoMovimento()) != null) ||
-																					model.getAccertamento().getNumero() != null;
+																					model.getAccertamento().getNumeroBigDecimal() != null;
 		model.setMovimentoPresente(movimentoPresente);
 						
 						
@@ -200,8 +201,8 @@ public class RicercaDocumentoEntrataAction extends GenericDocumentoAction<Ricerc
 
 		// Anno Impegno e numero devono essere entrambi presenti o entrambi assenti
 		if(movimentoPresente) {
-			if(((model.getAccertamento().getAnnoMovimento() != 0 && Integer.toString(model.getAccertamento().getAnnoMovimento()) != null) && model.getAccertamento().getNumero() == null) ||
-			   ((model.getAccertamento().getAnnoMovimento() == 0 || Integer.toString(model.getAccertamento().getAnnoMovimento()) == null) &&  model.getAccertamento().getNumero() != null)) {
+			if(((model.getAccertamento().getAnnoMovimento() != 0 && Integer.toString(model.getAccertamento().getAnnoMovimento()) != null) && model.getAccertamento().getNumeroBigDecimal() == null) ||
+			   ((model.getAccertamento().getAnnoMovimento() == 0 || Integer.toString(model.getAccertamento().getAnnoMovimento()) == null) &&  model.getAccertamento().getNumeroBigDecimal() != null)) {
 					addErrore(ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno e Numero Movimento", ": devono essere entrambi valorizzati o non valorizzati"));
 			} else {
 				// sono entrambi valorizzati, verifico che esista l'impegno

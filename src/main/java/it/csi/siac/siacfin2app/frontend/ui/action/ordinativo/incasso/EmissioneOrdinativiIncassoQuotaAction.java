@@ -27,6 +27,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiIncasso
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereEntrataResponse;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
+import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 /**
@@ -45,6 +46,9 @@ public class EmissioneOrdinativiIncassoQuotaAction extends EmissioneOrdinativiIn
 	private static final long serialVersionUID = 8373777286033962625L;
 	
 	@Autowired private transient DocumentoEntrataService documentoEntrataService;
+	
+	//SIAC-7470
+	@Autowired protected transient MovimentoGestioneService movimentoGestioneService;
 	
 	@Override
 	public void prepareCompleteStep1() {
@@ -76,7 +80,7 @@ public class EmissioneOrdinativiIncassoQuotaAction extends EmissioneOrdinativiIn
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaQuoteDaEmettereEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -274,7 +278,7 @@ public class EmissioneOrdinativiIncassoQuotaAction extends EmissioneOrdinativiIn
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EmetteOrdinativiDiIncassoDaElenco.class, response));
 			addErrori(response);
 			return INPUT;
 		}

@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologia
 
 import java.util.List;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.tipologiarichiesta.TipologiaRichiestaCassaEconomale;
 import it.csi.siac.siaccecser.model.TipoRichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
@@ -35,9 +35,9 @@ public class TipologiaRichiestaCassaEconomaleAnticipoSpesePerMissione extends Ti
 		setTipoRichiestaEconomale(tipoRichiestaEconomale);
 		
 		addAbilitazioneRichiestaCassaEconomale("inserisci", "inserisciAnticipoSpesePerMissioneCassaEconomale.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_INSERISCI, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 		addAbilitazioneRichiestaCassaEconomale("ricerca", "ricercaAnticipoSpesePerMissioneCassaEconomale.do", azioniConsentite,
-				AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_RICERCA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
+				AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_PER_MISSIONE_ABILITA);
 	}
 	
 }

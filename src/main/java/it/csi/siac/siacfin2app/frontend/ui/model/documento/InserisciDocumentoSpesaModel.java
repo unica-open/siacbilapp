@@ -24,7 +24,6 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
-import it.csi.siac.sirfelser.model.FatturaFEL;
 import it.csi.siac.sirfelser.model.OrdineAcquistoFEL;
 
 /**
@@ -49,10 +48,6 @@ public class InserisciDocumentoSpesaModel extends GenericDocumentoSpesaModel {
 	
 	private Boolean flagSubordinato = Boolean.FALSE;
 	private Boolean flagRegolarizzazione = Boolean.FALSE;
-	
-	// Legame con Fattura FEL
-	private FatturaFEL fatturaFEL;
-	private Soggetto soggettoFEL;
 	
 	private List<Integer> listaUidProvvisori = new ArrayList<Integer>();
 	private BigDecimal totaleProvvisori;
@@ -168,34 +163,6 @@ public class InserisciDocumentoSpesaModel extends GenericDocumentoSpesaModel {
 	 */
 	public void setFlagRegolarizzazione(Boolean flagRegolarizzazione) {
 		this.flagRegolarizzazione = flagRegolarizzazione;
-	}
-
-	/**
-	 * @return the fatturaFEL
-	 */
-	public FatturaFEL getFatturaFEL() {
-		return fatturaFEL;
-	}
-
-	/**
-	 * @param fatturaFEL the fatturaFEL to set
-	 */
-	public void setFatturaFEL(FatturaFEL fatturaFEL) {
-		this.fatturaFEL = fatturaFEL;
-	}
-
-	/**
-	 * @return the soggettoFEL
-	 */
-	public Soggetto getSoggettoFEL() {
-		return soggettoFEL;
-	}
-
-	/**
-	 * @param soggettoFEL the soggettoFEL to set
-	 */
-	public void setSoggettoFEL(Soggetto soggettoFEL) {
-		this.soggettoFEL = soggettoFEL;
 	}
 	
 	/**

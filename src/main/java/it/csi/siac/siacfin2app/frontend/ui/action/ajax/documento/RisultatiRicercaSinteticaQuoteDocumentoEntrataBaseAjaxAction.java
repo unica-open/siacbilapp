@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2app.frontend.ui.model.ajax.documento.RisultatiRicercaSinteticaQuoteDocumentoEntrataBaseAjaxModel;
@@ -28,7 +28,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 public class RisultatiRicercaSinteticaQuoteDocumentoEntrataBaseAjaxAction<M extends RisultatiRicercaSinteticaQuoteDocumentoEntrataBaseAjaxModel>
-	extends GenericRisultatiRicercaAjaxAction<ElementoSubdocumentoEntrata, M, SubdocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrataResponse> {
+	extends PagedDataTableAjaxAction<ElementoSubdocumentoEntrata, M, SubdocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrata, RicercaSinteticaModulareQuoteByDocumentoEntrataResponse> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -2521846964745106820L;
@@ -47,12 +47,12 @@ public class RisultatiRicercaSinteticaQuoteDocumentoEntrataBaseAjaxAction<M exte
 	}
 	
 	@Override
-	protected ElementoSubdocumentoEntrata ottieniIstanza(SubdocumentoEntrata e) {
+	protected ElementoSubdocumentoEntrata getInstance(SubdocumentoEntrata e) {
 		return new ElementoSubdocumentoEntrata(e, model.isGestioneUEB());
 	}
 	
 	@Override
-	protected RicercaSinteticaModulareQuoteByDocumentoEntrataResponse ottieniResponse(RicercaSinteticaModulareQuoteByDocumentoEntrata request) {
+	protected RicercaSinteticaModulareQuoteByDocumentoEntrataResponse getResponse(RicercaSinteticaModulareQuoteByDocumentoEntrata request) {
 		return documentoEntrataService.ricercaSinteticaModulareQuoteByDocumentoEntrata(request);
 	}
 	

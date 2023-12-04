@@ -9,7 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2app.frontend.ui.action.allegatoatto.GenericAssociaAllegatoAttoAction;
 import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.AssociaMovimentoAllegatoAttoModel;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
@@ -156,7 +156,7 @@ public class AssociaMovimentoAllegatoAttoBaseAction extends GenericAssociaAllega
 	protected boolean isMovimentoCoerente(MovimentoGestione base, MovimentoGestione subBase, MovimentoGestione toCheck, MovimentoGestione subToCheck) {
 		return base.getUid() == toCheck.getUid() && (
 				(!numeroMovimentoPresente(subBase) && !numeroMovimentoPresente(subToCheck))
-				|| (numeroMovimentoPresente(subBase) && numeroMovimentoPresente(subToCheck) && subBase.getNumero().equals(subToCheck.getNumero()))
+				|| (numeroMovimentoPresente(subBase) && numeroMovimentoPresente(subToCheck) && subBase.getNumeroBigDecimal().equals(subToCheck.getNumeroBigDecimal()))
 			);
 	}
 	
@@ -166,7 +166,7 @@ public class AssociaMovimentoAllegatoAttoBaseAction extends GenericAssociaAllega
 	 * @return <code>true</code> se il numero &eacute; valorizzato; <code>false</code> altrimenti
 	 */
 	protected boolean numeroMovimentoPresente(MovimentoGestione movimentoGestione) {
-		return movimentoGestione != null && movimentoGestione.getNumero() != null;
+		return movimentoGestione != null && movimentoGestione.getNumeroBigDecimal() != null;
 	}
 	/**
 	 * Controlla che l'utente possa associare il movimento gestione all'allegato atto
@@ -175,7 +175,7 @@ public class AssociaMovimentoAllegatoAttoBaseAction extends GenericAssociaAllega
 	 * @return <code>true</code> se l'utente  pu&ograve; associare il movimento gestione, <code>false</code> altrimenti.
 	 */
 	protected boolean isMovgestAssociabileDaUtente( MovimentoGestione movgest){
-		return ( model.getAnnoEsercizioInt().equals(movgest.getAnnoMovimento())) || !AzioniConsentiteFactory.isConsentito(AzioniConsentite.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite() ); 
+		return ( model.getAnnoEsercizioInt().equals(movgest.getAnnoMovimento())) || !AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.ALLEGATO_ATTO_INSERISCI_NO_RESIDUI, sessionHandler.getAzioniConsentite() ); 
 	}
 }
 

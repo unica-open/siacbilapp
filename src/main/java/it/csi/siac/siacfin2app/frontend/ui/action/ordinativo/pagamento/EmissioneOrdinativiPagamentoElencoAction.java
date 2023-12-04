@@ -14,11 +14,14 @@ import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siaccommonapp.interceptor.anchor.annotation.AnchorAnnotation;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.action.ordinativo.GenericEmissioneOrdinativiAction;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiPagamentoDaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElencoDaEmettere;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElencoDaEmettereResponse;
+import it.csi.siac.siacfin2ser.model.CommissioniDocumento;
+import it.csi.siac.siacfinser.model.codifiche.CommissioneDocumento;
 
 /**
  * Classe di action per l'emissione di ordinativi di pagamento, gestione dell'elenco.
@@ -48,7 +51,7 @@ public class EmissioneOrdinativiPagamentoElencoAction extends EmissioneOrdinativ
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaElencoDaEmettere.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -103,12 +106,18 @@ public class EmissioneOrdinativiPagamentoElencoAction extends EmissioneOrdinativ
 			caricaListaContoTesoreria();
 			caricaListaBollo();
 			caricaListaClassificatoreStipendi();
+			//task-291
+			caricaListaCommissioniDocumento();
+			//task-259
+			//task-293
+			caricaCommissioniDefault();
+			
 		} catch(WebServiceInvocationFailureException wsife) {
 			log.info(methodName, "Errore nel caricamento delle liste: " + wsife.getMessage());
 		}
 		return SUCCESS;
 	}
-	
+		
 	/**
 	 * Preparazione per il metodo {@link #completeStep2()}.
 	 */
@@ -137,7 +146,7 @@ public class EmissioneOrdinativiPagamentoElencoAction extends EmissioneOrdinativ
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(EmetteOrdinativiDiPagamentoDaElenco.class, res));
 			addErrori(res);
 			return INPUT;
 		}

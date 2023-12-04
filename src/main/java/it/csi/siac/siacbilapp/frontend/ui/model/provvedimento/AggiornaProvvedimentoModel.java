@@ -30,7 +30,8 @@ public class AggiornaProvvedimentoModel extends GenericBilancioModel {
 	private AttoAmministrativo attoAmministrativo;
 	private List<TipoAtto> tipiAtti = new ArrayList<TipoAtto>();
 	private List<StatoOperativoAtti> statiOperativi = new ArrayList<StatoOperativoAtti>();
-	
+	private String codiceInc;
+
 	private Boolean movimentoInterno;
 	
 	/** Costruttore vuoto di default */
@@ -144,5 +145,14 @@ public class AggiornaProvvedimentoModel extends GenericBilancioModel {
 		request.setTipoAtto(getAttoAmministrativo().getTipoAtto());
 		return request;
 	}
-	
+
+	public String getCodiceInc() {
+		return codiceInc;
+	}
+
+	public void setCodiceInc(String codiceInc) {
+		this.codiceInc = codiceInc;
+	}
+
+
 }

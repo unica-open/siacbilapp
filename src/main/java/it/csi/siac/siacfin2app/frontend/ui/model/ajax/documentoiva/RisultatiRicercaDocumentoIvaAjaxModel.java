@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.documentoiva;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documentoiva.ElementoDocumentoIva;
 import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.Subdocumento;
@@ -22,7 +22,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoIva;
  *
  */
 public class RisultatiRicercaDocumentoIvaAjaxModel<D extends Documento<SD, SDI>, SD extends Subdocumento<D, SDI>, SDI extends SubdocumentoIva<D, SD, SDI>> 
-		extends GenericRisultatiRicercaAjaxModel<ElementoDocumentoIva<D, SD, SDI>> {
+		extends PagedDataTableAjaxModel<ElementoDocumentoIva<D, SD, SDI>> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1949840562109980124L;

@@ -201,7 +201,8 @@
                                       "<button class='btn dropdown-toggle' data-toggle='dropdown'>Azioni<span class='caret'></span></button>" +
                                       "<ul class='dropdown-menu pull-right'>" +
                                             "<li><a href='ricercaPianoDeiContiFIN_consulta.do?uidConto="+conto.uid+"'>consulta</a></li>";
-        if(isGestioneConsentita && conto.livello !== 0){
+		//SIAC-8445
+        if(isGestioneConsentita && conto.livello !== 0 && conto.livello !== 8){
                         nuovaIntestazione +="<li><a href='ricercaPianoDeiContiFIN_aggiorna.do?uidConto="+conto.uid+"'>aggiorna</a></li>";
         }
 
@@ -212,7 +213,8 @@
         if(isGestioneConsentita && !figliPresenti){
                         nuovaIntestazione +="<li><a href='#' id ='linkAnnullamento'>annulla</a></li>";
         }
-        if(isGestioneConsentita && !figliPresenti){
+		//SIAC-8445
+        if(isGestioneConsentita && !figliPresenti && conto.livello !== 8){
             nuovaIntestazione +="<li><a href='#' id ='linkEliminazione'>elimina</a></li>";
 }
                     nuovaIntestazione +="</ul>" +

@@ -78,7 +78,8 @@ public final class CapitoloUscitaPrevisioneFakeModel {
 		
 		TipoComponenteImportiCapitolo tipoComponenteImportiCapitolo = new TipoComponenteImportiCapitolo();
 		cic.setTipoComponenteImportiCapitolo(tipoComponenteImportiCapitolo);
-		tipoComponenteImportiCapitolo.setCodice("01");
+		//SIAC-7492
+//		tipoComponenteImportiCapitolo.setCodice("01");
 		tipoComponenteImportiCapitolo.setDescrizione("FRESCO I");
 		tipoComponenteImportiCapitolo.setAnno(anno);
 		tipoComponenteImportiCapitolo.setMacrotipoComponenteImportiCapitolo(MacrotipoComponenteImportiCapitolo.FRESCO);
@@ -103,7 +104,8 @@ public final class CapitoloUscitaPrevisioneFakeModel {
 		
 		tipoComponenteImportiCapitolo = new TipoComponenteImportiCapitolo();
 		cic.setTipoComponenteImportiCapitolo(tipoComponenteImportiCapitolo);
-		tipoComponenteImportiCapitolo.setCodice("02");
+		//SIAC-7492
+//		tipoComponenteImportiCapitolo.setCodice("02");
 		tipoComponenteImportiCapitolo.setDescrizione("FPV application #1");
 		tipoComponenteImportiCapitolo.setAnno(anno);
 		tipoComponenteImportiCapitolo.setMacrotipoComponenteImportiCapitolo(MacrotipoComponenteImportiCapitolo.FPV);
@@ -128,7 +130,8 @@ public final class CapitoloUscitaPrevisioneFakeModel {
 		
 		tipoComponenteImportiCapitolo = new TipoComponenteImportiCapitolo();
 		cic.setTipoComponenteImportiCapitolo(tipoComponenteImportiCapitolo);
-		tipoComponenteImportiCapitolo.setCodice("03");
+		//SIAC-7492
+//		tipoComponenteImportiCapitolo.setCodice("03");
 		tipoComponenteImportiCapitolo.setDescrizione("FPV application #2");
 		tipoComponenteImportiCapitolo.setAnno(anno);
 		tipoComponenteImportiCapitolo.setMacrotipoComponenteImportiCapitolo(MacrotipoComponenteImportiCapitolo.FPV);

@@ -515,17 +515,13 @@ public class ConsultaDocumentoSpesaModel extends GenericDocumentoModel{
 		this.listaDocumentiCollegatiCaricata = listaDocumentiCollegatiCaricata;
 	}
 	
-	/**
-	 * @return the fatturaFEL
-	 */
+	@Override
 	public FatturaFEL getFatturaFEL() {
 		return fatturaFEL;
 	}
 
 
-	/**
-	 * @param fatturaFEL the fatturaFEL to set
-	 */
+	@Override
 	public void setFatturaFEL(FatturaFEL fatturaFEL) {
 		this.fatturaFEL = fatturaFEL;
 	}
@@ -790,7 +786,8 @@ public class ConsultaDocumentoSpesaModel extends GenericDocumentoModel{
 			SubdocumentoSpesaModelDetail.ImpegnoSubimpegno,
 			SubdocumentoSpesaModelDetail.AttoAmm,
 			SubdocumentoSpesaModelDetail.Liquidazione,
-			SubdocumentoSpesaModelDetail.Ordinativo);
+			SubdocumentoSpesaModelDetail.Ordinativo,
+			SubdocumentoSpesaModelDetail.Predocumento);
 		
 		return request;
 	}
@@ -912,7 +909,7 @@ public class ConsultaDocumentoSpesaModel extends GenericDocumentoModel{
 		RicercaImpegnoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaImpegnoPerChiaveOttimizzato.class);
 		request.setEnte(getEnte());
 		//carico i sub solo se ho il numero del sub valorizzato
-		request.setCaricaSub(subImpegno != null && subImpegno.getNumero() != null);
+		request.setCaricaSub(subImpegno != null && subImpegno.getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -934,8 +931,8 @@ public class ConsultaDocumentoSpesaModel extends GenericDocumentoModel{
 		pRicercaImpegnoK.setAnnoEsercizio(Integer.valueOf(bilancio.getAnno()));
 		
 		pRicercaImpegnoK.setAnnoImpegno(Integer.valueOf(impegno.getAnnoMovimento()));
-		pRicercaImpegnoK.setNumeroImpegno(impegno.getNumero());
-		pRicercaImpegnoK.setNumeroSubDaCercare(subImpegno != null ? subImpegno.getNumero() : null);
+		pRicercaImpegnoK.setNumeroImpegno(impegno.getNumeroBigDecimal());
+		pRicercaImpegnoK.setNumeroSubDaCercare(subImpegno != null ? subImpegno.getNumeroBigDecimal() : null);
 		request.setpRicercaImpegnoK(pRicercaImpegnoK);
 		
 		return request;

@@ -33,13 +33,13 @@ SPDX-License-Identifier: EUPL-1.2
 								<span class="alRight"> <label
 									for="numeroMovimentoGestione" class="radio inline">Numero</label>
 								</span>
-								<si:plainstringtextfield id="numeroMovimentoGestione"
+								<s:textfield id="numeroMovimentoGestione"
 									name="impegno.numero" cssClass="lbTextSmall soloNumeri span2"
 									maxlength="7" placeholder="%{'numero'}" />
 								<span class="alRight"> <label
 									for="numeroSubMovimentoGestione" class="radio inline">Subimpegno</label>
 								</span>
-								<si:plainstringtextfield id="numeroSubMovimentoGestione"
+								<s:textfield id="numeroSubMovimentoGestione"
 									name="subImpegno.numero"
 									cssClass="lbTextSmall soloNumeri span2" maxlength="7"
 									placeholder="%{'numero subimpegno'}" />
@@ -195,8 +195,8 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/backofficeModificaCig.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/backofficeModificaCig.js"></script>
 
 </body>
 </html>

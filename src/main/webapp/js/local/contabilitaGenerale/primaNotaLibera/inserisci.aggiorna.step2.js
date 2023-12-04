@@ -2,7 +2,7 @@
 *SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
 *SPDX-License-Identifier: EUPL-1.2
 */
-!function($) {
+!function(global, $) {
     "use strict";
     var alertErrori = $("#ERRORI");
     var alertErroriModale = $("#ERRORI_modale");
@@ -524,5 +524,7 @@
         
         caricaElencoScritture();
         caricaTabellaPrimeNote();
+        //SIAC-8134
+        StrutturaAmministrativaContabile.inizializzaZtreeStrutturaAmministrativaContabile("_PRIMA_NOTA_LIBERA", $('#HIDDEN_StrutturaAmministrativoContabileUid_PRIMA_NOTA_LIBERA'));
     });
-}(jQuery);
+}(this, jQuery);

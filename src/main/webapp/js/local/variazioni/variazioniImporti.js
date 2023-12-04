@@ -188,7 +188,8 @@ var VariazioneImporti = (function() {
         var totStanziamentiEntrataAnno2 = data.totaleStanziamentiEntrata2 || 0;
         
         var totStanziamentiSpesaAnno1 = data.totaleStanziamentiSpesa1 || 0;
-        var totStanziamentiSpesaAnno2 = data.totaleStanziamentiEntrata2 || 0;
+		//SIAC-8166
+        var totStanziamentiSpesaAnno2 = data.totaleStanziamentiSpesa2 || 0;
         
 
         impostaValutaEAllineaADestra("#totaleEntrateCompetenzaVariazione", totaleStanziamentiEntrataNotUndefined);

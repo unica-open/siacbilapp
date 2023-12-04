@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatori;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatoriResponse;
@@ -26,14 +26,20 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.predocumento.GenericPreDocumentoEntrataModel;
+import it.csi.siac.siacfin2app.frontend.ui.util.helper.VerificaBloccoRORHelper;
+import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoService;
 import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiTipiCausaleEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiTipiCausaleEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaCausaleEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaCausaleEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTipoDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTipoDocumentoResponse;
 import it.csi.siac.siacfin2ser.model.CausaleEntrata;
 import it.csi.siac.siacfin2ser.model.StatoOperativoCausale;
 import it.csi.siac.siacfin2ser.model.TipoCausale;
+import it.csi.siac.siacfin2ser.model.TipoDocumento;
+import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
@@ -64,6 +70,9 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 	@Autowired protected transient CapitoloEntrataGestioneService capitoloEntrataGestioneService;
 	/** Serviz&icirc; del provvisorio */
 	@Autowired protected transient ProvvisorioService provvisorioService;
+	/** Serviz&icirc; del documento*/
+	@Autowired protected transient DocumentoService documentoService;
+	
 
 	/**
 	 * Effettua una validazione del Capitolo fornito in input.
@@ -124,17 +133,43 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 	}
 	
 	/**
+	 * Carica la lista dei tipi di documento.
+	 */
+	protected void caricaListaTipoDocumento() {
+		List<TipoDocumento> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_TIPO_DOCUMENTO);
+		if(listaInSessione == null) {
+			RicercaTipoDocumento request = model.creaRequestRicercaTipoDocumento(TipoFamigliaDocumento.ENTRATA);
+			logServiceRequest(request);
+			RicercaTipoDocumentoResponse response = documentoService.ricercaTipoDocumento(request);
+			logServiceResponse(response);
+			
+			// Controllo gli errori
+			if(response.hasErrori()) {
+				//si sono verificati degli errori: esco.
+				addErrori(response);
+				return;
+			}
+			
+			listaInSessione = response.getElencoTipiDocumento();
+			sessionHandler.setParametro(BilSessionParameter.LISTA_TIPO_DOCUMENTO, listaInSessione);
+			
+		}
+		model.setListaTipoDocumento(listaInSessione);
+	}
+	
+	
+	/**
 	 * Effettua una validazione dell'accertamento e del subaccertamento forniti in input.
 	 * 
 	 * @return <code>true</code> se la validazione &eacute; andata a buon fine; <code>false</code> in caso contrario
 	 */
-	protected boolean validazioneAccertamentoSubAccertamento() {
+	protected boolean validazioneAccertamentoSubAccertamento(Integer flagProvenienzaCduBloccoROR) {
 		final String methodName = "validazioneAccertamentoSubAccertamento";
 		Accertamento accertamento = model.getMovimentoGestione();
 		SubAccertamento subAccertamento = model.getSubMovimentoGestione();
 		
 		if(accertamento == null || (
-				accertamento.getAnnoMovimento() == 0 || accertamento.getNumero() == null
+				accertamento.getAnnoMovimento() == 0 || accertamento.getNumeroBigDecimal() == null
 				)) {
 			return false;
 		}
@@ -152,7 +187,7 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 			return false;
 		}
 		if(response.isFallimento() || response.getAccertamento() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento()+"/"+accertamento.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento()+"/"+accertamento.getNumeroBigDecimal()));
 			return false;
 		}
 		
@@ -160,12 +195,12 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 		
 		model.setMovimentoGestione(accertamento);
 		
-		if(subAccertamento != null && subAccertamento.getNumero() != null) {
-			BigDecimal numero = subAccertamento.getNumero();
+		if(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subAccertamento.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subAccertamento = findSubAccertamentoLegatoAccertamentoByNumero(response.getAccertamento(), subAccertamento);
 			if(subAccertamento == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero() + "-" + numero));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal() + "-" + numero));
 				return true;
 			}
 			model.setSubMovimentoGestione(subAccertamento);
@@ -182,6 +217,23 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("subaccertamento", "l'anno deve essere non superiore all'anno di esercizio"));
 		
 		checkDisponibilitaAccertamentoSubaccertamento();
+		
+		//SIAC-6997-bloccoROR
+		if(flagProvenienzaCduBloccoROR != null && flagProvenienzaCduBloccoROR.intValue() == 1){
+			boolean test = VerificaBloccoRORHelper.escludiAccertamentoPerBloccoROR(sessionHandler.getAzioniConsentite(), accertamento,  model.getAnnoEsercizioInt());
+			if(test){
+				checkCondition(!test, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Accertamento/sub accertamento residuo non utilizzabile"));
+			}else if(accertamento.getElencoSubAccertamenti() != null && !accertamento.getElencoSubAccertamenti().isEmpty()){
+				for(int k = 0; k < accertamento.getElencoSubAccertamenti().size(); k++){
+					test = VerificaBloccoRORHelper.escludiAccertamentoPerBloccoROR(sessionHandler.getAzioniConsentite(), accertamento.getElencoSubAccertamenti().get(k), model.getAnnoEsercizioInt());
+					if(test)
+						break;
+				}
+				if(test){
+					checkCondition(!test, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Accertamento/sub accertamento residuo non utilizzabile"));
+				}
+			}
+		}
 		
 		return true;
 	}
@@ -210,7 +262,7 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 
 		String msgOperazione = model.getPreDocumento().getUid() != 0 ? "Aggiornamento" : "Inserimento";
 		// SIAC-5041: se ho l'azione OP-ENT-PreDocNoModAcc non posso fare la modifica
-		boolean modificaNonConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA, sessionHandler.getAzioniConsentite());
+		boolean modificaNonConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA, sessionHandler.getAzioniConsentite());
 		if(modificaNonConsentita || model.getMovimentoGestione().getAnnoMovimento() < model.getAnnoEsercizioInt().intValue()){
 			//L'accertamento e' residuo. la disponibilita non puo essere adeguata.
 			addErrore(ErroreFin.DISPONIBILITA_INSUFFICIENTE_MOVIMENTO.getErrore(msgOperazione + " predisposizione incasso", "Accertamento"));
@@ -234,7 +286,7 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 		SubAccertamento result = null;
 		if(accertamento.getElencoSubAccertamenti() != null) {
 			for(SubAccertamento s : accertamento.getElencoSubAccertamenti()) {
-				if(s.getNumero().compareTo(subAccertamento.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subAccertamento.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}
@@ -259,7 +311,7 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 				capitoloEntrataGestione.getNumeroCapitolo().equals(capitoloEntrataGestioneAccertamento.getNumeroCapitolo()) &&
 				capitoloEntrataGestione.getNumeroArticolo().equals(capitoloEntrataGestioneAccertamento.getNumeroArticolo()) &&
 				capitoloEntrataGestione.getNumeroUEB().equals(capitoloEntrataGestioneAccertamento.getNumeroUEB())
-			), ErroreCore.VALORE_NON_VALIDO.getErrore("capitolo", "in quanto non corrisponde al capitolo dell'accertamento"));
+			), ErroreCore.VALORE_NON_CONSENTITO.getErrore("capitolo", "in quanto non corrisponde al capitolo dell'accertamento"));
 	}
 	
 	/**
@@ -383,12 +435,13 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 	 * richiama la ricerca 
 	 */
 	protected void validazioneProvvisorioDiCassaPredocumentoDiEntrata(){
-		if(model.getProvvisorioCassa() == null || model.getProvvisorioCassa().getNumero() == null || model.getProvvisorioCassa().getAnno() == null) {
+		final String methodName = "validazioneProvvisorioDiCassaPredocumentoDiEntrata";
+		if(model.getProvvisorioCassa() == null || (model.getProvvisorioCassa().getAnno() == null && model.getProvvisorioCassa().getNumero() == null)) {
 			return;
 		}
 		
-		final String methodName = "validazioneProvvisorioDiCassaPredocumentoDiEntrata";
-
+		checkCondition(model.getProvvisorioCassa().getAnno() != null && model.getProvvisorioCassa().getNumero() != null, ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("anno e numero provvisorio devono essere entrambi valorizzati o entramnbi non valorizzati"));
+		
 		model.getProvvisorioCassa().setTipoProvvisorioDiCassa(TipoProvvisorioDiCassa.E);
 		RicercaProvvisoriDiCassa request = model.creaRequestRicercaProvvisorioDiCassa();
 		logServiceRequest(request);
@@ -398,7 +451,7 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvisoriDiCassa.class, response));
 			addErrori(response);
 			return;
 		}
@@ -411,11 +464,12 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 		checkCondition(TipoProvvisorioDiCassa.E.equals(provvisorioDiCassaFromResponse.getTipoProvvisorioDiCassa())
 				&& provvisorioDiCassaFromResponse.getDataRegolarizzazione() == null
 				&& provvisorioDiCassaFromResponse.getDataAnnullamento() == null, ErroreFin.DATI_PROVVISORIO_QUIETANZA_ERRATI.getErrore());
-		String keyProvvisorio = provvisorioDiCassaFromResponse.getAnno() +" - " + provvisorioDiCassaFromResponse.getNumero();
+//		String keyProvvisorio = provvisorioDiCassaFromResponse.getAnno() +" - " + provvisorioDiCassaFromResponse.getNumero();
 		model.setProvvisorioCassa(provvisorioDiCassaFromResponse);
-		checkCondition(isProvvisorioDiCassaRegolarizzabile(model.getPreDocumento().getImporto()),
+		//controllo delegato al servizio
+		/*checkCondition(isProvvisorioDiCassaRegolarizzabile(model.getPreDocumento().getImporto()),
 				ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("inserimento","predisposizione di incasso", keyProvvisorio,
-						"L'importo della predisposizione supera l'importo da regolarizzare del provvisorio"));
+						"L'importo della predisposizione supera l'importo da regolarizzare del provvisorio"));*/
 	}
 	
 	/**
@@ -443,4 +497,7 @@ public class GenericPreDocumentoEntrataAction<M extends GenericPreDocumentoEntra
 			addErrore(e);
 		}
 	}
+	
+	
+	
 }

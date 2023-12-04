@@ -7,11 +7,11 @@ package it.csi.siac.siacbilapp.frontend.ui.model.commons;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacbilser.model.AmbitoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.FonteFinanziariaComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ImpegnabileComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MomentoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.SottotipoComponenteImportiCapitolo;
-import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
 
 public abstract class ComponenteCapitoloModel extends GenericBilancioModel{
 
@@ -28,7 +28,10 @@ public abstract class ComponenteCapitoloModel extends GenericBilancioModel{
 	private FonteFinanziariaComponenteImportiCapitolo tipologiaFonteFinanziamentoComponenteCapitolo;
 	private MomentoComponenteImportiCapitolo tipologiaMomentoComponenteCapitolo;
 	private PropostaDefaultComponenteImportiCapitolo tipologiaPrevisioneComponenteCapitolo;
-	private TipoGestioneComponenteImportiCapitolo tipologiaGestioneComponenteCapitolo;
+	//SIAC-7349
+	//private TipoGestioneComponenteImportiCapitolo tipologiaGestioneComponenteCapitolo;
+	private ImpegnabileComponenteImportiCapitolo tipologiaImpegnabileComponenteCapitolo;
+	
 	private Integer annoInizioAttivita;
 	private Integer annoFineAttivita;
 	
@@ -40,7 +43,9 @@ public abstract class ComponenteCapitoloModel extends GenericBilancioModel{
 	private boolean fonteFinanziamentoComponenteCapitoloEditabile;
 	private boolean momentoComponenteCapitoloEditabile;
 	private boolean previsioneComponenteCapitoloEditabile;
-	private boolean gestioneComponenteCapitoloEditabile;
+	//SIAC-7349
+	//private boolean gestioneComponenteCapitoloEditabile;
+	private boolean impegnabileComponenteCapitoloEditabile;
 	
 	
 
@@ -110,13 +115,13 @@ public abstract class ComponenteCapitoloModel extends GenericBilancioModel{
 			PropostaDefaultComponenteImportiCapitolo tipologiaPrevisioneComponenteCapitolo) {
 		this.tipologiaPrevisioneComponenteCapitolo = tipologiaPrevisioneComponenteCapitolo;
 	}
-	public TipoGestioneComponenteImportiCapitolo getTipologiaGestioneComponenteCapitolo() {
-		return tipologiaGestioneComponenteCapitolo;
-	}
-	public void setTipologiaGestioneComponenteCapitolo(
-			TipoGestioneComponenteImportiCapitolo tipologiaGestioneComponenteCapitolo) {
-		this.tipologiaGestioneComponenteCapitolo = tipologiaGestioneComponenteCapitolo;
-	}
+//	public TipoGestioneComponenteImportiCapitolo getTipologiaGestioneComponenteCapitolo() {
+//		return tipologiaGestioneComponenteCapitolo;
+//	}
+//	public void setTipologiaGestioneComponenteCapitolo(
+//			TipoGestioneComponenteImportiCapitolo tipologiaGestioneComponenteCapitolo) {
+//		this.tipologiaGestioneComponenteCapitolo = tipologiaGestioneComponenteCapitolo;
+//	}
 	public Integer getAnnoInizioAttivita() {
 		return annoInizioAttivita;
 	}
@@ -165,11 +170,40 @@ public abstract class ComponenteCapitoloModel extends GenericBilancioModel{
 	public void setPrevisioneComponenteCapitoloEditabile(boolean previsioneComponenteCapitoloEditabile) {
 		this.previsioneComponenteCapitoloEditabile = previsioneComponenteCapitoloEditabile;
 	}
-	public boolean isGestioneComponenteCapitoloEditabile() {
-		return gestioneComponenteCapitoloEditabile;
+//	public boolean isGestioneComponenteCapitoloEditabile() {
+//		return gestioneComponenteCapitoloEditabile;
+//	}
+//	public void setGestioneComponenteCapitoloEditabile(boolean gestioneComponenteCapitoloEditabile) {
+//		this.gestioneComponenteCapitoloEditabile = gestioneComponenteCapitoloEditabile;
+//	}
+
+	/**
+	 * @return the tipologiaImpegnabileComponenteCapitolo
+	 */
+	public ImpegnabileComponenteImportiCapitolo getTipologiaImpegnabileComponenteCapitolo() {
+		return tipologiaImpegnabileComponenteCapitolo;
 	}
-	public void setGestioneComponenteCapitoloEditabile(boolean gestioneComponenteCapitoloEditabile) {
-		this.gestioneComponenteCapitoloEditabile = gestioneComponenteCapitoloEditabile;
+
+	/**
+	 * @param tipologiaImpegnabileComponenteCapitolo the tipologiaImpegnabileComponenteCapitolo to set
+	 */
+	public void setTipologiaImpegnabileComponenteCapitolo(
+			ImpegnabileComponenteImportiCapitolo tipologiaImpegnabileComponenteCapitolo) {
+		this.tipologiaImpegnabileComponenteCapitolo = tipologiaImpegnabileComponenteCapitolo;
+	}
+
+	/**
+	 * @return the impegnabileComponenteCapitoloEditabile
+	 */
+	public boolean isImpegnabileComponenteCapitoloEditabile() {
+		return impegnabileComponenteCapitoloEditabile;
+	}
+
+	/**
+	 * @param impegnabileComponenteCapitoloEditabile the impegnabileComponenteCapitoloEditabile to set
+	 */
+	public void setImpegnabileComponenteCapitoloEditabile(boolean impegnabileComponenteCapitoloEditabile) {
+		this.impegnabileComponenteCapitoloEditabile = impegnabileComponenteCapitoloEditabile;
 	}
 	
 }

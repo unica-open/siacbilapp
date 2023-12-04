@@ -9,15 +9,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.dubbiaesigibilita.ajax.RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxModel;
 import it.csi.siac.siacbilser.frontend.webservice.FondiDubbiaEsigibilitaService;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilitaResponse;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.RicercaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.RicercaAccantonamentoFondiDubbiaEsigibilitaResponse;
+import it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
+import it.csi.siac.siaccorser.model.paginazione.ListaPaginataImpl;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 
 /**
@@ -28,7 +29,9 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxAction extends GenericRisultatiRicercaAjaxAction<AccantonamentoFondiDubbiaEsigibilita, RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxModel, AccantonamentoFondiDubbiaEsigibilita, RicercaSinteticaFondiDubbiaEsigibilita, RicercaSinteticaFondiDubbiaEsigibilitaResponse> {
+// FIXME: SIAC-7858 - da eliminare?
+@Deprecated
+public class RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxAction extends PagedDataTableAjaxAction<AccantonamentoFondiDubbiaEsigibilita, RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxModel, AccantonamentoFondiDubbiaEsigibilita, RicercaAccantonamentoFondiDubbiaEsigibilita, RicercaAccantonamentoFondiDubbiaEsigibilitaResponse> {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 3720115772675193497L;
@@ -43,28 +46,29 @@ public class RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxAction exte
 	}
 
 	@Override
-	protected ParametriPaginazione ottieniParametriDiPaginazione(RicercaSinteticaFondiDubbiaEsigibilita request) {
-		return request.getParametriPaginazione();
+	protected ParametriPaginazione ottieniParametriDiPaginazione(RicercaAccantonamentoFondiDubbiaEsigibilita request) {
+		return new ParametriPaginazione();
+//		return request.getParametriPaginazione();
 	}
 
 	@Override
-	protected void impostaParametriPaginazione(RicercaSinteticaFondiDubbiaEsigibilita request, ParametriPaginazione parametriPaginazione) {
-		request.setParametriPaginazione(parametriPaginazione);
+	protected void impostaParametriPaginazione(RicercaAccantonamentoFondiDubbiaEsigibilita request, ParametriPaginazione parametriPaginazione) {
+//		request.setParametriPaginazione(parametriPaginazione);
 	}
 
 	@Override
-	protected AccantonamentoFondiDubbiaEsigibilita ottieniIstanza(AccantonamentoFondiDubbiaEsigibilita e) throws FrontEndBusinessException {
+	protected AccantonamentoFondiDubbiaEsigibilita getInstance(AccantonamentoFondiDubbiaEsigibilita e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaSinteticaFondiDubbiaEsigibilitaResponse ottieniResponse(RicercaSinteticaFondiDubbiaEsigibilita request) {
-		return fondiDubbiaEsigibilitaService.ricercaSinteticaFondiDubbiaEsigibilita(request);
+	protected RicercaAccantonamentoFondiDubbiaEsigibilitaResponse getResponse(RicercaAccantonamentoFondiDubbiaEsigibilita request) {
+		return fondiDubbiaEsigibilitaService.ricercaAccantonamentoFondiDubbiaEsigibilita(request);
 	}
 
 	@Override
-	protected ListaPaginata<AccantonamentoFondiDubbiaEsigibilita> ottieniListaRisultati(RicercaSinteticaFondiDubbiaEsigibilitaResponse response) {
-		return response.getAccantonamentiFondiDubbiaEsigibilita();
+	protected ListaPaginata<AccantonamentoFondiDubbiaEsigibilita> ottieniListaRisultati(RicercaAccantonamentoFondiDubbiaEsigibilitaResponse response) {
+		return new ListaPaginataImpl<AccantonamentoFondiDubbiaEsigibilita>(response.extractByType(AccantonamentoFondiDubbiaEsigibilita.class));
 	}
 
 }

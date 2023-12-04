@@ -181,7 +181,7 @@ public abstract class GestioneSubAccertamentoInsPrimaNotaIntegrataBaseAction<M e
 			.append("/")
 			.append(subAccertamento.getNumeroAccertamentoPadre().toPlainString())
 			.append("-")
-			.append(subAccertamento.getNumero().toPlainString());
+			.append(subAccertamento.getNumeroBigDecimal().toPlainString());
 		if(StringUtils.isNotBlank(subAccertamento.getDescrizione())) {
 			descrizione.append(" ")
 				.append(subAccertamento.getDescrizione());
@@ -190,7 +190,7 @@ public abstract class GestioneSubAccertamentoInsPrimaNotaIntegrataBaseAction<M e
 			.append("/")
 			.append(subAccertamento.getNumeroAccertamentoPadre().toPlainString())
 			.append("-")
-			.append(subAccertamento.getNumero().toPlainString())
+			.append(subAccertamento.getNumeroBigDecimal().toPlainString())
 			.append(" (subacc)");
 
 		model.setDescrMovimentoFinanziario(movimento.toString());

@@ -30,7 +30,7 @@ public class ElementoMovimentoConsultazionePrimaNotaIntegrataImpegno extends Ele
 	
 	@Override
 	public String getNumero() {
-		return movimento != null && movimento.getNumero() != null ? movimento.getNumero().toPlainString() : "";
+		return movimento != null && movimento.getNumeroBigDecimal() != null ? movimento.getNumeroBigDecimal().toPlainString() : "";
 	}
 	
 	@Override

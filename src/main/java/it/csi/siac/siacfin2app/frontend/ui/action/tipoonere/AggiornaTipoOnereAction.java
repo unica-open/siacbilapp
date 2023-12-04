@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -108,7 +108,7 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioTipoOnere.class, response));
 			throwExceptionFromErrori(response.getErrori());
 		}
 		
@@ -279,7 +279,7 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(Liste.class, response));
 			}
 			listaDistinta = new ArrayList<CodificaFin>(response.getDistintaEntrata());
 			ComparatorUtils.sortByCodiceFin(listaDistinta);
@@ -328,7 +328,7 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaTipoOnere.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -449,7 +449,7 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 		}
 		checkCondition(scs.getUid() == soggetto.getUid(),
 			ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'impegno "
-				+ causaleSpesa.getImpegno().getAnnoMovimento() + "/" + causaleSpesa.getImpegno().getNumero() + (causaleSpesa.getSubImpegno() != null ? "-" + causaleSpesa.getSubImpegno().getNumero() : "")
+				+ causaleSpesa.getImpegno().getAnnoMovimento() + "/" + causaleSpesa.getImpegno().getNumeroBigDecimal() + (causaleSpesa.getSubImpegno() != null ? "-" + causaleSpesa.getSubImpegno().getNumeroBigDecimal() : "")
 				+ " non appartiene alla classificazione del soggetto del tipo onere"));
 	}
 	
@@ -478,7 +478,7 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 		}
 		checkCondition(sce.getUid() == soggetto.getUid(),
 			ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'accertamento "
-				+ causaleEntrata.getAccertamento().getAnnoMovimento() + "/" + causaleEntrata.getAccertamento().getNumero() + (causaleEntrata.getSubAccertamento() != null ? "-" + causaleEntrata.getSubAccertamento().getNumero() : "")
+				+ causaleEntrata.getAccertamento().getAnnoMovimento() + "/" + causaleEntrata.getAccertamento().getNumeroBigDecimal() + (causaleEntrata.getSubAccertamento() != null ? "-" + causaleEntrata.getSubAccertamento().getNumeroBigDecimal() : "")
 				+ " ha un soggetto distinto da quello del tipo onere"));
 	}
 
@@ -564,7 +564,7 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			}
 			if(response.getSoggetto() == null) {
 				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Soggetto", codiceSoggetto));
@@ -627,8 +627,8 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 			}
 			checkCondition(cegce.getUid() == ceg.getUid(),
 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'accertamento "
-					+ ce.getAccertamento().getAnnoMovimento() + "/" + ce.getAccertamento().getNumero()
-						+ (ce.getSubAccertamento() != null ? "-" + ce.getSubAccertamento().getNumero() : "")
+					+ ce.getAccertamento().getAnnoMovimento() + "/" + ce.getAccertamento().getNumeroBigDecimal()
+						+ (ce.getSubAccertamento() != null ? "-" + ce.getSubAccertamento().getNumeroBigDecimal() : "")
 					+ " ha un capitolo differente da quello del tipo onere"));
 		}
 	}
@@ -670,8 +670,8 @@ public class AggiornaTipoOnereAction extends GenericAggiornaTipoOnereAction {
 			}
 			checkCondition(cugcs.getUid() == cug.getUid(),
 				ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("l'impegno "
-						+ cs.getImpegno().getAnnoMovimento() + "/" + cs.getImpegno().getNumero()
-						+ (cs.getSubImpegno() != null ? "-" + cs.getSubImpegno().getNumero() : "")
+						+ cs.getImpegno().getAnnoMovimento() + "/" + cs.getImpegno().getNumeroBigDecimal()
+						+ (cs.getSubImpegno() != null ? "-" + cs.getSubImpegno().getNumeroBigDecimal() : "")
 					+ " ha un capitolo differente da quello del tipo onere"));
 		}
 	}

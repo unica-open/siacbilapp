@@ -7,7 +7,7 @@ package it.csi.siac.siacgsaapp.frontend.ui.action.conciliazione;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
@@ -123,7 +123,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 			//si sono verificati degli errori: esco.
 			log.warn(methodName, "Errori nel caricamento del bilancio");
 			addErrori(response);
-			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(request, response));
+			throw new GenericFrontEndMessagesException(createErrorInServiceInvocationString(RicercaDettaglioBilancio.class, response));
 		}
 		FaseBilancio faseBilancio = response.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio();
 		boolean faseDiBilancioNonCompatibile = 
@@ -159,7 +159,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 		}
 		if(response.getSoggetto() == null) {
 			Errore errore = ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Soggetto " + soggetto.getCodiceSoggetto() + " non trovato");
@@ -186,7 +186,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaConciliazionePerBeneficiario.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -232,7 +232,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaConciliazionePerBeneficiario.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -262,7 +262,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioConciliazionePerBeneficiario.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -294,7 +294,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceConciliazioniPerBeneficiario.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -368,7 +368,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaConciliazionePerBeneficiario.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -445,7 +445,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaPuntualeCapitoloUscitaGestione.class, response));
 		}
 		return response.getCapitoloUscitaGestione();
 	}
@@ -465,7 +465,7 @@ public class GestioneConciliazionePerBeneficiarioAction extends GenericBilancioA
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaPuntualeCapitoloEntrataGestione.class, response));
 		}
 		return response.getCapitoloEntrataGestione();
 	}

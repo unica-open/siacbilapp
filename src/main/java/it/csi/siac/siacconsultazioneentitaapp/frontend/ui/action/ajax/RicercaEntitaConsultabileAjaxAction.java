@@ -4,6 +4,10 @@
 */
 package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.action.ajax;
 
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+
 import org.apache.struts2.json.JSONResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -84,6 +88,13 @@ public class RicercaEntitaConsultabileAjaxAction extends RicercaEntitaConsultabi
 			setEnumAsBean(true);
 			setExcludeNullProperties(true);
 			setIncludeProperties(INCLUDE_PROPERTIES);
+			//SIAC-8188
+			setDefaultEncoding("UTF-8");
 		}
+	}
+
+	@Override
+	public Set<Cookie> getCookies() {
+		return model.getCookies();
 	}
 }

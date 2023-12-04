@@ -224,7 +224,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/contabilitaGenerale/include/modaleRicercaConto.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/conto.js"></script>
-	<script type="text/javascript" src="${jspath}cespiti/tipobenecespite/aggiornaTipoBene.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/conto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/tipobenecespite/aggiornaTipoBene.js"></script>
 </body>
 </html>

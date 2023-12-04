@@ -5,7 +5,7 @@
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.movimentogestione;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovfin.ElementoSubAccertamentoRegistrazioneMovFin;
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 
 /**
  * Classe di model per la gestione dei risultati ricerca di Subaccertamenti
@@ -13,7 +13,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjax
  * @version 1.0.0 - 15/09/2016
  *
  */
-public class RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoSubAccertamentoRegistrazioneMovFin> {
+public class RisultatiRicercaSubAccertamentiMovimentoGestioneAjaxModel extends PagedDataTableAjaxModel<ElementoSubAccertamentoRegistrazioneMovFin> {
 	
 	/**
 	 * Per la serializzazione

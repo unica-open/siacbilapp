@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.quadroeconomico;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.quadroeconomico.ElementoQuadroEconomico;
 //import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.classifgsa.ElementoClassificatoreGSA;
 
@@ -15,7 +15,7 @@ import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.quadroeconomico.ElementoQ
  * @version 1.0.0 04/01/2018
  *
  */
-public class RisultatiRicercaQuadroEconomicoAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoQuadroEconomico> {
+public class RisultatiRicercaQuadroEconomicoAjaxModel extends PagedDataTableAjaxModel<ElementoQuadroEconomico> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 8080704160199932886L;

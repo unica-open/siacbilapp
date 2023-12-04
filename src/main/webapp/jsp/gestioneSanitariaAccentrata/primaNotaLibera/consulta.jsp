@@ -30,26 +30,59 @@ SPDX-License-Identifier: EUPL-1.2
 						<div class="boxOrSpan2">
 							<div class="boxOrInline">
 								<p>Dati Causale</p>
-								<ul class="htmlelt">
-									<li>
-										<dfn>Causale</dfn>
-										<dl><s:property value="descrizioneCausale"/>&nbsp;</dl>
-									</li>
-									<li>
-										<dfn>Data registrazione</dfn>
-										<dl><s:property value="primaNotaLibera.dataRegistrazione"/>&nbsp;</dl>
-									</li>
-									<li>
-										<dfn>Descrizione</dfn>
-										<dl><s:property value="primaNotaLibera.descrizione"/>&nbsp;</dl>
-									</li>
-									<s:if test="dataRegistrazioneDefinitivaVisibile">
+								<div class="span4">
+									<ul class="htmlelt">
 										<li>
-											<dfn>Data registrazione definitiva</dfn>
-											<dl><s:property value="primaNotaLibera.dataRegistrazioneLibroGiornale"/>&nbsp;</dl>
+											<dfn>Causale</dfn>
+											<dl><s:property value="descrizioneCausale"/>&nbsp;</dl>
 										</li>
-									</s:if>
-								</ul>
+										<li>
+											<dfn>Data registrazione</dfn>
+											<dl><s:property value="primaNotaLibera.dataRegistrazione"/>&nbsp;</dl>
+										</li>
+										<li>
+											<dfn>Descrizione</dfn>
+											<dl><s:property value="primaNotaLibera.descrizione"/>&nbsp;</dl>
+										</li>
+										<s:if test="dataRegistrazioneDefinitivaVisibile">
+											<li>
+												<dfn>Data registrazione definitiva</dfn>
+												<dl><s:property value="primaNotaLibera.dataRegistrazioneLibroGiornale"/>&nbsp;</dl>
+											</li>
+										</s:if>
+									</ul>
+								</div>
+								<div class="span7">
+									<%-- SIAC-8134 --%>
+									<%-- <div class="control-group margin-medium">
+										<label class="control-label">Struttura competente </label>
+										<div class="controls">
+											<div class="accordion w-95 struttAmm">
+												<div id="fieldsetStrutturaCompetente">
+													<div class="accordion struttAmm">
+														<div class="accordion-group">
+															<div class="accordion-heading">
+																<a class="accordion-toggle" id="accordionPadreStrutturaAmministrativa_PRIMA_NOTA_LIBERA_GSA_SD" href="#struttAmm_PRIMA_PRIMA_NOTA_LIBERA_GSA">
+																	<span id="SPAN_StrutturaAmministrativoContabile_PRIMA_PRIMA_NOTA_LIBERA_GSA">
+																		<s:if test="strutturaCompetentePrimaNotaLibera != null && strutturaCompetentePrimaNotaLibera.codice != null && strutturaCompetentePrimaNotaLibera.descrizione != null">
+																			<s:property value="strutturaCompetentePrimaNotaLibera.codice" /> - <s:property value="strutturaCompetentePrimaNotaLibera.descrizione" />
+																		</s:if>
+																		<s:else>
+																			Nessuna Struttura Amministrativa Responsabile selezionata
+																		</s:else>
+																	</span>
+																</a>
+															</div>
+															<div id="struttAmm_PRIMA_NOTA_LIBERA_GSA" class="accordion-body collapse">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div> --%>
+									<%-- SIAC-8134 --%>
+								</div>
 							</div>
 						</div>
 						<div class="clear"></div>
@@ -183,7 +216,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/primaNotaLibera/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/primaNotaLibera/consulta.js"></script>
 
 </body>
 </html>

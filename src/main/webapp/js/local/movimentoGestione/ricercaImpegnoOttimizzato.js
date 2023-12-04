@@ -38,20 +38,18 @@
         return obj && obj.siopeAssenzaMotivazione && obj.siopeAssenzaMotivazione.uid || 0;
     }
 
-    var Impegno = function(annoMovimento, numeroMovimento, numeroSubMovimento, descrizione, cig, cup, mutuo, disponibilita, pulsanteApertura, siopeAssenza) {
+    var Impegno = function(annoMovimento, numeroMovimento, numeroSubMovimento, descrizione, cig, cup, disponibilita, pulsanteApertura, siopeAssenza) {
         this.$annoMovimento = $(annoMovimento);
         this.$numeroMovimento = $(numeroMovimento);
         this.$numeroSubMovimento = $(numeroSubMovimento);
         this.$descrizione = $(descrizione);
         this.$cig = $(cig);
         this.$cup = $(cup);
-        this.$mutuo = $(mutuo);
         this.$disponibilita = $(disponibilita);
         this.$pulsanteApertura = $(pulsanteApertura);
         this.$siopeAssenza = $(siopeAssenza);
 
         this.$ricercaEffettuataConSuccesso = $('#hidden_ricercaEffettuataConSuccessoModaleImpegno');
-        this.$tabellaMutui = $('#tabellaMutuiModale');
         this.$tabellaMovimenti = $('#tabellaImpegniModale');
         this.$tdCapitolo = $('#tabellaImpegno_tdCapitolo');
         this.$tdProvvedimento = $('#tabellaImpegno_tdProvvedimento');
@@ -64,7 +62,6 @@
         this.$spinner = $('#SPINNER_pulsanteRicercaImpegnoModale');
         this.$fieldset = $('#FIELDSET_modaleImpegno');
         this.$divMovimenti = $('#divImpegniTrovati');
-        this.$divMutui = $('#divMutui').overlay();
         this.$conferma = $('#pulsanteConfermaModaleImpegno');
         this.$ricerca = $('#pulsanteRicercaImpegnoModale');
         this.$impegnoModale = $('#tabellaImpegnoModale');
@@ -72,7 +69,6 @@
         this.$modale = $('#modaleImpegno');
     };
 
-    Impegno.prototype.impostaMutuiNellaTabella = impostaMutuiNellaTabella;
     Impegno.prototype.impostaImpegnoNellaTabella = impostaImpegnoNellaTabella;
     Impegno.prototype.ricercaImpegno = ricercaImpegno;
     Impegno.prototype.ricercaImpegnoCallback = ricercaImpegnoCallback;
@@ -152,36 +148,6 @@
             self[wrapperName + 'InUse'] = operation === 'show';
         };
     }
-
-    /**
-     * Imposta la tabella dei mutui.
-     */
-    function impostaMutuiNellaTabella(lista) {
-        var opts = {
-            aaData: lista,
-            oLanguage: {
-                sZeroRecords : 'Non sono presenti mutui associati',
-                oPaginate : {
-                    sEmptyTable : 'Nessun mutuo disponibile'
-                }
-            },
-            aoColumnDefs : [
-                {aTargets: [0], mData: function() {
-                    return '<input type="radio" name="radio_mutuo_modale_impegno" />';
-                }, fnCreatedCell: function(nTd, sData, oData) {
-                    $('input', nTd).data('originalMutuo', oData);
-                }},
-                {aTargets: [1], mData: defaultPerDataTable('numeroMutuo')},
-                {aTargets: [2], mData: defaultPerDataTable('descrizioneMutuo')},
-                {aTargets: [3], mData: defaultPerDataTable('istitutoMutuante.denominazione')},
-                {aTargets: [4], mData: defaultPerDataTable('importoAttualeVoceMutuo', 0, formatMoney), fnCreatedCell: tabRight},
-                {aTargets: [5], mData: defaultPerDataTable('importoDisponibileLiquidareVoceMutuo', 0, formatMoney), fnCreatedCell: tabRight}
-            ]
-        };
-        var options = $.extend(true, {}, baseOpts, opts);
-        this.initDataTable(this.$tabellaMutui, options);
-    }
-
     /**
      * Imposta i dati dell'impegno nella tabella
      * @param impegno (any) l'impegno
@@ -302,6 +268,11 @@
             return;
         }
 
+        //SIAC-7661
+        if(!(typeof $('#formBackofficeModificaCig') === undefined)){
+            $('#modaleImpegno_bko').val(true);
+        }
+
         oggettoPerChiamataAjax = unqualify(this.$fieldset.serializeObject(), 1);
         alertErroriModale.slideUp();
         this.$divMovimenti.slideUp();
@@ -323,11 +294,9 @@
         }
         this.impostaImpegnoNellaTabella(data.impegno);
         this.impostaSubimpegniPaginatiNellaTabella(data.impegno);
-        this.impostaMutuiNellaTabella(data.impegno.listaVociMutuo);
         this.$ricercaEffettuataConSuccesso.val('true');
 
         this.$divMovimenti.slideDown();
-        this.$divMutui.slideDown();
         return data;
     }
 
@@ -338,10 +307,8 @@
      */
     function confermaImpegno(e) {
         var checkedRadio = this.$tabellaMovimenti.find('input[name="radio_modale_impegno"]:checked');
-        var checkedMutuoRadio = this.$tabellaMutui.find('input[name="radio_mutuo_modale_impegno"]:checked');
         var impegno;
         var subimpegno;
-        var mutuo;
         var numeroSub;
         var disponibilita;
         var str;
@@ -359,7 +326,6 @@
         
         impegno = impegnoSenzaSub ? impegnoSenzaSub : checkedRadio.data('originalImpegno');
         subimpegno = checkedRadio.data('originalSubImpegno') ? checkedRadio.data('originalSubImpegno') : undefined;
-        mutuo = checkedMutuoRadio.data('originalMutuo') ? checkedMutuoRadio.data('originalMutuo') : undefined;
        
         // SIAC-5410
         tipoDebitoSIOPE = subimpegno
@@ -387,7 +353,6 @@
         this.$cig.val(subimpegno ? subimpegno.cig : impegno.cig);
         this.$cup.val(subimpegno ? subimpegno.cup : impegno.cup);
         this.$siopeAssenza.val(subimpegno ? extractSiopeAssenzaMotivazione(subimpegno) : extractSiopeAssenzaMotivazione(impegno));
-        this.$mutuo.val(mutuo && mutuo.numeroMutuo || '');
         this.$disponibilita.html(disponibilita.formatMoney());
         this.$descrizione.html(str);
 
@@ -421,7 +386,6 @@
         }
         this.impostaImpegnoNellaTabella(data.impegno);
         this.impostaSubimpegniPaginatiNellaTabella(data.impegno);
-        this.impostaMutuiNellaTabella(data.impegno.listaVociMutuo);
         this.impostaEApriCollapseImpegniTrovati();
         return data;
     }
@@ -501,9 +465,6 @@
     function onChangeRadio(impegno) {
         return function() {
             var si = $(this).data('originalSubImpegno');
-            impegno.$divMutui.overlay('show');
-            impegno.impostaMutuiNellaTabella(si && si.listaVociMutuo || []);
-            impegno.$divMutui.overlay('hide');
         };
     }
 
@@ -515,7 +476,6 @@
         this.$numeroModale.val(this.$numeroMovimento.val());
         // SIAC-5409: Chiudo i collapse
         this.$divMovimenti.slideUp();
-        this.$divMutui.slideUp();
         this.$modale.modal('show');
     }
 
@@ -529,19 +489,17 @@
      *
      * @param campoCig                (String) il campo ove impostare il CIG (Optional - default: '')
      * @param campoCup                (String) il campo ove impostare il CUP (Optional - default: '')
-     * @param campoMutuo              (String) il campo ove impostare il mutuo (Optional - default: '')
      * @param spanDisponibilita       (String) il campo ove impostare la disponibilita (Optional - default: '')
      * @param pulsanteApertura        (String) il pulsante di apertura (Optional - default: '')
      * @param campoSiopeAssenza       (String) il campo ove impostare il tipo di assenza CIG (Optional - default: '')
      */
-    function inizializza (campoAnnoMovimento, campoNumeroMovimento, campoNumeroSubMovimento, campoDescrizione, campoCig, campoCup, campoMutuo, spanDisponibilita, pulsanteApertura, campoSiopeAssenza) {
+    function inizializza (campoAnnoMovimento, campoNumeroMovimento, campoNumeroSubMovimento, campoDescrizione, campoCig, campoCup, spanDisponibilita, pulsanteApertura, campoSiopeAssenza) {
         var impegno = new Impegno(campoAnnoMovimento || '#annoMovimentoMovimentoGestione',
             campoNumeroMovimento || '#numeroMovimentoGestione',
             campoNumeroSubMovimento || '#numeroSubMovimentoGestione',
             campoDescrizione || '#datiRiferimentoImpegnoSpan',
             campoCig || '',
             campoCup || '',
-            campoMutuo || '',
             spanDisponibilita || '',
             pulsanteApertura || '',
             campoSiopeAssenza || '');
@@ -558,7 +516,7 @@
         impegno.$conferma.substituteHandler('click', impegno._fncConfermaImpegno);
         impegno.$pulsanteApertura.substituteHandler('click', impegno._fncApriModale);
         
-        $('#divMutui, #divImpegniTrovati').on('shown hidden', eventStopPropagation);
+        $('#divImpegniTrovati').on('shown hidden', eventStopPropagation);
 
         $(document).on('shown', '#modaleImpegno', impegno._fncRicercaEffettuataConSuccessoVal)
         .on('hidden', '#modaleImpegno', impegno._fncSlideUpDivs)

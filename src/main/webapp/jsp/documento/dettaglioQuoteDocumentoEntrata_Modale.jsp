@@ -6,7 +6,7 @@ SPDX-License-Identifier: EUPL-1.2
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
-<!-- Modal dettQuote -->
+<%-- Modal dettQuote --%>
 <div id="modaleQuotaEntrata" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="dettQuoteLabel" aria-hidden="true">
 	<div class="row-fluid">
 		<div class="modal-header">
@@ -47,5 +47,5 @@ SPDX-License-Identifier: EUPL-1.2
 		</div>
 	</div>
 </div>
-<!--end Modal --->
+<%--end Modal ---%>
 

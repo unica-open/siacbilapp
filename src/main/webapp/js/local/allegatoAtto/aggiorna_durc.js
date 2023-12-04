@@ -9,22 +9,6 @@
     var alertErrori = $("#ERRORI");
     var alertInformazioni = $("#INFORMAZIONI");
 
-//    var moreCols = [
-//        {aTargets: [10], mData: defaultPerDataTable('domStringAzioni'), fnCreatedCell: function(nTd, sData, oData) {
-//            var $nTd = $(nTd).addClass("tab_Right");
-//            $nTd.find(".aggiornaQuotaElenco")
-//                .substituteHandler("click", aggiornaQuotaElenco.bind(undefined, nTd, oData, "aggiornaAllegatoAtto_aggiornaSubdocumentoElenco.do"));
-//            $nTd.find(".eliminaQuotaElenco")
-//                .substituteHandler("click", eliminaQuotaElenco.bind(undefined, oData, "aggiornaAllegatoAtto_eliminaSubdocumentoElenco.do"));
-//            $nTd.find(".sospendiPagamentoSoggetto")
-//                .substituteHandler("click", sospendiPagamentoSoggetto.bind(undefined, oData, "aggiornaAllegatoAtto_sospendiPagamentoSoggetto.do"));
-//            $nTd.find(".riattivaPagamentoSoggetto")
-//                .substituteHandler("click", riattivaPagamentoSoggetto.bind(undefined, oData, "aggiornaAllegatoAtto_riattivaSoggettoSospeso.do"));
-//            $nTd.find(".spezzaQuotaElenco")
-//                .substituteHandler("click", spezzaQuotaElenco.bind(undefined, nTd, oData, "aggiornaAllegatoAtto_spezzaSubdocumentoElenco.do"));
-//        }}
-//    ];
-
     /**
      * Imposta i dati negli alert, e ricarica l'elenco.
      *
@@ -54,8 +38,6 @@
     	caricaStrutture();
     }
     
-
-    
     function caricaElencoSoggetti() {
         $.postJSON('aggiornaAllegatoAtto_ottieniListaSoggettiDurc.do', {'uidAllegatoAtto': $('#HIDDEN_uidAllegatoAtto').val()})
         .then(function(data) {
@@ -68,13 +50,14 @@
         });
     }
    
-    
 	function initDataTable(soggetti) {
 		
 		var dt = $('#tabellaElencoSoggetti');
 		
         var opts = {
                 aaData: soggetti,
+                //SIAC-8450 passo una callback ad ogni riga
+                fnDrawCallback: function () { $('.aggiorna-durc').on('click', mostraAggiornaDettaglioSoggetto); }, 
                 bPaginate: true,
                 bLengthChange: false,
                 bSort: false,
@@ -98,8 +81,6 @@
                     }
                 },
                 aoColumnDefs: [
-//                    {aTargets: [0], mData : function(src) { 
-//                    	return '<input class="idSoggetti" name="soggUid" type="radio" value="'+src.uid+'"/>'; }},
                     {aTargets: [0], mData : 'codiceSoggetto'},
                     {aTargets: [1], mData : 'denominazione'},
                     {aTargets: [2], mData : 'codiceFiscale'},
@@ -109,11 +90,13 @@
                     {aTargets: [6], mData : defaultPerDataTable('descrizioneFonteDurc')},
                     {aTargets: [7], mData : function(src) { 
                     	return  src.tipoFonteDurc=='A' ? '' : '<button '
-                    	+'data-id-soggetto="' + (src.uid||'') + '" '
-                    	+'data-note-durc="' + (src.noteDurc||'') + '" '
-                    	+'data-classif-id-durc="' + (src.fonteDurcClassifId||'') + '" '
-                    	+'data-fine-validita-durc="' + (src.dataFineValiditaDurcStr||'') + '"' 
-                    	+ 'class="btn dropdown-toggle aggiorna-durc" data-placement="left" href="#" tabindex="0" >Aggiorna DURC</button>'; }},
+                        	+'data-id-soggetto="' + (src.uid||'') + '" '
+                    	    +'data-note-durc="' + (src.noteDurc||'') + '" '
+                    	    +'data-classif-id-durc="' + (src.fonteDurcClassifId||'') + '" '
+                    	    +'data-fine-validita-durc="' + (src.dataFineValiditaDurcStr||'') + '"' 
+                    	    +'class="btn dropdown-toggle aggiorna-durc" data-placement="left" href="#" tabindex="0" >Aggiorna DURC</button>'; 
+                        }
+                    },
                 ]
         };
         if($.fn.DataTable.fnIsDataTable(dt[0])) {
@@ -121,8 +104,6 @@
         }
         // Inizializzazione del dataTable
         dt.dataTable(opts);
-        
-        $('.aggiorna-durc').on('click', mostraAggiornaDettaglioSoggetto);
 	}
     
     function caricaStrutture() {

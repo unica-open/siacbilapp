@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacgsaapp.frontend.ui.model.conciliazione;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.conciliazione.ElementoConciliazionePerBeneficiario;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.conciliazione.ElementoCo
  * @version 1.0.0 03/11/2015
  *
  */
-public class RisultatiRicercaConciliazionePerBeneficiarioAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoConciliazionePerBeneficiario> {
+public class RisultatiRicercaConciliazionePerBeneficiarioAjaxModel extends PagedDataTableAjaxModel<ElementoConciliazionePerBeneficiario> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 3516844308895920927L;

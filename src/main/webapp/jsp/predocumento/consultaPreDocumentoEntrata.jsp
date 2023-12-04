@@ -56,7 +56,7 @@ SPDX-License-Identifier: EUPL-1.2
 									</li>
 									<li>
 										<dfn>Provvisorio di cassa</dfn>
-										<dl>&nbsp;</dl>
+										<dl><s:property value="preDocumento.provvisorioDiCassa.anno"/> / <s:property value="preDocumento.provvisorioDiCassa.numero"/></dl>
 									</li>
 									<li>
 										<dfn>Stato</dfn>
@@ -76,7 +76,7 @@ SPDX-License-Identifier: EUPL-1.2
 								<ul class="htmlelt">
 									<li>
 										<dfn>Denominazione</dfn>
-										<dl><s:property value="denominazione" escape="false"/>&nbsp;</dl>
+										<dl><s:property value="denominazione" escapeHtml="false"/>&nbsp;</dl>
 									</li>
 									<li>
 										<dfn>Codice fiscale</dfn>

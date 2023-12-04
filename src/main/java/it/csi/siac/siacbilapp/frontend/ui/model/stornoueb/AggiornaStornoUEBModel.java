@@ -27,7 +27,7 @@ import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.StornoUEB;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
@@ -80,7 +80,7 @@ public class AggiornaStornoUEBModel extends GenericBilancioModel {
 	private Integer numeroStorno;
 	
 	// Stato dello storno
-	private StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio;
+	private StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio;
 	
 	// Numero Provvedimento
 	private Integer numeroProvvedimento;
@@ -406,18 +406,18 @@ public class AggiornaStornoUEBModel extends GenericBilancioModel {
 	}
 	
 	/**
-	 * @return the statoOperativoVariazioneDiBilancio
+	 * @return the statoOperativoVariazioneBilancio
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoOperativoVariazioneDiBilancio() {
-		return statoOperativoVariazioneDiBilancio;
+	public StatoOperativoVariazioneBilancio getStatoOperativoVariazioneDiBilancio() {
+		return statoOperativoVariazioneBilancio;
 	}
 
 	/**
-	 * @param statoOperativoVariazioneDiBilancio the statoOperativoVariazioneDiBilancio to set
+	 * @param statoOperativoVariazioneBilancio the statoOperativoVariazioneBilancio to set
 	 */
 	public void setStatoOperativoVariazioneDiBilancio(
-			StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio) {
-		this.statoOperativoVariazioneDiBilancio = statoOperativoVariazioneDiBilancio;
+			StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio) {
+		this.statoOperativoVariazioneBilancio = statoOperativoVariazioneBilancio;
 	}
 
 	/**
@@ -739,7 +739,7 @@ public class AggiornaStornoUEBModel extends GenericBilancioModel {
 		stornoUEB.setCapitoloSorgente(sorgente);
 		stornoUEB.setCapitoloDestinazione(destinazione);
 		
-		stornoUEB.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneDiBilancio);
+		stornoUEB.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneBilancio);
 		stornoUEB.setDescrizione("");
 		
 		//Nuovo (rifacimento variazioni importi 06/2016)
@@ -786,7 +786,7 @@ public class AggiornaStornoUEBModel extends GenericBilancioModel {
 		annoProvvedimento = attoAmministrativo.getAnno();
 		
 		// Stato operativo variazione di getBilancio()
-		statoOperativoVariazioneDiBilancio = storno.getStatoOperativoVariazioneDiBilancio();
+		statoOperativoVariazioneBilancio = storno.getStatoOperativoVariazioneDiBilancio();
 		
 		Integer anno = getAnnoEsercizioInt();
 		

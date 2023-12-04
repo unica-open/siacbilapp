@@ -67,8 +67,11 @@
             var value2 = getValuesFromObject(valuesObj2);
             
             if(key1===key2 && value1!==value2){
-                $(rows[i]).find('.componenti-competenza').attr("rowspan", "2");
-                $(rows[i+1]).find('.componenti-competenza').remove();
+                //SIAC-7546 MR 22/04/2020 Fix Descrizione
+                // $(rows[i]).find('.componenti-competenza').attr("rowspan", "2");
+                // $(rows[i+1]).find('.componenti-competenza').remove();
+                $(rows[i]).find('.componentiCompetenzaRow').attr("rowspan", "2");
+                $(rows[i+1]).find('.componentiCompetenzaRow').remove();
                 i+=2;
             }else if(key1!==key2){
                 i+=1;
@@ -79,6 +82,32 @@
 
         }
     }
+
+
+	function caricaTabellaImportiComponenti(){
+			var overlay = $('#tabellaStanziamentiPerComponenti').overlay({usePosition: true});
+			overlay.overlay('show');
+			var uidCapitolo = $('#HIDDEN_uidCapitolo').val();
+			var capitolo={uid: uidCapitolo};
+			$.postJSON(
+				"consultaCapUscitaPrevisione_caricaImporti.do",
+				qualify({'capitolo' : capitolo}),
+				function(data) {
+					var righeComp;
+					var righeImporti;
+					// Controllo gli eventuali errori, messaggi, informazioni
+					if(impostaDatiNegliAlert(data.errori, $('#ERRORI'))) {return;	}
+					if(impostaDatiNegliAlert( data.messaggi, $('#MEAASGGI'))) {return;	}
+					if(impostaDatiNegliAlert(data.informazioni, $('#INFORMAZIONI'))) {return;	}
+					righeComp = data.righeComponentiTabellaImportiCapitolo;
+					righeImporti = data.righeImportiTabellaImportiCapitolo;
+					
+					TabellaImportiComponenteCapitolo.creaEPosizionaRigheImporti(righeImporti, true);
+					$('#competenzaCella').substituteHandler('click', TabellaImportiComponenteCapitolo.creaEPosizionaRigheComponenti.bind(undefined, righeComp, true,false));
+				
+				}
+			).always(overlay.overlay.bind(overlay, 'hide'));
+		}
 
 
     
@@ -99,8 +128,12 @@
              $("#componentiCompetenzaPrev").slideToggle();
          });
 
-         
+          caricaTabellaImportiComponenti();
 
+
+	
+						
+		
         
 
          /*$("td").each(function(){

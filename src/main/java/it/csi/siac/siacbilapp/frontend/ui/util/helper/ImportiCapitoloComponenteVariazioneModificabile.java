@@ -18,14 +18,16 @@ public enum ImportiCapitoloComponenteVariazioneModificabile {
 	FRESCO_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.FRESCO, null, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
 	AVANZO_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.AVANZO, null, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.FALSE, Boolean.FALSE),
 	FPV_BILANCIO_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.PROGRAMMATO_NON_IMPEGNATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.FALSE, Boolean.TRUE),
-	FPV_CUMULATO_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.CUMULATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.FALSE, Boolean.FALSE),
-	FPV_APPLICATO_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.APPLICATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.FALSE, Boolean.FALSE),
+	//SIAC-7782
+	FPV_CUMULATO_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.CUMULATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
+	FPV_APPLICATO_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.APPLICATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
 	DA_ATTRIBUIRE_IN_PREVISIONE(ApplicazioneVariazione.PREVISIONE, MacrotipoComponenteImportiCapitolo.DA_ATTRIBUIRE, null, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
 	
 	FRESCO_IN_GESTIONE(ApplicazioneVariazione.GESTIONE, MacrotipoComponenteImportiCapitolo.FRESCO, null, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
 	AVANZO_IN_GESTIONE(ApplicazioneVariazione.GESTIONE, MacrotipoComponenteImportiCapitolo.AVANZO, null, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.FALSE),
 	FPV_BILANCIO_IN_GESTIONE(ApplicazioneVariazione.GESTIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.PROGRAMMATO_NON_IMPEGNATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.FALSE, Boolean.FALSE),
-	FPV_CUMULATO_IN_GESTIONE(ApplicazioneVariazione.GESTIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.CUMULATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.FALSE, Boolean.FALSE),
+	//SIAC-7782
+	FPV_CUMULATO_IN_GESTIONE(ApplicazioneVariazione.GESTIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.CUMULATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
 	FPV_APPLICATO_IN_GESTIONE(ApplicazioneVariazione.GESTIONE, MacrotipoComponenteImportiCapitolo.FPV, SottotipoComponenteImportiCapitolo.APPLICATO, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
 	DA_ATTRIBUIRE_IN_GESTIONE(ApplicazioneVariazione.GESTIONE, MacrotipoComponenteImportiCapitolo.DA_ATTRIBUIRE, null, TipoDettaglioComponenteImportiCapitolo.STANZIAMENTO, Boolean.TRUE, Boolean.TRUE),
 	;

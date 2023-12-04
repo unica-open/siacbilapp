@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.list.SortedSetList;
+import it.csi.siac.siaccommon.util.collections.list.SortedSetList;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorEvento;
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaEventiPerTipo;
 import it.csi.siac.siacgenser.model.Evento;

@@ -95,6 +95,12 @@ SPDX-License-Identifier: EUPL-1.2
 												<dfn>Accertabile</dfn>
 												<dl><s:if test="capitolo.flagImpegnabile">S&iacute;</s:if><s:else>No</s:else></dl>
 											</li>
+											<!-- SIAC-7858 CM 13/05/2021 Inizio -->
+											<li>
+												<dfn>Capitolo pertinente per il calcolo FCDE</dfn>
+												<dl><s:if test="capitolo.flagEntrataDubbiaEsigFCDE">S&iacute;</s:if><s:else>No</s:else></dl>
+											</li>
+											<!-- SIAC-7858 CM 13/05/2021 Fine -->
 											<li>
 												<dfn>Accertato per cassa</dfn>
 												<dl><s:if test="capitolo.flagAccertatoPerCassa">S&iacute;</s:if><s:else>No</s:else></dl>
@@ -140,7 +146,7 @@ SPDX-License-Identifier: EUPL-1.2
 												<dfn>Codifica transazione UE</dfn>
 												<dl><s:property value="transazioneUnioneEuropeaEntrata.codice"/> <s:property value="transazioneUnioneEuropeaEntrata.descrizione"/></dl>
 											</li>
-											<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+											<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 												<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
 													<li>
 														<dfn><s:property value="%{#attr['labelClassificatoreGenerico' + #idx]}"/></dfn>
@@ -238,7 +244,7 @@ SPDX-License-Identifier: EUPL-1.2
 							<div class="tab-pane" id="movimenti"></div>
 							<div class="tab-pane" id="variazioniCodifiche">	</div>
 							<div class="tab-pane" id="gestione">
-								<s:include value="/jsp/cap/include/consulta_gestione.jsp" />
+								<s:include value="/jsp/cap/include/consulta_gestione_entrata.jsp" />
 							</div>
 						</div>
 						<!--fine tab-->
@@ -254,7 +260,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/consultaCapitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataPrevisione/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/consultaCapitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataPrevisione/consulta.js"></script>
 </body>
 </html>

@@ -84,6 +84,27 @@ SPDX-License-Identifier: EUPL-1.2
 													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
 											</div>
 										</div>
+										<!-- task-55 -->
+										<div id="containerRisorsaAccantonata" <s:if test='%{!missioneFondi}'>class="hide"</s:if>>
+											<div class="control-group" id="capitoloDaNonInserire">
+												<label for="flagCapitoloDaNonInserireA1" class="control-label">Capitolo da non inserire nell'allegato A1 *
+													<!-- task-55 -->
+													<a class="tooltip-test" title="Risorse Accantonate per Risultato di Amministrazione - Allegato a1" href="#">
+														<i class="icon-info-sign">&nbsp;
+															<span class="nascosto">Risorse Accantonate per Risultato di Amministrazione - Allegato a1</span>
+														</i>
+													</a>
+												</label>
+												<div class="controls">
+													<label class="radio inline">
+														<s:radio theme="simple" name="capitoloUscitaPrevisione.flagNonInserireAllegatoA1" list="#{true:'Sì'}" disabled="true"/>
+													</label>
+													<label class="radio inline">
+														<s:radio theme="simple" name="capitoloUscitaPrevisione.flagNonInserireAllegatoA1" list="#{false:'No'}" disabled="true"/>
+													</label>
+												</div>
+											</div>
+										</div>
 										<div class="control-group">
 											<label for="soggetto5" class="control-label">Programma *
 												<a class="tooltip-test" title="selezionare prima la Missione" href="#">
@@ -411,7 +432,8 @@ SPDX-License-Identifier: EUPL-1.2
 											<s:a href="%{url}" cssClass="btn" >indietro</s:a>
 										</s:else>
 										<button type="submit" class="btn btn-primary pull-right submit">aggiorna</button>
-										<s:a action="aggiornaComponenteImportoCapitolo" cssClass="btn btn-primary pull-right disabled" >
+										<%-- SIAC-7799--%>
+										<s:a action="gestioneComponenteImportoCapitoloNelCapitolo" cssClass="btn btn-primary pull-right disabled" >
 											<s:param name="isCapitoloFondino" value="%{capitoloFondino}"/>
 											<s:param name="uidCapitolo" value="%{capitoloUscitaPrevisione.uid}"/>
 											<s:param name="fromPage">MODIFY</s:param>
@@ -447,10 +469,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloUscita.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloUscitaPrevisione/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloUscita.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloUscitaPrevisione/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attoDiLegge/attoDiLegge.js"></script>
 </body>
 </html>

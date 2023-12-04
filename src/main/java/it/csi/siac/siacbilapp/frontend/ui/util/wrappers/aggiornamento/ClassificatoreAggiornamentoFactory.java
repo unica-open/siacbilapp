@@ -19,7 +19,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.capuscgest.AggiornaMassivaCapito
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscprev.AggiornaCapitoloUscitaPrevisioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscprev.AggiornaMassivaCapitoloUscitaPrevisioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.model.TipoFondo;
@@ -37,6 +37,10 @@ public final class ClassificatoreAggiornamentoFactory {
 	
 	/** Numero dei classificatori generici presenti */
 	private static final int NUMERO_CLASSIFICATORI_GENERICI = 15;
+	private static final int START_INDEX_CLASSIFICATORI_GENERICI_SPESA=1;
+	private static final int LAST_INDEX_CLASSIFICATORI_GENERICI_SPESA=15;
+	private static final int START_INDEX_CLASSIFICATORI_GENERICI_ENTRATA=36;
+	private static final int LAST_INDEX_CLASSIFICATORI_GENERICI_ENTRATA=36;
 	
 	/** Lista dei classificatori di base da injettare nel {@link ClassificatoreAggiornamento} */
 	@SuppressWarnings("unchecked")
@@ -65,7 +69,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloUscita wrapper = new ClassificatoreAggiornamentoCapitoloUscita();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model, START_INDEX_CLASSIFICATORI_GENERICI_SPESA, LAST_INDEX_CLASSIFICATORI_GENERICI_SPESA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setMissione(model.getMissione());
@@ -78,6 +82,8 @@ public final class ClassificatoreAggiornamentoFactory {
 		wrapper.setPerimetroSanitarioSpesa(model.getPerimetroSanitarioSpesa());
 		wrapper.setTransazioneUnioneEuropeaSpesa(model.getTransazioneUnioneEuropeaSpesa());
 		wrapper.setPoliticheRegionaliUnitarie(model.getPoliticheRegionaliUnitarie());
+		//SIAC-7192
+		wrapper.setRisorsaAccantonata(model.getRisorsaAccantonata());
 		
 		return wrapper;
 	}
@@ -98,7 +104,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloUscita wrapper = new ClassificatoreAggiornamentoCapitoloUscita();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model, START_INDEX_CLASSIFICATORI_GENERICI_SPESA, LAST_INDEX_CLASSIFICATORI_GENERICI_SPESA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setMissione(model.getMissione());
@@ -111,6 +117,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		wrapper.setPerimetroSanitarioSpesa(model.getPerimetroSanitarioSpesa());
 		wrapper.setTransazioneUnioneEuropeaSpesa(model.getTransazioneUnioneEuropeaSpesa());
 		wrapper.setPoliticheRegionaliUnitarie(model.getPoliticheRegionaliUnitarie());
+		wrapper.setRisorsaAccantonata(model.getRisorsaAccantonata());
 		return wrapper;
 	}
 	
@@ -130,7 +137,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloEntrata wrapper = new ClassificatoreAggiornamentoCapitoloEntrata();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model, START_INDEX_CLASSIFICATORI_GENERICI_ENTRATA, LAST_INDEX_CLASSIFICATORI_GENERICI_ENTRATA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setTitoloEntrata(model.getTitoloEntrata());
@@ -159,7 +166,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloEntrata wrapper = new ClassificatoreAggiornamentoCapitoloEntrata();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model, START_INDEX_CLASSIFICATORI_GENERICI_ENTRATA, LAST_INDEX_CLASSIFICATORI_GENERICI_ENTRATA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setTitoloEntrata(model.getTitoloEntrata());
@@ -190,7 +197,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloUscita wrapper = new ClassificatoreAggiornamentoCapitoloUscita();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model, START_INDEX_CLASSIFICATORI_GENERICI_SPESA, LAST_INDEX_CLASSIFICATORI_GENERICI_SPESA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setProgramma(model.getProgramma());
@@ -221,7 +228,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloUscita wrapper = new ClassificatoreAggiornamentoCapitoloUscita();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model, START_INDEX_CLASSIFICATORI_GENERICI_SPESA, LAST_INDEX_CLASSIFICATORI_GENERICI_SPESA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setProgramma(model.getProgramma());
@@ -251,7 +258,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloEntrata wrapper = new ClassificatoreAggiornamentoCapitoloEntrata();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model, START_INDEX_CLASSIFICATORI_GENERICI_ENTRATA, LAST_INDEX_CLASSIFICATORI_GENERICI_ENTRATA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setCategoriaTipologiaTitolo(model.getCategoriaTipologiaTitolo());
@@ -278,7 +285,7 @@ public final class ClassificatoreAggiornamentoFactory {
 		ClassificatoreAggiornamentoCapitoloEntrata wrapper = new ClassificatoreAggiornamentoCapitoloEntrata();
 		
 		// Popolamento dei campi comuni
-		popolaCampiComuni(wrapper, model);
+		popolaCampiComuni(wrapper, model,START_INDEX_CLASSIFICATORI_GENERICI_ENTRATA, LAST_INDEX_CLASSIFICATORI_GENERICI_ENTRATA);
 		
 		// Popolamento dei campi specifici
 		wrapper.setCategoriaTipologiaTitolo(model.getCategoriaTipologiaTitolo());
@@ -331,7 +338,7 @@ public final class ClassificatoreAggiornamentoFactory {
 	 * @return il wrapper creato
 	 */
 	private static ClassificatoreAggiornamento popolaCampiComuni(ClassificatoreAggiornamento classificatoreAggiornamento, 
-			CapitoloModel model) {
+			CapitoloModel model, int startIndexClassificatoriGenerici, int lastIndexClassificatoriGenerici) {
 		
 		/* Classificatori di base */
 		for(Class<? extends Codifica> classificatore : CLASSIFICATORI_BASE) {
@@ -339,8 +346,8 @@ public final class ClassificatoreAggiornamentoFactory {
 			ReflectionUtil.copyField(model, classificatoreAggiornamento, nomeCampo);
 		}
 		/* Classificatori generici */
-		for(int i = 0; i < NUMERO_CLASSIFICATORI_GENERICI; i++) {
-			String nomeCampo = "classificatoreGenerico" + (i + 1);
+		for(int i = startIndexClassificatoriGenerici; i <= lastIndexClassificatoriGenerici; i++) {
+			String nomeCampo = "classificatoreGenerico" + i;
 			ReflectionUtil.copyField(model, classificatoreAggiornamento, nomeCampo);
 		}
 		

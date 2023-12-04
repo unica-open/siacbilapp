@@ -261,8 +261,9 @@ var Capitolo = (function(global, exports) {
                 {aTargets: [2], mData : defaultPerDataTable('provvedimentoVariazione')},
                 {aTargets: [3], mData : defaultPerDataTable('strutturaAmministrativaContabileCapitoloPreVariazione')},
                 {aTargets: [4], mData : defaultPerDataTable('descrizioneCapitoloPreVariazione')},
-                {aTargets: [5], mData : defaultPerDataTable('descrizioneArticoloPreVariazione')}
+                {aTargets: [5], mData : defaultPerDataTable('descrizioneArticoloPreVariazione')},
             ],
+            
             fnPreDrawCallback: function () {
                 // Mostro il div del processing
                 tabella.parent().find('div.dataTables_processing').parent("div").show();
@@ -275,6 +276,18 @@ var Capitolo = (function(global, exports) {
                 $('#tabellaVariazioniCodifiche_wrapper').overlay('hide');
             }
         };
+        
+        opzioni.aoColumnDefs.push({aTargets: [ 6 ], mData: function (source) {
+            var pulsante = "";
+            var link = '<li><a href="consultaCodificheVariazione.do?uidVariazioneDaConsultare='+source.uid+'">consulta codifiche</a></li>';
+            
+            pulsante = '<div class="btn-group">' +
+            '<button class="btn dropdown-toggle" data-toggle="dropdown">Azioni&nbsp;<span class="caret"></span></button>' +
+            '<ul class="dropdown-menu pull-right">' + link + '</ul>' +
+            '</div>';
+            return pulsante;
+        }});
+        
         if($(tabelleGiaInDataTable).filter(tabella).length > 0) {
             tabella.dataTable().fnClearTable(false);
             tabella.dataTable().fnDestroy();
@@ -322,7 +335,7 @@ var Capitolo = (function(global, exports) {
             var arrIntestazioni = data.listaIntestazioniCampiTabella;
             var intestazioni;
             var footer;
-            var table;
+            var table; 
             if(impostaDatiNegliAlert(data.errori, alertErrori)) {
                 return $.Deferred().reject().promise();
             }

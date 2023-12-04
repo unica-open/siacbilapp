@@ -283,7 +283,7 @@ public abstract class GestioneModificaMovimentoGestioneEntrataInsPrimaNotaIntegr
 		if(modificaMovimentoGestioneEntrata.getSubAccertamento() != null) {
 			return modificaMovimentoGestioneEntrata.getSubAccertamento().getNumeroAccertamentoPadre();
 		} else if (modificaMovimentoGestioneEntrata.getAccertamento() != null) {
-			return modificaMovimentoGestioneEntrata.getAccertamento().getNumero();
+			return modificaMovimentoGestioneEntrata.getAccertamento().getNumeroBigDecimal();
 		}
 		throw new FrontEndUncheckedException("Modifica del movimento di gestione senza impegno ne' subimpegno associato");
 	}
@@ -296,7 +296,7 @@ public abstract class GestioneModificaMovimentoGestioneEntrataInsPrimaNotaIntegr
 	 */
 	private BigDecimal ottieniNumeroSub(ModificaMovimentoGestioneEntrata modificaMovimentoGestioneEntrata) {
 		if(modificaMovimentoGestioneEntrata.getSubAccertamento() != null) {
-			return modificaMovimentoGestioneEntrata.getSubAccertamento().getNumero();
+			return modificaMovimentoGestioneEntrata.getSubAccertamento().getNumeroBigDecimal();
 		}
 		return null;
 	}

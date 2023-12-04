@@ -50,8 +50,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}storniUEB/storni.js"></script>
-	<script type="text/javascript" src="${jspath}storniUEB/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/storniUEB/storni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/storniUEB/risultatiRicerca.js"></script>
 
 </body>
 </html>

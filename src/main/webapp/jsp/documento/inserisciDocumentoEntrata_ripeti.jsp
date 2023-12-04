@@ -21,7 +21,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<s:hidden id="HIDDEN_anno_datepicker" value="%{documento.anno}" />
 					<h3>Ripeti Documento entrata</h3>
 
-					<fieldset class="form-horizontal">
+					<fieldset id="fieldset_InserisciDocumentoRipeti" class="form-horizontal">
 						<h4>Dati principali</h4>
 						<div class="control-group">
 							<label for="tipoDocumento" class="control-label">Tipo *</label>
@@ -42,7 +42,7 @@ SPDX-License-Identifier: EUPL-1.2
 									<label for="dataEmissioneDocumento" class="radio inline">Data *</label>
 								</span>
 								<s:textfield id="dataEmissioneDocumento" name="documento.dataEmissione" cssClass="lbTextSmall span2 datepicker" size="10" />
-								<!-- SIAC 6677 -->
+								<%-- SIAC 6677 --%>
 								<span class="alRight">
 									<label for="dataOperazioneDocumento" class="radio inline">Data Operazione</label>
 								</span>
@@ -57,6 +57,11 @@ SPDX-License-Identifier: EUPL-1.2
 								</s:if>
 							</span>
 						</h4>
+						<%-- SIAC-7567 metto il campo solo se é una PA --%>
+						<s:if test="checkCanale != null && checkCanale == true">
+							<s:hidden id="HIDDEN_checkCanale" name="checkCanale" />
+						</s:if>
+						<%-- SIAC-7567 --%>
 						<s:hidden id="HIDDEN_soggettoDenominazione" name="soggetto.denominazione" />
 						<s:hidden id="HIDDEN_soggettoCodiceFiscale" name="soggetto.codiceFiscale" />
 						<div class="control-group">
@@ -109,7 +114,6 @@ SPDX-License-Identifier: EUPL-1.2
 							</div>
 						</div>
 					
-					
 						<div class="control-group">
 							<label class="control-label">Dati repertorio/protocollo</label>
 							<div class="controls">
@@ -131,7 +135,7 @@ SPDX-License-Identifier: EUPL-1.2
 							</div>
 						</div>
 						
-						<!-- SIAC 6677 -->
+						<%-- SIAC 6677 --%>
 						<div class="control-group">
 							<label class="control-label" for="codAvvisoPagoPA">Codice Avviso Pago PA</label>
 							<div class="controls">
@@ -142,7 +146,20 @@ SPDX-License-Identifier: EUPL-1.2
 								<s:textfield id="iuv" name="documento.iuv" readonly="true" cssClass="lbTextSmall span2" placeholder="IUV" />
 							</div>
 						</div>
-					
+			
+						<%-- SIAC-7567 --%>
+						<div class="control-group">
+							<label class="control-label" for="cig">CIG</label>
+							<div class="controls">
+								<s:textfield id="cig" name="documento.cig" cssClass="lbTextSmall span3 cig" maxlength="10" placeholder="CIG" />
+								<span class="alRight">
+									<label class="radio inline" for="cup">CUP</label>
+								</span>
+								<s:textfield id="cup" name="documento.cup" cssClass="lbTextSmall span3 cup" maxlength="15" placeholder="CUP" />
+							</div>
+						</div>
+						<s:hidden id="HIDDEN_proseguireConElaborazioneCheckPA" name="proseguireConElaborazioneCheckPA" value="false"/>
+						<%-- SIAC-7567 --%>
 						
 						<div class="step-pane active" id="datiIncassoPadre">
 							<div class="accordion" >
@@ -180,7 +197,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<p class="margin-medium">
 						<s:include value="/jsp/include/indietro.jsp" />
 						<s:reset cssClass="btn" value="annulla" />
-						<s:submit cssClass="btn btn-primary pull-right" value="salva" />
+						<s:submit id="salvaDocumento" cssClass="btn btn-primary pull-right" value="salva" />
 					</p>
 				</s:form>
 			</div>
@@ -190,10 +207,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisciEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisciEntrata.js"></script>
 
 </body>
 </html>

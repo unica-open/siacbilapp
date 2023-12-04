@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccecapp.frontend.ui.model.ajax.cassaeconomale.tabelle.RisultatiRicercaTipoGiustificativoAjaxModel;
@@ -29,7 +29,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaTipoGiustificativoAjaxAction extends GenericRisultatiRicercaAjaxAction<TipoGiustificativo,
+public class RisultatiRicercaTipoGiustificativoAjaxAction extends PagedDataTableAjaxAction<TipoGiustificativo,
 	RisultatiRicercaTipoGiustificativoAjaxModel, TipoGiustificativo, RicercaSinteticaTipoGiustificativo, RicercaSinteticaTipoGiustificativoResponse> {
 
 	/** Per la serializzazione */
@@ -55,12 +55,12 @@ public class RisultatiRicercaTipoGiustificativoAjaxAction extends GenericRisulta
 	}
 
 	@Override
-	protected TipoGiustificativo ottieniIstanza(TipoGiustificativo e) throws FrontEndBusinessException {
+	protected TipoGiustificativo getInstance(TipoGiustificativo e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaSinteticaTipoGiustificativoResponse ottieniResponse(RicercaSinteticaTipoGiustificativo request) {
+	protected RicercaSinteticaTipoGiustificativoResponse getResponse(RicercaSinteticaTipoGiustificativo request) {
 		return cassaEconomaleService.ricercaSinteticaTipoGiustificativo(request);
 	}
 

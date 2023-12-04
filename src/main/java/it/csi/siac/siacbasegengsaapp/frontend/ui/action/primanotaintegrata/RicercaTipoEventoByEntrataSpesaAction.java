@@ -137,7 +137,7 @@ public class RicercaTipoEventoByEntrataSpesaAction extends GenericBilancioAction
 		logServiceResponse(response);
 
 		if (response.hasErrori()) {
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaCodifiche.class, response);
 			log.debug(methodName, errorMsg);
 			addErrori(response);
 			throw new WebServiceInvocationFailureException(errorMsg);

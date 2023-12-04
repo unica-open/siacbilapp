@@ -74,7 +74,7 @@ SPDX-License-Identifier: EUPL-1.2
 													<dfn>Partita IVA</dfn>
 													<dl><s:property value="soggetto.partitaIva" />&nbsp;</dl>
 												</li>
-												<!-- SIAC-6565-CR1215 -->
+												<%-- SIAC-6565-CR1215 --%>
 												<li>
 													<dfn>E-mail PEC</dfn>
 													<dl><s:property value="soggetto.emailPec" />&nbsp;</dl>
@@ -149,6 +149,16 @@ SPDX-License-Identifier: EUPL-1.2
 													<dfn>IUV</dfn>
 													<dl><s:property value="documento.iuv" />&nbsp;</dl>
 												</li>
+												<%-- SIAC-7567 --%>
+												<li>
+													<dfn>CIG</dfn>
+													<dl><s:property value="documento.cig"></s:property></dl>
+												</li>
+												<li>
+													<dfn>CUP</dfn>
+													<dl><s:property value="documento.cup"></s:property></dl>
+												</li>
+												<%-- SIAC-7567 --%>
 												<li>
 													<dfn>Codice bollo</dfn>
 													<dl><s:property value="documento.codiceBollo.codice" />&nbsp;-&nbsp;<s:property value="documento.codiceBollo.descrizione" /></dl>

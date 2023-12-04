@@ -112,8 +112,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ztree/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricercaProvvedimento_collapse.js"></script>
-	<script type="text/javascript" src="${jspath}progetto/ricercaProgetto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricercaProvvedimento_collapse.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/progetto/ricercaProgetto.js"></script>
 </body>
 </html>

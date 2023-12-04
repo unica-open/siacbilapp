@@ -210,8 +210,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
 	
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}provvisorioDiCassa/ricercaSinteticaProvvisorioCassa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricercaSinteticaProvvisorioCassa.js"></script>
 
 </body>
 </html>

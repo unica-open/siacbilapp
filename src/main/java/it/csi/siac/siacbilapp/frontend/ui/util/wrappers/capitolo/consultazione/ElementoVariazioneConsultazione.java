@@ -200,10 +200,1234 @@ public class ElementoVariazioneConsultazione implements Serializable {
 	private BigDecimal variazioniInDiminuzioneAnnullataEquivalenteResiduo = BigDecimal.ZERO;
 	private BigDecimal variazioniInDiminuzioneAnnullataEquivalenteCassa = BigDecimal.ZERO;
 	
+	
+	
+	// CONTABILIA-285 INIZIO
+	private long variazioniInNeutreBozzaNum0 = 0L;
+	private long variazioniInNeutreDefinitivaNum0 = 0L;
+	private long variazioniInNeutrePreDefinitivaNum0 = 0L;
+	private long variazioniInNeutreGiuntaConsiglioNum0 = 0L;
+	private long variazioniInNeutreAnnullataNum0 = 0L;
+	private long variazioniInNeutreBozzaNum1 = 0L;
+	private long variazioniInNeutreDefinitivaNum1 = 0L;
+	private long variazioniInNeutrePreDefinitivaNum1 = 0L;
+	private long variazioniInNeutreGiuntaConsiglioNum1 = 0L;
+	private long variazioniInNeutreAnnullataNum1 = 0L;
+	private long variazioniInNeutreBozzaNum2 = 0L;
+	private long variazioniInNeutreDefinitivaNum2 = 0L;
+	private long variazioniInNeutrePreDefinitivaNum2 = 0L;
+	private long variazioniInNeutreGiuntaConsiglioNum2 = 0L;
+	private long variazioniInNeutreAnnullataNum2 = 0L;
+	
+	private BigDecimal variazioniInNeutreBozzaCompetenza0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaResiduo0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaCassa0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaCompetenza1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaResiduo1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaCassa1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaCompetenza2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaResiduo2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaCassa2 = BigDecimal.ZERO;
+	
+	private BigDecimal variazioniInNeutreDefinitivaCompetenza0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaResiduo0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaCassa0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaCompetenza1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaResiduo1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaCassa1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaCompetenza2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaResiduo2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaCassa2 = BigDecimal.ZERO;
+	
+	private BigDecimal variazioniInNeutrePreDefinitivaCompetenza0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaResiduo0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaCassa0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaCompetenza1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaResiduo1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaCassa1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaCompetenza2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaResiduo2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaCassa2 = BigDecimal.ZERO;
+	
+	private BigDecimal variazioniInNeutreGiuntaConsiglioCompetenza0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioResiduo0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioCassa0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioCompetenza1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioResiduo1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioCassa1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioCompetenza2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioResiduo2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioCassa2 = BigDecimal.ZERO;
+	
+	private BigDecimal variazioniInNeutreAnnullataCompetenza0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataResiduo0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataCassa0 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataCompetenza1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataResiduo1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataCassa1 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataCompetenza2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataResiduo2 = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataCassa2 = BigDecimal.ZERO;
+
+	/* Capitolo equivalente */
+	private long variazioniInNeutreBozzaEquivalenteNum = 0L;
+	private long variazioniInNeutreDefinitivaEquivalenteNum = 0L;
+	private long variazioniInNeutrePreDefinitivaEquivalenteNum = 0L;
+	private long variazioniInNeutreGiuntaConsiglioEquivalenteNum = 0L;
+	private long variazioniInNeutreAnnullataEquivalenteNum = 0L;
+	
+	private BigDecimal variazioniInNeutreBozzaEquivalenteCompetenza = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaEquivalenteResiduo = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreBozzaEquivalenteCassa = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaEquivalenteCompetenza = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaEquivalenteResiduo = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreDefinitivaEquivalenteCassa = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaEquivalenteCompetenza = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaEquivalenteResiduo = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutrePreDefinitivaEquivalenteCassa = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioEquivalenteResiduo = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreGiuntaConsiglioEquivalenteCassa = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataEquivalenteCompetenza = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataEquivalenteResiduo = BigDecimal.ZERO;
+	private BigDecimal variazioniInNeutreAnnullataEquivalenteCassa = BigDecimal.ZERO;
+	// CONTABILIA-285 FINE
+	
+	/**
+	 * @return the variazioniInNeutreBozzaNum0
+	 */
+	public long getVariazioniInNeutreBozzaNum0() {
+		return variazioniInNeutreBozzaNum0;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaNum0 the variazioniInNeutreBozzaNum0 to set
+	 */
+	public void setVariazioniInNeutreBozzaNum0(long variazioniInNeutreBozzaNum0) {
+		this.variazioniInNeutreBozzaNum0 = variazioniInNeutreBozzaNum0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaNum0
+	 */
+	public long getVariazioniInNeutreDefinitivaNum0() {
+		return variazioniInNeutreDefinitivaNum0;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaNum0 the variazioniInNeutreDefinitivaNum0 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaNum0(long variazioniInNeutreDefinitivaNum0) {
+		this.variazioniInNeutreDefinitivaNum0 = variazioniInNeutreDefinitivaNum0;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaNum0
+	 */
+	public long getVariazioniInNeutrePreDefinitivaNum0() {
+		return variazioniInNeutrePreDefinitivaNum0;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaNum0 the variazioniInNeutrePreDefinitivaNum0 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaNum0(long variazioniInNeutrePreDefinitivaNum0) {
+		this.variazioniInNeutrePreDefinitivaNum0 = variazioniInNeutrePreDefinitivaNum0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioNum0
+	 */
+	public long getVariazioniInNeutreGiuntaConsiglioNum0() {
+		return variazioniInNeutreGiuntaConsiglioNum0;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioNum0 the variazioniInNeutreGiuntaConsiglioNum0 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioNum0(long variazioniInNeutreGiuntaConsiglioNum0) {
+		this.variazioniInNeutreGiuntaConsiglioNum0 = variazioniInNeutreGiuntaConsiglioNum0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataNum0
+	 */
+	public long getVariazioniInNeutreAnnullataNum0() {
+		return variazioniInNeutreAnnullataNum0;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataNum0 the variazioniInNeutreAnnullataNum0 to set
+	 */
+	public void setVariazioniInNeutreAnnullataNum0(long variazioniInNeutreAnnullataNum0) {
+		this.variazioniInNeutreAnnullataNum0 = variazioniInNeutreAnnullataNum0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaNum1
+	 */
+	public long getVariazioniInNeutreBozzaNum1() {
+		return variazioniInNeutreBozzaNum1;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaNum1 the variazioniInNeutreBozzaNum1 to set
+	 */
+	public void setVariazioniInNeutreBozzaNum1(long variazioniInNeutreBozzaNum1) {
+		this.variazioniInNeutreBozzaNum1 = variazioniInNeutreBozzaNum1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaNum1
+	 */
+	public long getVariazioniInNeutreDefinitivaNum1() {
+		return variazioniInNeutreDefinitivaNum1;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaNum1 the variazioniInNeutreDefinitivaNum1 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaNum1(long variazioniInNeutreDefinitivaNum1) {
+		this.variazioniInNeutreDefinitivaNum1 = variazioniInNeutreDefinitivaNum1;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaNum1
+	 */
+	public long getVariazioniInNeutrePreDefinitivaNum1() {
+		return variazioniInNeutrePreDefinitivaNum1;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaNum1 the variazioniInNeutrePreDefinitivaNum1 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaNum1(long variazioniInNeutrePreDefinitivaNum1) {
+		this.variazioniInNeutrePreDefinitivaNum1 = variazioniInNeutrePreDefinitivaNum1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioNum1
+	 */
+	public long getVariazioniInNeutreGiuntaConsiglioNum1() {
+		return variazioniInNeutreGiuntaConsiglioNum1;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioNum1 the variazioniInNeutreGiuntaConsiglioNum1 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioNum1(long variazioniInNeutreGiuntaConsiglioNum1) {
+		this.variazioniInNeutreGiuntaConsiglioNum1 = variazioniInNeutreGiuntaConsiglioNum1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataNum1
+	 */
+	public long getVariazioniInNeutreAnnullataNum1() {
+		return variazioniInNeutreAnnullataNum1;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataNum1 the variazioniInNeutreAnnullataNum1 to set
+	 */
+	public void setVariazioniInNeutreAnnullataNum1(long variazioniInNeutreAnnullataNum1) {
+		this.variazioniInNeutreAnnullataNum1 = variazioniInNeutreAnnullataNum1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaNum2
+	 */
+	public long getVariazioniInNeutreBozzaNum2() {
+		return variazioniInNeutreBozzaNum2;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaNum2 the variazioniInNeutreBozzaNum2 to set
+	 */
+	public void setVariazioniInNeutreBozzaNum2(long variazioniInNeutreBozzaNum2) {
+		this.variazioniInNeutreBozzaNum2 = variazioniInNeutreBozzaNum2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaNum2
+	 */
+	public long getVariazioniInNeutreDefinitivaNum2() {
+		return variazioniInNeutreDefinitivaNum2;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaNum2 the variazioniInNeutreDefinitivaNum2 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaNum2(long variazioniInNeutreDefinitivaNum2) {
+		this.variazioniInNeutreDefinitivaNum2 = variazioniInNeutreDefinitivaNum2;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaNum2
+	 */
+	public long getVariazioniInNeutrePreDefinitivaNum2() {
+		return variazioniInNeutrePreDefinitivaNum2;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaNum2 the variazioniInNeutrePreDefinitivaNum2 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaNum2(long variazioniInNeutrePreDefinitivaNum2) {
+		this.variazioniInNeutrePreDefinitivaNum2 = variazioniInNeutrePreDefinitivaNum2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioNum2
+	 */
+	public long getVariazioniInNeutreGiuntaConsiglioNum2() {
+		return variazioniInNeutreGiuntaConsiglioNum2;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioNum2 the variazioniInNeutreGiuntaConsiglioNum2 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioNum2(long variazioniInNeutreGiuntaConsiglioNum2) {
+		this.variazioniInNeutreGiuntaConsiglioNum2 = variazioniInNeutreGiuntaConsiglioNum2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataNum2
+	 */
+	public long getVariazioniInNeutreAnnullataNum2() {
+		return variazioniInNeutreAnnullataNum2;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataNum2 the variazioniInNeutreAnnullataNum2 to set
+	 */
+	public void setVariazioniInNeutreAnnullataNum2(long variazioniInNeutreAnnullataNum2) {
+		this.variazioniInNeutreAnnullataNum2 = variazioniInNeutreAnnullataNum2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaCompetenza0
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaCompetenza0() {
+		return variazioniInNeutreBozzaCompetenza0;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaCompetenza0 the variazioniInNeutreBozzaCompetenza0 to set
+	 */
+	public void setVariazioniInNeutreBozzaCompetenza0(BigDecimal variazioniInNeutreBozzaCompetenza0) {
+		this.variazioniInNeutreBozzaCompetenza0 = variazioniInNeutreBozzaCompetenza0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaResiduo0
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaResiduo0() {
+		return variazioniInNeutreBozzaResiduo0;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaResiduo0 the variazioniInNeutreBozzaResiduo0 to set
+	 */
+	public void setVariazioniInNeutreBozzaResiduo0(BigDecimal variazioniInNeutreBozzaResiduo0) {
+		this.variazioniInNeutreBozzaResiduo0 = variazioniInNeutreBozzaResiduo0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaCassa0
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaCassa0() {
+		return variazioniInNeutreBozzaCassa0;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaCassa0 the variazioniInNeutreBozzaCassa0 to set
+	 */
+	public void setVariazioniInNeutreBozzaCassa0(BigDecimal variazioniInNeutreBozzaCassa0) {
+		this.variazioniInNeutreBozzaCassa0 = variazioniInNeutreBozzaCassa0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaCompetenza1
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaCompetenza1() {
+		return variazioniInNeutreBozzaCompetenza1;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaCompetenza1 the variazioniInNeutreBozzaCompetenza1 to set
+	 */
+	public void setVariazioniInNeutreBozzaCompetenza1(BigDecimal variazioniInNeutreBozzaCompetenza1) {
+		this.variazioniInNeutreBozzaCompetenza1 = variazioniInNeutreBozzaCompetenza1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaResiduo1
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaResiduo1() {
+		return variazioniInNeutreBozzaResiduo1;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaResiduo1 the variazioniInNeutreBozzaResiduo1 to set
+	 */
+	public void setVariazioniInNeutreBozzaResiduo1(BigDecimal variazioniInNeutreBozzaResiduo1) {
+		this.variazioniInNeutreBozzaResiduo1 = variazioniInNeutreBozzaResiduo1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaCassa1
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaCassa1() {
+		return variazioniInNeutreBozzaCassa1;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaCassa1 the variazioniInNeutreBozzaCassa1 to set
+	 */
+	public void setVariazioniInNeutreBozzaCassa1(BigDecimal variazioniInNeutreBozzaCassa1) {
+		this.variazioniInNeutreBozzaCassa1 = variazioniInNeutreBozzaCassa1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaCompetenza2
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaCompetenza2() {
+		return variazioniInNeutreBozzaCompetenza2;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaCompetenza2 the variazioniInNeutreBozzaCompetenza2 to set
+	 */
+	public void setVariazioniInNeutreBozzaCompetenza2(BigDecimal variazioniInNeutreBozzaCompetenza2) {
+		this.variazioniInNeutreBozzaCompetenza2 = variazioniInNeutreBozzaCompetenza2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaResiduo2
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaResiduo2() {
+		return variazioniInNeutreBozzaResiduo2;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaResiduo2 the variazioniInNeutreBozzaResiduo2 to set
+	 */
+	public void setVariazioniInNeutreBozzaResiduo2(BigDecimal variazioniInNeutreBozzaResiduo2) {
+		this.variazioniInNeutreBozzaResiduo2 = variazioniInNeutreBozzaResiduo2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaCassa2
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaCassa2() {
+		return variazioniInNeutreBozzaCassa2;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaCassa2 the variazioniInNeutreBozzaCassa2 to set
+	 */
+	public void setVariazioniInNeutreBozzaCassa2(BigDecimal variazioniInNeutreBozzaCassa2) {
+		this.variazioniInNeutreBozzaCassa2 = variazioniInNeutreBozzaCassa2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaCompetenza0
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaCompetenza0() {
+		return variazioniInNeutreDefinitivaCompetenza0;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaCompetenza0 the variazioniInNeutreDefinitivaCompetenza0 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaCompetenza0(BigDecimal variazioniInNeutreDefinitivaCompetenza0) {
+		this.variazioniInNeutreDefinitivaCompetenza0 = variazioniInNeutreDefinitivaCompetenza0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaResiduo0
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaResiduo0() {
+		return variazioniInNeutreDefinitivaResiduo0;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaResiduo0 the variazioniInNeutreDefinitivaResiduo0 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaResiduo0(BigDecimal variazioniInNeutreDefinitivaResiduo0) {
+		this.variazioniInNeutreDefinitivaResiduo0 = variazioniInNeutreDefinitivaResiduo0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaCassa0
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaCassa0() {
+		return variazioniInNeutreDefinitivaCassa0;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaCassa0 the variazioniInNeutreDefinitivaCassa0 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaCassa0(BigDecimal variazioniInNeutreDefinitivaCassa0) {
+		this.variazioniInNeutreDefinitivaCassa0 = variazioniInNeutreDefinitivaCassa0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaCompetenza1
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaCompetenza1() {
+		return variazioniInNeutreDefinitivaCompetenza1;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaCompetenza1 the variazioniInNeutreDefinitivaCompetenza1 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaCompetenza1(BigDecimal variazioniInNeutreDefinitivaCompetenza1) {
+		this.variazioniInNeutreDefinitivaCompetenza1 = variazioniInNeutreDefinitivaCompetenza1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaResiduo1
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaResiduo1() {
+		return variazioniInNeutreDefinitivaResiduo1;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaResiduo1 the variazioniInNeutreDefinitivaResiduo1 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaResiduo1(BigDecimal variazioniInNeutreDefinitivaResiduo1) {
+		this.variazioniInNeutreDefinitivaResiduo1 = variazioniInNeutreDefinitivaResiduo1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaCassa1
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaCassa1() {
+		return variazioniInNeutreDefinitivaCassa1;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaCassa1 the variazioniInNeutreDefinitivaCassa1 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaCassa1(BigDecimal variazioniInNeutreDefinitivaCassa1) {
+		this.variazioniInNeutreDefinitivaCassa1 = variazioniInNeutreDefinitivaCassa1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaCompetenza2
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaCompetenza2() {
+		return variazioniInNeutreDefinitivaCompetenza2;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaCompetenza2 the variazioniInNeutreDefinitivaCompetenza2 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaCompetenza2(BigDecimal variazioniInNeutreDefinitivaCompetenza2) {
+		this.variazioniInNeutreDefinitivaCompetenza2 = variazioniInNeutreDefinitivaCompetenza2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaResiduo2
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaResiduo2() {
+		return variazioniInNeutreDefinitivaResiduo2;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaResiduo2 the variazioniInNeutreDefinitivaResiduo2 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaResiduo2(BigDecimal variazioniInNeutreDefinitivaResiduo2) {
+		this.variazioniInNeutreDefinitivaResiduo2 = variazioniInNeutreDefinitivaResiduo2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaCassa2
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaCassa2() {
+		return variazioniInNeutreDefinitivaCassa2;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaCassa2 the variazioniInNeutreDefinitivaCassa2 to set
+	 */
+	public void setVariazioniInNeutreDefinitivaCassa2(BigDecimal variazioniInNeutreDefinitivaCassa2) {
+		this.variazioniInNeutreDefinitivaCassa2 = variazioniInNeutreDefinitivaCassa2;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaCompetenza0
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaCompetenza0() {
+		return variazioniInNeutrePreDefinitivaCompetenza0;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaCompetenza0 the variazioniInNeutrePreDefinitivaCompetenza0 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaCompetenza0(BigDecimal variazioniInNeutrePreDefinitivaCompetenza0) {
+		this.variazioniInNeutrePreDefinitivaCompetenza0 = variazioniInNeutrePreDefinitivaCompetenza0;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaResiduo0
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaResiduo0() {
+		return variazioniInNeutrePreDefinitivaResiduo0;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaResiduo0 the variazioniInNeutrePreDefinitivaResiduo0 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaResiduo0(BigDecimal variazioniInNeutrePreDefinitivaResiduo0) {
+		this.variazioniInNeutrePreDefinitivaResiduo0 = variazioniInNeutrePreDefinitivaResiduo0;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaCassa0
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaCassa0() {
+		return variazioniInNeutrePreDefinitivaCassa0;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaCassa0 the variazioniInNeutrePreDefinitivaCassa0 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaCassa0(BigDecimal variazioniInNeutrePreDefinitivaCassa0) {
+		this.variazioniInNeutrePreDefinitivaCassa0 = variazioniInNeutrePreDefinitivaCassa0;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaCompetenza1
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaCompetenza1() {
+		return variazioniInNeutrePreDefinitivaCompetenza1;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaCompetenza1 the variazioniInNeutrePreDefinitivaCompetenza1 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaCompetenza1(BigDecimal variazioniInNeutrePreDefinitivaCompetenza1) {
+		this.variazioniInNeutrePreDefinitivaCompetenza1 = variazioniInNeutrePreDefinitivaCompetenza1;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaResiduo1
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaResiduo1() {
+		return variazioniInNeutrePreDefinitivaResiduo1;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaResiduo1 the variazioniInNeutrePreDefinitivaResiduo1 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaResiduo1(BigDecimal variazioniInNeutrePreDefinitivaResiduo1) {
+		this.variazioniInNeutrePreDefinitivaResiduo1 = variazioniInNeutrePreDefinitivaResiduo1;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaCassa1
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaCassa1() {
+		return variazioniInNeutrePreDefinitivaCassa1;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaCassa1 the variazioniInNeutrePreDefinitivaCassa1 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaCassa1(BigDecimal variazioniInNeutrePreDefinitivaCassa1) {
+		this.variazioniInNeutrePreDefinitivaCassa1 = variazioniInNeutrePreDefinitivaCassa1;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaCompetenza2
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaCompetenza2() {
+		return variazioniInNeutrePreDefinitivaCompetenza2;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaCompetenza2 the variazioniInNeutrePreDefinitivaCompetenza2 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaCompetenza2(BigDecimal variazioniInNeutrePreDefinitivaCompetenza2) {
+		this.variazioniInNeutrePreDefinitivaCompetenza2 = variazioniInNeutrePreDefinitivaCompetenza2;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaResiduo2
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaResiduo2() {
+		return variazioniInNeutrePreDefinitivaResiduo2;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaResiduo2 the variazioniInNeutrePreDefinitivaResiduo2 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaResiduo2(BigDecimal variazioniInNeutrePreDefinitivaResiduo2) {
+		this.variazioniInNeutrePreDefinitivaResiduo2 = variazioniInNeutrePreDefinitivaResiduo2;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaCassa2
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaCassa2() {
+		return variazioniInNeutrePreDefinitivaCassa2;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaCassa2 the variazioniInNeutrePreDefinitivaCassa2 to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaCassa2(BigDecimal variazioniInNeutrePreDefinitivaCassa2) {
+		this.variazioniInNeutrePreDefinitivaCassa2 = variazioniInNeutrePreDefinitivaCassa2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioCompetenza0
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioCompetenza0() {
+		return variazioniInNeutreGiuntaConsiglioCompetenza0;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioCompetenza0 the variazioniInNeutreGiuntaConsiglioCompetenza0 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioCompetenza0(BigDecimal variazioniInNeutreGiuntaConsiglioCompetenza0) {
+		this.variazioniInNeutreGiuntaConsiglioCompetenza0 = variazioniInNeutreGiuntaConsiglioCompetenza0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioResiduo0
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioResiduo0() {
+		return variazioniInNeutreGiuntaConsiglioResiduo0;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioResiduo0 the variazioniInNeutreGiuntaConsiglioResiduo0 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioResiduo0(BigDecimal variazioniInNeutreGiuntaConsiglioResiduo0) {
+		this.variazioniInNeutreGiuntaConsiglioResiduo0 = variazioniInNeutreGiuntaConsiglioResiduo0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioCassa0
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioCassa0() {
+		return variazioniInNeutreGiuntaConsiglioCassa0;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioCassa0 the variazioniInNeutreGiuntaConsiglioCassa0 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioCassa0(BigDecimal variazioniInNeutreGiuntaConsiglioCassa0) {
+		this.variazioniInNeutreGiuntaConsiglioCassa0 = variazioniInNeutreGiuntaConsiglioCassa0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioCompetenza1
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioCompetenza1() {
+		return variazioniInNeutreGiuntaConsiglioCompetenza1;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioCompetenza1 the variazioniInNeutreGiuntaConsiglioCompetenza1 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioCompetenza1(BigDecimal variazioniInNeutreGiuntaConsiglioCompetenza1) {
+		this.variazioniInNeutreGiuntaConsiglioCompetenza1 = variazioniInNeutreGiuntaConsiglioCompetenza1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioResiduo1
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioResiduo1() {
+		return variazioniInNeutreGiuntaConsiglioResiduo1;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioResiduo1 the variazioniInNeutreGiuntaConsiglioResiduo1 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioResiduo1(BigDecimal variazioniInNeutreGiuntaConsiglioResiduo1) {
+		this.variazioniInNeutreGiuntaConsiglioResiduo1 = variazioniInNeutreGiuntaConsiglioResiduo1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioCassa1
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioCassa1() {
+		return variazioniInNeutreGiuntaConsiglioCassa1;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioCassa1 the variazioniInNeutreGiuntaConsiglioCassa1 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioCassa1(BigDecimal variazioniInNeutreGiuntaConsiglioCassa1) {
+		this.variazioniInNeutreGiuntaConsiglioCassa1 = variazioniInNeutreGiuntaConsiglioCassa1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioCompetenza2
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioCompetenza2() {
+		return variazioniInNeutreGiuntaConsiglioCompetenza2;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioCompetenza2 the variazioniInNeutreGiuntaConsiglioCompetenza2 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioCompetenza2(BigDecimal variazioniInNeutreGiuntaConsiglioCompetenza2) {
+		this.variazioniInNeutreGiuntaConsiglioCompetenza2 = variazioniInNeutreGiuntaConsiglioCompetenza2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioResiduo2
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioResiduo2() {
+		return variazioniInNeutreGiuntaConsiglioResiduo2;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioResiduo2 the variazioniInNeutreGiuntaConsiglioResiduo2 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioResiduo2(BigDecimal variazioniInNeutreGiuntaConsiglioResiduo2) {
+		this.variazioniInNeutreGiuntaConsiglioResiduo2 = variazioniInNeutreGiuntaConsiglioResiduo2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioCassa2
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioCassa2() {
+		return variazioniInNeutreGiuntaConsiglioCassa2;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioCassa2 the variazioniInNeutreGiuntaConsiglioCassa2 to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioCassa2(BigDecimal variazioniInNeutreGiuntaConsiglioCassa2) {
+		this.variazioniInNeutreGiuntaConsiglioCassa2 = variazioniInNeutreGiuntaConsiglioCassa2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataCompetenza0
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataCompetenza0() {
+		return variazioniInNeutreAnnullataCompetenza0;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataCompetenza0 the variazioniInNeutreAnnullataCompetenza0 to set
+	 */
+	public void setVariazioniInNeutreAnnullataCompetenza0(BigDecimal variazioniInNeutreAnnullataCompetenza0) {
+		this.variazioniInNeutreAnnullataCompetenza0 = variazioniInNeutreAnnullataCompetenza0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataResiduo0
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataResiduo0() {
+		return variazioniInNeutreAnnullataResiduo0;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataResiduo0 the variazioniInNeutreAnnullataResiduo0 to set
+	 */
+	public void setVariazioniInNeutreAnnullataResiduo0(BigDecimal variazioniInNeutreAnnullataResiduo0) {
+		this.variazioniInNeutreAnnullataResiduo0 = variazioniInNeutreAnnullataResiduo0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataCassa0
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataCassa0() {
+		return variazioniInNeutreAnnullataCassa0;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataCassa0 the variazioniInNeutreAnnullataCassa0 to set
+	 */
+	public void setVariazioniInNeutreAnnullataCassa0(BigDecimal variazioniInNeutreAnnullataCassa0) {
+		this.variazioniInNeutreAnnullataCassa0 = variazioniInNeutreAnnullataCassa0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataCompetenza1
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataCompetenza1() {
+		return variazioniInNeutreAnnullataCompetenza1;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataCompetenza1 the variazioniInNeutreAnnullataCompetenza1 to set
+	 */
+	public void setVariazioniInNeutreAnnullataCompetenza1(BigDecimal variazioniInNeutreAnnullataCompetenza1) {
+		this.variazioniInNeutreAnnullataCompetenza1 = variazioniInNeutreAnnullataCompetenza1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataResiduo1
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataResiduo1() {
+		return variazioniInNeutreAnnullataResiduo1;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataResiduo1 the variazioniInNeutreAnnullataResiduo1 to set
+	 */
+	public void setVariazioniInNeutreAnnullataResiduo1(BigDecimal variazioniInNeutreAnnullataResiduo1) {
+		this.variazioniInNeutreAnnullataResiduo1 = variazioniInNeutreAnnullataResiduo1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataCassa1
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataCassa1() {
+		return variazioniInNeutreAnnullataCassa1;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataCassa1 the variazioniInNeutreAnnullataCassa1 to set
+	 */
+	public void setVariazioniInNeutreAnnullataCassa1(BigDecimal variazioniInNeutreAnnullataCassa1) {
+		this.variazioniInNeutreAnnullataCassa1 = variazioniInNeutreAnnullataCassa1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataCompetenza2
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataCompetenza2() {
+		return variazioniInNeutreAnnullataCompetenza2;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataCompetenza2 the variazioniInNeutreAnnullataCompetenza2 to set
+	 */
+	public void setVariazioniInNeutreAnnullataCompetenza2(BigDecimal variazioniInNeutreAnnullataCompetenza2) {
+		this.variazioniInNeutreAnnullataCompetenza2 = variazioniInNeutreAnnullataCompetenza2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataResiduo2
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataResiduo2() {
+		return variazioniInNeutreAnnullataResiduo2;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataResiduo2 the variazioniInNeutreAnnullataResiduo2 to set
+	 */
+	public void setVariazioniInNeutreAnnullataResiduo2(BigDecimal variazioniInNeutreAnnullataResiduo2) {
+		this.variazioniInNeutreAnnullataResiduo2 = variazioniInNeutreAnnullataResiduo2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataCassa2
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataCassa2() {
+		return variazioniInNeutreAnnullataCassa2;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataCassa2 the variazioniInNeutreAnnullataCassa2 to set
+	 */
+	public void setVariazioniInNeutreAnnullataCassa2(BigDecimal variazioniInNeutreAnnullataCassa2) {
+		this.variazioniInNeutreAnnullataCassa2 = variazioniInNeutreAnnullataCassa2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaEquivalenteNum
+	 */
+	public long getVariazioniInNeutreBozzaEquivalenteNum() {
+		return variazioniInNeutreBozzaEquivalenteNum;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaEquivalenteNum the variazioniInNeutreBozzaEquivalenteNum to set
+	 */
+	public void setVariazioniInNeutreBozzaEquivalenteNum(long variazioniInNeutreBozzaEquivalenteNum) {
+		this.variazioniInNeutreBozzaEquivalenteNum = variazioniInNeutreBozzaEquivalenteNum;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaEquivalenteNum
+	 */
+	public long getVariazioniInNeutreDefinitivaEquivalenteNum() {
+		return variazioniInNeutreDefinitivaEquivalenteNum;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaEquivalenteNum the variazioniInNeutreDefinitivaEquivalenteNum to set
+	 */
+	public void setVariazioniInNeutreDefinitivaEquivalenteNum(long variazioniInNeutreDefinitivaEquivalenteNum) {
+		this.variazioniInNeutreDefinitivaEquivalenteNum = variazioniInNeutreDefinitivaEquivalenteNum;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaEquivalenteNum
+	 */
+	public long getVariazioniInNeutrePreDefinitivaEquivalenteNum() {
+		return variazioniInNeutrePreDefinitivaEquivalenteNum;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaEquivalenteNum the variazioniInNeutrePreDefinitivaEquivalenteNum to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaEquivalenteNum(long variazioniInNeutrePreDefinitivaEquivalenteNum) {
+		this.variazioniInNeutrePreDefinitivaEquivalenteNum = variazioniInNeutrePreDefinitivaEquivalenteNum;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioEquivalenteNum
+	 */
+	public long getVariazioniInNeutreGiuntaConsiglioEquivalenteNum() {
+		return variazioniInNeutreGiuntaConsiglioEquivalenteNum;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioEquivalenteNum the variazioniInNeutreGiuntaConsiglioEquivalenteNum to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioEquivalenteNum(long variazioniInNeutreGiuntaConsiglioEquivalenteNum) {
+		this.variazioniInNeutreGiuntaConsiglioEquivalenteNum = variazioniInNeutreGiuntaConsiglioEquivalenteNum;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataEquivalenteNum
+	 */
+	public long getVariazioniInNeutreAnnullataEquivalenteNum() {
+		return variazioniInNeutreAnnullataEquivalenteNum;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataEquivalenteNum the variazioniInNeutreAnnullataEquivalenteNum to set
+	 */
+	public void setVariazioniInNeutreAnnullataEquivalenteNum(long variazioniInNeutreAnnullataEquivalenteNum) {
+		this.variazioniInNeutreAnnullataEquivalenteNum = variazioniInNeutreAnnullataEquivalenteNum;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaEquivalenteCompetenza
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaEquivalenteCompetenza() {
+		return variazioniInNeutreBozzaEquivalenteCompetenza;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaEquivalenteCompetenza the variazioniInNeutreBozzaEquivalenteCompetenza to set
+	 */
+	public void setVariazioniInNeutreBozzaEquivalenteCompetenza(BigDecimal variazioniInNeutreBozzaEquivalenteCompetenza) {
+		this.variazioniInNeutreBozzaEquivalenteCompetenza = variazioniInNeutreBozzaEquivalenteCompetenza;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaEquivalenteResiduo
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaEquivalenteResiduo() {
+		return variazioniInNeutreBozzaEquivalenteResiduo;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaEquivalenteResiduo the variazioniInNeutreBozzaEquivalenteResiduo to set
+	 */
+	public void setVariazioniInNeutreBozzaEquivalenteResiduo(BigDecimal variazioniInNeutreBozzaEquivalenteResiduo) {
+		this.variazioniInNeutreBozzaEquivalenteResiduo = variazioniInNeutreBozzaEquivalenteResiduo;
+	}
+
+	/**
+	 * @return the variazioniInNeutreBozzaEquivalenteCassa
+	 */
+	public BigDecimal getVariazioniInNeutreBozzaEquivalenteCassa() {
+		return variazioniInNeutreBozzaEquivalenteCassa;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaEquivalenteCassa the variazioniInNeutreBozzaEquivalenteCassa to set
+	 */
+	public void setVariazioniInNeutreBozzaEquivalenteCassa(BigDecimal variazioniInNeutreBozzaEquivalenteCassa) {
+		this.variazioniInNeutreBozzaEquivalenteCassa = variazioniInNeutreBozzaEquivalenteCassa;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaEquivalenteCompetenza
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaEquivalenteCompetenza() {
+		return variazioniInNeutreDefinitivaEquivalenteCompetenza;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaEquivalenteCompetenza the variazioniInNeutreDefinitivaEquivalenteCompetenza to set
+	 */
+	public void setVariazioniInNeutreDefinitivaEquivalenteCompetenza(
+			BigDecimal variazioniInNeutreDefinitivaEquivalenteCompetenza) {
+		this.variazioniInNeutreDefinitivaEquivalenteCompetenza = variazioniInNeutreDefinitivaEquivalenteCompetenza;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaEquivalenteResiduo
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaEquivalenteResiduo() {
+		return variazioniInNeutreDefinitivaEquivalenteResiduo;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaEquivalenteResiduo the variazioniInNeutreDefinitivaEquivalenteResiduo to set
+	 */
+	public void setVariazioniInNeutreDefinitivaEquivalenteResiduo(
+			BigDecimal variazioniInNeutreDefinitivaEquivalenteResiduo) {
+		this.variazioniInNeutreDefinitivaEquivalenteResiduo = variazioniInNeutreDefinitivaEquivalenteResiduo;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaEquivalenteCassa
+	 */
+	public BigDecimal getVariazioniInNeutreDefinitivaEquivalenteCassa() {
+		return variazioniInNeutreDefinitivaEquivalenteCassa;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaEquivalenteCassa the variazioniInNeutreDefinitivaEquivalenteCassa to set
+	 */
+	public void setVariazioniInNeutreDefinitivaEquivalenteCassa(BigDecimal variazioniInNeutreDefinitivaEquivalenteCassa) {
+		this.variazioniInNeutreDefinitivaEquivalenteCassa = variazioniInNeutreDefinitivaEquivalenteCassa;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaEquivalenteCompetenza
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaEquivalenteCompetenza() {
+		return variazioniInNeutrePreDefinitivaEquivalenteCompetenza;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaEquivalenteCompetenza the variazioniInNeutrePreDefinitivaEquivalenteCompetenza to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaEquivalenteCompetenza(
+			BigDecimal variazioniInNeutrePreDefinitivaEquivalenteCompetenza) {
+		this.variazioniInNeutrePreDefinitivaEquivalenteCompetenza = variazioniInNeutrePreDefinitivaEquivalenteCompetenza;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaEquivalenteResiduo
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaEquivalenteResiduo() {
+		return variazioniInNeutrePreDefinitivaEquivalenteResiduo;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaEquivalenteResiduo the variazioniInNeutrePreDefinitivaEquivalenteResiduo to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaEquivalenteResiduo(
+			BigDecimal variazioniInNeutrePreDefinitivaEquivalenteResiduo) {
+		this.variazioniInNeutrePreDefinitivaEquivalenteResiduo = variazioniInNeutrePreDefinitivaEquivalenteResiduo;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaEquivalenteCassa
+	 */
+	public BigDecimal getVariazioniInNeutrePreDefinitivaEquivalenteCassa() {
+		return variazioniInNeutrePreDefinitivaEquivalenteCassa;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaEquivalenteCassa the variazioniInNeutrePreDefinitivaEquivalenteCassa to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaEquivalenteCassa(
+			BigDecimal variazioniInNeutrePreDefinitivaEquivalenteCassa) {
+		this.variazioniInNeutrePreDefinitivaEquivalenteCassa = variazioniInNeutrePreDefinitivaEquivalenteCassa;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioEquivalenteCompetenza() {
+		return variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza the variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioEquivalenteCompetenza(
+			BigDecimal variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza) {
+		this.variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza = variazioniInNeutreGiuntaConsiglioEquivalenteCompetenza;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioEquivalenteResiduo
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioEquivalenteResiduo() {
+		return variazioniInNeutreGiuntaConsiglioEquivalenteResiduo;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioEquivalenteResiduo the variazioniInNeutreGiuntaConsiglioEquivalenteResiduo to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioEquivalenteResiduo(
+			BigDecimal variazioniInNeutreGiuntaConsiglioEquivalenteResiduo) {
+		this.variazioniInNeutreGiuntaConsiglioEquivalenteResiduo = variazioniInNeutreGiuntaConsiglioEquivalenteResiduo;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaConsiglioEquivalenteCassa
+	 */
+	public BigDecimal getVariazioniInNeutreGiuntaConsiglioEquivalenteCassa() {
+		return variazioniInNeutreGiuntaConsiglioEquivalenteCassa;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaConsiglioEquivalenteCassa the variazioniInNeutreGiuntaConsiglioEquivalenteCassa to set
+	 */
+	public void setVariazioniInNeutreGiuntaConsiglioEquivalenteCassa(
+			BigDecimal variazioniInNeutreGiuntaConsiglioEquivalenteCassa) {
+		this.variazioniInNeutreGiuntaConsiglioEquivalenteCassa = variazioniInNeutreGiuntaConsiglioEquivalenteCassa;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataEquivalenteCompetenza
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataEquivalenteCompetenza() {
+		return variazioniInNeutreAnnullataEquivalenteCompetenza;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataEquivalenteCompetenza the variazioniInNeutreAnnullataEquivalenteCompetenza to set
+	 */
+	public void setVariazioniInNeutreAnnullataEquivalenteCompetenza(
+			BigDecimal variazioniInNeutreAnnullataEquivalenteCompetenza) {
+		this.variazioniInNeutreAnnullataEquivalenteCompetenza = variazioniInNeutreAnnullataEquivalenteCompetenza;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataEquivalenteResiduo
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataEquivalenteResiduo() {
+		return variazioniInNeutreAnnullataEquivalenteResiduo;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataEquivalenteResiduo the variazioniInNeutreAnnullataEquivalenteResiduo to set
+	 */
+	public void setVariazioniInNeutreAnnullataEquivalenteResiduo(BigDecimal variazioniInNeutreAnnullataEquivalenteResiduo) {
+		this.variazioniInNeutreAnnullataEquivalenteResiduo = variazioniInNeutreAnnullataEquivalenteResiduo;
+	}
+
+	/**
+	 * @return the variazioniInNeutreAnnullataEquivalenteCassa
+	 */
+	public BigDecimal getVariazioniInNeutreAnnullataEquivalenteCassa() {
+		return variazioniInNeutreAnnullataEquivalenteCassa;
+	}
+
+	/**
+	 * @param variazioniInNeutreAnnullataEquivalenteCassa the variazioniInNeutreAnnullataEquivalenteCassa to set
+	 */
+	public void setVariazioniInNeutreAnnullataEquivalenteCassa(BigDecimal variazioniInNeutreAnnullataEquivalenteCassa) {
+		this.variazioniInNeutreAnnullataEquivalenteCassa = variazioniInNeutreAnnullataEquivalenteCassa;
+	}
+
 	/* Liste */
 	private List<VariazioneImportoCapitolo> listaVariazioneInAumento = new ArrayList<VariazioneImportoCapitolo>();
 	private List<VariazioneImportoCapitolo> listaVariazioneInDiminuzione = new ArrayList<VariazioneImportoCapitolo>();
-	
+	// CONTABILIA-285
+	private List<VariazioneImportoCapitolo> listaVariazioneInNeutre = new ArrayList<VariazioneImportoCapitolo>();
+
 	/** Costruttore vuoto di default */
 	public ElementoVariazioneConsultazione() {
 		super();
@@ -2816,4 +4040,238 @@ public class ElementoVariazioneConsultazione implements Serializable {
 				.add(variazioniInDiminuzioneGiuntaConsiglioEquivalenteCassa);
 	}
 
+	public List<VariazioneImportoCapitolo> getListaVariazioneInNeutre() {
+		return listaVariazioneInNeutre;
+	}
+
+	public void setListaVariazioneInNeutre(List<VariazioneImportoCapitolo> listaVariazioneInNeutre) {
+		this.listaVariazioneInNeutre = listaVariazioneInNeutre;
+	}
+
+	
+	
+	
+	
+	
+	//
+	/**
+	 * @return the variazioniInNeutreTotaleNum0
+	 */
+	public long getVariazioniInNeutreTotaleNum0() {
+		return variazioniInNeutreBozzaNum0 + variazioniInNeutreDefinitivaNum0 + variazioniInNeutrePreDefinitivaNum0
+				+ variazioniInNeutreGiuntaConsiglioNum0;
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleNum1
+	 */
+	public long getVariazioniInNeutreTotaleNum1() {
+		return variazioniInNeutreBozzaNum1 + variazioniInNeutreDefinitivaNum1 + variazioniInNeutrePreDefinitivaNum1
+				+ variazioniInNeutreGiuntaConsiglioNum1;
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleNum2
+	 */
+	public long getVariazioniInNeutreTotaleNum2() {
+		return variazioniInNeutreBozzaNum2 + variazioniInNeutreDefinitivaNum2 + variazioniInNeutrePreDefinitivaNum2
+				+ variazioniInNeutreGiuntaConsiglioNum2;
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleCompetenza0
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleCompetenza0() {
+		return variazioniInNeutreBozzaCompetenza0
+				.add(variazioniInNeutreDefinitivaCompetenza0)
+				.add(variazioniInNeutrePreDefinitivaCompetenza0)
+				.add(variazioniInNeutreGiuntaConsiglioCompetenza0);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleResiduo0
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleResiduo0() {
+		return variazioniInNeutreBozzaResiduo0
+				.add(variazioniInNeutreDefinitivaResiduo0)
+				.add(variazioniInNeutrePreDefinitivaResiduo0)
+				.add(variazioniInNeutreGiuntaConsiglioResiduo0);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleCassa0
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleCassa0() {
+		return variazioniInNeutreBozzaCassa0
+				.add(variazioniInNeutreDefinitivaCassa0)
+				.add(variazioniInNeutrePreDefinitivaCassa0)
+				.add(variazioniInNeutreGiuntaConsiglioCassa0);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleCompetenza1
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleCompetenza1() {
+		return variazioniInNeutreBozzaCompetenza1
+				.add(variazioniInNeutreDefinitivaCompetenza1)
+				.add(variazioniInNeutrePreDefinitivaCompetenza1)
+				.add(variazioniInNeutreGiuntaConsiglioCompetenza1);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleResiduo1
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleResiduo1() {
+		return variazioniInNeutreBozzaResiduo1
+				.add(variazioniInNeutreDefinitivaResiduo1)
+				.add(variazioniInNeutrePreDefinitivaResiduo1)
+				.add(variazioniInNeutreGiuntaConsiglioResiduo1);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleCassa1
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleCassa1() {
+		return variazioniInNeutreBozzaCassa1
+				.add(variazioniInNeutreDefinitivaCassa1)
+				.add(variazioniInNeutrePreDefinitivaCassa1)
+				.add(variazioniInNeutreGiuntaConsiglioCassa1);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleCompetenza2
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleCompetenza2() {
+		return variazioniInNeutreBozzaCompetenza2
+				.add(variazioniInNeutreDefinitivaCompetenza2)
+				.add(variazioniInNeutrePreDefinitivaCompetenza2)
+				.add(variazioniInNeutreGiuntaConsiglioCompetenza2);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleResiduo2
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleResiduo2() {
+		return variazioniInNeutreBozzaResiduo2
+				.add(variazioniInNeutreDefinitivaResiduo2)
+				.add(variazioniInNeutrePreDefinitivaResiduo2)
+				.add(variazioniInNeutreGiuntaConsiglioResiduo2);
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleCassa2
+	 */
+	public BigDecimal getVariazioniInNeutreTotaleCassa2() {
+		return variazioniInNeutreBozzaCassa2
+				.add(variazioniInNeutreDefinitivaCassa2)
+				.add(variazioniInNeutrePreDefinitivaCassa2)
+				.add(variazioniInNeutreGiuntaConsiglioCassa2);
+	}
+	
+	
+	
+	/**
+	 * SIAC-7735
+	 */
+//	public long getVariazioniInNeutreBozzaComplessiva() {
+//		return variazioniInNeutreBozzaNum0 + variazioniInNeutreBozzaNum1 + variazioniInNeutreBozzaNum2;
+//	}
+//	
+//	public long getVariazioniInNeutreDefinitivaComplessiva() {
+//		return variazioniInNeutreDefinitivaNum0 + variazioniInNeutreDefinitivaNum1 + variazioniInNeutreDefinitivaNum2;
+//	}
+//	
+//	public long getVariazioniInNeutrePreDefinitivaComplessiva() {
+//		return variazioniInNeutrePreDefinitivaNum0 + variazioniInNeutrePreDefinitivaNum1 + variazioniInNeutrePreDefinitivaNum2;
+//	}
+//	
+//	public long getVariazioniInNeutreGiuntaComplessiva() {
+//		return variazioniInNeutreGiuntaConsiglioNum0 + variazioniInNeutreGiuntaConsiglioNum1 + variazioniInNeutreGiuntaConsiglioNum2;
+//	}
+//	
+//	
+//	public long getVariazioniInNeutreTotaleComplessiva() {
+//		return getVariazioniInNeutreBozzaComplessiva() + getVariazioniInNeutreDefinitivaComplessiva() + getVariazioniInNeutrePreDefinitivaComplessiva()
+//				+ getVariazioniInNeutreGiuntaComplessiva();
+//	}
+	
+	
+	private Integer variazioniInNeutreBozzaComplessiva;
+	private Integer variazioniInNeutreDefinitivaComplessiva;
+	private Integer variazioniInNeutrePreDefinitivaComplessiva;
+	private Integer variazioniInNeutreGiuntaComplessiva;
+	private Integer variazioniInNeutreTotaleComplessiva;
+
+	/**
+	 * @return the variazioniInNeutreBozzaComplessiva
+	 */
+	public Integer getVariazioniInNeutreBozzaComplessiva() {
+		return variazioniInNeutreBozzaComplessiva;
+	}
+
+	/**
+	 * @return the variazioniInNeutreDefinitivaComplessiva
+	 */
+	public Integer getVariazioniInNeutreDefinitivaComplessiva() {
+		return variazioniInNeutreDefinitivaComplessiva;
+	}
+
+	/**
+	 * @return the variazioniInNeutrePreDefinitivaComplessiva
+	 */
+	public Integer getVariazioniInNeutrePreDefinitivaComplessiva() {
+		return variazioniInNeutrePreDefinitivaComplessiva;
+	}
+
+	/**
+	 * @return the variazioniInNeutreGiuntaComplessiva
+	 */
+	public Integer getVariazioniInNeutreGiuntaComplessiva() {
+		return variazioniInNeutreGiuntaComplessiva;
+	}
+
+	/**
+	 * @return the variazioniInNeutreTotaleComplessiva
+	 */
+	public Integer getVariazioniInNeutreTotaleComplessiva() {
+		return variazioniInNeutreTotaleComplessiva;
+	}
+
+	/**
+	 * @param variazioniInNeutreBozzaComplessiva the variazioniInNeutreBozzaComplessiva to set
+	 */
+	public void setVariazioniInNeutreBozzaComplessiva(Integer variazioniInNeutreBozzaComplessiva) {
+		this.variazioniInNeutreBozzaComplessiva = variazioniInNeutreBozzaComplessiva;
+	}
+
+	/**
+	 * @param variazioniInNeutreDefinitivaComplessiva the variazioniInNeutreDefinitivaComplessiva to set
+	 */
+	public void setVariazioniInNeutreDefinitivaComplessiva(Integer variazioniInNeutreDefinitivaComplessiva) {
+		this.variazioniInNeutreDefinitivaComplessiva = variazioniInNeutreDefinitivaComplessiva;
+	}
+
+	/**
+	 * @param variazioniInNeutrePreDefinitivaComplessiva the variazioniInNeutrePreDefinitivaComplessiva to set
+	 */
+	public void setVariazioniInNeutrePreDefinitivaComplessiva(Integer variazioniInNeutrePreDefinitivaComplessiva) {
+		this.variazioniInNeutrePreDefinitivaComplessiva = variazioniInNeutrePreDefinitivaComplessiva;
+	}
+
+	/**
+	 * @param variazioniInNeutreGiuntaComplessiva the variazioniInNeutreGiuntaComplessiva to set
+	 */
+	public void setVariazioniInNeutreGiuntaComplessiva(Integer variazioniInNeutreGiuntaComplessiva) {
+		this.variazioniInNeutreGiuntaComplessiva = variazioniInNeutreGiuntaComplessiva;
+	}
+
+	/**
+	 * @param variazioniInNeutreTotaleComplessiva the variazioniInNeutreTotaleComplessiva to set
+	 */
+	public void setVariazioniInNeutreTotaleComplessiva(Integer variazioniInNeutreTotaleComplessiva) {
+		this.variazioniInNeutreTotaleComplessiva = variazioniInNeutreTotaleComplessiva;
+	}
+	
+	
+	
 }

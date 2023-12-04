@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.RisultatiRicercaPrimaNotaLiberaBaseModel;
@@ -97,7 +97,7 @@ public class RisultatiRicercaPrimaNotaLiberaBaseAction<M extends RisultatiRicerc
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(AnnullaPrimaNota.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -134,7 +134,7 @@ public class RisultatiRicercaPrimaNotaLiberaBaseAction<M extends RisultatiRicerc
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(ValidaPrimaNota.class, response));
 			addErrori(response);
 			return INPUT;
 		}

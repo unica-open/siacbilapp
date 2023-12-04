@@ -158,6 +158,13 @@ SPDX-License-Identifier: EUPL-1.2
             </result>
             <result name="input" type="customMessagesJSON" />
         </action>
+        <!-- SIAC 8870 -->
+        <action name="aggiornaProgettoDisassociaCronoprogrammaPerFPV" class="aggiornaProgettoAction" method="disassociaCronoprogrammaComeUsatoPerFPV">
+            <result name="success" type="customJSON">
+                <param name="includeProperties">errori.*, informazioni.*, listaElementiVersioneCronoprogramma.*</param>
+            </result>
+            <result name="input" type="customMessagesJSON" />
+        </action>
          <action name="consultaProgettoConsultaCronoprogrammaGestione" class="consultaProgettoAction" method="consultaCronoprogrammaGestione">
             <result name="success" type="json">
             	<param name="ignoreHierarchy">false</param>

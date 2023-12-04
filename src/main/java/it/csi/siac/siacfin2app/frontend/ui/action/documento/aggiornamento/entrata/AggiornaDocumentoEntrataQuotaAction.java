@@ -15,11 +15,12 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.ValidationUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
@@ -27,6 +28,8 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
+import it.csi.siac.siacfin2app.frontend.ui.util.helper.VerificaBloccoRORHelper;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EliminaQuotaDocumentoEntrata;
@@ -255,7 +258,7 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 				}
 			}
 			
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceQuotaDocumentoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -297,7 +300,7 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 
 		if (response.hasErrori()) {
 			// Errore nell'invocazione
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(EliminaQuotaDocumentoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -362,7 +365,7 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 			}
 			
 			// Errore di invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaQuotaDocumentoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -468,7 +471,7 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 		if(isAggiornamento && Boolean.TRUE.equals(documento.getContabilizzaGenPcc()) && isUnicaQuotaConMovimento(documento.getListaSubdocumenti(), model.getSubdocumento())){
 			checkCondition(model.getMovimentoGestione()!=null 
 					&& model.getMovimentoGestione().getAnnoMovimento()!=0 
-					&& model.getMovimentoGestione().getNumero()!=null, 
+					&& model.getMovimentoGestione().getNumeroBigDecimal()!=null, 
 					ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Le registrazioni GEN e PCC sul documento sono state attivate. "
 							+ "E' obbligatoria almeno una quota con l'accertamento."));
 		}
@@ -478,7 +481,7 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 		int count = 0;
 		SubdocumentoEntrata subUnicoConMovimento = null;
 		for (SubdocumentoEntrata ss : listaSubdocumenti) {
-			if(ss.getAccertamento() != null && ss.getAccertamento().getAnnoMovimento() != 0 && ss.getAccertamento().getNumero() != null){
+			if(ss.getAccertamento() != null && ss.getAccertamento().getAnnoMovimento() != 0 && ss.getAccertamento().getNumeroBigDecimal() != null){
 				count++;
 				subUnicoConMovimento = ss;
 				if(count > 1){
@@ -571,18 +574,22 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 
 		Accertamento accertamento = model.getMovimentoGestione();
 	
-		boolean accertamentoDaRicercare = accertamento != null && accertamento.getAnnoMovimento() > 0 && accertamento.getNumero() != null;
+		boolean accertamentoDaRicercare = accertamento != null && accertamento.getAnnoMovimento() > 0 && accertamento.getNumeroBigDecimal() != null;
 		
-		checkCondition( accertamento == null || !(accertamento.getAnnoMovimento() == 0 ^ accertamento.getNumero() == null) ,
+		checkCondition( accertamento == null || !(accertamento.getAnnoMovimento() == 0 ^ accertamento.getNumeroBigDecimal() == null) ,
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno accertamento e numero accertamento",
 						": devono essere entrambi selezionati o entrambi non selezionati"));
 		// L'anno dell'accertamento deve essere coerente con l'anno di esercizio
 		checkCondition( accertamento == null || accertamento.getAnnoMovimento() <= model.getAnnoEsercizioInt(),
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno accertamento", ": non deve essere superiore all'anno di esercizio"));
 
+		//SIAC-7470-bloccoROR: verifico se serve ricaricare l'accertamento con la sua lista di MovimentiModifica
+		if(!accertamentoDaRicercare){
+			accertamentoDaRicercare = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.BLOCCO_SU_INCASSI_RESIDUI, sessionHandler.getAzioniConsentite());
+		}
 		if (accertamentoDaRicercare) {
 			try {
-				Accertamento a = ricercaAccertamentoPerChiaveOttimizzato();
+				Accertamento a = ricercaAccertamentoPerChiaveOttimizzato(accertamentoDaRicercare);
 				model.setMovimentoGestione(a);
 				validazioneAccertamentoDaResponse(a);
 			} catch(WebServiceInvocationFailureException wsife) {
@@ -597,11 +604,16 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 	 * @return l'accertamento trovato
 	 * @throws WebServiceInvocationFailureException in caso di errore nell'invocazione del servizio
 	 */
-	private Accertamento ricercaAccertamentoPerChiaveOttimizzato() throws WebServiceInvocationFailureException {
+	private Accertamento ricercaAccertamentoPerChiaveOttimizzato(boolean forceToSearch) throws WebServiceInvocationFailureException {
 		Accertamento accertamento = sessionHandler.getParametro(BilSessionParameter.ACCERTAMENTO);
 		
-		if(isNecessarioRicaricareAccertamento(accertamento)) {
-			RicercaAccertamentoPerChiaveOttimizzato request = model.creaRequestRicercaAccertamentoPerChiaveOttimizzato(model.getMovimentoGestione());
+		if(isNecessarioRicaricareAccertamento(accertamento) || forceToSearch) {
+			RicercaAccertamentoPerChiaveOttimizzato request = null;
+			if(forceToSearch){
+				request = model.creaRequestRicercaAccertamentoPerChiaveOttimizzato_BloccoROR(model.getMovimentoGestione());
+			}else{
+				request = model.creaRequestRicercaAccertamentoPerChiaveOttimizzato(model.getMovimentoGestione());
+			}
 			logServiceRequest(request);
 			
 			RicercaAccertamentoPerChiaveOttimizzatoResponse response = movimentoGestioneService.ricercaAccertamentoPerChiaveOttimizzato(request);
@@ -610,7 +622,7 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, response);
 				addErrori(response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
@@ -657,16 +669,16 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 				ErroreFin.ACCERTAMENTO_NON_IN_STATO_DEFINITIVO.getErrore(""));
 
 		// Check del subaccertamento nella lista degli accertamenti
-		if (subaccertamento != null && subaccertamento.getNumero() != null) {
+		if (subaccertamento != null && subaccertamento.getNumeroBigDecimal() != null) {
 			SubAccertamento sub = null;
 			for (SubAccertamento s : accertamento.getElencoSubAccertamenti()) {
-				if (s.getNumero().compareTo(subaccertamento.getNumero()) == 0) {
+				if (s.getNumeroBigDecimal().compareTo(subaccertamento.getNumeroBigDecimal()) == 0) {
 					sub = s;
 					soggettoCollegatoAllAccertamento = s.getSoggetto();
 					break;
 				}
 			}
-			checkCondition(sub != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", subaccertamento.getNumero()+""));
+			checkCondition(sub != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", subaccertamento.getNumeroBigDecimal()+""));
 			if(sub != null){
 				model.setSubMovimentoGestione(sub);
 				checkCondition(StatoOperativoMovimentoGestione.DEFINITIVO.getCodice().equals(sub.getStatoOperativoMovimentoGestioneEntrata()),
@@ -683,13 +695,35 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 
 		/// Check sulla classe del soggetto
 		//Vedi jira 1245 e jira 1816
-		if(!Boolean.TRUE.equals(model.getProseguireConElaborazione())) {
+		if(!Boolean.TRUE.equals(model.getProseguireConElaborazione()) 
+				//SIAC-7529
+				//il controllo avviene solo quando il codice del soggetto non è uguale
+				&& !soggettoCollegatoAlDocumento.getCodiceSoggetto().equals(soggettoCollegatoAllAccertamento.getCodiceSoggetto())) {
 			checkClasseSoggettoAccertamento(accertamento, soggettoCollegatoAlDocumento);
 		}
+		
+		//SIAC-7470
+		//SIAC-6997-bloccoROR:
+		boolean test = checkBloccoRor(accertamento, model.getAnnoEsercizioInt());
+		//se l'impegno ha superato i test, verifico gli eventuali subImpegni
+		if(!test && accertamento.getElencoSubAccertamenti() != null && !accertamento.getElencoSubAccertamenti().isEmpty()){
+			for(int k = 0; k < accertamento.getElencoSubAccertamenti().size(); k++){
+				checkBloccoRor(accertamento.getElencoSubAccertamenti().get(k), model.getAnnoEsercizioInt());
+			}
+		}
+		
 		model.setProseguireConElaborazione(Boolean.FALSE);
 	}
 
-
+	private boolean checkBloccoRor(Accertamento accertamento, Integer annoEsercizio){
+		//il controllo viene demandato ad apposita classe di utilità
+		boolean checkBloccoROR = VerificaBloccoRORHelper.escludiAccertamentoPerBloccoROR(sessionHandler.getAzioniConsentite(), accertamento, model.getAnnoEsercizioInt());
+		//la gestione della messaggistica deve avvenire nella presente action
+		if(checkBloccoROR){
+			checkCondition(!checkBloccoROR, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Accertamento/sub accertamento residuo non utilizzabile"));
+		}
+		return checkBloccoROR;
+	}
 	
 	/**
 	 * Riottiene le quote associate al Documento a partire dal servizio di
@@ -789,7 +823,7 @@ public class AggiornaDocumentoEntrataQuotaAction extends AggiornaDocumentoEntrat
 	 * */
 	private boolean isNecessarioRicaricareAccertamento(Accertamento accertamentoDaSessione) {
 		//se ho il numero del submovimento, devo ricaricarlo sempre!
-		return model.getSubMovimentoGestione() != null && model.getSubMovimentoGestione().getNumero() !=null ||
+		return model.getSubMovimentoGestione() != null && model.getSubMovimentoGestione().getNumeroBigDecimal() !=null ||
 				 !ValidationUtil.isValidMovimentoGestioneFromSession(accertamentoDaSessione, model.getMovimentoGestione());
 	}
 }

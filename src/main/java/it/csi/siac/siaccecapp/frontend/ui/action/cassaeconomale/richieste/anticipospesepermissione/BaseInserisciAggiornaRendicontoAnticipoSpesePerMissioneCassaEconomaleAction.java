@@ -92,7 +92,7 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpesePerMissioneCas
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioRichiestaEconomale.class, response));
 		}
 		RichiestaEconomale richiestaEconomale = response.getRichiestaEconomale();
 		
@@ -127,7 +127,7 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpesePerMissioneCas
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			}
 			if(response.getSoggetto() == null) {
 				String errorMsg = "Nessun soggetto corrispondente al codice " + codiceSoggetto + " trovato";
@@ -171,8 +171,14 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpesePerMissioneCas
 		RendicontoRichiesta rendicontoRichiesta = new RendicontoRichiesta();
 		rendicontoRichiesta.setRichiestaEconomale(model.getRichiestaEconomaleCopia());
 		
+		//SIAC-7763 mantengo la descrizione poiche' richiesta
 		// Pulisco la descrizione
-		rendicontoRichiesta.getRichiestaEconomale().setDescrizioneDellaRichiesta(null);
+//		rendicontoRichiesta.getRichiestaEconomale().setDescrizioneDellaRichiesta(null);
+		RendicontoRichiesta rendiconto = model.getRendicontoRichiestaCopia() != null ? 
+				model.getRendicontoRichiestaCopia() : model.getRendicontoRichiesta();
+				
+		// passo l'uid del rendiconto
+		rendicontoRichiesta.setUid(rendiconto.getUid());
 		
 		// Pulisco i campi
 		model.setRendicontoRichiesta(rendicontoRichiesta);
@@ -367,7 +373,7 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpesePerMissioneCas
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaTipoGiustificativo.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaTipoGiustificativo = response.getTipiGiustificativi();

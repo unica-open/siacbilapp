@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import it.csi.siac.siacbilapp.frontend.webservice.client.BaseProxyServiceTest;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazionePerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazionePerChiaveResponse;
@@ -56,7 +56,7 @@ public class LiquidazioneServiceTest extends BaseProxyServiceTest<LiquidazioneSe
 		pRicercaLiquidazioneK.setAnnoLiquidazione(liquidazione.getAnnoLiquidazione());
 		pRicercaLiquidazioneK.setNumeroLiquidazione(liquidazione.getNumeroLiquidazione());
 		pRicercaLiquidazioneK.setLiquidazione(liquidazione);
-		pRicercaLiquidazioneK.setTipoRicerca(Constanti.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO);
+		pRicercaLiquidazioneK.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO);
 		req.setpRicercaLiquidazioneK(pRicercaLiquidazioneK);
 		
 		RicercaLiquidazionePerChiaveResponse res = service.ricercaLiquidazionePerChiave(req);
@@ -85,7 +85,7 @@ public class LiquidazioneServiceTest extends BaseProxyServiceTest<LiquidazioneSe
 		ricercaLiquidazioneK.setAnnoLiquidazione(liquidazione.getAnnoLiquidazione());
 		ricercaLiquidazioneK.setNumeroLiquidazione(liquidazione.getNumeroLiquidazione());
 		ricercaLiquidazioneK.setLiquidazione(liquidazione);
-		ricercaLiquidazioneK.setTipoRicerca(Constanti.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO);
+		ricercaLiquidazioneK.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO);
 		
 		reqRL.setpRicercaLiquidazioneK(ricercaLiquidazioneK);
 		RicercaLiquidazionePerChiaveResponse resRL = service.ricercaLiquidazionePerChiave(reqRL);

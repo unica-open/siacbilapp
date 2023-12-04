@@ -16,6 +16,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioProgettoRe
 import it.csi.siac.siacbilser.model.Cronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioBaseCronoprogramma;
 import it.csi.siac.siacbilser.model.ProspettoRiassuntivoCronoprogramma;
+import it.csi.siac.siacgenser.model.ProgettoModelDetail;
 
 /**
  * Classe di model per la consultazione del Progetto. Contiene una mappatura del form di consultazione.
@@ -178,7 +179,7 @@ public class ConsultaProgettoModel extends GenericProgettoModel {
 	public RicercaDettaglioProgetto creaRequestRicercaDettaglioProgetto() {
 		RicercaDettaglioProgetto request = creaRequest(RicercaDettaglioProgetto.class);
 		request.setChiaveProgetto(uidDaConsultare);
-		
+		request.setProgettoModelDetails(new ProgettoModelDetail[] {ProgettoModelDetail.MutuiAssociati});
 		return request;
 	}
 	

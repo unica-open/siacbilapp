@@ -122,13 +122,20 @@ SPDX-License-Identifier: EUPL-1.2
 
 										</div>
 									</div>
+									<%-- SIAC-6780 --%>
+									<div class="control-group">
+										<span class="al">
+											<label class="radio inline" for="numeroPredisposizioneDincasso">Numero predisposizione di incasso</label>
+										</span>
+										<s:textfield id="numeroPredisposizioneDincasso" cssClass="lbTextSmall span2" name="predocumento.numero" />
+									</div>
 								</fieldset>
 
 								<h4 class="step-pane">&nbsp;Provvedimento&nbsp;
 								<span id="SPAN_InformazioniProvvedimento">
-										<s:if test='%{attoAmministrativo != null && (attoAmministrativo.anno ne null && attoAmministrativo.anno != "") && (attoAmministrativo.numero ne null && attoAmministrativo.numero != "") && (tipoAtto.uid ne null && tipoAtto.uid != "")}'>
-											<s:property value="%{tipoAtto.descrizione+ '/'+ attoAmministrativo.anno + ' / ' + attoAmministrativo.numero + ' - ' + attoAmministrativo.oggetto}" />
-										</s:if>
+									<s:if test='%{attoAmministrativo != null && (attoAmministrativo.anno ne null && attoAmministrativo.anno != "") && (attoAmministrativo.numero ne null && attoAmministrativo.numero != "") && (tipoAtto.uid ne null && tipoAtto.uid != "")}'>
+										<s:property value="%{tipoAtto.descrizione+ '/'+ attoAmministrativo.anno + ' / ' + attoAmministrativo.numero + ' - ' + attoAmministrativo.oggetto}" />
+									</s:if>
 								</span>
 								</h4>
 								<fieldset class="form-horizontal">
@@ -217,11 +224,11 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_doc.js"></script>
-	<script type="text/javascript" src="${jspath}documento/ricercaEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_doc.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/ricercaEntrata.js"></script>
 
 </body>
 </html>

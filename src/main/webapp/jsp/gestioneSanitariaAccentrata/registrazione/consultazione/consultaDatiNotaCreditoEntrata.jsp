@@ -66,14 +66,14 @@ SPDX-License-Identifier: EUPL-1.2
 		<s:iterator value="consultazioneHelper.listaQuoteDaDedurre" var="q">
 			<tr>
 				<td>
-					<a rel="popover" href="#" data-original-title="Descrizione" data-trigger="hover" data-content="<s:property value="#q.descrizione"/>">
+					<a data-toggle="popover" href="#" data-original-title="Descrizione" data-trigger="hover" data-content="<s:property value="#q.descrizione"/>">
 						<s:property value="#q.numero"/>
 					</a>
 				</td>
 				<td>
 					<s:if test="%{#q.attoAmministrativo != null}">
 						<s:property value="#q.attoAmministrativo.anno"/> / <s:property value="#q.attoAmministrativo.numero"/> -
-						<a rel="popover" href="#" data-original-title="Oggetto" data-trigger="hover" data-content="<s:property value="#q.attoAmministrativo.oggetto"/>">
+						<a data-toggle="popover" href="#" data-original-title="Oggetto" data-trigger="hover" data-content="<s:property value="#q.attoAmministrativo.oggetto"/>">
 							<s:property value="#q.attoAmministrativo.tipoAtto.codice"/>
 						</a>
 						<s:if test="%{#q.attoAmministrativo.strutturaAmmContabile != null}">
@@ -84,9 +84,9 @@ SPDX-License-Identifier: EUPL-1.2
 				</td>
 				<td>
 					<s:if test="#q.impegno != null">
-						<s:property value="#q.accertamento.annoMovimento"/> / <si:plainstringproperty value="#q.accertamento.numero"/>
+						<s:property value="#q.accertamento.annoMovimento"/> / <s:property value="#q.accertamento.numero"/>
 						<s:if test="%{#q.subAccertamento != null}">
-							- <si:plainstringproperty value="#q.subAccertamento.numero"/>
+							- <s:property value="#q.subAccertamento.numero"/>
 						</s:if>
 					</s:if>
 				</td>
@@ -145,9 +145,9 @@ SPDX-License-Identifier: EUPL-1.2
 								<s:iterator value="consultazioneHelper.listaMovimentiIvaDocCollegato" var="mi">
 									<tr>
 										<td><s:property value="#mi.numeroQuota" /></td>
-										<td><s:property value="#mi.registrazioneIva" escape="false" /></td>
-										<td><s:property value="#mi.attivitaIva" escape="false"/></td>
-										<td><s:property value="#mi.aliquotaIva" escape="false"/></td>
+										<td><s:property value="#mi.registrazioneIva" escapeHtml="false" /></td>
+										<td><s:property value="#mi.attivitaIva" escapeHtml="false"/></td>
+										<td><s:property value="#mi.aliquotaIva" escapeHtml="false"/></td>
 										<td class="tab_Right"><s:property value="#mi.imponibile"/></td>
 										<td class="tab_Right"><s:property value="#mi.imposta"/></td>
 										<td class="tab_Right"><s:property value="#mi.impostaDetraibile"/></td>
@@ -193,9 +193,9 @@ SPDX-License-Identifier: EUPL-1.2
 								<s:iterator value="consultazioneHelper.listaMovimentiIva" var="mi">
 									<tr>
 										<td><s:property value="#mi.numeroQuota" /></td>
-										<td><s:property value="#mi.registrazioneIva" escape="false" /></td>
-										<td><s:property value="#mi.attivitaIva" escape="false"/></td>
-										<td><s:property value="#mi.aliquotaIva" escape="false"/></td>
+										<td><s:property value="#mi.registrazioneIva" escapeHtml="false" /></td>
+										<td><s:property value="#mi.attivitaIva" escapeHtml="false"/></td>
+										<td><s:property value="#mi.aliquotaIva" escapeHtml="false"/></td>
 										<td class="tab_Right"><s:property value="#mi.imponibile"/></td>
 										<td class="tab_Right"><s:property value="#mi.imposta"/></td>
 										<td class="tab_Right"><s:property value="#mi.impostaDetraibile"/></td>

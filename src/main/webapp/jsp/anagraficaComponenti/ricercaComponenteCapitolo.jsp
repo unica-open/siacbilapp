@@ -43,6 +43,8 @@ SPDX-License-Identifier: EUPL-1.2
 												<s:textarea rows="1" cols="15" id="descrizioneComponente" name="componenteCapitolo.descrizione" class="span10" maxlength="500" ></s:textarea>
 											</div>
 										</div>
+										<%-- SIAC-7873 --%>
+										<s:hidden name="saltaControlloSuDateValidita" value="true"></s:hidden>
 									</fieldset>
 								</div>
 							</div>
@@ -60,8 +62,8 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}provvedimento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca.js"></script>
 
 </body>
 </html>

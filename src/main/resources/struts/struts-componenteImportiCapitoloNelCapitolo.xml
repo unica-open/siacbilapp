@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+    <package name="componenteImportiCapitoloNelCapitolo" extends="capitoloDefault" namespace="/">
+    	
+    	
+    	 <!-- Inserimento Stanziamenti -->
+    	
+    	<action name="gestioneComponenteImportoCapitoloNelCapitolo" class="gestioneComponenteImportoCapitoloNelCapitoloAction" >
+			<result name="success">/jsp/capUscitaPrevisione/gestioneComponentiImportiCapitolo.jsp</result>
+            <result name="input">/jsp/failure.jsp</result>
+		</action>
+        
+        
+         <action name="gestioneComponenteImportoCapitoloNelCapitolo_caricaImporti" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="caricaImporti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		<action name="gestioneComponenteImportoCapitoloNelCapitolo_caricaListaTipoComponentiPerNuovaComponente" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="caricaListaTipoComponentiPerNuovaComponente">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					listaTipoComponentiPerNuovaComponente.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		 <action name="gestioneComponenteImportoCapitoloNelCapitolo_elimina" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="elimina">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		 <action name="gestioneComponenteImportoCapitoloNelCapitolo_aggiornaComponenti" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="aggiornaComponenti">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		
+		<action name="gestioneComponenteImportoCapitoloNelCapitolo_aggiornaResiduo" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="aggiornaResiduo">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+		<action name="gestioneComponenteImportoCapitoloNelCapitolo_aggiornaCassa" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="aggiornaCassa">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		
+    	<action name="gestioneComponenteImportoCapitoloNelCapitolo_inserisciNuovaComponente" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="inserisciNuovaComponente">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					messaggi.*,
+					righeComponentiTabellaImportiCapitolo.*,
+					righeImportiTabellaImportiCapitolo.*,
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+		
+		<action name="gestioneComponenteImportoCapitoloNelCapitolo_ricercaTipoComponenti" class="gestioneComponenteImportoCapitoloNelCapitoloAction" method="ricercaTipoComponenteCapitolo">
+			<result name="success" type="customJSON">
+				<param name="includeProperties">
+					errori.*,
+					informazioni.*,
+					annoEsercizioInt,
+					listaTipoComponenti.*
+				</param>
+			</result>
+			<result name="input" type="customMessagesJSON" />
+		</action>
+    	
+    	
+    
+     </package>
+</struts>

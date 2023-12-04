@@ -147,10 +147,50 @@ public class AggiornaCronoprogrammaModel extends GenericCronoprogrammaModel {
 		
 		impostaDefaultQuadroEconomico();
 		
-		List<DettaglioEntrataCronoprogramma> listaEntrate = creaListaDettagli(getListaDettaglioEntrataCronoprogramma(), listaDettaglioEntrataCronoprogrammaDaEliminare);
-		List<DettaglioUscitaCronoprogramma> listaUscite = creaListaDettagli(getListaDettaglioUscitaCronoprogramma(), listaDettaglioUscitaCronoprogrammaDaEliminare);
+		List<DettaglioEntrataCronoprogramma> listaEntrate = new ArrayList<DettaglioEntrataCronoprogramma>();
 		
-		getCronoprogramma().setCapitoliEntrata(listaEntrate);
+		//SIAC-8791
+		if(!isDettaglioEntrataFromEsistente()) {	
+			//forzo la ueb a -1 come discriminante; in questo caso non presente per passaggio a capitolo non esistente
+			List<DettaglioEntrataCronoprogramma> listaEntrateProvvisoria = creaListaDettagli(getListaDettaglioEntrataCronoprogramma(), listaDettaglioEntrataCronoprogrammaDaEliminare);			
+			listaEntrate = new ArrayList<DettaglioEntrataCronoprogramma>();
+			for(DettaglioEntrataCronoprogramma t : listaEntrateProvvisoria) {
+				//task-62
+				// forzo i dati per il nuovo record, il vecchio viene preso dalla parte srv
+				if(t.getNumeroCapitolo() == null) {
+					t.setNumeroUEB(-1);
+				}
+				else if(t.getCapitolo() != null && t.getCapitolo().getNumeroCapitolo() != null &&
+						(!t.getNumeroCapitolo().equals(t.getCapitolo().getNumeroCapitolo()))) {
+					t.setNumeroUEB(-1);
+				} 
+				listaEntrate.add(t);
+			}	
+		} else {
+			listaEntrate = creaListaDettagli(getListaDettaglioEntrataCronoprogramma(), listaDettaglioEntrataCronoprogrammaDaEliminare);			
+		}
+		
+		List<DettaglioUscitaCronoprogramma> listaUscite = new ArrayList<DettaglioUscitaCronoprogramma>();
+		
+		//SIAC-8791
+		if(!isDettaglioUscitaFromEsistente()) {	
+			//forzo la ueb a -1 come discriminante; in questo caso non presente per passaggio a capitolo non esiste
+			List<DettaglioUscitaCronoprogramma> listaUsciteProvvisoria = creaListaDettagli(getListaDettaglioUscitaCronoprogramma(), listaDettaglioUscitaCronoprogrammaDaEliminare);			
+			listaUscite = new ArrayList<DettaglioUscitaCronoprogramma>();
+			for(DettaglioUscitaCronoprogramma t : listaUsciteProvvisoria) {
+				// forzo i dati per il nuovo record, il vecchio viene preso dalla parte srv
+				if(t.getCapitolo() != null && t.getCapitolo().getNumeroCapitolo() != null &&
+						(!t.getNumeroCapitolo().equals(t.getCapitolo().getNumeroCapitolo()))) {
+					t.setNumeroUEB(-1);
+				} 
+				listaUscite.add(t);
+			}	
+		} else {
+			listaUscite = creaListaDettagli(getListaDettaglioUscitaCronoprogramma(), listaDettaglioUscitaCronoprogrammaDaEliminare);						
+		}
+		
+		
+		getCronoprogramma().setCapitoliEntrata(listaEntrate);		
 		getCronoprogramma().setCapitoliUscita(listaUscite);
 		return getCronoprogramma();
 	}

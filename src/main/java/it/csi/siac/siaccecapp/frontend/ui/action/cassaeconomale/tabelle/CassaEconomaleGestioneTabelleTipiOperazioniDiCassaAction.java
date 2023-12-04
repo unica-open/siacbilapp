@@ -7,7 +7,7 @@ package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.tabelle;
 import java.util.Arrays;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -144,7 +144,7 @@ public class CassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction extends Ge
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceTipoOperazioneDiCassa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -205,7 +205,7 @@ public class CassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction extends Ge
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaTipoOperazioneDiCassa.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -245,7 +245,7 @@ public class CassaEconomaleGestioneTabelleTipiOperazioniDiCassaAction extends Ge
 		logServiceResponse(response);
 		// Se ho errori, esco subito
 		if(response.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaTipoOperazioneDiCassa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

@@ -5,7 +5,7 @@
 ;(function (w, $) {
     'use strict';
     
-    //VARIABLES
+    //VARIABLE
     var exports = {};
     var $document = $(document);
     var instanceId = 0;
@@ -401,6 +401,7 @@
     function impostaTabella() {
         this.$tabellaMovimentoDettaglio.overlay({usePosition: true});
         var self = this;
+		var isLibera = $('#HIDDEN_tipoCausale').val() && $('#HIDDEN_tipoCausale').val() === 'LIB'; 
         var opts = {
             bServerSide: true,
             sServerMethod: 'POST',
@@ -411,7 +412,7 @@
             iDisplayStart: $('#HIDDEN_savedDisplayStart').val() || 0,
             bSort: false,
             bInfo: true,
-            bAutoWidth: true,
+            bAutoWidth: false,
             bFilter: false,
             bProcessing: true,
             oLanguage: {
@@ -444,16 +445,17 @@
             },
             aoColumnDefs: [
                 {aTargets: [0], mData: defaultPerDataTable('movimentoFinanziario')},
-                {aTargets: [1], mData: defaultPerDataTable('ivaCommerciale')},
-                {aTargets: [2], mData: defaultPerDataTable('importoFinanziario'), fnCreatedCell: doAddClassToElement('text-right')},
-                {aTargets: [3], mData: defaultPerDataTable('codiceContoCespite')},
-                {aTargets: [4], mData: defaultPerDataTable('descrizioneContoCespite')},
+				{aTargets: [1],bVisible:!isLibera, mData: defaultPerDataTable('atto')},
+                {aTargets: [2], mData: defaultPerDataTable('ivaCommerciale')},
+                {aTargets: [3], mData: defaultPerDataTable('importoFinanziario'), fnCreatedCell: doAddClassToElement('text-right')},
+                {aTargets: [4], mData: defaultPerDataTable('codiceContoCespite')},
+                {aTargets: [5], mData: defaultPerDataTable('descrizioneContoCespite')},
                 
-                {aTargets: [5], mData: defaultPerDataTable('importoDaInventariareAlienare'), fnCreatedCell: doAddClassToElement('text-right')},
-                {aTargets: [6], mData: defaultPerDataTable('importoInventariatoString'), fnCreatedCell: doAddClassToElement('text-right')},
+                {aTargets: [6], mData: defaultPerDataTable('importoDaInventariareAlienare'), fnCreatedCell: doAddClassToElement('text-right')},
+                {aTargets: [7], mData: defaultPerDataTable('importoInventariatoString'), fnCreatedCell: doAddClassToElement('text-right')},
                 
-                {aTargets: [7], mData: defaultPerDataTable('numeroBeni'), fnCreatedCell: doAddClassToElement('text-right')},
-                {aTargets: [8], mData: defaultPerDataTable('azioni'), fnCreatedCell: function(nTd, sData, oData) {
+                {aTargets: [8], mData: defaultPerDataTable('numeroBeni'), fnCreatedCell: doAddClassToElement('text-right')},
+                {aTargets: [9], mData: defaultPerDataTable('azioni'), fnCreatedCell: function(nTd, sData, oData) {
                     var $ntd = $(nTd);
                     $ntd.find('button').substituteHandler('click', self.gestioneAperturaRigaInterna.bind(self, oData));
                 }}

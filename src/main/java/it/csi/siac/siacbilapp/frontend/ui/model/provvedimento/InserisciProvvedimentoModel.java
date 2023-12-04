@@ -13,7 +13,7 @@ import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 
 /**
  * Classe di model per l'inserimento di un Provvedimento. Contiene una mappatura del model.
@@ -92,7 +92,7 @@ public class InserisciProvvedimentoModel extends GenericBilancioModel {
 		getAttoAmministrativo().setParereRegolaritaContabile(Boolean.FALSE);
 		//SIAC-6929
 		getAttoAmministrativo().setBloccoRagioneria(Boolean.FALSE);
-		getAttoAmministrativo().setProvenienza(Constanti.ATTO_AMMINISTRATIVO_PROVENIENZA_MANUALE);
+		getAttoAmministrativo().setProvenienza(CostantiFin.ATTO_AMMINISTRATIVO_PROVENIENZA_MANUALE);
 		request.setAttoAmministrativo(getAttoAmministrativo());
 		StrutturaAmministrativoContabile sac = getAttoAmministrativo().getStrutturaAmmContabile();
 		request.setStrutturaAmministrativoContabile(impostaEntitaFacoltativa(sac));

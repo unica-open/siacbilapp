@@ -7,6 +7,9 @@ var Variazioni = Variazioni || {};
 
 var VariazioniImporti = (function(varImp){
 	"use strict";
+	var alertMessaggi = $("#MESSAGGI");
+	var alertInformazioni = $("#INFORMAZIONI");
+	var $divPerOverlay = $('.overlay-on-submit');
 	//utilities
 	varImp.chiediConfermaAnnullamento = chiediConfermaAnnullamento;
 	//capitoli
@@ -19,9 +22,19 @@ var VariazioniImporti = (function(varImp){
     	 if(ulterioreCheck){
     		 return impostaConfermaProvvedimento();
     	 }
-         aggiornaAnagraficaVariazioneAsync('concludi');
+    	 aggiornaAnagraficaVariazioneAsync('concludi');
     }
     
+    //SIAC-7629 inizio FL 
+    function callbackRichiestaProsecuzioneSuSquadraturaImporti(ulterioreCheck){
+   	 $('form').append('<input type= "hidden" name ="saltaCheckStanziamentoCassa" value ="true" >');
+ 		$('form').append('<input type= "hidden" name ="saltaCheckStanziamento" value ="true" >');
+   	 if(ulterioreCheck){
+   		 return impostaConfermaProvvedimento();
+   	 }
+   	 aggiornaAnagraficaVariazioneAsync('chiudiProposta');
+   }
+   //SIAC-7629 fine FL
 
     /**
      * Se il servizio viene implementato in modo asincrono permette all'utente di scegliere se rimanere
@@ -40,7 +53,7 @@ var VariazioniImporti = (function(varImp){
                 "label" : "Rimani sulla pagina"
                 , "class" : "btn"
                 , "callback" : function() {
-                	$(document.body).overlay('show');
+                	$divPerOverlay.overlay('show');
                     setTimeout(ottieniResponse,30000,operazione, 50, 30000);
                 }
             }]);
@@ -87,7 +100,7 @@ var VariazioniImporti = (function(varImp){
     function aggiornaAnagraficaVariazioneAsync(operazione){
         var form = $('form');
         var obj = qualify(form.serializeObject());
-        $(document.body).overlay('show');
+        $divPerOverlay.overlay('show');
         $('#spinner_' + operazione).addClass('activated');
 
         return $.postJSON(operazione + 'AggiornamentoVariazioneImporti.do', obj)
@@ -98,6 +111,8 @@ var VariazioniImporti = (function(varImp){
             	resettaSpinnerFormSubmitted();
                 return;
             }
+			//SIAC-8261
+			impostaDatiNegliAlert(data.informazioni, alertInformazioni);
             ottieniResponse(operazione, 10, 10000);
         });
     }
@@ -107,7 +122,7 @@ var VariazioniImporti = (function(varImp){
     function chiudiPropostaAsync(operazione){
         var form = $('form');
         var obj = qualify(form.serializeObject());
-        $(document.body).overlay('show');
+        $divPerOverlay.overlay('show');
         $('#spinner_' + operazione).addClass('activated');
         return $.postJSON(operazione + 'AggiornamentoVariazioneImporti.do', obj)
         .then(function(data) {
@@ -123,7 +138,7 @@ var VariazioniImporti = (function(varImp){
     
 
     function resettaSpinnerFormSubmitted(){
-        $(document.body).overlay('hide');
+        $divPerOverlay.overlay('hide');
         $('[data-spinner-async]').removeClass('activated'); 
     } 
     
@@ -137,7 +152,7 @@ var VariazioniImporti = (function(varImp){
             alertErrori.slideUp();
             if (impostaDatiNegliAlert(data.errori,alertErrori)) {
             	
-                $(document.body).overlay('hide');
+                $divPerOverlay.overlay('hide');
             	redirezioneAPaginaDisabilitata();
                 return;
             }
@@ -150,35 +165,47 @@ var VariazioniImporti = (function(varImp){
 
 
             if(!data.isAsyncResponsePresent){
-                if(tentativiRimanenti<=0){
+               /* SIAC-8261
+				 if(tentativiRimanenti<=0){
                     //se i tentativi rimanenti sono azzerati chiedo se vuoi continuare ricorsione se sì continuo, altrimenti return.
-                	$(document.body).overlay('hide');
+                	$divPerOverlay.overlay('hide');
+
                 	showDialogAbbandonoPaginaSuServizioAsincrono(operazione);
                     return;
-                }
-
-                setTimeout(ottieniResponse, timeout, operazione, --tentativiRimanenti, timeout);
+                }*/
+                                                                 //SIAC-8261
+                setTimeout(ottieniResponse, timeout, operazione, /*--*/ tentativiRimanenti, timeout);
                 return;
             }
-            resettaSpinnerFormSubmitted();
             
             richiediConfermaProvvedimento = data.richiediConfermaMancanzaProvvedimentoVariazioneBilancio;
             
             if(data.richiediConfermaQuadratura){
             	var fnc_callback_indietro = richiediConfermaProvvedimento ? impostaConfermaProvvedimento : $.noop;
-            	$(document.body).overlay('hide');
+            	resettaSpinnerFormSubmitted();
             	return impostaRichiestaConfermaUtente('Non vi &eacute; quadratura sulla cassa. Proseguire ugualmente con il salvataggio?', 
     						callbackRichiestaProsecuzioneSuSquadraturaCassa.bind(undefined , richiediConfermaProvvedimento),
     						fnc_callback_indietro);
             }
             
+            
+            //SIAC-7629 inizio FL 
+            if(data.richiediConfermaQuadraturaCP){
+            	var fnc_callback_indietro = richiediConfermaProvvedimento ? impostaConfermaProvvedimento : $.noop;
+            	resettaSpinnerFormSubmitted();
+            	return impostaRichiestaConfermaUtente('Quadratura entrate-spese non corretta. Proseguire ugualmente con il salvataggio?', 
+    						callbackRichiestaProsecuzioneSuSquadraturaImporti.bind(undefined , richiediConfermaProvvedimento),
+    						fnc_callback_indietro);
+            }
+            //SIAC-7629 fine FL
+            
             if(richiediConfermaProvvedimento){
-            	$(document.body).overlay('hide');
+            	resettaSpinnerFormSubmitted();
             	return impostaConfermaProvvedimento();
             }
             
             redirezioneAPaginaDisabilitata();
-            $(document.body).overlay('hide');
+            //$divPerOverlay.overlay('hide');
         });
 
     }

@@ -10,6 +10,8 @@ import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloUscitaPrevisioneModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.RigaComponenteTabellaImportiCapitolo;
+import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.aggiornamento.RigaImportoTabellaImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisione;
@@ -89,6 +91,7 @@ public class ConsultaCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevisi
 	private Boolean variazioneInAumento;
 	// SIAC-6305
 	private String openTab;
+	
 
 	/** Costruttore vuoto di default */
 	public ConsultaCapitoloUscitaPrevisioneModel() {

@@ -89,7 +89,7 @@ public abstract class InserisciPrimaNotaIntegrataDocumentoSpesaBaseAction<M exte
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioDocumentoSpesa.class, res));
 		}
 		DocumentoSpesa documento = res.getDocumento();
 		if(documento == null) {
@@ -111,7 +111,7 @@ public abstract class InserisciPrimaNotaIntegrataDocumentoSpesaBaseAction<M exte
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaOnereByDocumentoSpesa.class, res));
 		}
 		return res.getListaDettagliOnere();
 	}

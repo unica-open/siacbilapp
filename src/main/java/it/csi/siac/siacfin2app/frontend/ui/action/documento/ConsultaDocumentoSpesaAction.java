@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -102,7 +102,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaModulareDocumentoSpesa.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -178,7 +178,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDocumentiCollegatiByDocumentoSpesa.class, res));
 			return INPUT;
 		}
 		
@@ -235,7 +235,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoSpesa.class, res));
 			return INPUT;
 		}
 		
@@ -261,7 +261,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoSpesa.class, res));
 			return INPUT;
 		}
 		
@@ -293,7 +293,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoEntrata.class, res));
 			return INPUT;
 		}
 		
@@ -328,7 +328,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoSpesa.class, res));
 			return INPUT;
 		}
 		
@@ -357,7 +357,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaOnereByDocumentoSpesa.class, res));
 			return INPUT;
 		}
 		
@@ -422,7 +422,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioQuotaSpesa.class, res));
 		}
 		return res.getSubdocumentoSpesa();
 	}
@@ -453,7 +453,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 			// Controllo gli errori
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, res);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
@@ -472,10 +472,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 			impegno = res.getImpegno();
 			// Default per le liste
 			impegno.setElencoSubImpegni(defaultingList(impegno.getElencoSubImpegni()));
-			impegno.setListaVociMutuo(defaultingList(impegno.getListaVociMutuo()));
-			for(SubImpegno si : impegno.getElencoSubImpegni()) {
-				si.setListaVociMutuo(defaultingList(si.getListaVociMutuo()));
-			}
+
 			// Inizializzo il capitolo se non gia' presente
 			if(impegno.getCapitoloUscitaGestione() == null) {
 				// Se il capitolo non e' stato impostato dal servizio, lo imposto io
@@ -496,7 +493,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 	 */
 	private void impostaSubImpegno(SubdocumentoSpesa subdocumentoSpesa, Impegno impegno) {
 		final String methodName = "impostaSubImpegno";
-		if(subdocumentoSpesa.getSubImpegno() == null || subdocumentoSpesa.getSubImpegno().getNumero() == null) {
+		if(subdocumentoSpesa.getSubImpegno() == null || subdocumentoSpesa.getSubImpegno().getNumeroBigDecimal() == null) {
 			// Non ho alcunche' da caricare
 			log.debug(methodName, "Subdocumento " + subdocumentoSpesa.getUid() + " senza subimpegno associato");
 			return;
@@ -504,7 +501,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		
 		// Cerco il subimpegno per numero
 		for(SubImpegno subImpegno : impegno.getElencoSubImpegni()) {
-			if(subImpegno.getNumero() != null && subdocumentoSpesa.getSubImpegno().getNumero().equals(subImpegno.getNumero())) {
+			if(subImpegno.getNumeroBigDecimal() != null && subdocumentoSpesa.getSubImpegno().getNumeroBigDecimal().equals(subImpegno.getNumeroBigDecimal())) {
 				subdocumentoSpesa.setSubImpegno(subImpegno);
 				return;
 			}
@@ -531,7 +528,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaOrdiniDocumento.class, res));
 			addErrori(res);
 			return SUCCESS;
 		}
@@ -560,7 +557,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaModulareDocumentoSpesa.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -587,7 +584,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaModulareQuoteByDocumentoSpesa.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -620,7 +617,7 @@ public class ConsultaDocumentoSpesaAction extends GenericBilancioAction<Consulta
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioFatturaElettronica.class, res));
 			return INPUT;
 		}
 		

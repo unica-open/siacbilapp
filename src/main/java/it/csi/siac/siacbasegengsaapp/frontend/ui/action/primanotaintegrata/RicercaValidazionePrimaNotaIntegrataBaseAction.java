@@ -53,7 +53,7 @@ import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
@@ -164,7 +164,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco lanciando un'errore.
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(TipiProvvedimento.class, res));
 			}
 			
 			listaTipoAtto = res.getElencoTipi();
@@ -190,7 +190,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(ListeGestioneSoggetto.class, res));
 			}
 			
 			listaClasseSoggetto = res.getListaClasseSoggetto();
@@ -216,7 +216,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(res);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoriGenericiByTipoElementoBil.class, res));
 			}
 			
 			listaTipiFinanziamento = res.getClassificatoriTipoFinanziamento();
@@ -255,7 +255,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 			// Controllo gli errori
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				log.info(methodName, createErrorInServiceInvocationString(req, res));
+				log.info(methodName, createErrorInServiceInvocationString(RicercaCodifiche.class, res));
 				addErrori(res);
 				return INPUT;
 			}
@@ -341,7 +341,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(LeggiClassificatoriByTipoElementoBil.class, res));
 		}
 		return res;
 	}
@@ -375,7 +375,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 			// Controllo gli errori
 			if(res.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				log.warn(methodName, createErrorInServiceInvocationString(req, res));
+				log.warn(methodName, createErrorInServiceInvocationString(RicercaCodifiche.class, res));
 				addErrori(res);
 				return INPUT;
 			}
@@ -493,7 +493,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaPrimaNotaIntegrataValidabile.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -675,7 +675,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		//controllo sia stata specificata la chiave del provvedimento
 		checkCondition((aa.getAnno() != 0 && aa.getNumero() != 0 && aa.getTipoAtto() != null && aa.getTipoAtto().getUid() != 0)
 				|| (aa.getAnno() == 0 && aa.getNumero() == 0 && (aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0)),
-			ErroreCore.VALORE_NON_VALIDO.getErrore("Provvedimento", ": e' necessario specificare anno, numero e tipo per effettuare la ricerca"), true);
+			ErroreCore.VALORE_NON_CONSENTITO.getErrore("Provvedimento", ": e' necessario specificare anno, numero e tipo per effettuare la ricerca"), true);
 		
 		// SIAC-4644, modifica: anche il tipo di atto deve essere obbligatorio
 		if(aa.getAnno() == 0 || aa.getNumero() == 0 || aa.getTipoAtto() == null || aa.getTipoAtto().getUid() == 0) {
@@ -693,7 +693,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvedimento.class, res));
 			return;
 		}
 		List<AttoAmministrativo> sacs = filterSac(res.getListaAttiAmministrativi(), aa.getStrutturaAmmContabile() == null || aa.getStrutturaAmmContabile().getUid() == 0);
@@ -719,20 +719,20 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		}
 		if(capitoloParziamenteValorizzato(model.getCapitolo())) {
 			// Il capitolo e' compilato solo in parte
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Capitolo",
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Capitolo",
 					": devono essere valorizzati i parametri Capitolo/Articolo" + (model.isGestioneUEB() ? "/UEB" : "")));
 			return false;
 		}
 		// Il capitolo e' presente
 		if(model.getTipoEvento() == null || model.getTipoEvento().getUid() == 0) {
 			// Il tipo di evento non e' impostato. Esco con errore
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Capitolo", "non e' possibile selezionare un capitolo se non e' selezionato un tipo di evento"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Capitolo", "non e' possibile selezionare un capitolo se non e' selezionato un tipo di evento"));
 			return false;
 		}
 		TipoEvento tipoEvento = ComparatorUtils.searchByUid(model.getListaTipoEvento(), model.getTipoEvento());
 		if(tipoEvento == null) {
 			// Tipo evento non valido
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Tipo evento", "non e' un tipo evento censito per l'ente"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Tipo evento", "non e' un tipo evento censito per l'ente"));
 			return false;
 		}
 		
@@ -780,7 +780,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		
 		if(res.hasErrori()) {
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaPuntualeCapitoloUscitaGestione.class, res));
 			return false;
 		}
 		if(res.getCapitoloUscitaGestione() == null) {
@@ -802,7 +802,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		
 		if(res.hasErrori()) {
 			addErrori(res);
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaPuntualeCapitoloEntrataGestione.class, res));
 			return false;
 		}
 		if(res.getCapitoloEntrataGestione() == null) {
@@ -871,7 +871,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaSinteticaConto.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -912,7 +912,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		
 		if(res.hasErrori()) {
 			// Se ho errori esco
-			log.info(methodName, createErrorInServiceInvocationString(req, res));
+			log.info(methodName, createErrorInServiceInvocationString(LeggiElementoPianoDeiContiByCodiceAndAnno.class, res));
 			addErrori(res);
 			return false;
 		}
@@ -971,14 +971,14 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		final String methodName = "checkMovimentoGestione";
 		if(model.getTipoEvento() == null || model.getTipoEvento().getUid() == 0) {
 			// Il tipo di evento non e' impostato. Esco con errore
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Movimento Gestione", "non e' possibile selezionare un movimento gestione se non e' selezionato un tipo di evento"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Movimento Gestione", "non e' possibile selezionare un movimento gestione se non e' selezionato un tipo di evento"));
 			return false;
 		}
 		
 		TipoEvento tipoEvento = ComparatorUtils.searchByUid(model.getListaTipoEvento(), model.getTipoEvento());
 		
 		MovimentoGestione movimentoGestioneDaControllare  = tipoEvento.isTipoEntrata() ?  model.getAccertamento() : model.getImpegno();
-		if(movimentoGestioneDaControllare == null || movimentoGestioneDaControllare.getAnnoMovimento()==0 || movimentoGestioneDaControllare.getNumero() == null) {
+		if(movimentoGestioneDaControllare == null || movimentoGestioneDaControllare.getAnnoMovimento()==0 || movimentoGestioneDaControllare.getNumeroBigDecimal() == null) {
 			log.debug(methodName, "L'impegno non e' stato fornito correttamente");
 			return true;
 		}
@@ -1003,7 +1003,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		Accertamento accertamento =  model.getAccertamento();
 		SubAccertamento subAccertamento = model.getSubAccertamento();
 		
-		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumero() == null)) {
+		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumeroBigDecimal() == null)) {
 			return false;
 		}
 		
@@ -1020,7 +1020,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 			return false;
 		}
 		if(response.isFallimento() || response.getAccertamento() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento()+"/"+accertamento.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento()+"/"+accertamento.getNumeroBigDecimal()));
 			return false;
 		}
 		
@@ -1028,12 +1028,12 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		
 		model.setMovimentoGestione(accertamento);
 		
-		if(subAccertamento != null && subAccertamento.getNumero() != null) {
-			BigDecimal numero = subAccertamento.getNumero();
+		if(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subAccertamento.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subAccertamento = findSubAccertamentoLegatoAccertamentoByNumero(response.getAccertamento(), subAccertamento);
 			if(subAccertamento == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero() + "-" + numero));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal() + "-" + numero));
 				return false;
 			}
 			model.setSubMovimentoGestione(subAccertamento);
@@ -1053,7 +1053,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		SubAccertamento result = null;
 		if(accertamento.getElencoSubAccertamenti() != null) {
 			for(SubAccertamento s : accertamento.getElencoSubAccertamenti()) {
-				if(s.getNumero().compareTo(subAccertamento.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subAccertamento.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}
@@ -1071,8 +1071,8 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		Impegno impegno = model.getImpegno();
 		SubImpegno subImpegno = model.getSubImpegno();
 		
-		boolean impegnoValorizzato = impegno != null && impegno.getAnnoMovimento() != 0 && impegno.getNumero() != null;
-		boolean subImpegnoValorizzato = subImpegno != null && subImpegno.getNumero() != null;
+		boolean impegnoValorizzato = impegno != null && impegno.getAnnoMovimento() != 0 && impegno.getNumeroBigDecimal() != null;
+		boolean subImpegnoValorizzato = subImpegno != null && subImpegno.getNumeroBigDecimal() != null;
 
 		
 		checkCondition(impegnoValorizzato || !subImpegnoValorizzato , ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("per indicare un subimpegno e' necessario indicare anche un impegno."), true);
@@ -1097,7 +1097,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		}
 		
 		if(response.isFallimento() || response.getImpegno() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumeroBigDecimal()));
 			return false;
 		}
 		
@@ -1105,8 +1105,8 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		
 		model.setMovimentoGestione(impegno);
 		
-		if(subImpegno != null && subImpegno.getNumero() != null) {
-			BigDecimal numero = subImpegno.getNumero();
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subImpegno.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subImpegno = findSubImpegnoLegatoImpegnoByNumero(response.getImpegno(), subImpegno);
 			if(subImpegno == null) {
@@ -1131,7 +1131,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		SubImpegno result = null;
 		if(impegno.getElencoSubImpegni() != null) {
 			for(SubImpegno s : impegno.getElencoSubImpegni()) {
-				if(s.getNumero().compareTo(subImpegno.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subImpegno.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}
@@ -1145,7 +1145,7 @@ public abstract class RicercaValidazionePrimaNotaIntegrataBaseAction<M extends R
 		if(movimentoGestione != null) {
 			sb.append(movimentoGestione.getAnnoMovimento())
 				.append('/')
-				.append(movimentoGestione.getNumero());
+				.append(movimentoGestione.getNumeroBigDecimal());
 		}
 		return sb.toString();
 	}

@@ -226,10 +226,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaConto.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/ricercaContoFIN.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/pianoDeiConti/inserisciFiglioPianoDeiContiFIN.js"></script>
-	<script type="text/javascript" src="${jspath}contabilitaGenerale/pianoDeiConti/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaConto.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/ricercaContoFIN.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/pianoDeiConti/inserisciFiglioPianoDeiContiFIN.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/contabilitaGenerale/pianoDeiConti/ztree.js"></script>
 </body>
 </html>

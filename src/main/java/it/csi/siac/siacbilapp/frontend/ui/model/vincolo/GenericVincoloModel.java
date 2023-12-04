@@ -25,12 +25,14 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.GenereVincolo;
+import it.csi.siac.siacbilser.model.RisorsaVincolata;
 import it.csi.siac.siacbilser.model.Vincolo;
 import it.csi.siac.siacbilser.model.VincoloCapitoli;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloEGest;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloEPrev;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUGest;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUPrev;
+import it.csi.siac.siaccommon.util.CoreUtil;
 
 /**
  * Classe astratta di model per il Vincolo.
@@ -62,6 +64,9 @@ public abstract class GenericVincoloModel extends GenericBilancioModel {
 	
 	// SIAC-5076
 	private List<GenereVincolo> listaGenereVincolo = new ArrayList<GenereVincolo>();
+
+	// SIAC-7129
+	private List<RisorsaVincolata> listaRisorsaVincolata = new ArrayList<RisorsaVincolata>();
 	
 	/**
 	 * @return the vincolo
@@ -226,11 +231,26 @@ public abstract class GenericVincoloModel extends GenericBilancioModel {
 		return listaGenereVincolo;
 	}
 
+
 	/**
 	 * @param listaGenereVincolo the listaGenereVincolo to set
 	 */
 	public void setListaGenereVincolo(List<GenereVincolo> listaGenereVincolo) {
 		this.listaGenereVincolo = listaGenereVincolo != null ? listaGenereVincolo : new ArrayList<GenereVincolo>();
+	}
+
+	/**
+	 * @return the listaRisorsaVincolata
+	 */
+	public List<RisorsaVincolata> getListaRisorsaVincolata() {
+		return listaRisorsaVincolata;
+	}
+	
+	/**
+	 * @param listaRisorsaVincolata the listaRisorsaVincolata to set
+	 */
+	public void setListaRisorsaVincolata(List<RisorsaVincolata> listaRisorsaVincolata) {
+		this.listaRisorsaVincolata = listaRisorsaVincolata != null ? listaRisorsaVincolata : new ArrayList<RisorsaVincolata>();
 	}
 
 	/**
@@ -353,8 +373,9 @@ public abstract class GenericVincoloModel extends GenericBilancioModel {
 		// Stringhe di utilita'
 		tipoBilancio = StringUtils.capitalize(vincolo.getTipoVincoloCapitoli().name().toLowerCase());
 		
-		listaCapitoliEntrata = ElementoCapitoloVincoloFactory.getInstances(listaEntrata, isGestioneUEB());
-		listaCapitoliUscita = ElementoCapitoloVincoloFactory.getInstances(listaUscita, isGestioneUEB());
+		//SIAC-8042
+		listaCapitoliEntrata = CoreUtil.checkList(ElementoCapitoloVincoloFactory.getInstances(listaEntrata, isGestioneUEB()));
+		listaCapitoliUscita = CoreUtil.checkList(ElementoCapitoloVincoloFactory.getInstances(listaUscita, isGestioneUEB()));
 		
 		totaleStanziamentoEntrata0 = BigDecimal.ZERO;
 		totaleStanziamentoEntrata1 = BigDecimal.ZERO;

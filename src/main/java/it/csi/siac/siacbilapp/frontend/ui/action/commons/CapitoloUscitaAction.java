@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.action.commons;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.commons.CapitoloUscitaModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
+import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilser.frontend.webservice.ComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriBilByIdPadreResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByRelazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByRelazioneResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipoElementoBilResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatori;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatoriResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriGenericiByTipoElementoBilResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiTreePianoDeiContiResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatoreGenerico;
@@ -27,13 +31,13 @@ import it.csi.siac.siacbilser.model.PerimetroSanitarioSpesa;
 import it.csi.siac.siacbilser.model.PoliticheRegionaliUnitarie;
 import it.csi.siac.siacbilser.model.Programma;
 import it.csi.siac.siacbilser.model.RicorrenteSpesa;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.model.TipoFondo;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siacbilser.model.TransazioneUnioneEuropeaSpesa;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
-import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 
 /**
@@ -56,6 +60,8 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 5881206277593915434L;
 	
+	protected static final String CODICE_MISSIONE_20 = "20";
+	
 	@Autowired protected ComponenteImportiCapitoloService componenteImportiCapitoloService;
 	
 	@Override
@@ -69,9 +75,35 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 		caricaListaClassificatoriGenerici(codiceTipoElementoBilancio);
 		
 		super.caricaListaCodifiche(codiceTipoElementoBilancio);
+		caricaListaCodificheUscita();
 		log.debugEnd(methodName, "Liste delle codifiche caricate");
 	}
 	
+	/**
+	 * Carica lista codifiche uscita.
+	 */
+	protected void caricaListaCodificheUscita() {
+		List<RisorsaAccantonata> listaRisorsaAccantonata = sessionHandler.getParametro(BilSessionParameter.LISTA_RISORSA_ACCANTONATA);
+		if(listaRisorsaAccantonata == null || listaRisorsaAccantonata.isEmpty()) {
+			List<TipologiaClassificatore> listaTipi = new ArrayList<TipologiaClassificatore>();
+			listaTipi.add(TipologiaClassificatore.RISORSA_ACCANTONATA);
+ 			LeggiClassificatoriByTipologieClassificatori request = model.creaRequestLeggiClassificatoriByTipologieClassificatori(listaTipi);
+			logServiceRequest(request);
+			LeggiClassificatoriByTipologieClassificatoriResponse response = classificatoreBilService.leggiClassificatoriByTipologieClassificatori(request);
+			logServiceResponse(response);
+			
+			// Controllo gli errori
+			if(response.hasErrori()) {
+				//si sono verificati degli errori: esco.
+				addErrori(response);
+			}
+			
+			listaRisorsaAccantonata = response.extractByClass(RisorsaAccantonata.class);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_RISORSA_ACCANTONATA, listaRisorsaAccantonata);
+		}
+		model.setListaRisorsaAccantonata(listaRisorsaAccantonata);
+	}
+
 	/**
 	 * Controlla se almeno una codifica &eacute; gi&agrave; stata caricata in sessione
 	 * @return <code>true</code> se vi &eacute; almeno una lista in sessione; <code>false</code> altrimenti
@@ -122,6 +154,16 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 			model.setListaMacroaggregato(listaMacroaggregato);
 		}
 	}
+
+	
+	
+	protected boolean isMissioneWithCodice(String codice) {
+		if(model.getMissione() == null || codice == null) {
+			return false;
+		}
+		Missione missioneConDati = ComparatorUtils.searchByUid(model.getListaMissione(), model.getMissione());
+		return missioneConDati != null && codice.equals(missioneConDati.getCodice());
+	}
 	
 	/**
 	 * Ottiene la lista del titolo di spesa da sessione
@@ -164,11 +206,11 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 		List<ClassificatoreGenerico> listaClassificatoreGenerico8 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_8);
 		List<ClassificatoreGenerico> listaClassificatoreGenerico9 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_9);
 		List<ClassificatoreGenerico> listaClassificatoreGenerico10 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_10);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico11 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_31);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico12 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_32);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico13 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_33);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico14 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_34);
-		List<ClassificatoreGenerico> listaClassificatoreGenerico15 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_35);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico31 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_31);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico32 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_32);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico33 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_33);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico34 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_34);
+		List<ClassificatoreGenerico> listaClassificatoreGenerico35 = sessionHandler.getParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_35);
 		
 		/* Boolean per il controllo della necessita' di caricamento delle liste da servizio */
 		boolean almenoUnaListaNulla = listaTipoFinanziamento == null
@@ -187,11 +229,11 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 				|| listaClassificatoreGenerico8 == null
 				|| listaClassificatoreGenerico9 == null
 				|| listaClassificatoreGenerico10 == null
-				|| listaClassificatoreGenerico11 == null
-				|| listaClassificatoreGenerico12 == null
-				|| listaClassificatoreGenerico13 == null
-				|| listaClassificatoreGenerico14 == null
-				|| listaClassificatoreGenerico15 == null;
+				|| listaClassificatoreGenerico31 == null
+				|| listaClassificatoreGenerico32 == null
+				|| listaClassificatoreGenerico33 == null
+				|| listaClassificatoreGenerico34 == null
+				|| listaClassificatoreGenerico35 == null;
 		
 		if(almenoUnaListaNulla) {
 			log.debug(methodName, "Caricamento delle liste di classificatori generici da servizio");
@@ -216,11 +258,11 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 			listaClassificatoreGenerico8 = response.getClassificatoriGenerici8();
 			listaClassificatoreGenerico9 = response.getClassificatoriGenerici9();
 			listaClassificatoreGenerico10 = response.getClassificatoriGenerici10();
-			listaClassificatoreGenerico11 = response.getClassificatoriGenerici31();
-			listaClassificatoreGenerico12 = response.getClassificatoriGenerici32();
-			listaClassificatoreGenerico13 = response.getClassificatoriGenerici33();
-			listaClassificatoreGenerico14 = response.getClassificatoriGenerici34();
-			listaClassificatoreGenerico15 = response.getClassificatoriGenerici35();
+			listaClassificatoreGenerico31 = response.getClassificatoriGenerici31();
+			listaClassificatoreGenerico32 = response.getClassificatoriGenerici32();
+			listaClassificatoreGenerico33 = response.getClassificatoriGenerici33();
+			listaClassificatoreGenerico34 = response.getClassificatoriGenerici34();
+			listaClassificatoreGenerico35 = response.getClassificatoriGenerici35();
 			
 			sessionHandler.setParametro(BilSessionParameter.LISTA_TIPO_FINANZIAMENTO,listaTipoFinanziamento);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_TIPO_FONDO, listaTipoFondo);
@@ -238,11 +280,11 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_8, listaClassificatoreGenerico8);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_9, listaClassificatoreGenerico9);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_10, listaClassificatoreGenerico10);
-			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_31, listaClassificatoreGenerico11);
-			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_32, listaClassificatoreGenerico12);
-			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_33, listaClassificatoreGenerico13);
-			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_34, listaClassificatoreGenerico14);
-			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_35, listaClassificatoreGenerico15);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_31, listaClassificatoreGenerico31);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_32, listaClassificatoreGenerico32);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_33, listaClassificatoreGenerico33);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_34, listaClassificatoreGenerico34);
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSIFICATORE_GENERICO_35, listaClassificatoreGenerico35);
 		}
 		
 		
@@ -263,11 +305,11 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 		model.setListaClassificatoreGenerico8(listaClassificatoreGenerico8);
 		model.setListaClassificatoreGenerico9(listaClassificatoreGenerico9);
 		model.setListaClassificatoreGenerico10(listaClassificatoreGenerico10);
-		model.setListaClassificatoreGenerico11(listaClassificatoreGenerico11);
-		model.setListaClassificatoreGenerico12(listaClassificatoreGenerico12);
-		model.setListaClassificatoreGenerico13(listaClassificatoreGenerico13);
-		model.setListaClassificatoreGenerico14(listaClassificatoreGenerico14);
-		model.setListaClassificatoreGenerico15(listaClassificatoreGenerico15);
+		model.setListaClassificatoreGenerico11(listaClassificatoreGenerico31);
+		model.setListaClassificatoreGenerico12(listaClassificatoreGenerico32);
+		model.setListaClassificatoreGenerico13(listaClassificatoreGenerico33);
+		model.setListaClassificatoreGenerico14(listaClassificatoreGenerico34);
+		model.setListaClassificatoreGenerico15(listaClassificatoreGenerico35);
 		
 		/* Impostazione dei labels */
 		model.setLabelClassificatoreGenerico1(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico1, 1));
@@ -280,11 +322,11 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 		model.setLabelClassificatoreGenerico8(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico8, 8));
 		model.setLabelClassificatoreGenerico9(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico9, 9));
 		model.setLabelClassificatoreGenerico10(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico10, 10));
-		model.setLabelClassificatoreGenerico11(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico11, 11));
-		model.setLabelClassificatoreGenerico12(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico12, 12));
-		model.setLabelClassificatoreGenerico13(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico13, 13));
-		model.setLabelClassificatoreGenerico14(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico14, 14));
-		model.setLabelClassificatoreGenerico15(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico15, 15));
+		model.setLabelClassificatoreGenerico11(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico31, 11));
+		model.setLabelClassificatoreGenerico12(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico32, 12));
+		model.setLabelClassificatoreGenerico13(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico33, 13));
+		model.setLabelClassificatoreGenerico14(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico34, 14));
+		model.setLabelClassificatoreGenerico15(estraiLabelDaListaClassificatoreGenerico(listaClassificatoreGenerico35, 15));
 	}
 	
 	/**	
@@ -350,7 +392,7 @@ public abstract class CapitoloUscitaAction<M extends CapitoloUscitaModel> extend
 		
 		if(res.hasErrori()) {
 			// Errori nel caricamento dei label
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaTipoClassificatoreGenerico.class, res));
 		}
 		// Impostazione dei label
 		model.setLabelClassificatoreGenerico1(estraiLabelByTipo(res.getTipoClassificatoreByTipologia(TipologiaClassificatore.CLASSIFICATORE_1)));

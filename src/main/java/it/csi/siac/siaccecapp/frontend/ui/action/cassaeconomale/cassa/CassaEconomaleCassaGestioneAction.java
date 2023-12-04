@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -81,7 +81,7 @@ public class CassaEconomaleCassaGestioneAction extends CassaEconomaleBaseAction<
 			logServiceResponse(response);
 			// Controllo gli errori
 			if(response.hasErrori()) {
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(ListeGestioneSoggetto.class, response));
 			}
 			listaClassiSoggetto = response.getListaClasseSoggetto();
 			ComparatorUtils.sortByCodiceFin(listaClassiSoggetto);

@@ -41,6 +41,9 @@ SPDX-License-Identifier: EUPL-1.2
 							<dd><s:property value="tipoBilancio"/>&nbsp;</dd>
 							<dt>Tipo</dt>
 							<dd><s:property value="genereVincolo"/>&nbsp;</dd>
+							<!-- SIAC-7192 -->
+							<dt>Risorsa vincolata</dt>
+							<dd><s:property value="vincolo.risorsaVincolata.descrizione"/>&nbsp;</dd>
 						</dl>
 					</fieldset>
 					
@@ -60,7 +63,7 @@ SPDX-License-Identifier: EUPL-1.2
 							<s:iterator value="listaCapitoliEntrata" var="entry">
 								<tr>
 									<td>
-										<a href="#" data-trigger="hover" rel="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
+										<a href="#" data-trigger="hover" data-toggle="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
 											<s:property value="%{#entry.capitolo}"/>
 										</a>
 									</td>
@@ -100,7 +103,7 @@ SPDX-License-Identifier: EUPL-1.2
 							<s:iterator value="listaCapitoliUscita" var="entry">
 								<tr>
 									<td>
-										<a href="#" data-trigger="hover" rel="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
+										<a href="#" data-trigger="hover" data-toggle="popover"  data-content="<s:property value="%{#entry.descrizione}"/>" data-original-title="Descrizione">
 											<s:property value="%{#entry.capitolo}"/>
 										</a>
 									</td>
@@ -135,7 +138,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/footer.jsp" />
 	
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}vincolo/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/vincolo/consulta.js"></script>
 
 </body>
 </html>

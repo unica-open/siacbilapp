@@ -315,11 +315,11 @@ public class GenericDocumentoIvaSpesaAction<M extends GenericDocumentoIvaSpesaMo
 		
 		if(response.isFallimento()) {
 			throw new WebServiceInvocationFailureException("Fallimento dell'invocazione del servizio RicercaImpegnoPerChiaveOttimizzato per impegno "
-				+ impegno.getAnnoMovimento() + "/" + impegno.getNumero().toPlainString());
+				+ impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal().toPlainString());
 		}
 		if(response.getImpegno() == null) {
 			throw new WebServiceInvocationFailureException("Nessun impegno trovato dal servizio RicercaImpegnoPerChiaveOttimizzato per impegno "
-				+ impegno.getAnnoMovimento() + "/" + impegno.getNumero().toPlainString());
+				+ impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal().toPlainString());
 		}
 		return response.getImpegno();
 	}

@@ -16,7 +16,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.El
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLiberaFactory;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siacbilapp.frontend.ui.util.result.CustomJSONResult;
 import it.csi.siac.siacbilser.model.Missione;
@@ -248,7 +248,7 @@ public abstract class BaseInserisciAggiornaContoPrimaNotaLiberaBaseAction <M ext
 	public void validateEliminaConto() {
 		String methodName = "validateEliminaConto";
 		checkNotNull(model.getIndiceConto(), "Indice", true);
-		int idx =  model.getIndiceConto().intValue();
+		int idx = model.getIndiceConto().intValue();
 		int size = model.getListaElementoScritturaPerElaborazione().size();
 		checkCondition(idx >= 0 && idx < size, ErroreCore.FORMATO_NON_VALIDO.getErrore("Indice", "deve essere compreso tra 0 e " + size));
 		
@@ -259,7 +259,9 @@ public abstract class BaseInserisciAggiornaContoPrimaNotaLiberaBaseAction <M ext
 		for(ElementoScritturaPrimaNotaLibera es : model.getListaElementoScritturaDaCausale()){
 			log.debug(methodName, "codice conto da confrontare: "+  es.getCodiceConto());
 			if(es.getCodiceConto().equals(contoDaEliminare.getCodiceConto())){
-				checkCondition(false , ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Il conto deriva da una causale"), true);
+				//SIAC-8466
+				checkCondition(MAX_LIVELLO_CONTO.compareTo(contoDaEliminare.getContoTipoOperazione().getConto().getLivello()) == 0,
+					ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Il conto deriva da una causale"), true);
 			}
 		}
 	}
@@ -351,7 +353,7 @@ public abstract class BaseInserisciAggiornaContoPrimaNotaLiberaBaseAction <M ext
 		if(response.hasErrori()) {
 			// Se ho errori esco
 			addErrori(response);
-			throw new ParamValidationException(createErrorInServiceInvocationString(request, response));
+			throw new ParamValidationException(createErrorInServiceInvocationString(RicercaSinteticaConto.class, response));
 		}
 		
 		return response;

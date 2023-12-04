@@ -14,11 +14,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.business.utility.StringUtilities;
 import it.csi.siac.siaccespapp.frontend.ui.model.ajax.registroa.RisultatiRicercaRegistroACespiteAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.registroa.ElementoPrimaNotaRegistroA;
@@ -26,9 +25,10 @@ import it.csi.siac.siaccespser.frontend.webservice.CespiteService;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaRegistroACespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaRegistroACespiteResponse;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgenser.model.PrimaNota;
 import it.csi.siac.siacgenser.model.StatoAccettazionePrimaNotaDefinitiva;
 import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
@@ -40,7 +40,7 @@ import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaRegistroACespiteAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoPrimaNotaRegistroA, RisultatiRicercaRegistroACespiteAjaxModel,
+public class RisultatiRicercaRegistroACespiteAjaxAction extends PagedDataTableAjaxAction<ElementoPrimaNotaRegistroA, RisultatiRicercaRegistroACespiteAjaxModel,
 		PrimaNota, RicercaSinteticaRegistroACespite, RicercaSinteticaRegistroACespiteResponse> {
 
 	/** Per la serializzazione */
@@ -80,12 +80,12 @@ public class RisultatiRicercaRegistroACespiteAjaxAction extends GenericRisultati
 	}
 
 	@Override
-	protected ElementoPrimaNotaRegistroA ottieniIstanza(PrimaNota e) throws FrontEndBusinessException {
+	protected ElementoPrimaNotaRegistroA getInstance(PrimaNota e) throws FrontEndBusinessException {
 		return new ElementoPrimaNotaRegistroA(e);
 	}
 
 	@Override
-	protected RicercaSinteticaRegistroACespiteResponse ottieniResponse(RicercaSinteticaRegistroACespite req) {
+	protected RicercaSinteticaRegistroACespiteResponse getResponse(RicercaSinteticaRegistroACespite req) {
 		return cespiteService.ricercaSinteticaRegistroACespite(req);
 	}
 
@@ -110,7 +110,7 @@ public class RisultatiRicercaRegistroACespiteAjaxAction extends GenericRisultati
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoPrimaNotaRegistroA instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoPrimaNotaRegistroA instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		
 		final boolean gestioneRifiuta = isGestisciRifiuta(instance);
@@ -143,7 +143,7 @@ public class RisultatiRicercaRegistroACespiteAjaxAction extends GenericRisultati
 		PrimaNota pn = instance.unwrap();
 		return
 			faseBilancioInValues(faseBilancio, FaseBilancio.ESERCIZIO_PROVVISORIO, FaseBilancio.GESTIONE, FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO)
-			&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_A_CESPITE_GESTIONE, listaAzioniConsentite)
+			&& AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_A_CESPITE_GESTIONE, listaAzioniConsentite)
 			&& StatoOperativoPrimaNota.DEFINITIVO.equals(pn.getStatoOperativoPrimaNota())
 			//si puo' rifiutare una prima nota gia' integrata, purche' non sia collegata a cespiti (controllo presente sul servizio)
 			&& (pn.getPrimaNotaInventario() == null || StatoAccettazionePrimaNotaDefinitiva.DA_ACCETTARE.equals(pn.getPrimaNotaInventario().getStatoAccettazionePrimaNotaDefinitiva()));
@@ -154,7 +154,7 @@ public class RisultatiRicercaRegistroACespiteAjaxAction extends GenericRisultati
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> altrimenti
 	 */
 	private boolean isGestisciConsulta() {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_A_CESPITE_RICERCA, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_A_CESPITE_RICERCA, listaAzioniConsentite);
 
 	}
 	
@@ -167,7 +167,7 @@ public class RisultatiRicercaRegistroACespiteAjaxAction extends GenericRisultati
 		PrimaNota pn = instance.unwrap();
 		return
 			faseBilancioInValues(faseBilancio, FaseBilancio.ESERCIZIO_PROVVISORIO, FaseBilancio.GESTIONE, FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO)
-			&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_A_CESPITE_GESTIONE, listaAzioniConsentite)
+			&& AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_A_CESPITE_GESTIONE, listaAzioniConsentite)
 			&& StatoOperativoPrimaNota.DEFINITIVO.equals(pn.getStatoOperativoPrimaNota())
 			&& pn.getPrimaNotaInventario() == null;
 	}
@@ -182,7 +182,7 @@ public class RisultatiRicercaRegistroACespiteAjaxAction extends GenericRisultati
 		PrimaNota pn = instance.unwrap();
 		return
 			faseBilancioInValues(faseBilancio, FaseBilancio.ESERCIZIO_PROVVISORIO, FaseBilancio.GESTIONE, FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO)
-			&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.REGISTRO_A_CESPITE_GESTIONE, listaAzioniConsentite)
+			&& AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.REGISTRO_A_CESPITE_GESTIONE, listaAzioniConsentite)
 			&& StatoOperativoPrimaNota.DEFINITIVO.equals(pn.getStatoOperativoPrimaNota())
 			&& pn.getPrimaNotaInventario() != null
 			&& StatoAccettazionePrimaNotaDefinitiva.DA_ACCETTARE.equals(pn.getPrimaNotaInventario().getStatoAccettazionePrimaNotaDefinitiva());

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
 import it.csi.siac.siaccecser.model.EventoRegistroACespiteSelector;
 import it.csi.siac.siaccespapp.frontend.ui.model.registroa.AggiornaRegistroACespiteModel;
 import it.csi.siac.siaccespser.frontend.webservice.ClassificazioneCespiteService;
@@ -34,6 +32,8 @@ import it.csi.siac.siaccespser.model.TipoBeneCespite;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.model.messaggio.MessaggioCore;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 
 /**
  * Action per la consultazione del registro A (prime note verso inventario contabile)
@@ -77,7 +77,7 @@ public class AggiornaRegistroACespiteAction extends BaseConsultaAggiornaRegistro
 			RicercaSinteticaTipoBeneCespiteResponse res = classificazioneCespiteService.ricercaSinteticaTipoBeneCespite(req);
 
 			if (res.hasErrori()) {
-				String errorMsg = createErrorInServiceInvocationString(req, res);
+				String errorMsg = createErrorInServiceInvocationString(RicercaSinteticaTipoBeneCespite.class, res);
 				log.warn(methodName, errorMsg);
 				addErrori(res);
 				throw new WebServiceInvocationFailureException(errorMsg);
@@ -219,7 +219,7 @@ public class AggiornaRegistroACespiteAction extends BaseConsultaAggiornaRegistro
 			chunks.add(Integer.valueOf(cespite.getUid()).toString());
 		}
 		sb.append(StringUtils.join(chunks, ", "));
-		addMessaggio(MessaggioBil.MESSAGGIO_DI_SISTEMA.getMessaggio(sb.toString()));
+		addMessaggio(MessaggioCore.MESSAGGIO_DI_SISTEMA.getMessaggio(sb.toString()));
 	}
 	
 	/**

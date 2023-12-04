@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestioneResponse;
@@ -23,7 +22,8 @@ import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureExcep
 import it.csi.siac.siaccorser.model.Entita.StatoEntita;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.predocumento.GenericPreDocumentoSpesaModel;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2app.frontend.ui.util.helper.VerificaBloccoRORHelper;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiTipiCausaleSpesa;
@@ -43,7 +43,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa.TipoProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -67,12 +66,11 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -5753785789350319842L;
 	
-	/** Serviz&icirc; del predocumento di spesa */
-	@Autowired protected transient PreDocumentoSpesaService preDocumentoSpesaService;
 	/** Serviz&icirc; del capitolo di uscita gestione */
 	@Autowired protected transient CapitoloUscitaGestioneService capitoloUscitaGestioneService;
 	/** Serviz&icirc; del provvisorio */
 	@Autowired protected transient ProvvisorioService provvisorioService;
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
 
 	/**
 	 * Carica le liste di Sede Secondaria e Modalita Pagamento.
@@ -150,12 +148,12 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 	/**
 	 * Effettua una validazione dell'impegno e del subimpegno forniti in input.
 	 */
-	protected void validazioneImpegnoSubImpegno() {
+	protected void validazioneImpegnoSubImpegno(Integer flagProvenienzaCduBloccoROR) {
 		Impegno impegno = model.getMovimentoGestione();
 		SubImpegno subImpegno = model.getSubMovimentoGestione();
 		
-		boolean impegnoValorizzato = impegno != null && impegno.getAnnoMovimento() != 0 && impegno.getNumero() != null;
-		boolean subImpegnoValorizzato = subImpegno != null && subImpegno.getNumero() != null;
+		boolean impegnoValorizzato = impegno != null && impegno.getAnnoMovimento() != 0 && impegno.getNumeroBigDecimal() != null;
+		boolean subImpegnoValorizzato = subImpegno != null && subImpegno.getNumeroBigDecimal() != null;
 		
 		checkCondition(impegnoValorizzato || !subImpegnoValorizzato , ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("per indicare un subimpegno e' necessario indicare anche un impegno."), true);
 		
@@ -177,7 +175,7 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		}
 		
 		if(response.isFallimento() || response.getImpegno() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumeroBigDecimal()));
 			return;
 		}
 		
@@ -185,12 +183,12 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		
 		model.setMovimentoGestione(impegno);
 		
-		if(subImpegno != null && subImpegno.getNumero() != null) {
-			BigDecimal numero = subImpegno.getNumero();
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subImpegno.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subImpegno = findSubImpegnoLegatoImpegnoByNumero(response.getImpegno(), subImpegno);
 			if(subImpegno == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumero() + "-" + numero));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal() + "-" + numero));
 				return;
 			}
 			model.setSubMovimentoGestione(subImpegno);
@@ -205,6 +203,22 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		// Controllo anno
 		checkCondition(impegno.getAnnoMovimento() <= model.getAnnoEsercizioInt().intValue(), 
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("subimpegno", "l'anno deve essere non superiore all'anno di esercizio"));
+		
+		if(flagProvenienzaCduBloccoROR != null && flagProvenienzaCduBloccoROR.intValue() == 1){
+			boolean test = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno,  model.getAnnoEsercizioInt());
+			if(test){
+				checkCondition(!test, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile"));
+			}else if(impegno.getElencoSubImpegni() != null && !impegno.getElencoSubImpegni().isEmpty()){
+				for(int k = 0; k < impegno.getElencoSubImpegni().size(); k++){
+					test = VerificaBloccoRORHelper.escludiImpegnoPerBloccoROR(sessionHandler.getAzioniConsentite(), impegno.getElencoSubImpegni().get(k), model.getAnnoEsercizioInt());
+					if(test)
+						break;
+				}
+				if(test){
+					checkCondition(!test, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impegno/sub impegno residuo non utilizzabile"));
+				}
+			}
+		}
 	}
 	
 	/**
@@ -219,7 +233,7 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		SubImpegno result = null;
 		if(impegno.getElencoSubImpegni() != null) {
 			for(SubImpegno s : impegno.getElencoSubImpegni()) {
-				if(s.getNumero().compareTo(subImpegno.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subImpegno.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}
@@ -247,7 +261,7 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 				capitoloUscitaGestione.getNumeroCapitolo().equals(capitoloUscitaGestioneImpegno.getNumeroCapitolo()) &&
 				capitoloUscitaGestione.getNumeroArticolo().equals(capitoloUscitaGestioneImpegno.getNumeroArticolo()) &&
 				capitoloUscitaGestione.getNumeroUEB().equals(capitoloUscitaGestioneImpegno.getNumeroUEB())
-			), ErroreCore.VALORE_NON_VALIDO.getErrore("capitolo", "in quanto non corrisponde al capitolo dell'impegno"));
+			), ErroreCore.VALORE_NON_CONSENTITO.getErrore("capitolo", "in quanto non corrisponde al capitolo dell'impegno"));
 		// Log
 		if(log.isDebugEnabled() && capitoloUscitaGestioneImpegno != null) {
 			StringBuilder sb = new StringBuilder();
@@ -331,12 +345,13 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 	 * 
 	 * @throws WebServiceInvocationFailureException nel caso in cui l'invocazione del servizio fallisca
 	 */
+	@Override
 	protected void caricaListaContoTesoreria() throws WebServiceInvocationFailureException {
 		List<ContoTesoreria> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_CONTO_TESORERIA);
 		if(listaInSessione == null) {
 			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
 			logServiceRequest(request);
-			LeggiContiTesoreriaResponse response = preDocumentoSpesaService.leggiContiTesoreria(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
 			logServiceResponse(response);
 			
 			// Controllo gli errori
@@ -463,7 +478,7 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		
 		if(impegno == null || (
 				impegno.getAnnoMovimento() == 0 ||
-				impegno.getNumero() == null
+				impegno.getNumeroBigDecimal() == null
 				)) {
 			return false;
 		}
@@ -481,7 +496,7 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		}
 		
 		if(response.isFallimento() || response.getImpegno() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", impegno.getAnnoMovimento()+"/"+impegno.getNumeroBigDecimal()));
 			return false;
 		}
 		
@@ -489,12 +504,12 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		
 		model.setMovimentoGestione(impegno);
 		
-		if(subImpegno != null && subImpegno.getNumero() != null) {
-			BigDecimal numero = subImpegno.getNumero();
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subImpegno.getNumeroBigDecimal();
 			// Controlli di validita' sull'impegno
 			subImpegno = findSubImpegnoLegatoImpegnoByNumero(response.getImpegno(), subImpegno);
 			if(subImpegno == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumero() + "-" + numero));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal() + "-" + numero));
 				return true;
 			}
 			model.setSubMovimentoGestione(subImpegno);
@@ -523,7 +538,7 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaProvvisoriDiCassa.class, response));
 			addErrori(response);
 			return;
 		}
@@ -543,110 +558,8 @@ public class GenericPreDocumentoSpesaAction<M extends GenericPreDocumentoSpesaMo
 						"L'importo della predisposizione supera l'importo da regolarizzare del provvisorio"));
 	}
 	
-	/**
-	 * effettua tutti i controlli che riguardano il mutuo 
-	 */
-	protected void validaNumeroMutuo(){	
-		
-        boolean voceMutuoValorizzata = model.getVoceMutuo() != null && model.getVoceMutuo().getNumeroMutuo() != null && StringUtils.isNotBlank(model.getVoceMutuo().getNumeroMutuo());
-        boolean impegnoValorizzato = model.getMovimentoGestione() != null && model.getMovimentoGestione().getUid() != 0;
-        boolean subImpegnoValorizzato = impegnoValorizzato && model.getSubMovimentoGestione() !=null && model.getSubMovimentoGestione().getUid() != 0;
-        boolean impegnoFinanziatoDaMutuo = impegnoValorizzato && model.getMovimentoGestione().getTipoImpegno() != null && BilConstants.IMPEGNO_FINANZIATO_DA_MUTUO.getConstant().equals(model.getMovimentoGestione().getTipoImpegno().getCodice());
-        boolean subImpegnoFinanziatoDaMutuo = subImpegnoValorizzato && model.getSubMovimentoGestione().getTipoImpegno() != null && BilConstants.IMPEGNO_FINANZIATO_DA_MUTUO.getConstant().equals(model.getSubMovimentoGestione().getTipoImpegno().getCodice());
-        
-        //se non ho impegno e voce mutuo non ho nulla da controllare
-        if(!impegnoValorizzato && !voceMutuoValorizzata){
-        	return;
-        }
-        
-        //mostro un errore se viene valorizzato il mutuo e non l'impegno
-        checkCondition(!voceMutuoValorizzata || impegnoValorizzato, ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("indicare un impegno se si desidera selezionare un mutuo"), true);
-        
-        if(subImpegnoValorizzato && voceMutuoValorizzata){
-			checkCondition(subImpegnoFinanziatoDaMutuo, ErroreFin.IMPEGNO_NON_FINANZIATO_CON_MUTUO.getErrore(), true);
-			validaVoceMutuoDaSubImpegno();
-			controllaDisponibilitaVoceMutuo();
-			return;
-        }
-        if (subImpegnoValorizzato && !voceMutuoValorizzata){
-            checkCondition(!subImpegnoFinanziatoDaMutuo, ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore(), true);
-            return;
-        }
-        if(impegnoValorizzato && voceMutuoValorizzata){
-	     	checkCondition(impegnoFinanziatoDaMutuo, ErroreFin.IMPEGNO_NON_FINANZIATO_CON_MUTUO.getErrore(), true);
-	     	validaVoceMutuoDaImpegno();
-			controllaDisponibilitaVoceMutuo();
-			return;
-        }
-        if(impegnoValorizzato && !voceMutuoValorizzata){
-            checkCondition(!impegnoFinanziatoDaMutuo, ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore(), true);
-        }
-        	
-	}
-	
-	
-	/**
-	 * controlla la disponibilita a liquidare  della voce mutuo
-	 * disponibilitaLiquidare >= documento.importo
-	 */
-	protected void controllaDisponibilitaVoceMutuo(){
-		
-		boolean isVoceMutuoHaDisponibilitaLiquidare= false;
-		if(model.getVoceMutuo() != null && model.getVoceMutuo().getImportoDisponibileLiquidareVoceMutuo() !=null && model.getPreDocumento().getImporto() != null ){
-			long ris = model.getVoceMutuo().getImportoDisponibileLiquidareVoceMutuo().compareTo(model.getPreDocumento().getImporto());
-			isVoceMutuoHaDisponibilitaLiquidare = (ris ==0 || ris ==1);
-		}
-		checkCondition(isVoceMutuoHaDisponibilitaLiquidare,ErroreFin.DISPONIBILITA_INSUFFICIENTE_IMPEGNO.getErrore("Inserimento predisposizione pagamento"));
-	}
-	
-
-	/**
-     * verifica se la voce mutuo e' presente e che abbia lo stesso numero del Mutuo passato dall'utente 
-	 */
-	protected  void validaVoceMutuoDaImpegno(){
-		
-		VoceMutuo voceMutuo = new VoceMutuo();
-		List<VoceMutuo> listaVociMutuo = model.getMovimentoGestione().getListaVociMutuo();
 
 	
-		if (!listaVociMutuo.isEmpty()) {
-			for(VoceMutuo vm : listaVociMutuo){
-				if(vm.getNumeroMutuo().equals(model.getVoceMutuo().getNumeroMutuo())){
-					voceMutuo =vm;
-					break;
-				}
-			}
-		}
-		
-		// voce mutuo e' valida solo se il suo  numero di mutuo e' uguale al numero di mutuo passato dall'utente
-		boolean isImpegnoHaVoceMutuoValido = false;
-		isImpegnoHaVoceMutuoValido = (voceMutuo !=null && voceMutuo.getUid() >0 );
-		checkCondition(isImpegnoHaVoceMutuoValido, ErroreFin.ENTITA_NON_VALIDA.getErrore("Numero mutuo"));
-		model.setVoceMutuo(voceMutuo);
+	
 
-	}
-	/**
-     * verifica se la voce mutuo e' presente e che abbia lo stesso numero del Mutuo passato dall'utente 
-	 */
-	protected  void validaVoceMutuoDaSubImpegno(){
-		
-		VoceMutuo voceMutuo = new VoceMutuo();
-		List<VoceMutuo> listaVociMutuo = model.getSubMovimentoGestione().getListaVociMutuo();
-		
-		if (!listaVociMutuo.isEmpty()) {
-			for(VoceMutuo vm : listaVociMutuo){
-				if(vm.getNumeroMutuo().equals(model.getVoceMutuo().getNumeroMutuo())){
-					voceMutuo =vm;
-					break;
-				}
-			}
-		}
-		
-		// voce mutuo e' valida solo se il suo  numero di mutuo e' uguale al numero di mutuo passato dall'utente
-		boolean isSubImpegnoHaVoceMutuoValido = false;
-		isSubImpegnoHaVoceMutuoValido = (voceMutuo !=null && voceMutuo.getUid() >0 );
-		checkCondition(isSubImpegnoHaVoceMutuoValido, ErroreFin.ENTITA_NON_VALIDA.getErrore("Numero mutuo"));
-		model.setVoceMutuo(voceMutuo);
-
-	}
 }

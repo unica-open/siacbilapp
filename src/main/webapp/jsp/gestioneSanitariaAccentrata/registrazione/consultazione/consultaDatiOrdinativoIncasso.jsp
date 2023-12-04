@@ -123,9 +123,9 @@ SPDX-License-Identifier: EUPL-1.2
 				<td><s:property value="#so.numero"/></td>
 				<td>
 					<s:if test="%{#so.accertamento != null}">
-						<s:property value="#so.accertamento.annoMovimento"/> / <si:plainstringproperty value="#so.accertamento.numero"/>
+						<s:property value="#so.accertamento.annoMovimento"/> / <s:property value="#so.accertamento.numero"/>
 						<s:if test="%{#so.accertamento.elencoSubAccertamenti != null}">
-							- <si:plainstringproperty value="#so.accertamento.elencoSubAccertamenti.get(0).numero"/>
+							- <s:property value="#so.accertamento.elencoSubAccertamenti.get(0).numero"/>
 						</s:if>
 					</s:if>
 				</td>

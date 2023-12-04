@@ -44,11 +44,11 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/modaleConfermaProsecuzioneCambioTab.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaTestataEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaTestataEntrataAggiornamento.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaTestataEntrataDatiIva.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaTestataEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaTestataEntrataAggiornamento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaTestataEntrataDatiIva.js"></script>
 
 </body>
 </html>

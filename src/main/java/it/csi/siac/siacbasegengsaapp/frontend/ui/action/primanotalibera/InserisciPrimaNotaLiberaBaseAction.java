@@ -10,7 +10,9 @@ import java.util.List;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera.InserisciPrimaNotaLiberaBaseModel;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLibera;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLiberaFactory;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
+import it.csi.siac.siacbilser.model.Ambito;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.msg.InseriscePrimaNota;
 import it.csi.siac.siacgenser.frontend.webservice.msg.InseriscePrimaNotaResponse;
 import it.csi.siac.siacgenser.model.CausaleEP;
@@ -33,7 +35,7 @@ public abstract class InserisciPrimaNotaLiberaBaseAction<M extends InserisciPrim
 	 * Per la serializzazione
 	 */
 	private static final long serialVersionUID = 5366464964103251900L;
-
+	
 	@Override
 	public String execute() throws Exception {
 		checkCasoDUsoApplicabile("");
@@ -41,6 +43,8 @@ public abstract class InserisciPrimaNotaLiberaBaseAction<M extends InserisciPrim
 		caricaListe(); 
 		caricaListaClassi();
 		caricaListaTitoli();
+		//SIAC-8134
+		caricaAzionePerSAC();
 		return SUCCESS;
 	}
 	
@@ -141,6 +145,8 @@ public abstract class InserisciPrimaNotaLiberaBaseAction<M extends InserisciPrim
 		log.debug(methodName, "Inserita correttamente Prima Nota Libera con uid " + response.getPrimaNota().getUid());
 		// Imposto i dati della causale restituitimi dal servizio
 		model.setPrimaNotaLibera(response.getPrimaNota());
+		//SIAC-8134
+		model.setStrutturaCompetentePrimaNotaLibera(response.getPrimaNota().getStrutturaCompetente());
 		impostaInformazioneSuccessoAzioneInSessionePerRedirezione();
 		return SUCCESS;
 	}

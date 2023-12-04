@@ -8,7 +8,6 @@
 package it.csi.siac.siacbilapp.frontend.ui.action.variazione;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +22,9 @@ import it.csi.siac.siacbilapp.frontend.ui.model.variazione.step4.RiepilogoVariaz
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
 import it.csi.siac.siacbilapp.frontend.ui.util.helper.DettaglioVariazioneComponenteImportoCapitoloHelper;
 import it.csi.siac.siacbilapp.frontend.ui.util.helper.ImportiCapitoloComponenteVariazioneModificabile;
-import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoCapitoloVariazione;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoComponenteVariazione;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.capitolo.variazione.importi.ElementoComponenteVariazioneFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaDettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaDettaglioVariazioneImportoCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.GestisciDettaglioVariazioneComponenteImportoCapitolo;
@@ -39,16 +36,14 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazione
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioVariazioneComponenteImportoCapitoloResponse;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
-import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
-import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
+import it.csi.siac.siaccorser.util.comparator.ComparatorUtil;
 
 /**
  * Classe per la gestione dell'aggiornamento della variazione degli importi.
@@ -205,6 +200,7 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 			uidTipiComponentiDelCapitolo = addComponentiDaCapitolo(importiComponentiCapitoloDaFiltrare, filtered);
 		}
 		
+		//SIAC-7169
 		//aggiungo le componenti in base al default
 		addComponentiDaDefault(filtered, uidTipiComponentiDelCapitolo);
 		
@@ -300,7 +296,7 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 		
 		for (ImportiCapitoloPerComponente importiByComponente : importiComponentiCapitoloDaFiltrare) {
 			
-			TipoComponenteImportiCapitolo tipoComponente = ComparatorUtils.searchByUid(listaTipoComponentiImportiCapitolo, importiByComponente.getTipoComponenteImportiCapitolo());
+			TipoComponenteImportiCapitolo tipoComponente = ComparatorUtil.searchByUid(listaTipoComponentiImportiCapitolo, importiByComponente.getTipoComponenteImportiCapitolo());
 			if(model.isPropostaDefaultCompatibile(tipoComponente.getPropostaDefaultComponenteImportiCapitolo())) {
 				uidTipiComponentiDelCapitolo.add(tipoComponente.getUid());
 			}
@@ -353,7 +349,7 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 		List<DettaglioVariazioneComponenteImportoCapitolo> detts1 = unwrapped.get(ElementoComponenteVariazioneFactory.KEY_ANNO_1);
 		List<DettaglioVariazioneComponenteImportoCapitolo> detts2 = unwrapped.get(ElementoComponenteVariazioneFactory.KEY_ANNO_2);
 		
-		GestisciDettaglioVariazioneComponenteImportoCapitolo req = model.creaRequestGestisciDettaglioVariazioneComponenteImportoCapitolo(detts0, detts1, detts2);
+		GestisciDettaglioVariazioneComponenteImportoCapitolo req = model.creaRequestGestisciDettaglioVariazioneComponenteImportoCapitolo(detts0, detts1, detts2, Boolean.TRUE);
 		GestisciDettaglioVariazioneComponenteImportoCapitoloResponse response = variazioneDiBilancioService.gestisciDettaglioVariazioneComponenteImportoCapitolo(req);
 		
 		if(response.hasErrori()){
@@ -395,7 +391,7 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 		List<DettaglioVariazioneComponenteImportoCapitolo> detts1 = unwrapped.get(ElementoComponenteVariazioneFactory.KEY_ANNO_1);
 		List<DettaglioVariazioneComponenteImportoCapitolo> detts2 = unwrapped.get(ElementoComponenteVariazioneFactory.KEY_ANNO_2);
 		
-		GestisciDettaglioVariazioneComponenteImportoCapitolo req = model.creaRequestGestisciDettaglioVariazioneComponenteImportoCapitolo(detts0, detts1, detts2);
+		GestisciDettaglioVariazioneComponenteImportoCapitolo req = model.creaRequestGestisciDettaglioVariazioneComponenteImportoCapitolo(detts0, detts1, detts2, Boolean.FALSE);
 		GestisciDettaglioVariazioneComponenteImportoCapitoloResponse response = variazioneDiBilancioService.gestisciDettaglioVariazioneComponenteImportoCapitolo(req);
 		
 		if(response.hasErrori()){
@@ -452,7 +448,7 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 			addErrore(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("componente gia' presente in variazione"));
 			return false;
 		}
-		TipoComponenteImportiCapitolo tipoComponenteConValori = ComparatorUtils.searchByUid(model.getListaTipoComponente(), elemento.getComponenteImportiCapitolo().getTipoComponenteImportiCapitolo());
+		TipoComponenteImportiCapitolo tipoComponenteConValori = ComparatorUtil.searchByUid(model.getListaTipoComponente(), elemento.getComponenteImportiCapitolo().getTipoComponenteImportiCapitolo());
 		ElementoComponenteVariazione instanceNuovaComponente = ElementoComponenteVariazioneFactory.getInstanceNuovaComponente(tipoComponenteConValori, elemento, model.getApplicazione());
 		
 		componentiCapitoloNuovoDettaglio.add(instanceNuovaComponente);
@@ -757,7 +753,7 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 	 */
 	public String ottieniEditabilitaByTipoComponente() {
 		
-		TipoComponenteImportiCapitolo tipoComponente = ComparatorUtils.searchByUid(model.getListaTipoComponente(), model.getSpecificaImporti().getTipoComponenteSelezionata());
+		TipoComponenteImportiCapitolo tipoComponente = ComparatorUtil.searchByUid(model.getListaTipoComponente(), model.getSpecificaImporti().getTipoComponenteSelezionata());
 		if(tipoComponente == null) {
 			addErrore(ErroreCore.ENTITA_NON_TROVATA_SINGOLO_MSG.getErrore("tipo componente selezionata"));
 			return INPUT;
@@ -779,7 +775,7 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 	public String redirezioneVersoRiepilogo() {
 		RiepilogoVariazioneModel riepilogo = model.getRiepilogo();
 		riepilogo.setNumeroVariazione(model.getNumeroVariazione());
-		riepilogo.setStatoVariazione(StatoOperativoVariazioneDiBilancio.BOZZA);
+		riepilogo.setStatoVariazione(getStatoOperativoVariazioneDiBilancioByUtente());
 		riepilogo.setApplicazioneVariazione(model.getApplicazione().getDescrizione());
 		riepilogo.setDescrizioneVariazione(model.getDescrizione());
 		riepilogo.setTipoVariazione(model.getTipoVariazione());
@@ -787,6 +783,11 @@ public class AggiornaVariazioneImportiAction extends AggiornaVariazioneImportiBa
 		impostaInformazioneSuccesso();
 		leggiEventualiMessaggiAzionePrecedente();
 		return SUCCESS;
+	}
+	
+	private StatoOperativoVariazioneBilancio getStatoOperativoVariazioneDiBilancioByUtente() {
+		return isAzioneConsentita(AzioneConsentitaEnum.RICERCA_VARIAZIONI_LIMITATA) ? 
+				StatoOperativoVariazioneBilancio.PRE_BOZZA : StatoOperativoVariazioneBilancio.BOZZA;
 	}
 	
 	/*

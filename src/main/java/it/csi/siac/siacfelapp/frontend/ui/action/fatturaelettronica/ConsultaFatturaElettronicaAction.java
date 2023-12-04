@@ -6,7 +6,7 @@ package it.csi.siac.siacfelapp.frontend.ui.action.fatturaelettronica;
 
 import java.util.Collections;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -71,7 +71,7 @@ public class ConsultaFatturaElettronicaAction extends GenericBilancioAction<Cons
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(request, response);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioFatturaElettronica.class, response);
 			log.info(methodName, errorMsg);
 			throw new WebServiceInvocationFailureException(errorMsg);
 		}

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
@@ -50,7 +50,7 @@ import it.csi.siac.siaccespser.model.Cespite;
 import it.csi.siac.siaccespser.model.ClassificazioneGiuridicaCespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespite;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.model.ClassePiano;
 import it.csi.siac.siacgenser.model.Evento;
@@ -104,7 +104,7 @@ public abstract class BaseInserisciVariazioneCespiteAction<M extends BaseInseris
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaCodifiche.class, response));
 			}
 			listaClassePiano = response.getCodifiche(ClassePiano.class);
 			sessionHandler.setParametro(BilSessionParameter.LISTA_CLASSE_PIANO_GEN, listaClassePiano);
@@ -359,7 +359,7 @@ public abstract class BaseInserisciVariazioneCespiteAction<M extends BaseInseris
 		
 		if(res.hasErrori()) {
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioCespite.class, res));
 		}
 		model.setCespite(res.getCespite());
 	}
@@ -373,7 +373,7 @@ public abstract class BaseInserisciVariazioneCespiteAction<M extends BaseInseris
 		RicercaSinteticaVariazioneCespiteResponse res = cespiteService.ricercaSinteticaVariazioneCespite(req);
 		if(res.hasErrori()) {
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSinteticaVariazioneCespite.class, res));
 		}
 		// Imposto i dati in sessione
 		
@@ -421,7 +421,7 @@ public abstract class BaseInserisciVariazioneCespiteAction<M extends BaseInseris
 		InserisciVariazioneCespite req = model.creaRequestInserisciVariazioneCespite();
 		InserisciVariazioneCespiteResponse res = cespiteService.inserisciVariazioneCespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(InserisciVariazioneCespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -461,7 +461,7 @@ public abstract class BaseInserisciVariazioneCespiteAction<M extends BaseInseris
 		AggiornaVariazioneCespite req = model.creaRequestAggiornaVariazioneCespite();
 		AggiornaVariazioneCespiteResponse res = cespiteService.aggiornaVariazioneCespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(AggiornaVariazioneCespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -501,7 +501,7 @@ public abstract class BaseInserisciVariazioneCespiteAction<M extends BaseInseris
 		EliminaVariazioneCespite req = model.creaRequestEliminaVariazioneCespite();
 		EliminaVariazioneCespiteResponse res = cespiteService.eliminaVariazioneCespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(EliminaVariazioneCespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}
@@ -533,7 +533,7 @@ public abstract class BaseInserisciVariazioneCespiteAction<M extends BaseInseris
 		RicercaDettaglioVariazioneCespite req = model.creaRequestRicercaDettaglioVariazioneCespite();
 		RicercaDettaglioVariazioneCespiteResponse res = cespiteService.ricercaDettaglioVariazioneCespite(req);
 		if(res.hasErrori()) {
-			log.debug(methodName, createErrorInServiceInvocationString(req, res));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaDettaglioVariazioneCespite.class, res));
 			addErrori(res);
 			return INPUT;
 		}

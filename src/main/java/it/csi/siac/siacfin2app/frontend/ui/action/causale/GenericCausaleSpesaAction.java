@@ -190,7 +190,7 @@ public class GenericCausaleSpesaAction<M extends GenericCausaleSpesaModel> exten
 		Impegno impegno = model.getMovimentoGestione();
 		SubImpegno subImpegno = model.getSubMovimentoGestione();
 		
-		if(impegno == null || (impegno.getAnnoMovimento() == 0 || impegno.getNumero() == null)) {
+		if(impegno == null || (impegno.getAnnoMovimento() == 0 || impegno.getNumeroBigDecimal() == null)) {
 			return;
 		}
 		
@@ -204,7 +204,7 @@ public class GenericCausaleSpesaAction<M extends GenericCausaleSpesaModel> exten
 			return;
 		}
 		if(response.isFallimento() || response.getImpegno() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", impegno.getAnnoMovimento() + "/" + impegno.getNumero().toPlainString()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal().toPlainString()));
 			return;
 		}
 		
@@ -212,12 +212,12 @@ public class GenericCausaleSpesaAction<M extends GenericCausaleSpesaModel> exten
 		
 		model.setMovimentoGestione(impegno);
 		
-		if(subImpegno != null && subImpegno.getNumero() != null) {
-			BigDecimal numero = subImpegno.getNumero();
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subImpegno.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subImpegno = findSubImpegnoLegatoImpegnoByNumero(response.getImpegno(), subImpegno);
 			if(subImpegno == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumero().toPlainString() + "-" + numero.toPlainString()));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal().toPlainString() + "-" + numero.toPlainString()));
 				return;
 			}
 			model.setSubMovimentoGestione(subImpegno);
@@ -249,7 +249,7 @@ public class GenericCausaleSpesaAction<M extends GenericCausaleSpesaModel> exten
 		SubImpegno result = null;
 		if(impegno.getElencoSubImpegni() != null) {
 			for(SubImpegno s : impegno.getElencoSubImpegni()) {
-				if(s.getNumero().compareTo(subImpegno.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subImpegno.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}

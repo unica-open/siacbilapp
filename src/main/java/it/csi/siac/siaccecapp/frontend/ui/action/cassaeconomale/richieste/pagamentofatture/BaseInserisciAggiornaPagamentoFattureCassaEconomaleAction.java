@@ -112,7 +112,7 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaValuta.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaValuta = response.getListaValuta();
@@ -141,7 +141,7 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaTipoDocumento.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaTipoDocumento = response.getElencoTipiDocumento();
@@ -168,7 +168,7 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(ListeGestioneSoggetto.class, response));
 			}
 			listaClassiSoggetto = response.getListaClasseSoggetto();
 			ComparatorUtils.sortByCodiceFin(listaClassiSoggetto);
@@ -325,7 +325,7 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaQuoteByDocumentoSpesa.class, response));
 			addErrori(response);
 		}
 		
@@ -344,7 +344,7 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 		final String methodName = "checkMovimentoGestione";
 		checkNotNull(movimentoGestione, "Impegno", true);
 		checkCondition(movimentoGestione.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno impegno"));
-		checkCondition(movimentoGestione.getNumero() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero impegno"));
+		checkCondition(movimentoGestione.getNumeroBigDecimal() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero impegno"));
 		
 		if(hasErrori()) {
 			// Se ho errori, esco subito
@@ -352,7 +352,7 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 		}
 		
 		// La chiave logica del movimento
-		final String chiaveMovimentoGestione = movimentoGestione.getAnnoMovimento() + "/" + movimentoGestione.getNumero();
+		final String chiaveMovimentoGestione = movimentoGestione.getAnnoMovimento() + "/" + movimentoGestione.getNumeroBigDecimal();
 		
 		Impegno impegno;
 		List<SubImpegno> subImp;
@@ -369,11 +369,11 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 		log.debug(methodName, "Trovato movimento di gestione " + impegno.getUid() + " da servizio corrispondente alla chiave " + chiaveMovimentoGestione);
 		model.setMovimentoGestione(impegno);
 		
-		checkCondition(subImp.isEmpty() || (subMovimentoGestione != null && subMovimentoGestione.getNumero() != null), ErroreFin.IMPEGNO_CON_SUBIMPEGNI.getErrore(), true);
+		checkCondition(subImp.isEmpty() || (subMovimentoGestione != null && subMovimentoGestione.getNumeroBigDecimal() != null), ErroreFin.IMPEGNO_CON_SUBIMPEGNI.getErrore(), true);
 		
-		if(subMovimentoGestione != null && subMovimentoGestione.getNumero() != null && impegno.getElencoSubImpegni() != null) {
+		if(subMovimentoGestione != null && subMovimentoGestione.getNumeroBigDecimal() != null && impegno.getElencoSubImpegni() != null) {
 			// La chiave logica del submovimento
-			final String chiaveSubMovimentoGestione = chiaveMovimentoGestione + "/" + subMovimentoGestione.getNumero();
+			final String chiaveSubMovimentoGestione = chiaveMovimentoGestione + "/" + subMovimentoGestione.getNumeroBigDecimal();
 			
 			log.debug(methodName, "Ricerca del subimpegno");
 			SubImpegno subImpegno = ComparatorUtils.findByNumeroMovimentoGestione(impegno.getElencoSubImpegni(), subMovimentoGestione);
@@ -499,7 +499,7 @@ public abstract class BaseInserisciAggiornaPagamentoFattureCassaEconomaleAction<
 		modalitaPagamentoDipendente = ComparatorUtils.searchByUidEventuallyNull(model.getListaModalitaPagamentoDipendente(), modalitaPagamentoDipendente);
 		log.debug(methodName, "Modalita trovata? " + (modalitaPagamentoDipendente != null));
 		if(modalitaPagamentoDipendente == null) {
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("modalita' di pagamento del dipendente", "non e' presente tra quelle elencate"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("modalita' di pagamento del dipendente", "non e' presente tra quelle elencate"));
 			return SUCCESS;
 		}
 		

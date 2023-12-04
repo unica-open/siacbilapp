@@ -4,12 +4,13 @@
 */
 package it.csi.siac.siacgenapp.frontend.ui.action.primanotalibera;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotalibera.ConsultaPrimaNotaLiberaBaseAction;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacgenapp.frontend.ui.model.primanotalibera.ConsultaPrimaNotaLiberaFINModel;
 /**
  * Classe di action per la consultazione della prima nota libera FIN
@@ -34,6 +35,15 @@ public class ConsultaPrimaNotaLiberaFINAction extends ConsultaPrimaNotaLiberaBas
 	public String execute() throws Exception {
 		// Uso il metodo solo per forzare il breadcrumb
 		return super.execute();
+	}
+	
+	/**
+	 * SIAC-8134
+	 * Caricamento dell'azione per la gestione della SAC
+	 */
+	@Override
+	public void caricaAzionePerSAC() {
+		model.setNomeAzioneSAC(AzioneConsentitaEnum.PRIMANOTALIBERA_GEN_GESTIONE.getNomeAzione());
 	}
 
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.list.SortedSetList;
+import it.csi.siac.siaccommon.util.collections.list.SortedSetList;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorEvento;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiElementoPianoDeiContiByCodiceAndAnno;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCodifiche;

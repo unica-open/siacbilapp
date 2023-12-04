@@ -94,7 +94,7 @@ public class GenericAggiornaTipoOnereAction extends GenericTipoOnereAction<Aggio
 			logServiceResponse(response);
 			// Controllo gli errori
 			if(response.hasErrori()) {
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(ListeGestioneSoggetto.class, response));
 			}
 			listaClassiSoggetto = response.getListaClasseSoggetto();
 			ComparatorUtils.sortByCodiceFin(listaClassiSoggetto);
@@ -144,11 +144,11 @@ public class GenericAggiornaTipoOnereAction extends GenericTipoOnereAction<Aggio
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			}
 			if(response.getSoggetto() == null) {
 				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Soggetto", request.getParametroSoggettoK().getCodice()));
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			}
 			s = response.getSoggetto();
 			sessionHandler.setParametro(BilSessionParameter.SOGGETTO, s);
@@ -187,7 +187,7 @@ public class GenericAggiornaTipoOnereAction extends GenericTipoOnereAction<Aggio
 				return;
 			}
 		}
-		checkCondition(false, ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("il movimento " + movimentoGestione.getNumero()
+		checkCondition(false, ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("il movimento " + movimentoGestione.getNumeroBigDecimal()
 				+ " non appartiene alla classificazione del soggetto del tipo onere"), true);
 	}
 	
@@ -223,7 +223,7 @@ public class GenericAggiornaTipoOnereAction extends GenericTipoOnereAction<Aggio
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaPuntualeCapitoloEntrataGestione.class, response));
 		}
 		
 		return response.getCapitoloEntrataGestione();
@@ -259,7 +259,7 @@ public class GenericAggiornaTipoOnereAction extends GenericTipoOnereAction<Aggio
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaPuntualeCapitoloUscitaGestione.class, response));
 		}
 		
 		return response.getCapitoloUscitaGestione();

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -33,7 +33,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaQuoteDaAssociareAllegatoAttoAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoSubdocumentoDaAssociareAllegatoAtto<?, ?, ?, ?, ?>, 
+public class RisultatiRicercaQuoteDaAssociareAllegatoAttoAjaxAction extends PagedDataTableAjaxAction<ElementoSubdocumentoDaAssociareAllegatoAtto<?, ?, ?, ?, ?>, 
 		RisultatiRicercaQuoteDaAssociareAllegatoAttoAjaxModel, Subdocumento<?,?> , RicercaQuoteDaAssociare, RicercaQuoteDaAssociareResponse> {
 	
 	/** Per la serializzazione */
@@ -59,7 +59,7 @@ public class RisultatiRicercaQuoteDaAssociareAllegatoAttoAjaxAction extends Gene
 	}
 	
 	@Override
-	protected ElementoSubdocumentoDaAssociareAllegatoAtto<?, ?, ?, ?, ?> ottieniIstanza(Subdocumento<?,?> e) {
+	protected ElementoSubdocumentoDaAssociareAllegatoAtto<?, ?, ?, ?, ?> getInstance(Subdocumento<?,?> e) {
 		if(e instanceof SubdocumentoSpesa) {
 			return new ElementoSubdocumentoDaAssociareAllegatoAttoSpesa((SubdocumentoSpesa) e);
 		}
@@ -70,7 +70,7 @@ public class RisultatiRicercaQuoteDaAssociareAllegatoAttoAjaxAction extends Gene
 	}
 	
 	@Override
-	protected RicercaQuoteDaAssociareResponse ottieniResponse(RicercaQuoteDaAssociare request) {
+	protected RicercaQuoteDaAssociareResponse getResponse(RicercaQuoteDaAssociare request) {
 		return documentoService.ricercaQuoteDaAssociare(request);
 	}
 	

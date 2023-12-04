@@ -77,7 +77,7 @@ public abstract class BaseInserisciAggiornaRimborsoSpeseCassaEconomaleAction<M e
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaValuta.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaValuta = response.getListaValuta();
@@ -107,7 +107,7 @@ public abstract class BaseInserisciAggiornaRimborsoSpeseCassaEconomaleAction<M e
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaTipoGiustificativo.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaTipoGiustificativo = response.getTipiGiustificativi();

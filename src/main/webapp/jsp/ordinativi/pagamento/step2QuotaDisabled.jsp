@@ -116,8 +116,9 @@ SPDX-License-Identifier: EUPL-1.2
 														<span class="al span3">
 															<label class="radio inline" for="listaCommissioni">Commis<wbr/>sioni</label>
 														</span>
-														<s:select list="listaCommissioni" name="commissioneDocumento" id="commissioneDocumento" cssClass="lbTextSmall span9"
-															listValue="%{descrizione}" headerKey="" headerValue="" disabled="true" />
+														<!-- task-291 -->
+														<s:select list="listaCommissioniDocumento" name="commissioneDocumento.descrizione" listKey="descrizione" listValue="%{codice + ' - ' + descrizione}"
+															headerKey="" headerValue="" cssClass="lbTextSmall span9" id="commissioneDocumento" disabled="true"/>
 													</div>
 												</div>
 												<div class="span12 margin-medium no-margin-left">
@@ -167,7 +168,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ordinativo/emissionePagamentoStep2Quota.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ordinativo/emissionePagamentoStep2Quota.js"></script>
 
 </body>
 </html>

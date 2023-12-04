@@ -72,7 +72,7 @@ public abstract class InserisciPrimaNotaIntegrataSubdocumentoEntrataNotaCreditoB
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioQuotaEntrata.class, response));
 		}
 		if(response.getSubdocumentoEntrata() == null) {
 			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subdocumento", "uid " + model.getSubdocumento().getUid()));

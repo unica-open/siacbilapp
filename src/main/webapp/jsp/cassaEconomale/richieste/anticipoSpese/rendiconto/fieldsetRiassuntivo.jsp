@@ -28,11 +28,11 @@ SPDX-License-Identifier: EUPL-1.2
 				</li>
 				<li>
 					<dfn>Numero</dfn>
-					<dl><si:plainstringproperty value="rendicontoRichiesta.richiestaEconomale.impegno.numero"/>&nbsp;</dl>
+					<dl><s:property value="rendicontoRichiesta.richiestaEconomale.impegno.numero"/>&nbsp;</dl>
 				</li>
 				<li>
 					<dfn>SubImpegno</dfn>
-					<dl><si:plainstringproperty value="rendicontoRichiesta.richiestaEconomale.subImpegno.numero"/>&nbsp;</dl>
+					<dl><s:property value="rendicontoRichiesta.richiestaEconomale.subImpegno.numero"/>&nbsp;</dl>
 				</li>
 				<li>
 					<dfn>Descrizione</dfn>

@@ -6,7 +6,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.vincolo;
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -36,8 +36,9 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.ScollegaCapitoloAlVincoloR
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
  * Classe di Action per la gestione della consultazione del Vincolo.
@@ -67,6 +68,8 @@ public class AggiornaVincoloAction extends GenericVincoloAction<AggiornaVincoloM
 		
 		// SIAC-5076: caricamento Genere Vincolo
 		caricaGenereVincolo();
+		//SIAC-7129
+		caricaRisorsaVincolata();
 	}
 	
 	@Override
@@ -86,7 +89,7 @@ public class AggiornaVincoloAction extends GenericVincoloAction<AggiornaVincoloM
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioVincolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -140,7 +143,7 @@ public class AggiornaVincoloAction extends GenericVincoloAction<AggiornaVincoloM
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaVincoloCapitolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -340,6 +343,16 @@ public class AggiornaVincoloAction extends GenericVincoloAction<AggiornaVincoloM
 		if(capitoliEntrata.isEmpty() && !capitoliUscita.isEmpty()) {
 			addErrore(ErroreBil.CAPITOLO_DI_ENTRATA_ASSENTE.getErrore());
 		}
+		
+		//SIAC-7550
+		if(model.getVincolo().getGenereVincolo() == null || model.getVincolo().getGenereVincolo().getUid() == 0) {
+			addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Omesso Tipo Vincolo"));
+		}
+
+		//SIAC-7525
+		if(model.getVincolo().getRisorsaVincolata() == null || model.getVincolo().getRisorsaVincolata().getUid() == 0) {
+			addErrore(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Omesso Risorse Vincolate"));
+		}
 	}
 	
 	/* Metodi di utilita' */
@@ -361,7 +374,7 @@ public class AggiornaVincoloAction extends GenericVincoloAction<AggiornaVincoloM
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(ScollegaCapitoloAlVincolo.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -389,7 +402,7 @@ public class AggiornaVincoloAction extends GenericVincoloAction<AggiornaVincoloM
 		logServiceResponse(responseAssociazione);
 		
 		if(responseAssociazione.hasErrori()) {
-			log.info(methodName, createErrorInServiceInvocationString(requestAssociazione, responseAssociazione));
+			log.info(methodName, createErrorInServiceInvocationString(AssociaCapitoloAlVincolo.class, responseAssociazione));
 			addErrori(responseAssociazione);
 			return INPUT;
 		}

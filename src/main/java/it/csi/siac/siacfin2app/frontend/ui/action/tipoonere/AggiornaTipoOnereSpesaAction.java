@@ -100,7 +100,7 @@ public class AggiornaTipoOnereSpesaAction extends GenericAggiornaTipoOnereAction
 		checkCondition(impegno.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno impegno"));
 		checkCondition(impegno.getAnnoMovimento() <= model.getAnnoEsercizioInt().intValue(),
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno impegno", "sono ammessi solo movimenti di gestione o residui"));
-		checkCondition(impegno.getNumero() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero impegno"));
+		checkCondition(impegno.getNumeroBigDecimal() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero impegno"));
 		
 		if(hasErrori()) {
 			return;
@@ -158,8 +158,8 @@ public class AggiornaTipoOnereSpesaAction extends GenericAggiornaTipoOnereAction
 			Impegno i = cs.getImpegno();
 			SubImpegno si = cs.getSubImpegno();
 			boolean giaPresente = (i.getAnnoMovimento() == impegno.getAnnoMovimento())
-					&& (i.getNumero().equals(impegno.getNumero()))
-					&& (subImpegno == null || si == null || si.getNumero().equals(subImpegno.getNumero()));
+					&& (i.getNumeroBigDecimal().equals(impegno.getNumeroBigDecimal()))
+					&& (subImpegno == null || si == null || si.getNumeroBigDecimal().equals(subImpegno.getNumeroBigDecimal()));
 			checkCondition(!giaPresente, ErroreCore.RELAZIONE_GIA_PRESENTE.getErrore(), true);
 		}
 		log.debug(methodName, "Nessun collegamento con l'impegno selezionato ancora presente. Proseguo con la validazione");
@@ -182,12 +182,12 @@ public class AggiornaTipoOnereSpesaAction extends GenericAggiornaTipoOnereAction
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, response));
 		}
 		if(response.getImpegno() == null) {
 			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", request.getpRicercaImpegnoK().getAnnoEsercizio() + "/"
 					+ request.getpRicercaImpegnoK().getAnnoImpegno() + "/" + request.getpRicercaImpegnoK().getNumeroImpegno()));
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, response));
 		}
 		return response;
 	}
@@ -203,7 +203,7 @@ public class AggiornaTipoOnereSpesaAction extends GenericAggiornaTipoOnereAction
 	 */
 	private SubImpegno checkPresenzaSubImpegniNonAnnullati(List<SubImpegno> listaSub, Impegno impegno, SubImpegno subImpegno) {
 		final String methodName="checkPresenzaSubImpegniNonAnnullati";
-		boolean subImpegnoDigitato = subImpegno != null && subImpegno.getNumero() != null;
+		boolean subImpegnoDigitato = subImpegno != null && subImpegno.getNumeroBigDecimal() != null;
 		boolean impegnoSenzaSub = listaSub == null || listaSub.isEmpty();
 		
 		log.debug(methodName, "Subimpegno digitato? " + subImpegnoDigitato + ". L'impegno ha dei subimpegni? " + !impegnoSenzaSub);
@@ -214,13 +214,13 @@ public class AggiornaTipoOnereSpesaAction extends GenericAggiornaTipoOnereAction
 		}
 		
 		SubImpegno subImpegnoTrovato = ComparatorUtils.findByNumeroMovimentoGestione(impegno.getElencoSubImpegni(), subImpegno);
-		boolean isSubImpegnoTrovato = !impegnoSenzaSub && subImpegnoTrovato !=null && subImpegnoTrovato.getNumero() != null;
+		boolean isSubImpegnoTrovato = !impegnoSenzaSub && subImpegnoTrovato !=null && subImpegnoTrovato.getNumeroBigDecimal() != null;
 		
 		boolean isSubImpegnoCorretto = (subImpegnoDigitato && isSubImpegnoTrovato) || (!subImpegnoDigitato && impegnoSenzaSub);
 		log.debug(methodName, "Condizione di superamento dei controlli del subImpegno: (subImpegnoDigitato && isSubImpegnoTrovato) || (!subImpegnoDigitato && impegnoSenzaSub) = "
 				+ "(" + subImpegnoDigitato + " && " + isSubImpegnoTrovato + ") || (" + !subImpegnoDigitato + " && " + impegnoSenzaSub + ") = "
 				+ isSubImpegnoCorretto);
-		checkCondition(isSubImpegnoCorretto, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumero() + "-" + subImpegno.getNumero()), true);
+		checkCondition(isSubImpegnoCorretto, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno", impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal() + "-" + subImpegno.getNumeroBigDecimal()), true);
 		
 		return subImpegnoTrovato;
 	}

@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.util.wrapper.cassaeconomale.richiestaeconomale.ElementoRichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per i risultati di ricerca per l'anticipo spese per trasferta, gestione dell'AJAX.
@@ -35,7 +35,7 @@ public class RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAct
 				&& !instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
 	}
 
 	@Override
@@ -43,14 +43,14 @@ public class RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAct
 		return isStatoOperativoPrenotataEvasaOrDaRendicontare(instance)
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
 	}
 
 	@Override
 	protected boolean gestisciConsultazione(ElementoRichiestaEconomale instance, List<AzioneConsentita> listaAzioniConsentite) {
 		// SIAC-5623: aggiunto controllo abilitazione
 //		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_RICERCA, listaAzioniConsentite);
-		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_RICERCA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
+		return AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_RICERCA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAct
 				&& !instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_INSERISCI_RENDICONTO, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_INSERISCI_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_INSERISCI_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAct
 		return instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA_RENDICONTO, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_AGGIORNA_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
 	}
 	
 	@Override
@@ -75,7 +75,7 @@ public class RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAct
 		return instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_CONSULTA_RENDICONTO, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_CONSULTA_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_CONSULTA_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
 	}
 	
 	@Override
@@ -83,7 +83,7 @@ public class RisultatiRicercaAnticipoPerTrasfertaDipendentiCassaEconomaleAjaxAct
 		return instance.hasRendiconto()
 				// SIAC-5623: aggiunto controllo abilitazione
 //				&& AzioniConsentiteFactory.isConsentito(AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, listaAzioniConsentite);
-				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioniConsentite.CASSA_ECONOMALE_STAMPA_RICEVUTA, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
+				&& AzioniConsentiteFactory.isConsentitoAll(listaAzioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_STAMPA_RICEVUTA, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_PER_TRASFERTA_DIPENDENTI_ABILITA);
 	}
 	
 	@Override

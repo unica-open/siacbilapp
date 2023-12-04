@@ -1,5 +1,5 @@
 /*
-*SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+ *SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
 *SPDX-License-Identifier: EUPL-1.2
 */
 /*
@@ -338,6 +338,11 @@ $(
             Provvedimento.impostaUid();
         });
         $("#pulsanteDeselezionaProvvedimento").on("click", Provvedimento.deseleziona);
+        
+        // SIAC-8227
+        $('#oggettoProvvedimento').on('blur', function() {
+        	$(this).val($(this).val().replace(/[\x00-\x1F\x7F]/g, ""));
+        });
 
         /* Non permettere di accedere al modale finché il caricamento non è avvenuto */
         pulsante.removeAttr("href");

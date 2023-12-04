@@ -13,7 +13,6 @@ import java.util.Map;
 import org.apache.commons.lang3.ObjectUtils;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.list.SortedSetList;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorElencoDocumentiAllegato;
 import it.csi.siac.siacbilser.business.utility.ElaborazioneEnum;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ElaborazioneWrapper;
@@ -21,6 +20,8 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.EsisteElaborazioneAttiva;
 import it.csi.siac.siacbilser.model.TipologiaAttributo;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InviaAllegatoAtto;
 import it.csi.siac.siaccecser.frontend.webservice.msg.StampaAllegatoAtto;
+import it.csi.siac.siaccommon.util.collections.list.SortedSetList;
+import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.allegatoatto.ElementoElencoDocumentiAllegato;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.allegatoatto.ElementoElencoDocumentiAllegatoEntrata;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.allegatoatto.ElementoElencoDocumentiAllegatoSpesa;
@@ -39,11 +40,11 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioAllegatoA
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioQuotaSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElenchiPerAllegatoAtto;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaQuoteElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.SpezzaQuotaEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.SpezzaQuotaSpesa;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
 import it.csi.siac.siacfin2ser.model.AllegatoAttoModelDetail;
-import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DatiSoggettoAllegato;
 import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
@@ -54,12 +55,10 @@ import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaDatiDurcSoggetto;
-import it.csi.siac.siacfinser.frontend.webservice.msg.Liste;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisorioDiCassaPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
-import it.csi.siac.siacfinser.model.codifiche.TipiLista;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa.TipoProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaSoggettoK;
@@ -131,9 +130,6 @@ public class AggiornaAllegatoAttoModel extends GenericAllegatoAttoModel {
 	//SIAC-5589
 	private Soggetto soggetto;
 	private List<CodificaFin> listaClasseSoggetto = new ArrayList<CodificaFin>();
-	
-	//SIAC-7005
-	private List<ContoTesoreria> listaContoTesoreria = new ArrayList<ContoTesoreria>();
 	
 
 	/** Costruttore vuoto di default */
@@ -516,20 +512,6 @@ public class AggiornaAllegatoAttoModel extends GenericAllegatoAttoModel {
 	}
 
 	/**
-	 * @return the listaContoTesoreria
-	 */
-	public List<ContoTesoreria> getListaContoTesoreria() {
-		return listaContoTesoreria;
-	}
-
-	/**
-	 * @param listaContoTesoreria the listaContoTesoreria to set
-	 */
-	public void setListaContoTesoreria(List<ContoTesoreria> listaContoTesoreria) {
-		this.listaContoTesoreria = listaContoTesoreria != null? listaContoTesoreria : null;
-	}
-
-	/**
 	 * @return the flagRitenuteNonAggiornabile
 	 */
 	public boolean isFlagRitenuteNonAggiornabile() {
@@ -794,7 +776,6 @@ public class AggiornaAllegatoAttoModel extends GenericAllegatoAttoModel {
 		Map<TipologiaAttributo, Object> attributi = new EnumMap<TipologiaAttributo, Object>(TipologiaAttributo.class);
 		attributi.put(TipologiaAttributo.CIG, getSubdocumentoSpesa().getCig());
 		attributi.put(TipologiaAttributo.CUP, getSubdocumentoSpesa().getCup());
-		attributi.put(TipologiaAttributo.NUMERO_MUTUO, getSubdocumentoSpesa().getVoceMutuo() != null ? getSubdocumentoSpesa().getVoceMutuo().getNumeroMutuo() : null);
 		
 		request.setAttributi(attributi);
 		
@@ -1034,21 +1015,18 @@ public class AggiornaAllegatoAttoModel extends GenericAllegatoAttoModel {
 	return req;
     }
     
-    //SIAC-7005
-    /**
-	 * Crea una request per il servizio {@link Liste}
-	 * @param tipiLista i tipi di lista da cercare
+
+	//SIAC-7410
+	/**
+	 * Crea una request per il servizio {@link RicercaSinteticaQuoteElenco}.
+	 * 
 	 * @return la request creata
 	 */
-	public Liste creaRequestListe(TipiLista... tipiLista) {
-		Liste request = creaRequest(Liste.class);
-		
-		request.setEnte(getEnte());
-		request.setTipi(tipiLista);
-		request.setBilancio(getBilancio());
-		
+	public RicercaSinteticaQuoteElenco creaRequestRicercaSinteticaQuoteElenco() {
+		RicercaSinteticaQuoteElenco request = creaRequest(RicercaSinteticaQuoteElenco.class);
+		request.setElencoDocumentiAllegato(getElencoDocumentiAllegato());
+		request.setSoggetto(getSoggetto());
+		request.setParametriPaginazione(new ParametriPaginazione(0,10));
 		return request;
 	}
-
-
 }

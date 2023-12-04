@@ -4,21 +4,36 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.dubbiaesigibilita;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
-import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaFondoDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaFondiDubbiaEsigibilitaAnnoPrecedente;
-import it.csi.siac.siacbilser.frontend.webservice.msg.EliminaFondoDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceFondiDubbiaEsigibilita;
-import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente;
-import it.csi.siac.siacbilser.frontend.webservice.msg.PopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaFondiDubbiaEsigibilita;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilitaModelDetail;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.RicercaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.ImpostaDefaultAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.ModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.RicercaPuntualeAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.attributibilancio.RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.gestione.InserisceAccantonamentoFondiDubbiaEsigibilitaImportGestione;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.AggiornaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.EliminaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.InserisceAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.RipristinaAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.fcde.previsione.SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
-import it.csi.siac.siaccorser.model.Azione;
-import it.csi.siac.siaccorser.model.GruppoAzioni;
+import it.csi.siac.siacbilser.model.TipologiaTitolo;
+import it.csi.siac.siacbilser.model.TitoloEntrata;
+import it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siacbilser.model.fcde.StatoAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.model.fcde.TipoAccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.model.fcde.TipoImportazione;
+import it.csi.siac.siacbilser.model.fcde.modeldetail.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail;
+import it.csi.siac.siacbilser.model.fcde.modeldetail.AccantonamentoFondiDubbiaEsigibilitaModelDetail;
+import it.csi.siac.siacfin2ser.model.CapitoloEntrataPrevisioneModelDetail;
 
 /**
  * Classe di modello per la gestione della configurazioen delle stampe dei fondi a dubbia e difficile esazione
@@ -36,14 +51,9 @@ public class InserisciConfigurazioneStampaDubbiaEsigibilitaModel extends Inseris
 	private List<AccantonamentoFondiDubbiaEsigibilita> listaAccantonamentoFondiDubbiaEsigibilitaTemp = new ArrayList<AccantonamentoFondiDubbiaEsigibilita>();
 	private List<AccantonamentoFondiDubbiaEsigibilita> listaAccantonamentoFondiDubbiaEsigibilitaSelezionati = new ArrayList<AccantonamentoFondiDubbiaEsigibilita>();
 	private List<AccantonamentoFondiDubbiaEsigibilita> listaAccantonamentoFondiDubbiaEsigibilita = new ArrayList<AccantonamentoFondiDubbiaEsigibilita>();
+	
+	private Integer numeroAccantonamentiDefinitivi;
 
-	private AccantonamentoFondiDubbiaEsigibilita accantonamento = new AccantonamentoFondiDubbiaEsigibilita();
-	
-	// SIAC-5481
-	private boolean datiAnnoPrecedenteGestionePresenti;
-	private Azione azioneReportistica;
-	private GruppoAzioni gruppoAzioniReportistica;
-	
 	/** Costruttore vuoto di default */
 	public InserisciConfigurazioneStampaDubbiaEsigibilitaModel(){
 		super();
@@ -67,7 +77,7 @@ public class InserisciConfigurazioneStampaDubbiaEsigibilitaModel extends Inseris
 	/**
 	 * @return the listaAccantonamentoFondiDubbiaEsigibilitaTemp
 	 */
-	public List<AccantonamentoFondiDubbiaEsigibilita> getListaAccantonamentoFondiDubbiaEsigibilitaTemp() {
+	public List<AccantonamentoFondiDubbiaEsigibilita> getListaAccantonamentoFondiDubbiaEsigibilitaTemp() {		
 		return listaAccantonamentoFondiDubbiaEsigibilitaTemp;
 	}
 
@@ -107,148 +117,224 @@ public class InserisciConfigurazioneStampaDubbiaEsigibilitaModel extends Inseris
 	}
 
 	/**
-	 * @return the accantonamento
+	 * @return the numeroAccantonamentiDefinitivi
 	 */
-	public AccantonamentoFondiDubbiaEsigibilita getAccantonamento() {
-		return accantonamento;
+	public Integer getNumeroAccantonamentiDefinitivi() {
+		return this.numeroAccantonamentiDefinitivi;
 	}
 
 	/**
-	 * @param accantonamento the accantonamento to set
+	 * @param numeroAccantonamentiDefinitivi the numeroAccantonamentiDefinitivi to set
 	 */
-	public void setAccantonamento(AccantonamentoFondiDubbiaEsigibilita accantonamento) {
-		this.accantonamento = accantonamento;
-	}
-
-	/**
-	 * @return the datiAnnoPrecedenteGestionePresenti
-	 */
-	public boolean isDatiAnnoPrecedenteGestionePresenti() {
-		return datiAnnoPrecedenteGestionePresenti;
-	}
-
-	/**
-	 * @param datiAnnoPrecedenteGestionePresenti the datiAnnoPrecedenteGestionePresenti to set
-	 */
-	public void setDatiAnnoPrecedenteGestionePresenti(boolean datiAnnoPrecedenteGestionePresenti) {
-		this.datiAnnoPrecedenteGestionePresenti = datiAnnoPrecedenteGestionePresenti;
-	}
-
-	/**
-	 * @return the azioneReportistica
-	 */
-	public Azione getAzioneReportistica() {
-		return azioneReportistica;
-	}
-
-	/**
-	 * @param azioneReportistica the azioneReportistica to set
-	 */
-	public void setAzioneReportistica(Azione azioneReportistica) {
-		this.azioneReportistica = azioneReportistica;
-	}
-
-	/**
-	 * @return the gruppoAzioniReportistica
-	 */
-	public GruppoAzioni getGruppoAzioniReportistica() {
-		return gruppoAzioniReportistica;
-	}
-
-	/**
-	 * @param gruppoAzioniReportistica the gruppoAzioniReportistica to set
-	 */
-	public void setGruppoAzioniReportistica(GruppoAzioni gruppoAzioniReportistica) {
-		this.gruppoAzioniReportistica = gruppoAzioniReportistica;
+	public void setNumeroAccantonamentiDefinitivi(Integer numeroAccantonamentiDefinitivi) {
+		this.numeroAccantonamentiDefinitivi = numeroAccantonamentiDefinitivi;
 	}
 
 	@Override
-	public String getActionOperazioneAttributi() {
-		return "inserisciConfigurazioneStampaDubbiaEsigibilita_" + (isAttributiBilancioPresenti() ? "aggiornaAttributiBilancio" : "salvaAttributiBilancio");
+	public Collection<TitoloEntrata> getElencoTitoloEntrataAccantonamenti() {
+		if(listaAccantonamentoFondiDubbiaEsigibilita == null) {
+			return new HashSet<TitoloEntrata>();
+		}
+		Map<String, TitoloEntrata> res = new HashMap<String, TitoloEntrata>();
+		for(AccantonamentoFondiDubbiaEsigibilita acc : listaAccantonamentoFondiDubbiaEsigibilita) {
+			CapitoloEntrataPrevisione capitolo = acc.getCapitolo();
+			if(capitolo != null && capitolo.getTitoloEntrata() != null && capitolo.getTitoloEntrata().getCodice() != null) {
+				res.put(capitolo.getTitoloEntrata().getCodice(), capitolo.getTitoloEntrata());
+			}
+		}
+		return res.values();
+	}
+	
+	@Override
+	public Collection<TipologiaTitolo> getElencoTipologiaTitoloAccantonamenti() {
+		if(listaAccantonamentoFondiDubbiaEsigibilita == null) {
+			return new HashSet<TipologiaTitolo>();
+		}
+		Map<String, TipologiaTitolo> res = new HashMap<String, TipologiaTitolo>();
+		for(AccantonamentoFondiDubbiaEsigibilita acc : listaAccantonamentoFondiDubbiaEsigibilita) {
+			CapitoloEntrataPrevisione capitolo = acc.getCapitolo();
+			if(capitolo != null && capitolo.getTipologiaTitolo() != null && capitolo.getTipologiaTitolo().getCodice() != null) {
+				res.put(capitolo.getTipologiaTitolo().getCodice(), capitolo.getTipologiaTitolo());
+			}
+		}
+		return res.values();
 	}
 
 	// REQUESTS
 	
 	/**
-	 * Crea una request per il servizio di {@link InserisceFondiDubbiaEsigibilita}.
+	 * Crea una request per il servizio di {@link InserisceAccantonamentoFondiDubbiaEsigibilita}.
 	 * @return la request creata
 	 */
-	public InserisceFondiDubbiaEsigibilita creaRequestInserisceFondiDubbiaEsigibilita() {
-		InserisceFondiDubbiaEsigibilita request = creaRequest(InserisceFondiDubbiaEsigibilita.class);
-		request.setAccantonamentiFondiDubbiaEsigibilita(getListaAccantonamentoFondiDubbiaEsigibilitaSelezionati());
+	public InserisceAccantonamentoFondiDubbiaEsigibilita creaRequestInserisceFondiDubbiaEsigibilita() {
+		InserisceAccantonamentoFondiDubbiaEsigibilita request = creaRequest(InserisceAccantonamentoFondiDubbiaEsigibilita.class);
+		request.setListaAccantonamentoFondiDubbiaEsigibilita(getListaAccantonamentoFondiDubbiaEsigibilitaSelezionati());
 		return request;
 	}
-
-	/**
-	 * Crea una request per il servizio di {@link RicercaSinteticaFondiDubbiaEsigibilita}.
-	 * @return la request creata
-	 */
-	public RicercaSinteticaFondiDubbiaEsigibilita creaRequestRicercaSinteticaFondiDubbiaEsigibilita() {
-		RicercaSinteticaFondiDubbiaEsigibilita request = creaRequest(RicercaSinteticaFondiDubbiaEsigibilita.class);
 	
-		request.setAccantonamentoFondiDubbiaEsigibilitaModelDetails(AccantonamentoFondiDubbiaEsigibilitaModelDetail.CapitoloEntrataPrevisione);
-		request.setBilancio(getBilancio());
-		request.setParametriPaginazione(creaParametriPaginazione());
+	/**
+	 * Crea una request per il servizio di {@link ModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio}.
+	 * @param stato lo statoda applicare
+	 * @return la request creata
+	 * 
+	 * SIAC-7858 04/06/2021 CM 
+	 */
+	@Override
+	public ModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio creaRequestModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(StatoAccantonamentoFondiDubbiaEsigibilita stato) {
+		ModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio request = creaRequest(ModificaStatoAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio.class);
+		
+		request.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(new AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio());
+		request.getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().setUid(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().getUid());
+		request.getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().setStatoAccantonamentoFondiDubbiaEsigibilita(stato);
+
+		return request;
+	}
+	
+	/**
+	 * Crea una request per il servizio di {@link InserisceAccantonamentoFondiDubbiaEsigibilitaImportGestione}.
+	 * @return la request creata
+	 * 
+	 * SIAC-7858 14/06/2021 CM 
+	 */
+	public InserisceAccantonamentoFondiDubbiaEsigibilita creaRequestCopiaCapitoliModaleAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio() {
+		InserisceAccantonamentoFondiDubbiaEsigibilita request = creaRequest(InserisceAccantonamentoFondiDubbiaEsigibilita.class);
+		
+		request.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio());
+		request.setListaAccantonamentoFondiDubbiaEsigibilita(getListaAccantonamentoFondiDubbiaEsigibilitaTemp());
+	
+		return request;
+	}
+	
+	public RicercaAccantonamentoFondiDubbiaEsigibilita creaRequestRicercaAccantonamentoFondiDubbiaEsigibilita() {
+		RicercaAccantonamentoFondiDubbiaEsigibilita req = creaRequest(RicercaAccantonamentoFondiDubbiaEsigibilita.class);
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio());
+		req.setModelDetails(
+				AccantonamentoFondiDubbiaEsigibilitaModelDetail.CapitoloEntrataPrevisione,
+				AccantonamentoFondiDubbiaEsigibilitaModelDetail.TipoMedia,
+				AccantonamentoFondiDubbiaEsigibilitaModelDetail.StanziamentiCapitolo,
+				CapitoloEntrataPrevisioneModelDetail.TitoloTipologiaCategoriaSAC);
+		return req;
+	}
+
+	public EliminaAccantonamentoFondiDubbiaEsigibilita creaRequestEliminaAccantonamentoFondiDubbiaEsigibilita() {
+		EliminaAccantonamentoFondiDubbiaEsigibilita req = creaRequest(EliminaAccantonamentoFondiDubbiaEsigibilita.class);
+		req.getListaAccantonamentoFondiDubbiaEsigibilita().add(getAccantonamentoByIndice(listaAccantonamentoFondiDubbiaEsigibilita));
+		return req;
+	}
+
+	public RipristinaAccantonamentoFondiDubbiaEsigibilita creaRequestRipristinaAccantonamentoFondiDubbiaEsigibilita() {
+		RipristinaAccantonamentoFondiDubbiaEsigibilita req = creaRequest(RipristinaAccantonamentoFondiDubbiaEsigibilita.class);
+		req.getListaAccantonamentoFondiDubbiaEsigibilita().add(getAccantonamentoByIndice(listaAccantonamentoFondiDubbiaEsigibilita));
+		return req;
+	}
+
+	public AggiornaAccantonamentoFondiDubbiaEsigibilita creaRequestAggiornaAccantonamentoFondiDubbiaEsigibilita() {
+		AggiornaAccantonamentoFondiDubbiaEsigibilita req = creaRequest(AggiornaAccantonamentoFondiDubbiaEsigibilita.class);
+		popolaListaAccantonamentoFondiDubbiaEsigibilita(req);
+		return req;
+	}
+
+	public SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport creaRequestSimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport(TipoImportazione tipoImportazione) {
+		SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport req = creaRequest(SimulaInserisceAccantonamentoFondiDubbiaEsigibilitaImport.class);
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio());
+		req.getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().setTipoAccantonamentoFondiDubbiaEsigibilita(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioOld(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioCopiaDa());
+		req.setTipoImportazione(tipoImportazione);
+		return req;
+	}
+	
+	@Override
+	public ImpostaDefaultAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio creaRequestInizializzaioneAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio() {
+		ImpostaDefaultAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio req = creaRequest(ImpostaDefaultAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio.class);
+		req.setBilancio(getBilancio());
+		req.setTipoAccantonamentoFondiDubbiaEsigibilita(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+		req.setStatoAccantonamentoFondiDubbiaEsigibilita(StatoAccantonamentoFondiDubbiaEsigibilita.BOZZA);
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetails(
+				AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail.values()
+			);
+		return req;
+	}
+
+	@Override
+	public RicercaPuntualeAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio creaRequestRicercaPuntualeAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio() {
+		RicercaPuntualeAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio request = creaRequest(RicercaPuntualeAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio.class);
+
+		AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio afdeab = new AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio();
+		afdeab.setBilancio(getBilancio());
+		afdeab.setTipoAccantonamentoFondiDubbiaEsigibilita(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+
+		// se ho una versione sono nel caso del reset
+		if(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio() != null 
+				&& getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().getVersione() != null) {
+			afdeab.setVersione(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().getVersione());
+		}
+		
+		request.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(afdeab);
+		request.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetails(
+			AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail.Stato
+		);
 		
 		return request;
 	}
 	
-	/**
-	 * Crea una request per il servizio di {@link AggiornaFondoDubbiaEsigibilita}.
-	 * @return la request creata
-	 */
-	public AggiornaFondoDubbiaEsigibilita creaRequestAggiornaFondoDubbiaEsigibilita() {
-		AggiornaFondoDubbiaEsigibilita request = creaRequest(AggiornaFondoDubbiaEsigibilita.class);
-		request.setAccantonamentoFondiDubbiaEsigibilita(getAccantonamento());
-		return request;
-	}
+	@Override
+	public RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio creaRequestRicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio() {
+		RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio req = creaRequest(RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio.class);
+		
+		AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio afdeab = new AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio();
+		afdeab.setBilancio(getBilancio());
+		afdeab.setTipoAccantonamentoFondiDubbiaEsigibilita(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(afdeab);
 
-	/**
-	 * Crea una request per il servizio di {@link EliminaFondoDubbiaEsigibilita}.
-	 * @return la request creata
-	 */
-	public EliminaFondoDubbiaEsigibilita creaRequestEliminaFondoDubbiaEsigibilita() {
-		EliminaFondoDubbiaEsigibilita request = creaRequest(EliminaFondoDubbiaEsigibilita.class);
-		request.setAccantonamentoFondiDubbiaEsigibilita(getAccantonamento());
-		return request;
-	}
-	
-	/**
-	 * Crea una request per il servizio di {@link ControllaFondiDubbiaEsigibilitaAnnoPrecedente}.
-	 * @return la request creata
-	 */
-	public ControllaFondiDubbiaEsigibilitaAnnoPrecedente creaRequestControllaFondiDubbiaEsigibilitaAnnoPrecedente() {
-		ControllaFondiDubbiaEsigibilitaAnnoPrecedente req = creaRequest(ControllaFondiDubbiaEsigibilitaAnnoPrecedente.class);
-		req.setBilancio(getBilancio());
-		return req;
-	}
-
-	/**
-	 * Rimozione dei capitoli dalla lista dei remporanei
-	 */
-	public void rimuoviCapitoliDaTemp() {
-		rimuoviCapitoliDaTemp(getListaAccantonamentoFondiDubbiaEsigibilitaTemp(), getListaAccantonamentoFondiDubbiaEsigibilitaSelezionati());
-	}
-
-	/**
-	 * Crea una request per il servizio di {@link PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente}.
-	 * @return la request creata
-	 */
-	public PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente creaRequestPopolaFondiDubbiaEsigibilitaDaAnnoPrecedente() {
-		PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente req = creaRequest(PopolaFondiDubbiaEsigibilitaDaAnnoPrecedente.class);
-		req.setBilancio(getBilancio());
+		if(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio() != null 
+				&& getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().getVersione() != null) {
+			afdeab.setVersione(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().getVersione());
+		}
+		
+		req.setExcludeCurrent(Boolean.TRUE);
+		req.setParametriPaginazione(creaParametriPaginazione(Integer.MAX_VALUE));
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetails(AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail.Stato);
 		return req;
 	}
 	
 	/**
-	 * Crea una request per il servizio di {@link PopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente}.
+	 * Ricerca sintatica dell'accantonamento definitivo
 	 * @return la request creata
 	 */
-	public PopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente creaRequestPopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente() {
-		PopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente req = creaRequest(PopolaFondiDubbiaEsigibilitaDaGestioneAnnoPrecedente.class);
-		req.setBilancio(getBilancio());
+	public RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio creaRequestRicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioDefinitivi() {
+		RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio req = creaRequest(RicercaSinteticaAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio.class);
+		
+		AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio afdeab = new AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio();
+		afdeab.setBilancio(getBilancio());
+		afdeab.setTipoAccantonamentoFondiDubbiaEsigibilita(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+		afdeab.setVersione(getAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio().getVersione());
+		afdeab.setStatoAccantonamentoFondiDubbiaEsigibilita(StatoAccantonamentoFondiDubbiaEsigibilita.DEFINITIVA);
+		
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(afdeab);
+		req.setExcludeCurrent(Boolean.TRUE);
+		req.setParametriPaginazione(creaParametriPaginazione(1));
+		// Request no model details
+		req.setAccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetails();
+
 		return req;
 	}
-
 	
+	@Override
+	protected void impostaAttributiBilancio(AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio attributi) {
+		attributi.setBilancio(getBilancio());
+		attributi.setTipoAccantonamentoFondiDubbiaEsigibilita(TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
+		attributi.setStatoAccantonamentoFondiDubbiaEsigibilita(StatoAccantonamentoFondiDubbiaEsigibilita.BOZZA);
+		attributi.setAccantonamentoGraduale(new BigDecimal(100));
+		attributi.setQuinquennioRiferimento(getBilancio().getAnno() - 1);
+		attributi.setRiscossioneVirtuosa(Boolean.FALSE);
+		attributi.setCreditiStralciati(null);
+		attributi.setCreditiStralciatiFcde(null);
+		attributi.setAccertamentiAnniSuccessivi(null);
+		attributi.setAccertamentiAnniSuccessiviFcde(null);
+		attributi.setVersione(null);
+	}
+	
+	private void popolaListaAccantonamentoFondiDubbiaEsigibilita(AggiornaAccantonamentoFondiDubbiaEsigibilita req) {
+		req.setListaAccantonamentoFondiDubbiaEsigibilita(popolaListaDatiSalvataggio(new AccantonamentoFondiDubbiaEsigibilita(), new ArrayList<AccantonamentoFondiDubbiaEsigibilita>()));
+	}
 }

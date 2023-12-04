@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecser.model.TipoRichiestaEconomale;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Tipologia per la richiesta della cassa economale.
@@ -60,7 +60,7 @@ public class TipologiaRichiestaCassaEconomale implements Serializable {
 	 * @param azioniRichieste  le azioni richieste
 	 * @param azioniConsentite le azioni consentite
 	 */
-	protected void addAbilitazioneRichiestaCassaEconomale(String nome, String url, List<AzioneConsentita> azioniConsentite, AzioniConsentite... azioniRichieste) {
+	protected void addAbilitazioneRichiestaCassaEconomale(String nome, String url, List<AzioneConsentita> azioniConsentite, AzioneConsentitaEnum... azioniRichieste) {
 		AbilitazioneRichiestaCassaEconomale abilitazione = new AbilitazioneRichiestaCassaEconomale();
 		abilitazione.setAbilitato(AzioniConsentiteFactory.isConsentitoAll(azioniConsentite, azioniRichieste));
 		abilitazione.setNome(nome);

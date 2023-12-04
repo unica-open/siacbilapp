@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import org.apache.commons.lang.StringUtils;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.provvedimento.AggiornaProvvedime
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Action per L'aggiornamento di un Provvedimento.
@@ -203,6 +205,8 @@ public class AggiornaProvvedimentoAction extends GenericBilancioAction<AggiornaP
 	 * @return la response del servizio
 	 */
 	private AggiornaProvvedimentoResponse aggiorna() {
+		//task-69
+		//boolean prova = model.getAttoAmministrativo().getBloccoRagioneria();
 		TipoAtto tipoAtto = ComparatorUtils.searchByUid(model.getTipiAtti(), model.getAttoAmministrativo().getTipoAtto());
 		model.getAttoAmministrativo().setTipoAtto(tipoAtto);
 		
@@ -216,9 +220,25 @@ public class AggiornaProvvedimentoAction extends GenericBilancioAction<AggiornaP
 		// Prepara Request
 		AggiornaProvvedimento request = model.creaRequestAggiornaProvvedimento();
 		logServiceRequest(request);
+		
+		if (isAzioneRichiestaAggiornaProvvedimentoSistemaEsterno()) {
+			request.setCodiceInc(defaultGetCodiceInc());
+		}
+		
 		// richiama servizio
 		AggiornaProvvedimentoResponse response = provvedimentoService.aggiornaProvvedimento(request);
 		logServiceResponse(response);
 		return response;
+	}
+	
+	public boolean isAzioneRichiestaAggiornaProvvedimentoSistemaEsterno() {
+		return isAzioneRichiesta(AzioneConsentitaEnum.AGGIORNA_PROVVEDIMENTO_SISTEMA_ESTERNO);
+	}
+	
+
+	private String defaultGetCodiceInc() {
+		return String.format("%s-%s", 
+				sessionHandler.getRichiedente().getOperatore().getCodiceFiscale(), 
+				StringUtils.isBlank(model.getCodiceInc()) ? "BackofficeModificaModalitaPagamentoAttoAllegato" : model.getCodiceInc());
 	}
 }

@@ -43,12 +43,11 @@ import it.csi.siac.siacbilser.model.DettaglioVariazioneCodificaCapitolo;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
-import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * Classe di model per l'inserimento di una Variazione. Contiene una mappatura del model.
@@ -79,7 +78,7 @@ public class InserisciVariazioneModel extends GenericBilancioModel {
 
 	private int uidVariazione;
 	private Integer numeroVariazione;
-	private StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio;
+	private StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio;
 	
 	private Integer idOperazioneAsincrona;
 
@@ -414,18 +413,18 @@ public class InserisciVariazioneModel extends GenericBilancioModel {
 	}
 
 	/**
-	 * @return the statoOperativoVariazioneDiBilancio
+	 * @return the statoOperativoVariazioneBilancio
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoOperativoVariazioneDiBilancio() {
-		return statoOperativoVariazioneDiBilancio;
+	public StatoOperativoVariazioneBilancio getStatoOperativoVariazioneDiBilancio() {
+		return statoOperativoVariazioneBilancio;
 	}
 
 	/**
-	 * @param statoOperativoVariazioneDiBilancio the statoOperativoVariazioneDiBilancio to set
+	 * @param statoOperativoVariazioneBilancio the statoOperativoVariazioneBilancio to set
 	 */
 	public void setStatoOperativoVariazioneDiBilancio(
-			StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio) {
-		this.statoOperativoVariazioneDiBilancio = statoOperativoVariazioneDiBilancio;
+			StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio) {
+		this.statoOperativoVariazioneBilancio = statoOperativoVariazioneBilancio;
 	}
 	
 	/**
@@ -661,7 +660,7 @@ public class InserisciVariazioneModel extends GenericBilancioModel {
 		utility.setData(new Date());
 		utility.setDescrizione(definisci.getDescrizioneVariazione());
 		utility.setEnte(getEnte());
-		utility.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.BOZZA);
+		utility.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio.BOZZA);
 		utility.setTipoVariazione(definisci.getTipoVariazione());
 		//SIAC-6884
 		if(definisci.getDataApertura() != null){
@@ -693,7 +692,7 @@ public class InserisciVariazioneModel extends GenericBilancioModel {
 		utility.setDescrizione(definisci.getDescrizioneVariazione());
 		utility.setEnte(getEnte());
 		utility.setNote(specificaCodifiche.getNote());
-		utility.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.BOZZA);
+		utility.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio.BOZZA);
 		utility.setTipoVariazione(definisci.getTipoVariazione());
 		
 		// Dati specifici
@@ -720,7 +719,8 @@ public class InserisciVariazioneModel extends GenericBilancioModel {
 	 */
 	public void impostaDatiStep4(SpecificaVariazioneModel modelSpecifica) {
 		riepilogo.setNumeroVariazione(modelSpecifica.getNumeroVariazione());
-		riepilogo.setStatoVariazione(StatoOperativoVariazioneDiBilancio.BOZZA);
+		//SIAC-8332-REGP aggiunta la possibilita' che la variazione sia in stato BOZZA o BOZZA-DECb
+		riepilogo.setStatoVariazione(modelSpecifica.getStatoVariazione());
 		riepilogo.setApplicazioneVariazione(definisci.getApplicazione().getDescrizione());
 		riepilogo.setDescrizioneVariazione(definisci.getDescrizioneVariazione());
 		riepilogo.setTipoVariazione(definisci.getTipoVariazione());
@@ -1068,11 +1068,11 @@ public class InserisciVariazioneModel extends GenericBilancioModel {
 	}
 	
 	/**
-	 * Crea una request per il servizio {@link StampaExcelVariazioneDiBilancio}.
+	 * Crea una request per il servizio {@link VariazioneBilancioExcelReport}.
 	 * @return la request creata
 	 */
-	public StampaExcelVariazioneDiBilancio creaRequestStampaExcelVariazioneDiBilancio() {
-		StampaExcelVariazioneDiBilancio req = creaRequest(StampaExcelVariazioneDiBilancio.class);
+	public VariazioneBilancioExcelReport creaRequestStampaExcelVariazioneDiBilancio() {
+		VariazioneBilancioExcelReport req = creaRequest(VariazioneBilancioExcelReport.class);
 		
 		req.setEnte(getEnte());
 		req.setXlsx(getIsXlsx());

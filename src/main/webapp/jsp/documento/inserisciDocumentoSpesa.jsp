@@ -38,7 +38,6 @@ SPDX-License-Identifier: EUPL-1.2
 					<div class="step-content">
 						<div id="step1" class="step-pane active">
 							<h4>Dati principali</h4>
-							<fieldset class="form-horizontal">
 								<div class="control-group">
 									<label for="tipoDocumento" class="control-label">Tipo *</label>
 									<div class="controls">
@@ -167,7 +166,6 @@ SPDX-License-Identifier: EUPL-1.2
 										<s:checkbox id="collegatoCEC" name="documento.collegatoCEC" />
 									</div>
 								</div>
-							</fieldset>
 						</div>
 					</div>
 
@@ -184,11 +182,11 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}documento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}documento/inserisciSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/inserisciSpesa.js"></script>
 
 </body>
 </html>

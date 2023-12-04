@@ -155,7 +155,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}ordinativo/emissioneIncassoStep2Quota.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ordinativo/emissioneIncassoStep2Quota.js"></script>
 
 </body>
 </html>

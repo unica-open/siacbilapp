@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -30,7 +30,7 @@ import it.csi.siac.siacfin2ser.model.StampaIva;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaStampaIvaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoStampaIva,
+public class RisultatiRicercaStampaIvaAjaxAction extends PagedDataTableAjaxAction<ElementoStampaIva,
 	RisultatiRicercaStampaIvaAjaxModel, StampaIva, RicercaSinteticaStampaIva, RicercaSinteticaStampaIvaResponse> {
 	
 	/** Per la serializzazione */
@@ -61,12 +61,12 @@ public class RisultatiRicercaStampaIvaAjaxAction extends GenericRisultatiRicerca
 	}
 	
 	@Override
-	protected ElementoStampaIva ottieniIstanza(StampaIva e) throws FrontEndBusinessException {
+	protected ElementoStampaIva getInstance(StampaIva e) throws FrontEndBusinessException {
 		return new ElementoStampaIva(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaStampaIvaResponse ottieniResponse(RicercaSinteticaStampaIva request) {
+	protected RicercaSinteticaStampaIvaResponse getResponse(RicercaSinteticaStampaIva request) {
 		return stampaIvaService.ricercaSinteticaStampaIva(request);
 	}
 	
@@ -76,7 +76,7 @@ public class RisultatiRicercaStampaIvaAjaxAction extends GenericRisultatiRicerca
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoStampaIva instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoStampaIva instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		// Gestione delle azioni consentite
 		Integer uidFile = instance.getUidFile();

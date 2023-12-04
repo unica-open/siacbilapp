@@ -374,8 +374,8 @@
         } else {
             $('#causale770ModaleRitenute').html('');
         }
-        if(dettaglioOnere && dettaglioOnere.tipoSommaNonSoggetta) {
-            $('#codiceSommaNonModaleRitenute').html(dettaglioOnere.tipoSommaNonSoggetta.codice + ' - ' + dettaglioOnere.tipoSommaNonSoggetta.descrizione);
+        if(dettaglioOnere && dettaglioOnere.codiceSommaNonSoggetta) {
+            $('#codiceSommaNonModaleRitenute').html(dettaglioOnere.codiceSommaNonSoggetta.codice + ' - ' + dettaglioOnere.codiceSommaNonSoggetta.descrizione);
         } else {
             $('#codiceSommaNonModaleRitenute').html('');
         }

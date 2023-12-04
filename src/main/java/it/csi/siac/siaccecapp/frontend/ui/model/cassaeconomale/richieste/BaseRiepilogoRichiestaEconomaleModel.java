@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
-import it.csi.siac.siacbilapp.frontend.ui.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
@@ -127,7 +127,7 @@ public abstract class BaseRiepilogoRichiestaEconomaleModel extends BaseRichiesta
 	 * @return the disponibileMovimentoGestione
 	 */
 	public BigDecimal getDisponibileMovimentoGestione() {
-		Impegno mg = getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null ? getSubMovimentoGestione() : getMovimentoGestione();
+		Impegno mg = getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null ? getSubMovimentoGestione() : getMovimentoGestione();
 		return mg != null ? mg.getDisponibilitaLiquidare() : null;
 	}
 	
@@ -136,7 +136,7 @@ public abstract class BaseRiepilogoRichiestaEconomaleModel extends BaseRichiesta
 	 */
 	public String getFlagCassaEconomaleMovimentoGestione() {
 		// SIAC-5623
-		Impegno mg = getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null ? getSubMovimentoGestione() : getMovimentoGestione();
+		Impegno mg = getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null ? getSubMovimentoGestione() : getMovimentoGestione();
 		return mg == null
 			? null
 			: mg.isFlagCassaEconomale() ? "SI" : "NO";
@@ -356,18 +356,29 @@ public abstract class BaseRiepilogoRichiestaEconomaleModel extends BaseRichiesta
 		
 		final StringBuilder sb = new StringBuilder();
 		final String separator = " - ";
+		
 		if(isCassaMista()) {
 			sb.append("Cassa ")
-				.append(movimento.getModalitaPagamentoCassa().getDescrizione())
-				.append(separator)
-				.append("Dipendente ");
+			.append(movimento.getModalitaPagamentoCassa().getDescrizione());
+			addModalitaPagamentoDipendenteToStringBuilder(sb, movimento, separator);
+		} else {
+			addModalitaPagamentoDipendenteToStringBuilder(sb, movimento, separator);
 		}
-		sb.append(movimento.getModalitaPagamentoDipendente().getDescrizione());
-		if(movimento.getDettaglioPagamento()!=null && !movimento.getDettaglioPagamento().isEmpty()) {
+		
+		if(movimento.getDettaglioPagamento() != null && !movimento.getDettaglioPagamento().isEmpty()) {
 			sb.append(separator)
 			.append(movimento.getDettaglioPagamento());
 		}
 		return sb.toString();
+	}
+	
+	private void addModalitaPagamentoDipendenteToStringBuilder(StringBuilder sb, Movimento movimento, String separator) {
+		if(movimento.getModalitaPagamentoDipendente() != null 
+				&& movimento.getModalitaPagamentoDipendente().getDescrizione() != null) {
+			sb.append(separator)
+			.append("Dipendente ")
+			.append(movimento.getModalitaPagamentoDipendente().getDescrizione());
+		}
 	}
 	
 	/**

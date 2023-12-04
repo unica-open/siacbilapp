@@ -80,7 +80,7 @@ public abstract class BaseInserisciAggiornaPagamentoCassaEconomaleAction<M exten
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(ListeGestioneSoggetto.class, response));
 			}
 			listaClassiSoggetto = response.getListaClasseSoggetto();
 			ComparatorUtils.sortByCodiceFin(listaClassiSoggetto);
@@ -109,7 +109,7 @@ public abstract class BaseInserisciAggiornaPagamentoCassaEconomaleAction<M exten
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaValuta.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaValuta = response.getListaValuta();
@@ -139,7 +139,7 @@ public abstract class BaseInserisciAggiornaPagamentoCassaEconomaleAction<M exten
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaTipoGiustificativo.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaTipoGiustificativo = response.getTipiGiustificativi();

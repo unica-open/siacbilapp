@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
@@ -35,7 +35,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaDocumentoIvaSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<
+public class RisultatiRicercaDocumentoIvaSpesaAjaxAction extends PagedDataTableAjaxAction<
 		ElementoDocumentoIva<DocumentoSpesa, SubdocumentoSpesa, SubdocumentoIvaSpesa>, 
 		RisultatiRicercaDocumentoIvaAjaxModel<DocumentoSpesa, SubdocumentoSpesa, SubdocumentoIvaSpesa>,
 		SubdocumentoIvaSpesa,
@@ -87,12 +87,12 @@ public class RisultatiRicercaDocumentoIvaSpesaAjaxAction extends GenericRisultat
 	}
 	
 	@Override
-	protected ElementoDocumentoIva<DocumentoSpesa, SubdocumentoSpesa, SubdocumentoIvaSpesa> ottieniIstanza(SubdocumentoIvaSpesa e) {
+	protected ElementoDocumentoIva<DocumentoSpesa, SubdocumentoSpesa, SubdocumentoIvaSpesa> getInstance(SubdocumentoIvaSpesa e) {
 		return new ElementoDocumentoIva<DocumentoSpesa, SubdocumentoSpesa, SubdocumentoIvaSpesa>(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaSubdocumentoIvaSpesaResponse ottieniResponse(RicercaSinteticaSubdocumentoIvaSpesa request) {
+	protected RicercaSinteticaSubdocumentoIvaSpesaResponse getResponse(RicercaSinteticaSubdocumentoIvaSpesa request) {
 		return documentoIvaSpesaService.ricercaSinteticaSubdocumentoIvaSpesa(request);
 	}
 	
@@ -102,11 +102,11 @@ public class RisultatiRicercaDocumentoIvaSpesaAjaxAction extends GenericRisultat
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoDocumentoIva<DocumentoSpesa, SubdocumentoSpesa, SubdocumentoIvaSpesa> instance,
+	protected void handleAzioniConsentite(ElementoDocumentoIva<DocumentoSpesa, SubdocumentoSpesa, SubdocumentoIvaSpesa> instance,
 			boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_IVA_SPESA_AGGIORNA, listaAzioniConsentite);
-		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioniConsentite.DOCUMENTO_IVA_SPESA_CONSULTA, listaAzioniConsentite);
+		Boolean isAggiornaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_IVA_SPESA_AGGIORNA, listaAzioniConsentite);
+		Boolean isConsultaConsentita = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.DOCUMENTO_IVA_SPESA_CONSULTA, listaAzioniConsentite);
 		
 		// Gestione delle azioni consentite
 		StringBuilder azioniBuilder = new StringBuilder();

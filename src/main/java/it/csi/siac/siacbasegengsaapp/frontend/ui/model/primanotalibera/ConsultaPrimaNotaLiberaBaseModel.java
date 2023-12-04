@@ -6,7 +6,6 @@ package it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotalibera;
 
 import java.math.BigDecimal;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siacgenser.frontend.webservice.msg.RicercaDettaglioPrimaNota;
 import it.csi.siac.siacgenser.model.CausaleEP;
@@ -18,7 +17,7 @@ import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
  * @author Marchino Alessandro
  * @version 1.0.0 - 11/12/2017
  */
-public abstract class ConsultaPrimaNotaLiberaBaseModel extends GenericBilancioModel {
+public abstract class ConsultaPrimaNotaLiberaBaseModel extends BasePrimaNotaLiberaModel {
 
 	/**
 	 * Per la serializzazione
@@ -31,7 +30,7 @@ public abstract class ConsultaPrimaNotaLiberaBaseModel extends GenericBilancioMo
 	
 	// SIAC-5853
 	private boolean dataRegistrazioneDefinitivaVisibile;
-	
+		
 	/**
 	 * @return the ambito
 	 */

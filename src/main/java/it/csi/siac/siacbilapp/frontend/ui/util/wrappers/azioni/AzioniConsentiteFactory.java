@@ -6,13 +6,12 @@ package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe statica per l'ottenimento delle informazioni sull'azione consentita.
@@ -23,43 +22,43 @@ import it.csi.siac.siaccorser.model.AzioneConsentita;
  */
 public final class AzioniConsentiteFactory {
 	
-	private static final Map<String, List<AzioniConsentite>> MAPPATURA_AZIONI_CONSENTITE = new HashMap<String, List<AzioniConsentite>>();
+	private static final Map<String, List<AzioneConsentitaEnum>> MAPPATURA_AZIONI_CONSENTITE = new HashMap<String, List<AzioneConsentitaEnum>>();
 	// Inizializzazione della mappatura
 	static {
-		List<AzioniConsentite> listaStringheUscitaPrevisione = Arrays.asList(AzioniConsentite.CAPITOLO_USCITA_PREVISIONE_AGGIORNA, 
-				AzioniConsentite.CAPITOLO_USCITA_PREVISIONE_ANNULLA, AzioniConsentite.CAPITOLO_USCITA_PREVISIONE_ELIMINA, 
-				AzioniConsentite.CAPITOLO_USCITA_PREVISIONE_INSERISCI);
-		List<AzioniConsentite> listaStringheUscitaGestione = Arrays.asList(AzioniConsentite.CAPITOLO_USCITA_GESTIONE_AGGIORNA, 
-				AzioniConsentite.CAPITOLO_USCITA_GESTIONE_ANNULLA, AzioniConsentite.CAPITOLO_USCITA_GESTIONE_ELIMINA, 
-				AzioniConsentite.CAPITOLO_USCITA_GESTIONE_INSERISCI);
-		List<AzioniConsentite> listaStringheEntrataPrevisione = Arrays.asList(AzioniConsentite.CAPITOLO_ENTRATA_PREVISIONE_AGGIORNA, 
-				AzioniConsentite.CAPITOLO_ENTRATA_PREVISIONE_ANNULLA, AzioniConsentite.CAPITOLO_ENTRATA_PREVISIONE_ELIMINA, 
-				AzioniConsentite.CAPITOLO_ENTRATA_PREVISIONE_INSERISCI);
-		List<AzioniConsentite> listaStringheEntrataGestione = Arrays.asList(AzioniConsentite.CAPITOLO_ENTRATA_GESTIONE_AGGIORNA, 
-				AzioniConsentite.CAPITOLO_ENTRATA_GESTIONE_ANNULLA, AzioniConsentite.CAPITOLO_ENTRATA_GESTIONE_ELIMINA, 
-				AzioniConsentite.CAPITOLO_ENTRATA_GESTIONE_INSERISCI);
+		List<AzioneConsentitaEnum> listaStringheUscitaPrevisione = Arrays.asList(AzioneConsentitaEnum.CAPITOLO_USCITA_PREVISIONE_AGGIORNA, 
+				AzioneConsentitaEnum.CAPITOLO_USCITA_PREVISIONE_ANNULLA, AzioneConsentitaEnum.CAPITOLO_USCITA_PREVISIONE_ELIMINA, 
+				AzioneConsentitaEnum.CAPITOLO_USCITA_PREVISIONE_INSERISCI);
+		List<AzioneConsentitaEnum> listaStringheUscitaGestione = Arrays.asList(AzioneConsentitaEnum.CAPITOLO_USCITA_GESTIONE_AGGIORNA, 
+				AzioneConsentitaEnum.CAPITOLO_USCITA_GESTIONE_ANNULLA, AzioneConsentitaEnum.CAPITOLO_USCITA_GESTIONE_ELIMINA, 
+				AzioneConsentitaEnum.CAPITOLO_USCITA_GESTIONE_INSERISCI);
+		List<AzioneConsentitaEnum> listaStringheEntrataPrevisione = Arrays.asList(AzioneConsentitaEnum.CAPITOLO_ENTRATA_PREVISIONE_AGGIORNA, 
+				AzioneConsentitaEnum.CAPITOLO_ENTRATA_PREVISIONE_ANNULLA, AzioneConsentitaEnum.CAPITOLO_ENTRATA_PREVISIONE_ELIMINA, 
+				AzioneConsentitaEnum.CAPITOLO_ENTRATA_PREVISIONE_INSERISCI);
+		List<AzioneConsentitaEnum> listaStringheEntrataGestione = Arrays.asList(AzioneConsentitaEnum.CAPITOLO_ENTRATA_GESTIONE_AGGIORNA, 
+				AzioneConsentitaEnum.CAPITOLO_ENTRATA_GESTIONE_ANNULLA, AzioneConsentitaEnum.CAPITOLO_ENTRATA_GESTIONE_ELIMINA, 
+				AzioneConsentitaEnum.CAPITOLO_ENTRATA_GESTIONE_INSERISCI);
 		
-		List<AzioniConsentite> listaStringheVincolo = Arrays.asList(AzioniConsentite.VINCOLO_CONSULTA, AzioniConsentite.VINCOLO_GESTISCI);
+		List<AzioneConsentitaEnum> listaStringheVincolo = Arrays.asList(AzioneConsentitaEnum.VINCOLO_CONSULTA, AzioneConsentitaEnum.VINCOLO_GESTISCI);
 		
-		List<AzioniConsentite> listaStringheCronoProgrammaNelProgetto = Arrays.asList(AzioniConsentite.CRONO_NEL_PROGETTO_CONSULTA, 
-				AzioniConsentite.CRONO_NEL_PROGETTO_AGGIORNA);
+		List<AzioneConsentitaEnum> listaStringheCronoProgrammaNelProgetto = Arrays.asList(AzioneConsentitaEnum.CRONO_NEL_PROGETTO_CONSULTA, 
+				AzioneConsentitaEnum.CRONO_NEL_PROGETTO_AGGIORNA);
 		
-		List<AzioniConsentite> listaStringheDocumentoSpesa = Arrays.asList(AzioniConsentite.DOCUMENTO_SPESA_CONSULTA, 
-				AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA, AzioniConsentite.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, AzioniConsentite.DOCUMENTO_SPESA_ANNULLA, 
-				AzioniConsentite.DOCUMENTO_SPESA_GESTIONE_ACQUISTI, AzioniConsentite.DOCUMENTO_SPESA_DECENTRATO, AzioniConsentite.DOCUMENTO_SPESA_LIMITA_DATI_FEL);
-		List<AzioniConsentite> listaStringheDocumentoEntrata = Arrays.asList(AzioniConsentite.DOCUMENTO_ENTRATA_CONSULTA, 
-				AzioniConsentite.DOCUMENTO_ENTRATA_AGGIORNA, AzioniConsentite.DOCUMENTO_ENTRATA_AGGIORNA_QUIENTANZA, AzioniConsentite.DOCUMENTO_ENTRATA_ANNULLA,
-				AzioniConsentite.DOCUMENTO_ENTRATA_DECENTRATO);
+		List<AzioneConsentitaEnum> listaStringheDocumentoSpesa = Arrays.asList(AzioneConsentitaEnum.DOCUMENTO_SPESA_CONSULTA, 
+				AzioneConsentitaEnum.DOCUMENTO_SPESA_AGGIORNA, AzioneConsentitaEnum.DOCUMENTO_SPESA_AGGIORNA_QUIENTANZA, AzioneConsentitaEnum.DOCUMENTO_SPESA_ANNULLA, 
+				AzioneConsentitaEnum.DOCUMENTO_SPESA_GESTIONE_ACQUISTI, AzioneConsentitaEnum.DOCUMENTO_SPESA_DECENTRATO, AzioneConsentitaEnum.DOCUMENTO_SPESA_LIMITA_DATI_FEL);
+		List<AzioneConsentitaEnum> listaStringheDocumentoEntrata = Arrays.asList(AzioneConsentitaEnum.DOCUMENTO_ENTRATA_CONSULTA, 
+				AzioneConsentitaEnum.DOCUMENTO_ENTRATA_AGGIORNA, AzioneConsentitaEnum.DOCUMENTO_ENTRATA_AGGIORNA_QUIENTANZA, AzioneConsentitaEnum.DOCUMENTO_ENTRATA_ANNULLA,
+				AzioneConsentitaEnum.DOCUMENTO_ENTRATA_DECENTRATO);
 
-		List<AzioniConsentite> listaStringheCausaleSpesa = Arrays.asList(AzioniConsentite.CAUSALE_SPESA_CONSULTA, AzioniConsentite.CAUSALE_SPESA_GESTISCI);
-		List<AzioniConsentite> listaStringheCausaleEntrata = Arrays.asList(AzioniConsentite.CAUSALE_ENTRATA_CONSULTA, AzioniConsentite.CAUSALE_ENTRATA_GESTISCI);
+		List<AzioneConsentitaEnum> listaStringheCausaleSpesa = Arrays.asList(AzioneConsentitaEnum.CAUSALE_SPESA_CONSULTA, AzioneConsentitaEnum.CAUSALE_SPESA_GESTISCI);
+		List<AzioneConsentitaEnum> listaStringheCausaleEntrata = Arrays.asList(AzioneConsentitaEnum.CAUSALE_ENTRATA_CONSULTA, AzioneConsentitaEnum.CAUSALE_ENTRATA_GESTISCI);
 		
-		List<AzioniConsentite> listaStringhePreDocumentoSpesa = Arrays.asList(AzioniConsentite.PREDOCUMENTO_SPESA_INSERISCI, 
-				AzioniConsentite.PREDOCUMENTO_SPESA_INSERISCI_DECENTRATO, AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA, 
-				AzioniConsentite.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, AzioniConsentite.PREDOCUMENTO_SPESA_CONSULTA);
-		List<AzioniConsentite> listaStringhePreDocumentoEntrata = Arrays.asList(AzioniConsentite.PREDOCUMENTO_ENTRATA_INSERISCI, 
-				AzioniConsentite.PREDOCUMENTO_ENTRATA_INSERISCI_DECENTRATO, AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA, 
-				AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, AzioniConsentite.PREDOCUMENTO_ENTRATA_CONSULTA);
+		List<AzioneConsentitaEnum> listaStringhePreDocumentoSpesa = Arrays.asList(AzioneConsentitaEnum.PREDOCUMENTO_SPESA_INSERISCI, 
+				AzioneConsentitaEnum.PREDOCUMENTO_SPESA_INSERISCI_DECENTRATO, AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA, 
+				AzioneConsentitaEnum.PREDOCUMENTO_SPESA_AGGIORNA_DECENTRATO, AzioneConsentitaEnum.PREDOCUMENTO_SPESA_CONSULTA);
+		List<AzioneConsentitaEnum> listaStringhePreDocumentoEntrata = Arrays.asList(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_INSERISCI, 
+				AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_INSERISCI_DECENTRATO, AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA, 
+				AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_CONSULTA);
 		
 
 		MAPPATURA_AZIONI_CONSENTITE.put(TipoCapitolo.CAPITOLO_USCITA_PREVISIONE.name(), listaStringheUscitaPrevisione);
@@ -94,7 +93,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentito(TipoCapitolo tipoCapitolo, List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(0);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(0);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -107,7 +106,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'annullamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAnnullaConsentito(TipoCapitolo tipoCapitolo, List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -120,7 +119,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'eliminazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isEliminaConsentito(TipoCapitolo tipoCapitolo, List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(2);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(2);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -133,7 +132,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'inserimento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isInserisciConsentito(TipoCapitolo tipoCapitolo, List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(3);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get(tipoCapitolo.name()).get(3);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -145,7 +144,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoVincolo(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -157,7 +156,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'annullamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAnnullaConsentitoVincolo(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -169,8 +168,8 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoVincolo(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azioneConsultazioneVincolo = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(0);
-		AzioniConsentite azioneGestioneVincolo = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(1);
+		AzioneConsentitaEnum azioneConsultazioneVincolo = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(0);
+		AzioneConsentitaEnum azioneGestioneVincolo = MAPPATURA_AZIONI_CONSENTITE.get("Vincolo").get(1);
 		return Boolean.valueOf(isConsentito(azioneConsultazioneVincolo, listaAzioniConsentite) ||
 				isConsentito(azioneGestioneVincolo, listaAzioniConsentite));
 	}
@@ -183,7 +182,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoCronoprogrammaNelProgetto(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CronoprogrammaNelProgetto").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CronoprogrammaNelProgetto").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -195,7 +194,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'annullamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAnnullaConsentitoCronoprogrammaNelProgetto(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CronoprogrammaNelProgetto").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CronoprogrammaNelProgetto").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -209,7 +208,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoCronoprogrammaNelProgetto(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azioneConsultazioneCronopNelProg = MAPPATURA_AZIONI_CONSENTITE.get("CronoprogrammaNelProgetto").get(0);
+		AzioneConsentitaEnum azioneConsultazioneCronopNelProg = MAPPATURA_AZIONI_CONSENTITE.get("CronoprogrammaNelProgetto").get(0);
 		return Boolean.valueOf(isConsentito(azioneConsultazioneCronopNelProg, listaAzioniConsentite));
 	}
 	
@@ -222,8 +221,8 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoDocumentoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(1);
-		AzioniConsentite azioneDecentrata = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(5);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(1);
+		AzioneConsentitaEnum azioneDecentrata = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(5);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite) || isConsentito(azioneDecentrata, listaAzioniConsentite));
 	}
 	
@@ -235,7 +234,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento del documentoSpesa &eacute; Quietanza &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoDocumentoSpesaQuietanza(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(2);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(2);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -248,7 +247,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'annullamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAnnullaConsentitoDocumentoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(3);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(3);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -260,7 +259,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoDocumentoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(0);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(0);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -272,7 +271,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isGestioneProceduraAcquistiConsentitoDocumentoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(4);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoSpesa").get(4);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -285,8 +284,8 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoDocumentoEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(1);
-		AzioniConsentite azioneDecentrata = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(4);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(1);
+		AzioneConsentitaEnum azioneDecentrata = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(4);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite) || isConsentito(azioneDecentrata, listaAzioniConsentite));
 	}
 	
@@ -298,7 +297,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento del DocumentoEntrata &eacute; Quietanza &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoDocumentoEntrataQuietanza(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(2);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(2);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -311,7 +310,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'annullamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAnnullaConsentitoDocumentoEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(3);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(3);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -323,7 +322,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoDocumentoEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(0);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("DocumentoEntrata").get(0);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 
@@ -336,7 +335,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la gestione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isGestioneIvaConsentito(List<AzioneConsentita> listaAzioniConsentite) {
-		return Boolean.valueOf(isConsentito(AzioniConsentite.GESTIONE_IVA, listaAzioniConsentite));
+		return Boolean.valueOf(isConsentito(AzioneConsentitaEnum.GESTIONE_IVA, listaAzioniConsentite));
 	}
 	
 	/**
@@ -347,7 +346,7 @@ public final class AzioniConsentiteFactory {
 	 * @return l'Azione Consentita relativa al documento decentrato, se presente; <code>null</code> in caso contrario
 	 */
 	public static AzioneConsentita findAzioneConsentitaDecentratoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = AzioniConsentite.DOCUMENTO_SPESA_DECENTRATO;
+		AzioneConsentitaEnum azione = AzioneConsentitaEnum.DOCUMENTO_SPESA_DECENTRATO;
 		for(AzioneConsentita az : listaAzioniConsentite) {
 			if(az.getAzione().getNome().equalsIgnoreCase(azione.getNomeAzione())) {
 				return az;
@@ -364,7 +363,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoCausaleSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleSpesa").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleSpesa").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -377,7 +376,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'annullamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAnnullaConsentitoCausaleSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleSpesa").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleSpesa").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -389,7 +388,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoCausaleSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleSpesa").get(0);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleSpesa").get(0);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -401,7 +400,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'aggiornamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoCausaleEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleEntrata").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleEntrata").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -414,7 +413,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se l'annullamento &eacute; consentito; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAnnullaConsentitoCausaleEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleEntrata").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleEntrata").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -426,7 +425,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoCausaleEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleEntrata").get(0);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("CausaleEntrata").get(0);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -438,7 +437,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoPreDocumentoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(4);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(4);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -450,8 +449,8 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isInserisciConsentitoPreDocumentoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(0);
-		AzioniConsentite azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(0);
+		AzioneConsentitaEnum azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite) || isConsentito(azioneDec, listaAzioniConsentite));
 	}
 	
@@ -463,8 +462,8 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoPreDocumentoSpesa(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(2);
-		AzioniConsentite azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(3);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(2);
+		AzioneConsentitaEnum azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoSpesa").get(3);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite) || isConsentito(azioneDec, listaAzioniConsentite));
 	}
 	
@@ -476,7 +475,7 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isConsultaConsentitoPreDocumentoEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(4);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(4);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite));
 	}
 	
@@ -488,8 +487,8 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isInserisciConsentitoPreDocumentoEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(0);
-		AzioniConsentite azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(1);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(0);
+		AzioneConsentitaEnum azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(1);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite) || isConsentito(azioneDec, listaAzioniConsentite));
 	}
 	
@@ -501,8 +500,8 @@ public final class AzioniConsentiteFactory {
 	 * @return <code>true</code> se la consultazione &eacute; consentita; <code>false</code> in caso contrario
 	 */
 	public static Boolean isAggiornaConsentitoPreDocumentoEntrata(List<AzioneConsentita> listaAzioniConsentite) {
-		AzioniConsentite azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(2);
-		AzioniConsentite azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(3);
+		AzioneConsentitaEnum azione = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(2);
+		AzioneConsentitaEnum azioneDec = MAPPATURA_AZIONI_CONSENTITE.get("PreDocumentoEntrata").get(3);
 		return Boolean.valueOf(isConsentito(azione, listaAzioniConsentite) || isConsentito(azioneDec, listaAzioniConsentite));
 	}
 	
@@ -517,13 +516,8 @@ public final class AzioniConsentiteFactory {
 	 * 
 	 * @return <code>true</code> se l'azione &eacute; consentita; <code>false</code> in caso contrario
 	 */
-	public static boolean isConsentito(AzioniConsentite azione, List<AzioneConsentita> listaAzioniConsentite) {
-		for(AzioneConsentita az : listaAzioniConsentite) {
-			if(az.getAzione().getNome().equalsIgnoreCase(azione.getNomeAzione())) {
-				return true;
-			}
-		}
-		return false;
+	public static boolean isConsentito(AzioneConsentitaEnum azione, List<AzioneConsentita> listaAzioniConsentite) {
+		return AzioneConsentitaEnum.isConsentito(azione, listaAzioniConsentite);
 	}
 	
 	/**
@@ -534,21 +528,8 @@ public final class AzioniConsentiteFactory {
 	 * 
 	 * @return <code>true</code> se l'azione &eacute; consentita; <code>false</code> in caso contrario
 	 */
-	public static boolean isConsentitoAll(List<AzioneConsentita> listaAzioniConsentite, AzioniConsentite... azioni) {
-		boolean consentito = !listaAzioniConsentite.isEmpty() && azioni != null && azioni.length > 0;
-		for(int i = 0; consentito && i < azioni.length; i++) {
-			AzioniConsentite azione = azioni[i];
-			// Ripristino il booleano a false
-			consentito = false;
-			
-			for(Iterator<AzioneConsentita> it = listaAzioniConsentite.iterator(); it.hasNext() && !consentito;) {
-				AzioneConsentita az = it.next();
-				if(az.getAzione().getNome().equalsIgnoreCase(azione.getNomeAzione())) {
-					consentito = true;
-				}
-			}
-		}
-		return consentito;
+	public static boolean isConsentitoAll(List<AzioneConsentita> listaAzioniConsentite, AzioneConsentitaEnum... azioni) {
+		return AzioneConsentitaEnum.isConsentitoAll(listaAzioniConsentite, azioni);
 	}
 
 }

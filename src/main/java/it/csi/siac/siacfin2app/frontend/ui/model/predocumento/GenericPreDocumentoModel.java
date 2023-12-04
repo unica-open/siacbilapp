@@ -20,6 +20,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTipoDocumento;
 import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DatiAnagraficiPreDocumento;
@@ -67,7 +68,7 @@ public class GenericPreDocumentoModel extends GenericBilancioModel {
 	
 	//SIAC-6428
 	private Ordinativo ordinativoSubCollegato;
-	private Soggetto   soggettoOrdinativo;
+	private Soggetto soggettoOrdinativo;
 
 	
 	private List<TipoCausale> listaTipoCausale = new ArrayList<TipoCausale>();
@@ -392,8 +393,46 @@ public class GenericPreDocumentoModel extends GenericBilancioModel {
 		return sb.toString();
 	}
 
+	//SIAC-6780
+	/**
+	 * @return the datiRiferimentoAttoAmministrativo
+	 */
+	public String getDatiRiferimentoProvvisorioCassa() {
+		ProvvisorioDiCassa pdc = getProvvisorioCassa();
+		
+		if(pdc == null || pdc.getAnno() == 0 || pdc.getNumero() == 0 || pdc.getUid() == 0) {
+			return "";
+		}
+		
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(": ");
+		sb.append(pdc.getAnno());
+		sb.append(" / ");
+		sb.append(pdc.getNumero());
+		sb.append(pdc.getCausale());
+		
+		return sb.toString();
+	}
+	//
 	
 	/* ***** Requests ***** */
+	
+	/**
+	 * Crea una request per il servizio di {@link LeggiContiTesoreria} a partire
+	 * dal model.
+	 * 
+	 * @return la request creata
+	 */
+	public LeggiContiTesoreria creaRequestLeggiContiTesoreria() {
+		LeggiContiTesoreria request = new LeggiContiTesoreria();
+
+		request.setDataOra(new Date());
+		request.setEnte(getEnte());
+		request.setRichiedente(getRichiedente());
+
+		return request;
+	}
 	
 	/**
 	 * Crea una request per il servizio di {@link Liste}.
@@ -638,6 +677,10 @@ public class GenericPreDocumentoModel extends GenericBilancioModel {
 		parametroRicercaProvvisorio.setNumero(provvisorioCassa.getNumero());
 		parametroRicercaProvvisorio.setTipoProvvisorio(provvisorioCassa.getTipoProvvisorioDiCassa());
 		ricercaProvvisoriDiCassa.setParametroRicercaProvvisorio(parametroRicercaProvvisorio);
+		
+		//SIAC-7421
+		ricercaProvvisoriDiCassa.setNumPagina(1);
+		ricercaProvvisoriDiCassa.setNumRisultatiPerPagina(5);
 
 		return ricercaProvvisoriDiCassa;
 	}
@@ -727,7 +770,7 @@ public class GenericPreDocumentoModel extends GenericBilancioModel {
 	 * @return the datiRiferimentoMovimentoGestione
 	 */
 	protected String computeDatiRiferimentoMovimentoGestione(MovimentoGestione mg, MovimentoGestione smg) {
-		if(mg == null || mg.getAnnoMovimento() == 0 || mg.getNumero() == null) {
+		if(mg == null || mg.getAnnoMovimento() == 0 || mg.getNumeroBigDecimal() == null) {
 			return "";
 		}
 		
@@ -735,10 +778,10 @@ public class GenericPreDocumentoModel extends GenericBilancioModel {
 		sb.append(": ");
 		sb.append(mg.getAnnoMovimento());
 		sb.append(" / ");
-		sb.append(FormatUtils.formatPlain(mg.getNumero()));
-		if(smg != null && smg.getNumero() != null) {
+		sb.append(FormatUtils.formatPlain(mg.getNumeroBigDecimal()));
+		if(smg != null && smg.getNumeroBigDecimal() != null) {
 			sb.append(" - ");
-			sb.append(FormatUtils.formatPlain(smg.getNumero()));
+			sb.append(FormatUtils.formatPlain(smg.getNumeroBigDecimal()));
 		}
 		
 		return sb.toString();

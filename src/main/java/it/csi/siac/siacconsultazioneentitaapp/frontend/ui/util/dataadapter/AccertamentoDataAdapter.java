@@ -32,7 +32,8 @@ public class AccertamentoDataAdapter extends EntitaConsultabileDataAdapter {
 					new BaseDataInfo("Soggetto", "{0}-{1}","soggetto_code", "soggetto_desc"),
 					new SimpleDataInfo("Stato", "accertamento_stato_desc"),
 					new BaseDataInfo("Capitolo", "{0}/{1}/{2}", "capitolo_anno","capitolo_numero", "capitolo_articolo"),
-					new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc"),
+					//SIAC-8188 "attoamm_oggetto", "attoal_causale"
+					new NumeroProvvedimentoDataInfo("N. Provv.", "top", "attoamm_anno","attoamm_numero", "attoamm_tipo_code", "attoamm_tipo_desc" , "attoamm_sac_code", "attoamm_sac_desc", "attoamm_stato_desc", "attoamm_oggetto", "attoal_causale"),
 					new PianoDeiContiDataInfo("Piano dei Conti", "left", "pdc_code", "pdc_desc"),
 					new CurrencyDataInfo("Importo", "importo", true)
 
@@ -44,20 +45,25 @@ public class AccertamentoDataAdapter extends EntitaConsultabileDataAdapter {
 					new SimpleDataInfo("Descrizione accertamento", "accertamento_desc").forceNoEscape(),
 					new BaseDataInfo("Soggetto", "{0}-{1}","soggetto_code", "soggetto_desc").forceNoEscape(),
 					new SimpleDataInfo("Stato", "accertamento_stato_desc").forceNoEscape(),
+					//SIAC-8351
+					new BaseDataInfo("Struttura Competente" , "{0} - {1}", "acc_sac_code", "acc_sac_desc").forceNoEscape(),
+					
+					//CAPITOLO
 					new PlainNumberDataInfo("N.Capitolo", "capitolo_numero"),
 					new PlainNumberDataInfo("N.Articolo", "capitolo_articolo"),
 					new PlainNumberDataInfo("Anno capitolo", "capitolo_anno"),
-					new PlainNumberDataInfo("Provvedimento", "attoamm_numero"),					
-					new SimpleDataInfo("Descrizione provvedimento","attoamm_oggetto").forceNoEscape(),	
+					//SIAC-8351
+					new BaseDataInfo("Struttura Amm. capitolo" , "{0} - {1}", "cap_sac_code", "cap_sac_desc").forceNoEscape(),
 
+					//PROVVEDIMENYO
 					new SimpleDataInfo("Anno provv.", "attoamm_anno"),
+					new PlainNumberDataInfo("Numero provv.", "attoamm_numero"),
+					new BaseDataInfo("Tipo provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc").forceNoEscape(),
+					new SimpleDataInfo("Descrizione provvedimento","attoamm_oggetto").forceNoEscape(),
+					new BaseDataInfo("Sruttura Provvedimento" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc").forceNoEscape(),
 					new SimpleDataInfo("Stato provv.", "attoamm_stato_desc").forceNoEscape(),
 					
-					
-					
-					new BaseDataInfo("Tipo provv." , "{0} - {1}", "attoamm_tipo_code", "attoamm_tipo_desc").forceNoEscape(),
 					new BaseDataInfo("Piano dei Conti" , "{0} - {1}", "pdc_code", "pdc_desc").forceNoEscape(),
-					new BaseDataInfo("Sruttura Amm. Cont" , "{0} - {1}", "attoamm_sac_code", "attoamm_sac_desc").forceNoEscape(),
 					//new BaseDataInfo("Soggetto", "{0}-{1}", "soggetto_code", "soggetto_desc").forceNoEscape(),
 					new TypedDataInfo<BigDecimal>("Importo", "importo")
 

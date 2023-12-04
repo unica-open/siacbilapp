@@ -18,7 +18,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotaintegrata.ElementoScritturaPrimaNotaIntegrata;
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacbilser.model.Ambito;
-import it.csi.siac.siacbilser.model.ModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siacfin2ser.model.AccertamentoModelDetail;
 import it.csi.siac.siacfin2ser.model.ImpegnoModelDetail;
 import it.csi.siac.siacfin2ser.model.LiquidazioneModelDetail;
@@ -462,20 +462,20 @@ public abstract class GestioneRateiERiscontiPrimaNotaIntegrataDocumentoBaseModel
 	 * Calcola i model detail per il tipo di collegamento selezionato
 	 * @return i model detail da utilizzare per il tipo di collegamento
 	 */
-	private ModelDetail[] ottieniModelDetailPerTipoCollegamento() {
-		Map<TipoCollegamento, ModelDetail[]> details = new HashMap<TipoCollegamento, ModelDetail[]>();
-		details.put(TipoCollegamento.IMPEGNO, new ModelDetail[] {ImpegnoModelDetail.Soggetto, ImpegnoModelDetail.PianoDeiConti});
-		details.put(TipoCollegamento.SUBIMPEGNO, new ModelDetail[] {SubImpegnoModelDetail.Soggetto, SubImpegnoModelDetail.PianoDeiConti, SubImpegnoModelDetail.Padre});
-		details.put(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_SPESA, new ModelDetail[0]);
+	private ModelDetailEnum[] ottieniModelDetailPerTipoCollegamento() {
+		Map<TipoCollegamento, ModelDetailEnum[]> details = new HashMap<TipoCollegamento, ModelDetailEnum[]>();
+		details.put(TipoCollegamento.IMPEGNO, new ModelDetailEnum[] {ImpegnoModelDetail.Soggetto, ImpegnoModelDetail.PianoDeiConti});
+		details.put(TipoCollegamento.SUBIMPEGNO, new ModelDetailEnum[] {SubImpegnoModelDetail.Soggetto, SubImpegnoModelDetail.PianoDeiConti, SubImpegnoModelDetail.Padre});
+		details.put(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_SPESA, new ModelDetailEnum[0]);
 		
-		details.put(TipoCollegamento.ACCERTAMENTO, new ModelDetail[] {AccertamentoModelDetail.Soggetto, AccertamentoModelDetail.PianoDeiConti});
-		details.put(TipoCollegamento.SUBACCERTAMENTO, new ModelDetail[] {SubAccertamentoModelDetail.Soggetto, SubAccertamentoModelDetail.PianoDeiConti, SubAccertamentoModelDetail.Padre});
-		details.put(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_ENTRATA, new ModelDetail[0]);
+		details.put(TipoCollegamento.ACCERTAMENTO, new ModelDetailEnum[] {AccertamentoModelDetail.Soggetto, AccertamentoModelDetail.PianoDeiConti});
+		details.put(TipoCollegamento.SUBACCERTAMENTO, new ModelDetailEnum[] {SubAccertamentoModelDetail.Soggetto, SubAccertamentoModelDetail.PianoDeiConti, SubAccertamentoModelDetail.Padre});
+		details.put(TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_ENTRATA, new ModelDetailEnum[0]);
 		
-		details.put(TipoCollegamento.LIQUIDAZIONE, new ModelDetail[] {LiquidazioneModelDetail.Impegno, LiquidazioneModelDetail.Soggetto, LiquidazioneModelDetail.PianoDeiConti});
+		details.put(TipoCollegamento.LIQUIDAZIONE, new ModelDetailEnum[] {LiquidazioneModelDetail.Impegno, LiquidazioneModelDetail.Soggetto, LiquidazioneModelDetail.PianoDeiConti});
 		
-		details.put(TipoCollegamento.SUBDOCUMENTO_SPESA, new ModelDetail[] {SubdocumentoSpesaModelDetail.TestataDocumento, SubdocumentoSpesaModelDetail.ImpegnoSubimpegnoPdc, SubdocumentoSpesaModelDetail.Liquidazione, SubdocumentoSpesaModelDetail.Ordinativo});
-		details.put(TipoCollegamento.SUBDOCUMENTO_ENTRATA, new ModelDetail[] {SubdocumentoEntrataModelDetail.TestataDocumento,SubdocumentoEntrataModelDetail.AccertamentoSubaccertamentoPdc, SubdocumentoEntrataModelDetail.Ordinativo});
+		details.put(TipoCollegamento.SUBDOCUMENTO_SPESA, new ModelDetailEnum[] {SubdocumentoSpesaModelDetail.TestataDocumento, SubdocumentoSpesaModelDetail.ImpegnoSubimpegnoPdc, SubdocumentoSpesaModelDetail.Liquidazione, SubdocumentoSpesaModelDetail.Ordinativo});
+		details.put(TipoCollegamento.SUBDOCUMENTO_ENTRATA, new ModelDetailEnum[] {SubdocumentoEntrataModelDetail.TestataDocumento,SubdocumentoEntrataModelDetail.AccertamentoSubaccertamentoPdc, SubdocumentoEntrataModelDetail.Ordinativo});
 		
 		return details.get(getTipoCollegamento());
 	}

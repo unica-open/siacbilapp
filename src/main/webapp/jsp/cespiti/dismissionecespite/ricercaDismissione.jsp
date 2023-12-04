@@ -141,8 +141,8 @@ SPDX-License-Identifier: EUPL-1.2
 	</div>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}predocumento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale.js"></script>
-	<script type="text/javascript" src="${jspath}cespiti/dismissionecespite/ricercaDismissione.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/cespiti/dismissionecespite/ricercaDismissione.js"></script>
 </body>
 </html>

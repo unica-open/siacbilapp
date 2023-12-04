@@ -68,7 +68,7 @@ public class InserisciPreDocumentoSpesaModel extends GenericPreDocumentoSpesaMod
 		preDocumento.setSedeSecondariaSoggetto(impostaEntitaFacoltativa(getSedeSecondariaSoggetto()));
 		preDocumento.setModalitaPagamentoSoggetto(impostaEntitaFacoltativa(getModalitaPagamentoSoggetto()));
 		preDocumento.setStrutturaAmministrativoContabile(impostaEntitaFacoltativa(getStrutturaAmministrativoContabile()));
-		preDocumento.setVoceMutuo(getVoceMutuo());
+
 		preDocumento.setDatiAnagraficiPreDocumento(getDatiAnagraficiPreDocumento());
 		preDocumento.setProvvisorioDiCassa(getProvvisorioCassa());
 		request.setPreDocumentoSpesa(preDocumento);

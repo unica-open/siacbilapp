@@ -26,6 +26,12 @@ import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.wrapper.ImportiCapitoloPerComponente;
 
+/**
+ * The Class AggiornaComponenteImportoCapitoloModel.
+ * @deprecated in base alla segnalazione SIAC-7799. Usare GestioneComponenteImportoCapitoloNelCapitoloModel.
+ * Viene lasciata perche' viene ancora usata  nella pagina di aggiornamento (perche'?)
+ */
+@Deprecated
 public class AggiornaComponenteImportoCapitoloModel extends CapitoloUscitaPrevisioneModel{
 
 	/**

@@ -172,13 +172,6 @@ public class ElementoElencoDocumentiAllegatoSpesa extends ElementoElencoDocument
 		return subdocumento.getCup();
 	}
 	
-	@Override
-	public String getSubdocumentoNumeroMutuo() {
-		if(subdocumento == null || subdocumento.getVoceMutuo() == null) {
-			return "";
-		}
-		return subdocumento.getVoceMutuo().getNumeroMutuo();
-	}
 	
 	@Override
 	protected Date getDataFineValiditaDurc() {

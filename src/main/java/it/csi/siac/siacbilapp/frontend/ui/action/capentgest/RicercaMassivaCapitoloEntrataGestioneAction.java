@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -260,21 +260,21 @@ public class RicercaMassivaCapitoloEntrataGestioneAction
 				checkPresenzaIdEntita(model.getStrutturaAmministrativoContabile()) ||
 				checkPresenzaIdEntita(model.getTipoFinanziamento()) ||
 				checkPresenzaIdEntita(model.getTipoFondo()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico1()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico2()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico3()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico4()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico5()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico6()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico7()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico8()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico9()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico10()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico11()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico12()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico13()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico14()) ||
-				checkPresenzaIdEntita(model.getClassificatoreGenerico15()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico36()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico37()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico38()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico39()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico40()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico41()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico42()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico43()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico44()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico45()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico46()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico47()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico48()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico49()) ||
+				checkPresenzaIdEntita(model.getClassificatoreGenerico50()) ||
 				checkPresenzaIdEntita(model.getSiopeEntrata()) ||
 				checkPresenzaIdEntita(model.getRicorrenteEntrata()) ||
 				checkPresenzaIdEntita(model.getPerimetroSanitarioEntrata()) ||

@@ -8,12 +8,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaContoVincolatoCapitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiIncassoDaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
+import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiave;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
+import it.csi.siac.siacfinser.model.ric.RicercaAccertamentoK;
 
 /**
  * Classe di model per l'emissione degli ordinativi di incasso.
@@ -34,6 +39,8 @@ public class EmissioneOrdinativiIncassoModel extends GenericEmissioneOrdinativiM
 	
 	private List<ProvvisorioDiCassa> listProvvisorioDiCassa = new ArrayList<ProvvisorioDiCassa>();
 	private List<ProvvisorioDiCassa> listProvvisorioDiCassaSelezionati = new ArrayList<ProvvisorioDiCassa>();
+	
+	private List<Integer> idsSubdocumentiEntrata = new ArrayList<Integer>();
 	
 	/** Costruttore vuoto di default */
 	public EmissioneOrdinativiIncassoModel() {
@@ -242,7 +249,41 @@ public class EmissioneOrdinativiIncassoModel extends GenericEmissioneOrdinativiM
 	public void setListProvvisorioDiCassaSelezionati(List<ProvvisorioDiCassa> listProvvisorioDiCassaSelezionati) {
 		this.listProvvisorioDiCassaSelezionati = listProvvisorioDiCassaSelezionati;
 	}
+	
+	public List<Integer> getIdsSubdocumentiEntrata() {
+		return idsSubdocumentiEntrata;
+	}
 
+	public void setIdsSubdocumentiEntrata(List<Integer> idsSubdocumentiEntrata) {
+		this.idsSubdocumentiEntrata = idsSubdocumentiEntrata;
+	}
 
+	/**
+	 * Crea una request per il servizio di {@link RicercaAccertamentoPerChiave}.
+	 * 
+	 * @return la request creata
+	 */
+	//SIAC-7470: ricarico l'accertamento di cui ho bisogno
+	public RicercaAccertamentoPerChiaveOttimizzato creaRequestRicercaAccertamentoPerChiaveOttimizzato(int anno, BigDecimal numero) {
+		RicercaAccertamentoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaAccertamentoPerChiaveOttimizzato.class);
+		request.setEnte(getEnte());
+		RicercaAccertamentoK utility = new RicercaAccertamentoK();
+		utility.setAnnoEsercizio(getAnnoEsercizioInt());
+		utility.setAnnoAccertamento(anno);
+		utility.setNumeroAccertamento(numero);
+		request.setpRicercaAccertamentoK(utility);
+		request.setCaricaSub(true);
+		request.setSubPaginati(true);
+		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
+		datiOpzionaliElencoSubTuttiConSoloGliIds.setEscludiAnnullati(true);
+		request.setDatiOpzionaliElencoSubTuttiConSoloGliIds(datiOpzionaliElencoSubTuttiConSoloGliIds);
+		return request;
+	}
+	
+	@Override
+	protected void impostaSubdocumentiSuRequestContoVincolato(ControllaDisponibilitaCassaContoVincolatoCapitolo request) {
+		request.setIdsSubdocumentiEntrata(getIdsSubdocumentiEntrata());
+		
+	}
 
 }

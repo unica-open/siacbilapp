@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfin2app.frontend.ui.model.ajax.attivitaiva;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.attivitaiva.ElementoGruppoAttivitaIva;
 
 /**
@@ -14,7 +14,7 @@ import it.csi.siac.siacfin2app.frontend.ui.util.wrappers.attivitaiva.ElementoGru
  * @version 1.0.0 24/04/2014
  *
  */
-public class RisultatiRicercaGruppoAttivitaIvaAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoGruppoAttivitaIva> {
+public class RisultatiRicercaGruppoAttivitaIvaAjaxModel extends PagedDataTableAjaxModel<ElementoGruppoAttivitaIva> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 1949840562109980124L;

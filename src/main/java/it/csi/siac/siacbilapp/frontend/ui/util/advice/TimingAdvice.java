@@ -6,7 +6,7 @@ package it.csi.siac.siacbilapp.frontend.ui.util.advice;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonapp.util.log.LogWebUtil;
 
 /**
  * Advice per la temporizzazione dell'invocazione.
@@ -16,7 +16,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
  */
 public class TimingAdvice implements ClassAwareMethodInterceptor {
 
-	private static final LogUtil LOG = new LogUtil(TimingAdvice.class);
+	private static final LogWebUtil LOG = new LogWebUtil(TimingAdvice.class);
 	private Class<?> advisedClass;
 	
 	@Override

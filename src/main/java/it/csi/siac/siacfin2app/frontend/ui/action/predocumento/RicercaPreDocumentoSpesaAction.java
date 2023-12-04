@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -224,7 +224,7 @@ public class RicercaPreDocumentoSpesaAction extends GenericPreDocumentoSpesaActi
 		}
 		if(model.getOrdinativo().getAnno() == null || model.getOrdinativo().getNumero() == null) {
 			log.debug(methodName, "Anno o numero non valorizzati");
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Ordinativo", ": anno e numero devono essere entrambi valorizzati"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Ordinativo", ": anno e numero devono essere entrambi valorizzati"));
 			return false;
 		}
 		return true;
@@ -250,7 +250,7 @@ public class RicercaPreDocumentoSpesaAction extends GenericPreDocumentoSpesaActi
 		// Se anno e numero sono presenti, devono essere contemporaneamente valorizzati
 		if(eda.getAnno() == null || eda.getNumero() == null) {
 			log.debug(methodName, "Anno o numero non valorizzato");
-			addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Elenco", ": anno e numero devono essere entrambi valorizzati"));
+			addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Elenco", ": anno e numero devono essere entrambi valorizzati"));
 			return false;
 		}
 		// Tutto valido

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -29,7 +29,7 @@ import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.conciliazione.ElementoCo
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaConciliazionePerTitoloAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoConciliazionePerTitolo, RisultatiRicercaConciliazionePerTitoloAjaxModel,
+public class RisultatiRicercaConciliazionePerTitoloAjaxAction extends PagedDataTableAjaxAction<ElementoConciliazionePerTitolo, RisultatiRicercaConciliazionePerTitoloAjaxModel,
 		ConciliazionePerTitolo, RicercaSinteticaConciliazionePerTitolo, RicercaSinteticaConciliazionePerTitoloResponse> {
 
 	/** Per la serializzazione */
@@ -64,7 +64,7 @@ public class RisultatiRicercaConciliazionePerTitoloAjaxAction extends GenericRis
 	}
 
 	@Override
-	protected RicercaSinteticaConciliazionePerTitoloResponse ottieniResponse(RicercaSinteticaConciliazionePerTitolo request) {
+	protected RicercaSinteticaConciliazionePerTitoloResponse getResponse(RicercaSinteticaConciliazionePerTitolo request) {
 		return conciliazioneService.ricercaSinteticaConciliazionePerTitolo(request);
 	}
 
@@ -74,7 +74,7 @@ public class RisultatiRicercaConciliazionePerTitoloAjaxAction extends GenericRis
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoConciliazionePerTitolo instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoConciliazionePerTitolo instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		
 		String azioni = new StringBuilder(AZIONI_CONSENTITE_BEGIN)
@@ -86,7 +86,7 @@ public class RisultatiRicercaConciliazionePerTitoloAjaxAction extends GenericRis
 	}
 
 	@Override
-	protected ElementoConciliazionePerTitolo ottieniIstanza(ConciliazionePerTitolo e) throws FrontEndBusinessException {
+	protected ElementoConciliazionePerTitolo getInstance(ConciliazionePerTitolo e) throws FrontEndBusinessException {
 		return new ElementoConciliazionePerTitolo(e);
 	}
 	

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.consultazione.DettaglioVariazioniCapitoloAjaxModel;
@@ -33,7 +33,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class DettaglioVariazioniCapitoloAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoVariazioneImportoSingoloCapitolo,
+public class DettaglioVariazioniCapitoloAjaxAction extends PagedDataTableAjaxAction<ElementoVariazioneImportoSingoloCapitolo,
 		DettaglioVariazioniCapitoloAjaxModel,  VariazioneImportoSingoloCapitolo, RicercaSinteticaVariazioniSingoloCapitolo, RicercaSinteticaVariazioniSingoloCapitoloResponse> {
 	
 	/** Per la serializzazione */
@@ -72,7 +72,7 @@ public class DettaglioVariazioniCapitoloAjaxAction extends GenericRisultatiRicer
 	}
 
 	@Override
-	protected ElementoVariazioneImportoSingoloCapitolo ottieniIstanza(VariazioneImportoSingoloCapitolo e) throws FrontEndBusinessException {
+	protected ElementoVariazioneImportoSingoloCapitolo getInstance(VariazioneImportoSingoloCapitolo e) throws FrontEndBusinessException {
 		RicercaDettaglioVariazioneComponenteImportoCapitolo req = model.creaRequestRicercaDettaglioVariazioneComponenteImportoCapitolo(e, sessionHandler.getParametro(BilSessionParameter.CAPITOLO_PER_RICERCA_DETTAGLIO_VARIAZIONE, Integer.class));
 		RicercaDettaglioVariazioneComponenteImportoCapitoloResponse res = variazioneDiBilancioService.ricercaDettaglioVariazioneComponenteImportoCapitolo(req);
 		return new ElementoVariazioneImportoSingoloCapitolo(e, model.getAnnoEsercizioInt(),
@@ -82,7 +82,7 @@ public class DettaglioVariazioniCapitoloAjaxAction extends GenericRisultatiRicer
 	}
 
 	@Override
-	protected RicercaSinteticaVariazioniSingoloCapitoloResponse ottieniResponse(RicercaSinteticaVariazioniSingoloCapitolo req) {
+	protected RicercaSinteticaVariazioniSingoloCapitoloResponse getResponse(RicercaSinteticaVariazioniSingoloCapitolo req) {
 		return capitoloService.ricercaSinteticaVariazioniSingoloCapitolo(req);
 	}
 

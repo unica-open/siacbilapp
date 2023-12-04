@@ -7,7 +7,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.capentgest;
 import java.math.BigDecimal;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,8 @@ import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataPrevisioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceCapitoloDiEntrataGestioneResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiPropostaNumeroCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloEntrataGestione;
@@ -34,13 +36,15 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloEnt
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloEntrataPrevisioneResponse;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEG;
 import it.csi.siac.siacbilser.model.SiopeEntrata;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Informazione;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
@@ -134,6 +138,21 @@ public class InserisciCapitoloEntrataGestioneAction extends CapitoloEntrataActio
 		importi1.setStanziamento(BigDecimal.ZERO);
 		importi2.setStanziamento(BigDecimal.ZERO);
 		
+		//task-86
+		if(abilitaNumerazioneAutomaticaCapitolo()) {
+			LeggiPropostaNumeroCapitolo req = model.leggiPropostaNumeroCapitolo();
+			logServiceRequest(req);
+			LeggiPropostaNumeroCapitoloResponse response = capitoloService.leggiPropostaNumeroCapitoloService(req);
+			logServiceResponse(response);
+			if(!response.hasErrori()) {
+				model.getCapitoloEntrataGestione().setNumeroCapitolo(response.getNumeroPropostoCapitolo());
+			}else {
+				log.debug(methodName, "Errore nella risposta del servizio");
+				addErrori(methodName, response);
+				log.debug(methodName, "Model: " + model);
+			}
+		}
+		
 		model.setImportiCapitoloEntrataGestione0(importi0);
 		model.setImportiCapitoloEntrataGestione1(importi1);
 		model.setImportiCapitoloEntrataGestione2(importi2);
@@ -143,6 +162,12 @@ public class InserisciCapitoloEntrataGestioneAction extends CapitoloEntrataActio
 		// SIAC-4724
 		model.setTipoCapitoloCopia(TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE);
 	}
+	
+	
+	
+	
+
+	
 	
 	/**
 	 * CR-2559
@@ -173,6 +198,17 @@ public class InserisciCapitoloEntrataGestioneAction extends CapitoloEntrataActio
 		if(!model.isFlagAccertatoPerCassaVisibile()) {
 			model.getCapitoloEntrataGestione().setFlagAccertatoPerCassa(Boolean.FALSE);
 		}
+		
+		//task-244
+		if(model.getCapitoloEntrataGestione().getCategoriaCapitolo().getUid() >0)
+			model.getCapitoloEntrataGestione().setCategoriaCapitolo(caricaCategoriaCapitolo(model.getCapitoloEntrataGestione().getCategoriaCapitolo().getUid()));
+		
+		//task-244
+		if(CategoriaCapitoloEnum.categoriaIsFPV(model.getCapitoloEntrataGestione().getCategoriaCapitolo().getCodice()) || 
+				model.getCapitoloEntrataGestione().getCategoriaCapitolo().getCodice().equals(CategoriaCapitoloEnum.AAM.getCodice()) ) {
+			model.getCapitoloEntrataGestione().setFlagImpegnabile(null);
+		}
+		
 			
 		InserisceCapitoloDiEntrataGestione request = model.creaRequestInserisceCapitoloDiEntrataGestione(statoOperativoElementoDiBilancio);
 		

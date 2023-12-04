@@ -110,9 +110,9 @@ SPDX-License-Identifier: EUPL-1.2
 																</td>
 																<td>
 																	<s:if test="%{#ce.accertamento != null}">
-																		<s:property value="%{#ce.accertamento.annoMovimento}"/>/<si:plainstringproperty value="#ce.accertamento.numero"/>
+																		<s:property value="%{#ce.accertamento.annoMovimento}"/>/<s:property value="#ce.accertamento.numero"/>
 																		<s:if test="%{#ce.subAccertamento != null}">
-																			-<si:plainstringproperty value="#ce.subAccertamento.numero"/>
+																			-<s:property value="#ce.subAccertamento.numero"/>
 																		</s:if> 
 																	</s:if>
 																</td>
@@ -164,9 +164,9 @@ SPDX-License-Identifier: EUPL-1.2
 																</td>
 																<td>
 																	<s:if test="%{#cs.impegno != null}">
-																		<s:property value="%{#cs.impegno.annoMovimento}"/>/<si:plainstringproperty value="#cs.impegno.numero"/>
+																		<s:property value="%{#cs.impegno.annoMovimento}"/>/<s:property value="#cs.impegno.numero"/>
 																		<s:if test="%{#cs.subImpegno != null}">
-																			-<si:plainstringproperty value="#cs.subImpegno.numero"/>
+																			-<s:property value="#cs.subImpegno.numero"/>
 																		</s:if>
 																	</s:if>
 																</td>
@@ -248,7 +248,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}tipoOnere/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/tipoOnere/consulta.js"></script>
 
 </body>
 </html>

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -30,7 +30,7 @@ import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaElencoDocumentiAllegatoDaEmettereAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoElencoDocumentiAllegatoDaEmettere,
+public class RisultatiRicercaElencoDocumentiAllegatoDaEmettereAjaxAction extends PagedDataTableAjaxAction<ElementoElencoDocumentiAllegatoDaEmettere,
   RisultatiRicercaElencoDocumentiAllegatoDaEmettereAjaxModel, ElencoDocumentiAllegato, RicercaElencoDaEmettere, RicercaElencoDaEmettereResponse> {
 		
 	/** Per la serializzazione */
@@ -56,12 +56,12 @@ public class RisultatiRicercaElencoDocumentiAllegatoDaEmettereAjaxAction extends
 	}
 	
 	@Override
-	protected ElementoElencoDocumentiAllegatoDaEmettere ottieniIstanza(ElencoDocumentiAllegato e) throws FrontEndBusinessException {
+	protected ElementoElencoDocumentiAllegatoDaEmettere getInstance(ElencoDocumentiAllegato e) throws FrontEndBusinessException {
 		return new ElementoElencoDocumentiAllegatoDaEmettere(e);
 	}
 	
 	@Override
-	protected RicercaElencoDaEmettereResponse ottieniResponse(RicercaElencoDaEmettere request) {
+	protected RicercaElencoDaEmettereResponse getResponse(RicercaElencoDaEmettere request) {
 		return allegatoAttoService.ricercaElencoDaEmettere(request);
 	}
 	

@@ -7,7 +7,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.progetto;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -15,7 +15,6 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.model.progetto.AggiornaCronoprogrammaModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.annotation.PutModelInSession;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaCronoprogramma;
@@ -31,6 +30,7 @@ import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureExcep
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di Action per l'aggiornamento del Cronoprogramma.
@@ -146,6 +146,8 @@ public class AggiornaCronoprogrammaAction extends GenericCronoprogrammaAction<Ag
 		validaAnagrafica();
 		try {
 			validaDettagli();
+			checkDatiDettagliEntrataSpesa();
+			
 		} catch(ParamValidationException e) {
 			// Verificatasi un'eccezione. Non importa: ignoro e proseguo
 		}
@@ -153,9 +155,19 @@ public class AggiornaCronoprogrammaAction extends GenericCronoprogrammaAction<Ag
 		logActionErrorsAndMessages();
 	}
 
+	protected void checkDatiDettagliEntrataSpesa() {
+		//SIAC-8791
+		if(model.getDettaglioEntrataCronoprogramma() != null) {
+			validateInserisciDettaglioCronoprogrammaEntrata();
+		}
+		if(model.getDettaglioUscitaCronoprogramma() != null) {
+			validateInserisciDettaglioCronoprogrammaUscita();
+		}
+	}
+
 	@Override
 	protected void checkCasoDUsoApplicabile(String cdu) {
-		final String codiceAzione = AzioniConsentite.CRONOPROGRAMMA_AGGIORNA.getNomeAzione();
+		final String codiceAzione = AzioneConsentitaEnum.CRONOPROGRAMMA_AGGIORNA.getNomeAzione();
 		List<AzioneConsentita> list = sessionHandler.getAzioniConsentite();
 		for(AzioneConsentita azioneConsentita : list) {
 			if(azioneConsentita.getAzione().getNome().equalsIgnoreCase(codiceAzione)) {
@@ -186,7 +198,7 @@ public class AggiornaCronoprogrammaAction extends GenericCronoprogrammaAction<Ag
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(response);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaDettaglioCronoprogramma.class, response));
 		}
 		
 		model.popolaDettaglioCronoprogramma(response.getCronoprogramma());
@@ -209,7 +221,7 @@ public class AggiornaCronoprogrammaAction extends GenericCronoprogrammaAction<Ag
 		
 		if(erroriNellInvocazione) {
 			// Ho un altro errore: esco
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaCronoprogramma.class, response));
 			addErrori(response);
 			return true;
 		}

@@ -24,7 +24,7 @@ import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siaccommonapp.handler.session.SessionParameter;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.frontend.webservice.msg.InserisciOperazioneAsincResponse;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.predocumento.RisultatiRicercaPreDocumentoGenericModel;
 import it.csi.siac.siacfin2app.frontend.ui.util.async.AsyncOperationHelper;
@@ -336,7 +336,7 @@ public class RisultatiRicercaPreDocumentoGenericAction<M extends RisultatiRicerc
 	protected <SMG extends MovimentoGestione> SMG findSubMovimentoByNumero(List<SMG> list, SMG sub) {
 		if(list != null) {
 			for(SMG smg : list) {
-				if(smg.getNumero().compareTo(sub.getNumero()) == 0) {
+				if(smg.getNumeroBigDecimal().compareTo(sub.getNumeroBigDecimal()) == 0) {
 					return smg;
 				}
 			}

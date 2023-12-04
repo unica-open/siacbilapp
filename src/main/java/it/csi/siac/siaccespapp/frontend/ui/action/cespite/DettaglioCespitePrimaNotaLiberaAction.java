@@ -50,7 +50,7 @@ public class DettaglioCespitePrimaNotaLiberaAction extends GenericBilancioAction
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaCespiteDaPrimaNota.class, response));
 			addErrori(response);
 			return INPUT;
 		}

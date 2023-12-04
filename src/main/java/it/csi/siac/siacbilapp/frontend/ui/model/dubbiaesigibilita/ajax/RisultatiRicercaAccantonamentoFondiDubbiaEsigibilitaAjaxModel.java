@@ -4,8 +4,8 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.dubbiaesigibilita.ajax;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
+import it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilita;
 
 /**
  * Classe di model per la gestione della ricerca sintetica dell'accantonamento fondi dubbia esigibilita
@@ -13,7 +13,7 @@ import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
  * @version 1.0.0 - 02/11/2016
  *
  */
-public class RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxModel extends GenericRisultatiRicercaAjaxModel<AccantonamentoFondiDubbiaEsigibilita> {
+public class RisultatiRicercaAccantonamentoFondiDubbiaEsigibilitaAjaxModel extends PagedDataTableAjaxModel<AccantonamentoFondiDubbiaEsigibilita> {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -4377698056456187771L;

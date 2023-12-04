@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -30,7 +30,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaQuoteDaEmettereSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoSubdocumentoDaEmettereSpesa,
+public class RisultatiRicercaQuoteDaEmettereSpesaAjaxAction extends PagedDataTableAjaxAction<ElementoSubdocumentoDaEmettereSpesa,
 		RisultatiRicercaQuoteDaEmettereSpesaAjaxModel, SubdocumentoSpesa, RicercaQuoteDaEmettereSpesa, RicercaQuoteDaEmettereSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -56,12 +56,12 @@ public class RisultatiRicercaQuoteDaEmettereSpesaAjaxAction extends GenericRisul
 	}
 	
 	@Override
-	protected ElementoSubdocumentoDaEmettereSpesa ottieniIstanza(SubdocumentoSpesa e) throws FrontEndBusinessException {
+	protected ElementoSubdocumentoDaEmettereSpesa getInstance(SubdocumentoSpesa e) throws FrontEndBusinessException {
 		return new ElementoSubdocumentoDaEmettereSpesa(e, model.isGestioneUEB());
 	}
 	
 	@Override
-	protected RicercaQuoteDaEmettereSpesaResponse ottieniResponse(RicercaQuoteDaEmettereSpesa request) {
+	protected RicercaQuoteDaEmettereSpesaResponse getResponse(RicercaQuoteDaEmettereSpesa request) {
 		return documentoSpesaService.ricercaQuoteDaEmettereSpesa(request);
 	}
 	

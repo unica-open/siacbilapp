@@ -23,7 +23,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<div class="control-group">
 						<label class="control-label" for="cigMovimentoGestioneModale">CIG</label>
 						<div class="controls">
-							<input type="text" class="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" id="cigMovimentoGestioneModale" maxlength="10">
+							<input type="text" class="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" id="cigMovimentoGestioneModale" maxlength="10">
 							<span class="al" data-assenza-cig>
 								<label for="siopeAssenzaMotivazioneModale" class="radio inline">Motivo di assenza CIG</label>
 							</span>
@@ -34,7 +34,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<div class="control-group">
 						<label class="control-label" for="cupMovimentoGestioneModale">CUP</label>
 						<div class="controls">
-							<input type="text" class="span3" data-force-uppercase="" data-allowed-chars="[A-Za-z0-9]" id="cupMovimentoGestioneModale" maxlength="15" value="">
+							<input type="text" class="span3 forzaMaiuscole" data-allowed-chars="[A-Za-z0-9]" id="cupMovimentoGestioneModale" maxlength="15" value="">
 						</div>
 					</div>
 					<div class="control-group">

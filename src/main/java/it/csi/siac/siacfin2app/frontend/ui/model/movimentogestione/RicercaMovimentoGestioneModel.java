@@ -65,6 +65,8 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 	private boolean caricaDisponibilitaLiquidare = true;
 	private Progetto progetto;
 	private Cronoprogramma cronoprogramma;
+	//SIAC-7661
+	private Boolean bko = Boolean.FALSE;
 	
 	/** Costruttore vuoto di default */
 	public RicercaMovimentoGestioneModel() {
@@ -256,6 +258,20 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 	}
 
 	/**
+	 * @return the bko
+	 */
+	public Boolean getBko() {
+		return bko;
+	}
+
+	/**
+	 * @param bko the bko to set
+	 */
+	public void setBko(Boolean bko) {
+		this.bko = bko;
+	}
+
+	/**
 	 * Crea una request per il servizio di {@link RicercaImpegnoPerChiave}.
 	 * 
 	 * @return la request creata
@@ -283,7 +299,7 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 		RicercaImpegnoK utility = new RicercaImpegnoK();
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoImpegno(impegno.getAnnoMovimento());
-		utility.setNumeroImpegno(impegno.getNumero());
+		utility.setNumeroImpegno(impegno.getNumeroBigDecimal());
 		
 		return utility;
 	}
@@ -315,7 +331,7 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 		RicercaAccertamentoK utility = new RicercaAccertamentoK();
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		utility.setNumeroAccertamento(accertamento.getNumero());
+		utility.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 		
 		return utility;
 	}
@@ -336,7 +352,7 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 		/* ***IMPEGNO*** */
 		if(impegno != null) {
 			pr.setAnnoImpegno(impegno.getAnnoMovimento() != 0 ? Integer.valueOf(impegno.getAnnoMovimento()) : null);
-			pr.setNumeroImpegno(impegno.getNumero() != null ? Integer.valueOf(impegno.getNumero().intValue()) : null);
+			pr.setNumeroImpegno(impegno.getNumeroBigDecimal() != null ? Integer.valueOf(impegno.getNumeroBigDecimal().intValue()) : null);
 		}
 		
 		/* ***PROVVEDIMENTO*** */
@@ -377,7 +393,7 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 		/* ***ACCERTAMENTO*** */
 		if(accertamento != null) {
 			pr.setAnnoAccertamento(accertamento.getAnnoMovimento() != 0 ? Integer.valueOf(accertamento.getAnnoMovimento()) : null);
-			pr.setNumeroAccertamento(accertamento.getNumero() != null ? Integer.valueOf(accertamento.getNumero().intValue()) : null);
+			pr.setNumeroAccertamento(accertamento.getNumeroBigDecimal() != null ? Integer.valueOf(accertamento.getNumeroBigDecimal().intValue()) : null);
 		}
 	
 		/* ***PROVVEDIMENTO*** */
@@ -406,7 +422,10 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 		request.setCaricaSub(getCaricaSub());
 		request.setSubPaginati(isSubPaginati());
 		request.setEscludiSubAnnullati(isEscludiSubAnnullati());
-		request.setFiltroSubSoloInQuestoStato(getStatoOperativoMovimentoGestioneDaFiltrare().getCodice());
+		
+		//SIAC-7661
+		//se la chiamata è da backoffice non voglio filtrare per un unico stato operativo
+		request.setFiltroSubSoloInQuestoStato(getBko() ? "" : getStatoOperativoMovimentoGestioneDaFiltrare().getCodice());
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		datiOpzionaliElencoSubTuttiConSoloGliIds.setEscludiAnnullati(isEscludiSubAnnullati());
@@ -428,7 +447,7 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 	public RicercaImpegnoPerChiaveOttimizzato creaRequestRicercaImpegnoSubimpegnoPerChiaveOttimizzato() {
 		//SIAC-4560
 		SubImpegno subImpegno = new SubImpegno();
-		subImpegno.setNumero(getNumeroSubmovimentoGestione());
+		subImpegno.setNumeroBigDecimal(getNumeroSubmovimentoGestione());
 		return MovimentoGestioneHelper.creaRequestRicercaImpegnoPerChiaveOttimizzato(getAnnoEsercizioInt(), getEnte(), getRichiedente(), impegno, subImpegno);
 	}
 	
@@ -453,6 +472,9 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 		datiOpzionaliElencoSubTuttiConSoloGliIds.setEscludiAnnullati(isEscludiSubAnnullati());
 		request.setDatiOpzionaliElencoSubTuttiConSoloGliIds(datiOpzionaliElencoSubTuttiConSoloGliIds);
 		
+		//SIAC-8275
+		request.setCaricalistaModificheCollegate(false);
+		
 		// Non richiedo NESSUN importo derivato.
 		DatiOpzionaliCapitoli datiOpzionaliCapitoli = new DatiOpzionaliCapitoli();
 		datiOpzionaliCapitoli.setImportiDerivatiRichiesti(EnumSet.noneOf(ImportiCapitoloEnum.class));
@@ -468,7 +490,7 @@ public class RicercaMovimentoGestioneModel extends GenericBilancioModel {
 	public RicercaAccertamentoPerChiaveOttimizzato creaRequestRicercaAccertamentoSubAccertamentoPerChiaveOttimizzato() {
 		//SIAC-4560
 		SubAccertamento subAccertamento = new SubAccertamento();
-		subAccertamento.setNumero(getNumeroSubmovimentoGestione());
+		subAccertamento.setNumeroBigDecimal(getNumeroSubmovimentoGestione());
 		return MovimentoGestioneHelper.creaRequestRicercaAccertamentoPerChiaveOttimizzato(getAnnoEsercizioInt(), getEnte(), getRichiedente(), accertamento, subAccertamento);
 	}
 	

@@ -78,7 +78,7 @@ public class GestionePrimaNotaIntegrataBaseAction<M extends GestionePrimaNotaInt
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioRegistrazioneMovFin.class, response));
 			addErrori(response);
 			return INPUT;
 		}

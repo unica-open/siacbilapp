@@ -6,7 +6,7 @@ package it.csi.siac.siacfin2app.frontend.ui.util.wrappers.documentoiva;
 
 import java.util.Date;
 
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.ModelWrapper;
 import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.Subdocumento;

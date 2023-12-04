@@ -7,7 +7,7 @@ package it.csi.siac.siacfin2app.frontend.ui.action.predocumento;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,6 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataGestioneResponse;
@@ -30,7 +29,9 @@ import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.Informazione;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2app.frontend.ui.model.predocumento.RisultatiRicercaPreDocumentoEntrataModel;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDataTrasmissionePreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaPreDocumentoEntrata;
@@ -38,15 +39,19 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaPreDocumentoEntrat
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaImputazioniContabiliPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaImputazioniContabiliVariatePreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.DefiniscePreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.model.CausaleEntrata;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzatoResponse;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 /**
@@ -67,20 +72,48 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 	@Autowired private transient PreDocumentoEntrataService preDocumentoEntrataService;
 	@Autowired private transient CapitoloEntrataGestioneService capitoloEntrataGestioneService;
 	
+	@Autowired protected transient ContoTesoreriaService contoTesoreriaService;
+	
 	@Override
 	public void prepare() throws Exception {
 		super.prepare();
 		checkDecentrato();
-		// SIAC-5041
+		//SIAC-5041
 		checkModificaAccertamentoDisponibile();
+		//SIAC-6780
+//		checkisFromCompletaDefinisci();
+		checkisFromRiepilogoCompletaDefinisci();
+		caricaListaContoTesoreria();
+		
 	}
 	
+	/**
+	 * Controlla se la lista dei predocumenti selezionati e presente
+	 * se lo e' la svuoto
+	 */
+	private void checkisFromRiepilogoCompletaDefinisci() {
+		String methodName = "checkisFormRiepilogoCompletaDefinisci";
+		
+		if((sessionHandler.containsKey(BilSessionParameter.LISTA_PREDOC_SELEZIONATI) 
+				&& sessionHandler.getParametro(BilSessionParameter.LISTA_PREDOC_SELEZIONATI) != null)) {
+			log.debug(methodName, ": invalido la lista dei predoc " );
+			sessionHandler.setParametro(BilSessionParameter.LISTA_PREDOC_SELEZIONATI, null);
+		}
+		
+		if((sessionHandler.containsKey(BilSessionParameter.LISTA_UID_PREDOC_SELEZIONATI) 
+				&& sessionHandler.getParametro(BilSessionParameter.LISTA_UID_PREDOC_SELEZIONATI) != null)) {
+			log.debug(methodName, ": invalido la lista uid dei predoc " );
+			sessionHandler.setParametro(BilSessionParameter.LISTA_UID_PREDOC_SELEZIONATI, null);
+		}
+		
+	}
+
 	/**
 	 * Controlla se l'utente sia decentrato
 	 */
 	private void checkDecentrato() {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
-		Boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
+		Boolean isDecentrato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
 		model.setUtenteDecentrato(Boolean.TRUE.equals(isDecentrato));
 	}
 	
@@ -89,7 +122,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 	 */
 	private void checkModificaAccertamentoDisponibile() {
 		// La modifica e' consentita se non ho l'azione
-		boolean modificaConsentita = !AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA, sessionHandler.getAzioniConsentite());
+		boolean modificaConsentita = !AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA, sessionHandler.getAzioniConsentite());
 		model.setModificaAccertamentoDisponibile(modificaConsentita);
 	}
 	
@@ -129,6 +162,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		List<AzioneConsentita> azioniConsentite = sessionHandler.getAzioniConsentite();
 		controlloInserisciAbilitato(azioniConsentite);
 		controlloAssociaAbilitato(azioniConsentite);
+		controlloCompletaDefinisci(azioniConsentite);
 		controlloDefinisciAbilitato();
 		controlloDataTrasmissioneAbilitato(azioniConsentite);
 		
@@ -156,11 +190,40 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSinteticaPreDocumentoEntrata.class, res));
 		}
 		sessionHandler.setParametro(BilSessionParameter.IMPORTO_TOTALE_RICERCA_PREDOCUMENTO, res.getImportoTotale());
 	}
 
+	//SIAC-7423
+	/**
+	 * Carica la lista del Conto Tesoreria.
+	 * 
+	 * @throws WebServiceInvocationFailureException nel caso in cui l'invocazione del servizio fallisca
+	 */
+	protected void caricaListaContoTesoreria() throws WebServiceInvocationFailureException {
+		List<ContoTesoreria> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_CONTO_TESORERIA);
+		if(listaInSessione == null) {
+			LeggiContiTesoreria request = model.creaRequestLeggiContiTesoreria();
+			logServiceRequest(request);
+			LeggiContiTesoreriaResponse response = contoTesoreriaService.leggiContiTesoreria(request);
+			logServiceResponse(response);
+			
+			// Controllo gli errori
+			if(response.hasErrori()) {
+				//si sono verificati degli errori: esco.
+				addErrori(response);
+				throw new WebServiceInvocationFailureException("caricaListaContoTesoreria");
+			}
+			
+			listaInSessione = response.getContiTesoreria();
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CONTO_TESORERIA, listaInSessione);
+		}
+		
+		model.setListaContoTesoreria(listaInSessione);
+	}
+	//
+	
 	/**
 	 * Impostazione delle imputazioni contabili per la modifica delle stesse
 	 */
@@ -182,6 +245,12 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 			strutturaAmministrativoContabileAttoAmministrativo = attoAmministrativo.getStrutturaAmmContabile();
 		}
 		
+		//SIAC-7423
+		ProvvisorioDiCassa provvisorioCassa = new ProvvisorioDiCassa();
+		model.setProvvisorioCassa(provvisorioCassa);
+		//
+		
+		
 		model.setCapitolo(capitolo);
 		model.setMovimentoGestione(movimentoGestione);
 		model.setSubMovimentoGestione(subMovimentoGestione);
@@ -191,6 +260,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		model.setStrutturaAmministrativoContabileAttoAmministrativo(strutturaAmministrativoContabileAttoAmministrativo);
 	}
 
+	
 	/**
 	 * Abilitato se azione consentita in
 	 * <ul>
@@ -202,8 +272,8 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 	 */
 	private void controlloInserisciAbilitato(List<AzioneConsentita> listaAzioniConsentite) {
 		final String methodName = "controlloInserisciAbilitato";
-		boolean inserisciAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_INSERISCI, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_INSERISCI_DECENTRATO, listaAzioniConsentite);
+		boolean inserisciAbilitato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_INSERISCI, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_INSERISCI_DECENTRATO, listaAzioniConsentite);
 		// SIAC-4382
 		inserisciAbilitato = inserisciAbilitato && Boolean.TRUE.equals(model.getFaseBilancioAbilitata()) && !model.isUtenteDecentrato();
 		log.debug(methodName, "Inserisci abilitato? " + inserisciAbilitato);
@@ -221,11 +291,36 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 	 * @param listaAzioniConsentite la lista delle azioni consentite
 	 * @see #controllaCriteriRicerca(boolean)
 	 */
+	private void controlloCompletaDefinisci(List<AzioneConsentita> listaAzioniConsentite) {
+		final String methodName = "controlloCompletaDefinisciAbilitato";
+		// Controllo sulle azioni
+//		boolean controlloCompletaDefinisciAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
+//				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
+//		// Controllo sui criteri di ricerca
+//		controlloCompletaDefinisciAbilitato = controlloCompletaDefinisciAbilitato && controllaCriteriRicerca(false, StatoOperativoPreDocumento.INCOMPLETO) && Boolean.TRUE.equals(model.getFaseBilancioAbilitata());
+//		log.debug(methodName, "CompletaDefinisci abilitato? " + controlloCompletaDefinisciAbilitato);
+//		model.setAssociaAbilitato(Boolean.valueOf(controlloCompletaDefinisciAbilitato));
+		//TODO implementare meglio a seconda dei permessi 
+		log.debug(methodName, "CompletaDefinisci abilitato? " + Boolean.TRUE);
+		model.setCompletaDefinisciAbilitato(Boolean.TRUE);
+	}
+
+	/**
+	 * Abilitato se azione consentita in
+	 * <ul>
+	 *     <li>OP-ENT-aggPreDoc</li>
+	 *     <li>OP-ENT-aggPreDocDec</li>
+	 * </ul>
+	 * Inoltre, devono esserci ulteriori controlli sui parametri di ricerca
+	 * 
+	 * @param listaAzioniConsentite la lista delle azioni consentite
+	 * @see #controllaCriteriRicerca(boolean)
+	 */
 	private void controlloAssociaAbilitato(List<AzioneConsentita> listaAzioniConsentite) {
 		final String methodName = "controlloAssociaAbilitato";
 		// Controllo sulle azioni
-		boolean associaAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
-				|| AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
+		boolean associaAbilitato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
+				|| AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
 		// Controllo sui criteri di ricerca
 		associaAbilitato = associaAbilitato && controllaCriteriRicerca(false, StatoOperativoPreDocumento.INCOMPLETO) && Boolean.TRUE.equals(model.getFaseBilancioAbilitata());
 		log.debug(methodName, "Associa abilitato? " + associaAbilitato);
@@ -263,8 +358,8 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 	private void controlloDataTrasmissioneAbilitato(List<AzioneConsentita> listaAzioniConsentite) {
 		final String methodName = "controlloDataTrasmissioneAbilitato";
 		// Controllo sulle azioni
-		boolean dataTrasmissioneAbilitato = AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
-				&& !AzioniConsentiteFactory.isConsentito(AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
+		boolean dataTrasmissioneAbilitato = AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA, listaAzioniConsentite)
+				&& !AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA_DECENTRATO, listaAzioniConsentite);
 		// Controllo sui criteri di ricerca
 		log.debug(methodName, "Data di trasmissione abilitata? " + dataTrasmissioneAbilitato);
 		model.setDataTrasmissioneAbilitato(Boolean.valueOf(dataTrasmissioneAbilitato));
@@ -288,7 +383,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(req, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaPreDocumentoEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -343,7 +438,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		RicercaSinteticaPreDocumentoEntrata requestSintetica = sessionHandler.getParametroXmlType(BilSessionParameter.REQUEST_RICERCA_PREDOCUMENTI_ENTRATA, RicercaSinteticaPreDocumentoEntrata.class);
 		DefiniscePreDocumentoEntrata req = model.creaRequestDefiniscePreDocumentoEntrata(requestSintetica);
 		
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.PREDOCUMENTO_ENTRATA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = preDocumentoEntrataService.definiscePreDocumentoEntrataAsync(wrapRequestToAsync(req, azioneRichiesta));
 		
 		// Controllo gli errori
@@ -361,7 +456,6 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 	}
 	
 	// SIAC-4280
-	
 	/**
 	 * Apertura dell'associazione con modifiche
 	 * @return una stringa corrispondente al risultato dell'invocazione
@@ -383,7 +477,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		AssociaImputazioniContabiliVariatePreDocumentoEntrata req = model.creaRequestAssociaImputazioniContabiliVariatePreDocumentoEntrata(
 				sessionHandler.getParametroXmlType(BilSessionParameter.REQUEST_RICERCA_PREDOCUMENTI_ENTRATA, RicercaSinteticaPreDocumentoEntrata.class));
 		
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.PREDOCUMENTO_ENTRATA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_RICERCA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response =
 				preDocumentoEntrataService.associaImputazioniContabiliVariatePreDocumentoEntrataAsync(wrapRequestToAsync(req, azioneRichiesta));
 		
@@ -427,7 +521,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		Accertamento accertamento = model.getMovimentoGestione();
 		SubAccertamento subAccertamento = model.getSubMovimentoGestione();
 		
-		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumero() == null)) {
+		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumeroBigDecimal() == null)) {
 			return;
 		}
 		
@@ -441,19 +535,19 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 			throw new WebServiceInvocationFailureException("Errori nell'invocazione della ricercaAccertamentoPerChiaveOttimizzato");
 		}
 		if(response.isFallimento() || response.getAccertamento() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal()));
 			throw new WebServiceInvocationFailureException("Errori nell'invocazione della ricercaAccertamentoPerChiaveOttimizzato: entita' non trovata");
 		}
 		
 		accertamento = response.getAccertamento();
 		model.setMovimentoGestione(accertamento);
 		
-		if(subAccertamento != null && subAccertamento.getNumero() != null) {
-			BigDecimal numero = subAccertamento.getNumero();
+		if(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subAccertamento.getNumeroBigDecimal();
 			// Controlli di validita' sull'impegno
 			subAccertamento = findSubMovimentoByNumero(response.getAccertamento().getSubAccertamenti(), subAccertamento);
 			if(subAccertamento == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero() + "-" + numero));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal() + "-" + numero));
 				return;
 			}
 			model.setSubMovimentoGestione(subAccertamento);
@@ -470,7 +564,6 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("subaccertamento", "l'anno deve essere non superiore all'anno di esercizio"));
 		
 	}
-	
 
 	/**
 	 * Effettua una validazione del Capitolo fornito in input.
@@ -527,7 +620,7 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 		AggiornaDataTrasmissionePreDocumentoEntrata req = model.creaRequestAggiornaDataTrasmissionePreDocumentoEntrata(
 				sessionHandler.getParametroXmlType(BilSessionParameter.REQUEST_RICERCA_PREDOCUMENTI_ENTRATA, RicercaSinteticaPreDocumentoEntrata.class));
 		
-		AzioneRichiesta azioneRichiesta = AzioniConsentite.PREDOCUMENTO_ENTRATA_AGGIORNA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
+		AzioneRichiesta azioneRichiesta = AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_AGGIORNA.creaAzioneRichiesta(sessionHandler.getAzioniConsentite());
 		AsyncServiceResponse response = preDocumentoEntrataService.aggiornaDataTrasmissionePreDocumentoEntrataAsync(wrapRequestToAsync(req, azioneRichiesta));
 		
 		// Controllo gli errori
@@ -552,4 +645,19 @@ public class RisultatiRicercaPreDocumentoEntrataAction extends RisultatiRicercaP
 			ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("necessario specificare i predocumenti da associare o se si desidera associare tutti"));
 		checkNotNull(model.getDataTrasmissione() != null, "data trasmissione");
 	}
+
+	/**
+	 * @return the fromCompletaDefinisci
+	 */
+	public boolean isCompletaDefinisciAbilitato() {
+		return model.isCompletaDefinisciAbilitato();
+	}
+
+	/**
+	 * @param fromCompletaDefinisci the fromCompletaDefinisci to set
+	 */
+	public void setCompletaDefinisciAbilitato(boolean fromCompletaDefinisci) {
+		model.setCompletaDefinisciAbilitato(fromCompletaDefinisci);
+	}
+	
 }

@@ -4,13 +4,13 @@
 */
 package it.csi.siac.siaccespapp.frontend.ui.model.ajax.dismissionecespite;
 
-import it.csi.siac.siacbilapp.frontend.ui.model.ajax.GenericRisultatiRicercaAjaxModel;
+import it.csi.siac.siacbilapp.frontend.ui.model.ajax.PagedDataTableAjaxModel;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.dismissionecespite.ElementoDismissioneCespite;
 
 /**
  * The Class RisultatiRicercaTipoBeneAjaxAction.
  */
-public class RisultatiRicercaDismissioneCespiteAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoDismissioneCespite> {
+public class RisultatiRicercaDismissioneCespiteAjaxModel extends PagedDataTableAjaxModel<ElementoDismissioneCespite> {
 
 	/** Per la serializzazione*/
 	private static final long serialVersionUID = -4261496316668050659L;

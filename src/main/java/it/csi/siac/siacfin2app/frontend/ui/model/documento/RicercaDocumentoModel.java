@@ -192,6 +192,7 @@ public abstract class RicercaDocumentoModel extends GenericDocumentoModel {
 	public void setFlagIva(String flagIva) {
 		this.flagIva = flagIva;
 	}
+	
 
 	/**
 	 * Compone una stringa con i parametri di ricerca impostati.

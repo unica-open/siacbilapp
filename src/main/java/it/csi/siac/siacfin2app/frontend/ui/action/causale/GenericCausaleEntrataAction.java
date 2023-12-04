@@ -188,7 +188,7 @@ public class GenericCausaleEntrataAction<M extends GenericCausaleEntrataModel> e
 		Accertamento accertamento = model.getMovimentoGestione();
 		SubAccertamento subAccertamento = model.getSubMovimentoGestione();
 		
-		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumero() == null)) {
+		if(accertamento == null || (accertamento.getAnnoMovimento() == 0 || accertamento.getNumeroBigDecimal() == null)) {
 			return;
 		}
 		
@@ -202,7 +202,7 @@ public class GenericCausaleEntrataAction<M extends GenericCausaleEntrataModel> e
 			return;
 		}
 		if(response.isFallimento() || response.getAccertamento() == null) {
-			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString()));
+			addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString()));
 			return;
 		}
 		
@@ -210,12 +210,12 @@ public class GenericCausaleEntrataAction<M extends GenericCausaleEntrataModel> e
 		
 		model.setMovimentoGestione(accertamento);
 		
-		if(subAccertamento != null && subAccertamento.getNumero() != null) {
-			BigDecimal numero = subAccertamento.getNumero();
+		if(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null) {
+			BigDecimal numero = subAccertamento.getNumeroBigDecimal();
 			// Controlli di validità sull'impegno
 			subAccertamento = findSubAccertamentoLegatoAccertamentoByNumero(response.getAccertamento(), subAccertamento);
 			if(subAccertamento == null) {
-				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubAccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString() + "-" + numero.toPlainString()));
+				addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubAccertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString() + "-" + numero.toPlainString()));
 				return;
 			}
 			model.setSubMovimentoGestione(subAccertamento);
@@ -246,7 +246,7 @@ public class GenericCausaleEntrataAction<M extends GenericCausaleEntrataModel> e
 		SubAccertamento result = null;
 		if(impegno.getElencoSubAccertamenti() != null) {
 			for(SubAccertamento s : impegno.getElencoSubAccertamenti()) {
-				if(s.getNumero().compareTo(subAccertamento.getNumero()) == 0) {
+				if(s.getNumeroBigDecimal().compareTo(subAccertamento.getNumeroBigDecimal()) == 0) {
 					result = s;
 					break;
 				}

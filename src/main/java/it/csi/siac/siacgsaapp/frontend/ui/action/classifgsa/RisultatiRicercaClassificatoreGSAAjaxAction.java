@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -30,7 +30,7 @@ import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.classifgsa.ElementoClass
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaClassificatoreGSAAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoClassificatoreGSA, 
+public class RisultatiRicercaClassificatoreGSAAjaxAction extends PagedDataTableAjaxAction<ElementoClassificatoreGSA, 
 		RisultatiRicercaClassificatoreGSAAjaxModel, ClassificatoreGSA, RicercaSinteticaClassificatoreGSA, RicercaSinteticaClassificatoreGSAResponse> {
 	
 	/** Per la serializzazione*/
@@ -62,12 +62,12 @@ public class RisultatiRicercaClassificatoreGSAAjaxAction extends GenericRisultat
 	}
 	
 	@Override
-	protected ElementoClassificatoreGSA ottieniIstanza(ClassificatoreGSA e) throws FrontEndBusinessException {
+	protected ElementoClassificatoreGSA getInstance(ClassificatoreGSA e) throws FrontEndBusinessException {
 		return new ElementoClassificatoreGSA(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaClassificatoreGSAResponse ottieniResponse(RicercaSinteticaClassificatoreGSA request) {
+	protected RicercaSinteticaClassificatoreGSAResponse getResponse(RicercaSinteticaClassificatoreGSA request) {
 		return classificatoreGSAService.ricercaSinteticaClassificatoreGSA(request);
 	}
 	

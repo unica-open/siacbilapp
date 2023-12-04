@@ -181,10 +181,10 @@ public class RicercaDocumentoEntrataAjaxAction extends GenericBilancioAction<Ric
 		
 		//verifica dati movimento
 		boolean movimentoPresente = (model.getAccertamento().getAnnoMovimento() != 0 && Integer.toString(model.getAccertamento().getAnnoMovimento()) != null) ||
-																	model.getAccertamento().getNumero() != null;
+																	model.getAccertamento().getNumeroBigDecimal() != null;
 		model.setMovimentoPresente(movimentoPresente);
 		
-		log.debug(methodName, "movimento presente"+movimentoPresente+"-"+model.getAccertamento().getAnnoMovimento()+"-"+model.getAccertamento().getNumero());
+		log.debug(methodName, "movimento presente"+movimentoPresente+"-"+model.getAccertamento().getAnnoMovimento()+"-"+model.getAccertamento().getNumeroBigDecimal());
 		//controllo che si voglia filtrare per elenco
 		boolean elencoPresente = model.getElencoDocumenti() != null && ( model.getElencoDocumenti().getAnno() != null || model.getElencoDocumenti().getNumero() != null);
 		if(elencoPresente){
@@ -197,8 +197,8 @@ public class RicercaDocumentoEntrataAjaxAction extends GenericBilancioAction<Ric
 
 		// Anno Accertamento e numero devono essere entrambi presenti o entrambi assenti
 		if(movimentoPresente) {
-			if(((model.getAccertamento().getAnnoMovimento() != 0 && Integer.toString(model.getAccertamento().getAnnoMovimento()) != null) && model.getAccertamento().getNumero() == null) ||
-			   ((model.getAccertamento().getAnnoMovimento() == 0 || Integer.toString(model.getAccertamento().getAnnoMovimento()) == null) && model.getAccertamento().getNumero() != null)) {
+			if(((model.getAccertamento().getAnnoMovimento() != 0 && Integer.toString(model.getAccertamento().getAnnoMovimento()) != null) && model.getAccertamento().getNumeroBigDecimal() == null) ||
+			   ((model.getAccertamento().getAnnoMovimento() == 0 || Integer.toString(model.getAccertamento().getAnnoMovimento()) == null) && model.getAccertamento().getNumeroBigDecimal() != null)) {
 				checkCondition(false, ErroreCore.FORMATO_NON_VALIDO.getErrore("Anno e Numero Movimento", ": devono essere entrambi valorizzati o non valorizzati"));
 			} else {
 				// sono entrambi valorizzati, verifico che esista l'accertamento
@@ -245,7 +245,7 @@ public class RicercaDocumentoEntrataAjaxAction extends GenericBilancioAction<Ric
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaQuoteByDocumentoEntrata.class, response));
 			addErrori(response);
 			return INPUT;
 		}

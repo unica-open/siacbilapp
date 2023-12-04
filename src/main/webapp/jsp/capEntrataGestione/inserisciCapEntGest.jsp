@@ -278,6 +278,7 @@ SPDX-License-Identifier: EUPL-1.2
 												</option>
 											</s:iterator>
 										</select>
+										<s:hidden name="capitoloEntrataGestione.tipoCapitolo.codice"></s:hidden>
 									</div>
 								</div>
 								<div class="control-group">
@@ -286,6 +287,23 @@ SPDX-License-Identifier: EUPL-1.2
 										<s:checkbox id="flagImpegnabile" name="capitoloEntrataGestione.flagImpegnabile" />
 									</div>
 								</div>
+								<!-- SIAC-7858 CM 19/05/2021 Inizio -->
+								<div class="control-group">
+										<label for="flagEntrataDubbiaEsigFCDE" class="control-label">Capitolo pertinente per il calcolo FCDE</label>
+										<div class="controls">
+											<span class="al">
+												<label class="radio inline" >
+													<input type="radio" value="true" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==true}'>checked="checked"</s:if>>Si
+												</label>
+											</span>
+											<span class="al">
+												<label class="radio inline" style="margin-left: 15px;">
+													<input type="radio" value="false" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{(capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==null)||(capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==false)}'>checked="checked"</s:if>>No
+												</label>
+											</span>
+										</div>
+									</div>
+								<!-- SIAC-7858 CM 19/05/2021 Fine -->
 								<div class="control-group <s:if test="!flagAccertatoPerCassaVisibile">hide</s:if>">
 									<label for="flagAccertatoPerCassa" class="control-label">Accertato per cassa</label>
 									<div class="controls">
@@ -361,7 +379,7 @@ SPDX-License-Identifier: EUPL-1.2
 													</div>
 												</div>
 												<%-- Classificatori Generici --%>
-												<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+												<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 													<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
 														<div class="control-group">
 															<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
@@ -533,9 +551,9 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataGestione/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataGestione/inserisci.js"></script>
 </body>
 </html>

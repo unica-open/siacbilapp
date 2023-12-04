@@ -43,7 +43,9 @@ SPDX-License-Identifier: EUPL-1.2
 				</s:if><s:else>
 					<s:hidden id="numeroUEBEntrata" name="dettaglioEntrataCronoprogramma.numeroUEB" />
 				</s:else>
-				<s:hidden id="uidCapitoloEntrata" name="dettaglioEntrataCronoprogramma.capitoloEntrata.uid" />
+				<!-- SIAC-8791 -->
+				<!-- s:hidden id="uidCapitoloEntrata" name="dettaglioEntrataCronoprogramma.capitoloEntrata.uid" />-->
+				<s:hidden id="uidCapitoloEntrata" name="dettaglioEntrataCronoprogramma.capitolo.uid" />
 				<span class="alRight">
 					<label class="radio inline">Da esistente</label>
 					<label class="radio inline">

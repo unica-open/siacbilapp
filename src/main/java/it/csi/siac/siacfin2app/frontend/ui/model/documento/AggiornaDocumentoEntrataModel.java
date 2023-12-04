@@ -38,6 +38,7 @@ import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
+import it.csi.siac.siacfin2ser.model.StatoSDIDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
@@ -113,10 +114,44 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 	private boolean forzaDisponibilitaAccertamento = false;
 	private Messaggio messaggioConfermaSfondamentoAccertamento;
 	
+	//SIAC-7562 - 25/06/2020 - CM e GM
+	private String statoSDIdescrizione;
+	//SIAC-7562 - 06/07/2020 - CM
+	private Date dataCambioStatoFel;
+	
+	//SIAC-6988 - 06/10/2020 FL
+	private Boolean flagStatoSDIInviatoFEL = Boolean.FALSE;
+	
+
 	/** Costruttore vuoto di default */
 	public AggiornaDocumentoEntrataModel() {
 		setTitolo("Aggiorna Documenti di Entrata");
 	}
+
+	
+	
+	
+	/**
+	 * @return the flagStatoSDIInviatoFEL
+	 */
+	public Boolean getFlagStatoSDIInviatoFEL()
+	{
+		return flagStatoSDIInviatoFEL;
+	}
+
+
+
+
+	/**
+	 * @param flagStatoSDIInviatoFEL the flagStatoSDIInviatoFEL to set
+	 */
+	public void setFlagStatoSDIInviatoFEL(Boolean flagStatoSDIInviatoFEL)
+	{
+		this.flagStatoSDIInviatoFEL = flagStatoSDIInviatoFEL;
+	}
+
+
+
 
 	/**
 	 * @return the movimentoGestione
@@ -371,6 +406,8 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 	public void setFlagDocumentiCollegatiAccessibile(Boolean flagDocumentiCollegatiAccessibile) {
 		this.flagDocumentiCollegatiAccessibile = flagDocumentiCollegatiAccessibile;
 	}
+
+	
 	
 	/**
 	 * @return <code>true</code> se il documento &eacute; gi&agrave; legato a un subdocumento iva
@@ -420,11 +457,20 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 		if(getDocumento() == null) {
 			return Boolean.FALSE;
 		}
+		
+		//SIAC-6988 Inizio FL
+		if (StatoSDIDocumento.DECORR_TERMINI.getCodice().equalsIgnoreCase(getDocumento().getStatoSDI())  ||
+			StatoSDIDocumento.ACCET_CONSEG.getCodice().equalsIgnoreCase(getDocumento().getStatoSDI())  ||
+			StatoSDIDocumento.INVIATA_FEL.getCodice().equalsIgnoreCase(getDocumento().getStatoSDI())
+			) {
+			return Boolean.TRUE;
+		}
+		//SIAC-6988 Fine FL		
 		StatoOperativoDocumento stato = getDocumento().getStatoOperativoDocumento();
 		return StatoOperativoDocumento.INCOMPLETO.equals(stato) ||
 				StatoOperativoDocumento.VALIDO.equals(stato) ||
 				StatoOperativoDocumento.PARZIALMENTE_LIQUIDATO.equals(stato) ||
-				StatoOperativoDocumento.PARZIALMENTE_EMESSO.equals(stato);
+				StatoOperativoDocumento.PARZIALMENTE_EMESSO.equals(stato)  ;
 	}
 	
 	/**
@@ -548,8 +594,11 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 	public void setMessaggioConfermaSfondamentoAccertamento(Messaggio messaggioConfermaSfondamentoAccertamento) {
 		this.messaggioConfermaSfondamentoAccertamento = messaggioConfermaSfondamentoAccertamento;
 	}
-
+	
+	
 	/* Requests */	
+	
+
 	/**
 	 * Crea una request per il servizio di {@link AggiornaDocumentoDiEntrata}.
 	 *  
@@ -871,6 +920,23 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 		if(!doc.getListaSubdocumentoIva().isEmpty()) {
 			impostaSubdocumentoIva(doc.getListaSubdocumentoIva());
 		}
+		
+		//SIAC-7562 - 06/07/2020 - CM
+		setDataCambioStatoFel(doc.getDataCambioStatoFel());
+		
+		//SIAC-7562 - 25/06/2020 - CM e GM
+		if(doc.getStatoSDI() != null && !doc.getStatoSDI().equals("")){
+			this.setStatoSDIdescrizione(StatoSDIDocumento.getDescrizioneFromCodice(doc.getStatoSDI()));
+			
+			//SIAC-6988
+			if (doc.getStatoSDI().equals(StatoSDIDocumento.INVIATA_FEL.getCodice())
+					|| doc.getStatoSDI().equals(StatoSDIDocumento.DECORR_TERMINI.getCodice())
+					|| doc.getStatoSDI().equals(StatoSDIDocumento.ACCET_CONSEG.getCodice())) {
+				setFlagStatoSDIInviatoFEL(true);
+			}
+				
+			
+		}
 	}
 	
 	/**
@@ -1074,7 +1140,7 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 		
 		utility.setAnnoEsercizio(getAnnoEsercizioInt());
 		utility.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		utility.setNumeroAccertamento(accertamento.getNumero());
+		utility.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 		
 		return utility;
 	}
@@ -1247,6 +1313,30 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 		request.setBilancio(getBilancio());
 		return request;
 	}
+	
+	/**
+	 * Crea request comprensiva dei dati di ModificaMovimento da caricare per il bloccoROR ed da utilizzare per il servizio {@link RicercaAccertamentoPerChiaveOttimizzato}
+	 * @param accertamento l'accertamento per cui effettuare la ricerca
+	 * @return la request creata
+	 * */
+	public RicercaAccertamentoPerChiaveOttimizzato creaRequestRicercaAccertamentoPerChiaveOttimizzato_BloccoROR(Accertamento accertamento) {
+		RicercaAccertamentoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaAccertamentoPerChiaveOttimizzato.class);
+		request.setEnte(getEnte());
+		RicercaAccertamentoK pRicercaAccertamentoK = creaRicercaAccertamentoK(accertamento);
+		pRicercaAccertamentoK.setNumeroSubDaCercare(getSubMovimentoGestione() != null ? getSubMovimentoGestione().getNumeroBigDecimal() : null);
+		request.setpRicercaAccertamentoK(pRicercaAccertamentoK);
+		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null);
+		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
+		datiOpzionaliElencoSubTuttiConSoloGliIds.setEscludiAnnullati(true);
+		datiOpzionaliElencoSubTuttiConSoloGliIds.setCaricaElencoModificheMovGest(true);
+		request.setDatiOpzionaliElencoSubTuttiConSoloGliIds(datiOpzionaliElencoSubTuttiConSoloGliIds);
+		// Non richiedo NESSUN importo derivato.
+		DatiOpzionaliCapitoli datiOpzionaliCapitoli = new DatiOpzionaliCapitoli();
+		datiOpzionaliCapitoli.setImportiDerivatiRichiesti(EnumSet.noneOf(ImportiCapitoloEnum.class));
+		request.setDatiOpzionaliCapitoli(datiOpzionaliCapitoli);
+		return request;
+	}
+	
 	/**
 	 * Cre a request da utilizzare per il servizio {@link RicercaAccertamentoPerChiaveOttimizzato}
 	 * @param accertamento l'accertamento per cui effettuare la ricerca
@@ -1258,10 +1348,10 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 		request.setEnte(getEnte());
 		
 		RicercaAccertamentoK pRicercaAccertamentoK = creaRicercaAccertamentoK(accertamento);
-		pRicercaAccertamentoK.setNumeroSubDaCercare(getSubMovimentoGestione() != null ? getSubMovimentoGestione().getNumero() : null);
+		pRicercaAccertamentoK.setNumeroSubDaCercare(getSubMovimentoGestione() != null ? getSubMovimentoGestione().getNumeroBigDecimal() : null);
 		request.setpRicercaAccertamentoK(pRicercaAccertamentoK);
 		
-		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null);
+		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		datiOpzionaliElencoSubTuttiConSoloGliIds.setEscludiAnnullati(true);
@@ -1303,6 +1393,22 @@ public class AggiornaDocumentoEntrataModel extends AggiornaDocumentoModel {
 		req.setParametriPaginazione(new ParametriPaginazione(0, 100));
 		
 		return req;
+	}
+
+	public String getStatoSDIdescrizione() {
+		return statoSDIdescrizione;
+	}
+
+	public void setStatoSDIdescrizione(String statoSDIdescrizione) {
+		this.statoSDIdescrizione = statoSDIdescrizione;
+	}
+	
+	public Date getDataCambioStatoFel() {
+		return dataCambioStatoFel;
+	}
+
+	public void setDataCambioStatoFel(Date dataCambioStatoFel) {
+		this.dataCambioStatoFel = dataCambioStatoFel;
 	}
 	
 }

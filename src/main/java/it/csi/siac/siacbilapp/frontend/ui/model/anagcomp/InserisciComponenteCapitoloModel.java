@@ -4,6 +4,8 @@
 */
 package it.csi.siac.siacbilapp.frontend.ui.model.anagcomp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,12 +14,12 @@ import it.csi.siac.siacbilapp.frontend.ui.model.commons.ComponenteCapitoloModel;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.AmbitoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.FonteFinanziariaComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ImpegnabileComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MomentoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.SottotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
-import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
 
 /**
  * @author filippo
@@ -36,7 +38,9 @@ public class InserisciComponenteCapitoloModel extends ComponenteCapitoloModel{
 	private List<FonteFinanziariaComponenteImportiCapitolo> listaFonteFinanziamento = new ArrayList<FonteFinanziariaComponenteImportiCapitolo>();
 	private List<MomentoComponenteImportiCapitolo> listaMomento = new ArrayList<MomentoComponenteImportiCapitolo>();
 	private List<PropostaDefaultComponenteImportiCapitolo> listaPrevisione = new ArrayList<PropostaDefaultComponenteImportiCapitolo>();
-	private List<TipoGestioneComponenteImportiCapitolo> listaGestione = new ArrayList<TipoGestioneComponenteImportiCapitolo>();
+	//SIAC-7349
+	//private List<TipoGestioneComponenteImportiCapitolo> listaGestione = new ArrayList<TipoGestioneComponenteImportiCapitolo>();
+	private List<ImpegnabileComponenteImportiCapitolo> listaImpegnabile = new ArrayList<ImpegnabileComponenteImportiCapitolo>();
 	
 	/** Costruttore vuoto di default */
 	public InserisciComponenteCapitoloModel() {
@@ -150,12 +154,28 @@ public class InserisciComponenteCapitoloModel extends ComponenteCapitoloModel{
 		this.listaPrevisione = listaPrevisione;
 	}
 
-	public List<TipoGestioneComponenteImportiCapitolo> getListaGestione() {
-		return listaGestione;
+//	public List<TipoGestioneComponenteImportiCapitolo> getListaGestione() {
+//		return listaGestione;
+//	}
+//
+//	public void setListaGestione(List<TipoGestioneComponenteImportiCapitolo> listaGestione) {
+//		this.listaGestione = listaGestione;
+//	}
+
+	
+	
+	/**
+	 * @return the listaImpegnabile
+	 */
+	public List<ImpegnabileComponenteImportiCapitolo> getListaImpegnabile() {
+		return listaImpegnabile;
 	}
 
-	public void setListaGestione(List<TipoGestioneComponenteImportiCapitolo> listaGestione) {
-		this.listaGestione = listaGestione;
+	/**
+	 * @param listaImpegnabile the listaImpegnabile to set
+	 */
+	public void setListaImpegnabile(List<ImpegnabileComponenteImportiCapitolo> listaImpegnabile) {
+		this.listaImpegnabile = listaImpegnabile;
 	}
 
 	/* Requests */	
@@ -165,11 +185,31 @@ public class InserisciComponenteCapitoloModel extends ComponenteCapitoloModel{
 		request.setDataOra(new Date());
 		request.setRichiedente(getRichiedente());
 		
+		//SIAC-7246
+		setDataInizioValiditaToDefaultIfNull();
+				
 		//TODO : rimuovere il codice del TipoComponenteImportiCapitolo 
-		componenteCapitolo.setCodice("05");
+		//SIAC-7492
+//		componenteCapitolo.setCodice("05");
 		request.setTipoComponenteImportiCapitolo(componenteCapitolo);
 		return request;
 	}
 	
+	private void setDataInizioValiditaToDefaultIfNull(){
+		String methodName = "creaRequestInserisceComponenteCapitolo() - setDataInizioValiditaToDefaultIfNull";
+		if(componenteCapitolo.getDataInizioValidita() == null && getBilancio() != null && getBilancio().getAnno() != 0) {
+			Date defaultDate = null;
+			try {
+				defaultDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/" + getBilancio().getAnno());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} 
+			componenteCapitolo.setDataInizioValidita(defaultDate);
+		} else if(componenteCapitolo.getDataInizioValidita() != null) {
+			log.debug(methodName, "data inizio validita' corretta");
+		} else {
+			log.debug(methodName, "data inizio validita non pressente");
+		}
+	}
 	
 }

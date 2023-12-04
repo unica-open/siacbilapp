@@ -61,7 +61,7 @@ public class RicercaPreDocumentoEntrataModel extends GenericPreDocumentoEntrataM
 	private Boolean flagNonAnnullati = Boolean.FALSE;
 	
 	private List<StatoOperativoPreDocumento> listaStatoOperativoPreDocumento = new ArrayList<StatoOperativoPreDocumento>();
-	private List<TipoDocumento> listaTipoDocumento = new ArrayList<TipoDocumento>();
+//	private List<TipoDocumento> listaTipoDocumento = new ArrayList<TipoDocumento>();
 	
 	// SIAC-4772
 	private OrdinativoIncasso ordinativo;
@@ -69,6 +69,9 @@ public class RicercaPreDocumentoEntrataModel extends GenericPreDocumentoEntrataM
 	// SIAC-5250
 	private List<OrdinamentoPreDocumentoEntrata> listaOrdinamentoPreDocumentoEntrata = new ArrayList<OrdinamentoPreDocumentoEntrata>();
 	private OrdinamentoPreDocumentoEntrata ordinamentoPreDocumentoEntrata;
+	
+	//SIAC-6780
+	private PreDocumentoEntrata predocumentoEntrata;
 	
 	/** Costruttore vuoto di default */
 	public RicercaPreDocumentoEntrataModel() {
@@ -286,19 +289,19 @@ public class RicercaPreDocumentoEntrataModel extends GenericPreDocumentoEntrataM
 		this.listaStatoOperativoPreDocumento = listaStatoOperativoPreDocumento != null ? listaStatoOperativoPreDocumento : new ArrayList<StatoOperativoPreDocumento>();
 	}
 	
-	/**
-	 * @return the listaTipoDocumento
-	 */
-	public List<TipoDocumento> getListaTipoDocumento() {
-		return listaTipoDocumento;
-	}
-
-	/**
-	 * @param listaTipoDocumento the listaTipoDocumento to set
-	 */
-	public void setListaTipoDocumento(List<TipoDocumento> listaTipoDocumento) {
-		this.listaTipoDocumento = listaTipoDocumento != null ? listaTipoDocumento : new ArrayList<TipoDocumento>();
-	}
+//	/**
+//	 * @return the listaTipoDocumento
+//	 */
+//	public List<TipoDocumento> getListaTipoDocumento() {
+//		return listaTipoDocumento;
+//	}
+//
+//	/**
+//	 * @param listaTipoDocumento the listaTipoDocumento to set
+//	 */
+//	public void setListaTipoDocumento(List<TipoDocumento> listaTipoDocumento) {
+//		this.listaTipoDocumento = listaTipoDocumento != null ? listaTipoDocumento : new ArrayList<TipoDocumento>();
+//	}
 
 	/**
 	 * @return the ordinativo
@@ -343,6 +346,20 @@ public class RicercaPreDocumentoEntrataModel extends GenericPreDocumentoEntrataM
 	}
 
 	/* ***** Requests ***** */
+
+	/**
+	 * @return the predocumentoEntrata
+	 */
+	public PreDocumentoEntrata getPredocumentoEntrata() {
+		return predocumentoEntrata;
+	}
+
+	/**
+	 * @param predocumentoEntrata the predocumentoEntrata to set
+	 */
+	public void setPredocumentoEntrata(PreDocumentoEntrata predocumentoEntrata) {
+		this.predocumentoEntrata = predocumentoEntrata;
+	}
 
 	/**
 	 * Crea una request per il servizio di {@link RicercaSinteticaPreDocumentoEntrata}.

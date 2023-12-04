@@ -6,7 +6,7 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ taglib uri="/struts-tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<s:set name="annoIsNotRequired"><c:out value="${param.annoIsNotRequired}" default="false"/></s:set>
+<s:set var="annoIsNotRequired"><c:out value="${param.annoIsNotRequired}" default="false"/></s:set>
 
 <!--modale provvedimento -->
 <div id="modaleGuidaProvvedimento<s:property value='%{suffisso}' default='' />" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="guidaProvLabel" aria-hidden="true">

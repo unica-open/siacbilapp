@@ -7,6 +7,9 @@ package it.csi.siac.siacconsultazioneentitaapp.frontend.ui.model.ajax;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
 
 import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacconsultazioneentitaapp.frontend.ui.util.wrapper.EntitaConsultabileWrapper;
@@ -38,6 +41,8 @@ public class RicercaEntitaConsultabileBaseAjaxModel extends GenericBilancioModel
 	private Long contentLength;
 	private String fileName;
 	private transient InputStream inputStream;
+	//SIAC-8222
+	private Set<Cookie> cookies;
 	
 	/**
 	 * @return the sEcho
@@ -192,6 +197,20 @@ public class RicercaEntitaConsultabileBaseAjaxModel extends GenericBilancioModel
 	public void setInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
+	
+	/**
+	 * @return the cookies
+	 */
+	public Set<Cookie> getCookies() {
+		return cookies;
+	}
+
+	/**
+	 * @param cookies the cookies to set
+	 */
+	public void setCookies(Set<Cookie> cookies) {
+		this.cookies = cookies;
+	}
 
 	@Override
 	protected ParametriPaginazione creaParametriPaginazione() {
@@ -216,5 +235,20 @@ public class RicercaEntitaConsultabileBaseAjaxModel extends GenericBilancioModel
 		request.setRichiedente(getRichiedente());
 		request.setParametriPaginazione(creaParametriPaginazione());
 		return request;
+	}
+	
+	public static void main(String[] args) {
+		int start, stop, elementiPerPagina, totale;
+		start = 1;
+		stop = 10;
+		totale = 21;
+		elementiPerPagina=10;
+		System.out.println("start = " + start + " elementiPerPagina= " + elementiPerPagina + " numeroPagina: " +  start/elementiPerPagina);
+		start = 11;
+		stop = 20;
+		totale = 21;
+		elementiPerPagina=10;
+		System.out.println("start = " + start + " elementiPerPagina= " + elementiPerPagina + " numeroPagina: " +  start/elementiPerPagina);
+		
 	}
 }

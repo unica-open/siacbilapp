@@ -168,11 +168,11 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp"/>
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>	
-	<script type="text/javascript" src="${jspath}variazioni/variazioni.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/classificatori.js"></script>
-	<script type="text/javascript" src="${jspath}variazioni/variazioni.step3.codifiche.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>	
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioni.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/classificatori.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/variazioni/variazioni.step3.codifiche.js"></script>
 	
 </body>
 </html>

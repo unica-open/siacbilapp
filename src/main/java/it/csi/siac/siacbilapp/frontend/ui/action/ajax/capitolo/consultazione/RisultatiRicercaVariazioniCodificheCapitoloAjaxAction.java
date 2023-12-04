@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.model.ajax.consultazione.RisultatiRicercaVariazioniCodificheCapitoloAjaxModel;
@@ -31,7 +31,7 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaVariazioniCodificheCapitoloAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDettaglioVariazioneCodificaCapitolo, 
+public class RisultatiRicercaVariazioniCodificheCapitoloAjaxAction extends PagedDataTableAjaxAction<ElementoDettaglioVariazioneCodificaCapitolo, 
 RisultatiRicercaVariazioniCodificheCapitoloAjaxModel, DettaglioVariazioneCodificaCapitolo, RicercaStoricoVariazioniCodificheCapitolo, RicercaStoricoVariazioniCodificheCapitoloResponse> {
 	
 	/** Per la serializzazione */
@@ -69,13 +69,13 @@ RisultatiRicercaVariazioniCodificheCapitoloAjaxModel, DettaglioVariazioneCodific
 
 
 	@Override
-	protected RicercaStoricoVariazioniCodificheCapitoloResponse ottieniResponse(RicercaStoricoVariazioniCodificheCapitolo request) {
+	protected RicercaStoricoVariazioniCodificheCapitoloResponse getResponse(RicercaStoricoVariazioniCodificheCapitolo request) {
 		return capitoloService.ricercaStoricoVariazioniCodificheCapitolo(request);
 	}
 	
 
 	@Override
-	protected ElementoDettaglioVariazioneCodificaCapitolo ottieniIstanza(DettaglioVariazioneCodificaCapitolo e)	throws FrontEndBusinessException {		
+	protected ElementoDettaglioVariazioneCodificaCapitolo getInstance(DettaglioVariazioneCodificaCapitolo e)	throws FrontEndBusinessException {		
 		log.debug("ottieniIstanza", "ottengo un'istanza della variazione da consultare");
 		return ElementoDettaglioVariazioneCodificaCapitoloFactory.getInstance(e);
 	}

@@ -5,16 +5,19 @@
 package it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
+import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneDiBilancio;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo;
+import it.csi.siac.siaccorser.model.OperazioneAsincrona;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 
 /**
@@ -111,6 +114,16 @@ public final class ElementoVariazioneFactory {
 		wrapper.setProvvedimento(componiStringaAttoAmministrativo(variazione.getAttoAmministrativo()));
 		wrapper.setProvvedimentoBilancio(componiStringaAttoAmministrativo(variazione.getAttoAmministrativoVariazioneBilancio()));
 		wrapper.setApplicazione(ottieniApplicazione(variazione.getCapitoli()));
+		boolean ultimaOperazioneEffettuataDefinizione = variazione.getUltimaAsincronaDefinizione() != null;
+		OperazioneAsincrona ultimaOperazioneAsincronaEffettuata = ultimaOperazioneEffettuataDefinizione? variazione.getUltimaAsincronaDefinizione() : variazione.getUltimaAsincronaAggiornamento();
+		if(ultimaOperazioneAsincronaEffettuata == null) {
+			return;
+		}
+		wrapper.setStatoUltimaOperazioneEffettuata(ultimaOperazioneAsincronaEffettuata.getStato());
+		Date dataAgg = ultimaOperazioneAsincronaEffettuata.getOpasFine() != null? ultimaOperazioneAsincronaEffettuata.getOpasFine() : ultimaOperazioneAsincronaEffettuata.getOpasAvvio(); 
+		wrapper.setDataUltimaOperazioneEffettuata(FormatUtils.formatDate(dataAgg,"dd/MM/yyyy HH:mm"));
+		wrapper.setTipologiaUltimaOperazioneEffettuata(ultimaOperazioneEffettuataDefinizione? "DEFINIZIONE" : "AGGIORNAMENTO");
+		
 	}
 	
 	/**

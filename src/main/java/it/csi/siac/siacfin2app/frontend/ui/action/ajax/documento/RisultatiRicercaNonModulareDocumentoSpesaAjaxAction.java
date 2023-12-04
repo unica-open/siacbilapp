@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -31,7 +31,7 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaNonModulareDocumentoSpesaAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoDocumento, 
+public class RisultatiRicercaNonModulareDocumentoSpesaAjaxAction extends PagedDataTableAjaxAction<ElementoDocumento, 
 	RisultatiRicercaDocumentoAjaxModel, DocumentoSpesa, RicercaSinteticaDocumentoSpesa, RicercaSinteticaDocumentoSpesaResponse> {
 	
 	/** Per la serializzazione */
@@ -68,12 +68,12 @@ public class RisultatiRicercaNonModulareDocumentoSpesaAjaxAction extends Generic
 	}
 	
 	@Override
-	protected ElementoDocumentoSpesa ottieniIstanza(DocumentoSpesa e) throws FrontEndBusinessException {
+	protected ElementoDocumentoSpesa getInstance(DocumentoSpesa e) throws FrontEndBusinessException {
 		return ElementoDocumentoFactory.getInstanceSpesa(e);
 	}
 	
 	@Override
-	protected RicercaSinteticaDocumentoSpesaResponse ottieniResponse(RicercaSinteticaDocumentoSpesa request) {	
+	protected RicercaSinteticaDocumentoSpesaResponse getResponse(RicercaSinteticaDocumentoSpesa request) {	
 		return documentoSpesaService.ricercaSinteticaDocumentoSpesa(request);
 	}
 	

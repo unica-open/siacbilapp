@@ -6,13 +6,13 @@ package it.csi.siac.siacbilapp.frontend.ui.action;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import it.csi.siac.siacbilapp.BaseJUnit4SpringTestCase;
 import it.csi.siac.siacbilapp.frontend.ui.action.capuscprev.InserisciCapitoloUscitaPrevisioneAction;
 import it.csi.siac.siacbilapp.frontend.ui.model.capuscprev.InserisciCapitoloUscitaPrevisioneModel;
+import it.csi.siac.siaccommon.util.log.LogUtil;
 
 /**
  * Classe di test per la Action CapitoloUscitaPrevisioneAction.
@@ -22,7 +22,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.capuscprev.InserisciCapitoloUsci
  */
 public class InserisciCapitoloUscitaPrevisioneActionTest extends BaseJUnit4SpringTestCase {
 	
-	private Logger logger = Logger.getLogger(InserisciCapitoloUscitaPrevisioneActionTest.class);
+	private LogUtil logger = new LogUtil(getClass());
 	
 	private InserisciCapitoloUscitaPrevisioneAction action;
 	private InserisciCapitoloUscitaPrevisioneModel  model;
@@ -37,7 +37,7 @@ public class InserisciCapitoloUscitaPrevisioneActionTest extends BaseJUnit4Sprin
 		try {
 			action.prepare();
 		} catch (Exception e) {
-			logger.debug("Errore nella preparazione della Action");
+			logger.debug("init", "Errore nella preparazione della Action");
 			e.printStackTrace();
 		}
 	}
@@ -47,9 +47,10 @@ public class InserisciCapitoloUscitaPrevisioneActionTest extends BaseJUnit4Sprin
 	 */
 	@Test
 	public void inserisciTest() {
-		logger.debug("Test per il metodo 'inserisci'");
+		final String methodName = "inserisciTest";
+		logger.debug(methodName, "Test per il metodo 'inserisci'");
 		
-		logger.debug("Imposto i dati dalle liste del model per popolare i campi singoli");
+		logger.debug(methodName, "Imposto i dati dalle liste del model per popolare i campi singoli");
 		try {
 			model.setMissione(			model.getListaMissione()			.get(0));
 			model.setTipoFinanziamento(	model.getListaTipoFinanziamento()	.get(0));
@@ -71,9 +72,9 @@ public class InserisciCapitoloUscitaPrevisioneActionTest extends BaseJUnit4Sprin
 			fail("Errore: " + ex.getMessage());
 		}
 		
-		logger.debug("Prima di action.inserisci()");
+		logger.debug(methodName, "Prima di action.inserisci()");
 		String result = action.inserisceCDU();
-		logger.debug("Dopo di action.inserisci(): risultato " + result);
+		logger.debug(methodName, "Dopo di action.inserisci(): risultato " + result);
 		
 		assertEquals("Non ho ottenuto SUCCESS", result, "success");
 	}

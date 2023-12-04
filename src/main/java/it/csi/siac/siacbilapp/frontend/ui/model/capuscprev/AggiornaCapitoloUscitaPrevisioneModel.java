@@ -12,8 +12,10 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.aggiornamento.Classifica
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaCapitoloDiUscitaPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaAttributiModificabiliCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaClassificatoriModificabiliCapitoloResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaPrevisioneResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoComponenteImportiCapitoloPerCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioniCapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.ClassificazioneCofog;
@@ -26,7 +28,9 @@ import it.csi.siac.siacbilser.model.PerimetroSanitarioSpesa;
 import it.csi.siac.siacbilser.model.PoliticheRegionaliUnitarie;
 import it.csi.siac.siacbilser.model.Programma;
 import it.csi.siac.siacbilser.model.RicorrenteSpesa;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
+import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.model.TipoFondo;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
@@ -66,8 +70,10 @@ public class AggiornaCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevisi
 	
 	//SIAC-6884 Per Discriminare le componenti di default
 	private boolean capitoloFondino = false;
-	//private boolean stanziamentiNegativiPresenti;
-	
+	//SIAC-8256
+	private boolean stanziamentiNegativiPresenti;
+	private boolean presentiComponentiNonFresco;
+	private List<TipoComponenteImportiCapitolo> listaTipoComponentiDefault = new ArrayList<TipoComponenteImportiCapitolo>();
 
 	
 
@@ -251,8 +257,41 @@ public class AggiornaCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevisi
 		this.capitoloFondino = capitoloFondino;
 	}
 	
-	/* Requests */
 	
+	
+	public boolean isStanziamentiNegativiPresenti() {
+		return stanziamentiNegativiPresenti;
+	}
+
+	public void setStanziamentiNegativiPresenti(boolean stanziamentiNegativiPresenti) {
+		this.stanziamentiNegativiPresenti = stanziamentiNegativiPresenti;
+	}
+
+	public boolean isPresentiComponentiNonFresco() {
+		return presentiComponentiNonFresco;
+	}
+
+	public void setPresentiComponentiNonFresco(boolean presentiComponentiNonFresco) {
+		this.presentiComponentiNonFresco = presentiComponentiNonFresco;
+	}
+
+	
+	public List<TipoComponenteImportiCapitolo> getListaTipoComponentiDefault() {
+		return listaTipoComponentiDefault;
+	}
+
+	public void setListaTipoComponentiDefault(List<TipoComponenteImportiCapitolo> listaTipoComponentiDefault) {
+		this.listaTipoComponentiDefault = listaTipoComponentiDefault;
+	}
+
+	public RicercaTipoComponenteImportiCapitoloPerCapitolo creaRicercaTipoComponenteImportiCapitoloPerCapitolo() {
+		RicercaTipoComponenteImportiCapitoloPerCapitolo request = creaRequest(RicercaTipoComponenteImportiCapitoloPerCapitolo.class);
+		request.setCapitolo(new CapitoloUscitaPrevisione());
+		request.getCapitolo().setUid(getUidDaAggiornare());
+		request.setSoloValidiPerBilancio(true);
+		return request;
+	}
+	/* Requests */
 	/**
 	 * Restituisce una Request di tipo {@link AggiornaCapitoloDiUscitaPrevisione} a partire dal Model.
 	 * 
@@ -284,6 +323,8 @@ public class AggiornaCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevisi
 		PerimetroSanitarioSpesa perimetroSanitarioSpesaDaInjettare = valutaInserimento(getPerimetroSanitarioSpesa(), classificatoreAggiornamento.getPerimetroSanitarioSpesa(), isPerimetroSanitarioSpesaEditabile());
 		TransazioneUnioneEuropeaSpesa transazioneUnioneEuropeaSpesaDaInjettare = valutaInserimento(getTransazioneUnioneEuropeaSpesa(), classificatoreAggiornamento.getTransazioneUnioneEuropeaSpesa(), isTransazioneUnioneEuropeaSpesaEditabile());
 		PoliticheRegionaliUnitarie politicheRegionaliUnitarieDaInjettare = valutaInserimento(getPoliticheRegionaliUnitarie(), classificatoreAggiornamento.getPoliticheRegionaliUnitarie(), isPoliticheRegionaliUnitarieEditabile());
+		RisorsaAccantonata risorsaAccantonataDaInjettare = valutaInserimento(getRisorsaAccantonata(), classificatoreAggiornamento.getRisorsaAccantonata(), isMissioneEditabile());
+		
 		
 		// Injezione dei classificatori
 		capitoloUscitaPrevisione.setBilancio(getBilancio());
@@ -302,6 +343,8 @@ public class AggiornaCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevisi
 		capitoloUscitaPrevisione.setPerimetroSanitarioSpesa(perimetroSanitarioSpesaDaInjettare);
 		capitoloUscitaPrevisione.setTransazioneUnioneEuropeaSpesa(transazioneUnioneEuropeaSpesaDaInjettare);
 		capitoloUscitaPrevisione.setPoliticheRegionaliUnitarie(politicheRegionaliUnitarieDaInjettare);
+		
+		capitoloUscitaPrevisione.setRisorsaAccantonata(risorsaAccantonataDaInjettare);
 		
 		capitoloUscitaPrevisione.setListaImportiCapitoloUP(getListaImportiCapitolo());
 		capitoloUscitaPrevisione.setClassificatoriGenerici(getListaClassificatoriGenericiAggiornamento(classificatoreAggiornamento));
@@ -385,6 +428,8 @@ public class AggiornaCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevisi
 		setPerimetroSanitarioSpesa(capitoloUscitaPrevisione.getPerimetroSanitarioSpesa());
 		setTransazioneUnioneEuropeaSpesa(capitoloUscitaPrevisione.getTransazioneUnioneEuropeaSpesa());
 		setPoliticheRegionaliUnitarie(capitoloUscitaPrevisione.getPoliticheRegionaliUnitarie());
+		//SIAC-7192
+		setRisorsaAccantonata(capitoloUscitaPrevisione.getRisorsaAccantonata());
 		
 		/* Stringhe di utilita' per la visualizzazione dell'elemento del piano dei conti e della struttura amministrativo contabile */
 		valorizzaStringheUtilita();
@@ -481,8 +526,13 @@ public class AggiornaCapitoloUscitaPrevisioneModel extends CapitoloUscitaPrevisi
 		}
 	}
 
-	
-	
+	//SIAC-8256
+	public RicercaComponenteImportiCapitolo creaRequestRicercaComponenteImportiCapitolo() {
+		RicercaComponenteImportiCapitolo request = creaRequest(RicercaComponenteImportiCapitolo.class);
+		request.setCapitolo(new CapitoloUscitaPrevisione());
+		request.getCapitolo().setUid(capitoloUscitaPrevisione.getUid());
+		return request;
+	}
 	
 	
 

@@ -256,5 +256,5 @@ public class ConsultaCapitoloEntrataPrevisioneModel extends CapitoloEntrataPrevi
 			// Ignoro l'errore: ipmorti non impostabili
 		}
 	}
-
+	
 }

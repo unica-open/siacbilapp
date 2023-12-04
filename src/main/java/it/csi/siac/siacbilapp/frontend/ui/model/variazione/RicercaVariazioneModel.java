@@ -19,7 +19,7 @@ import it.csi.siac.siacbilapp.frontend.ui.model.GenericBilancioModel;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.variazione.ElementoStatoOperativoVariazione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodifiche;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
@@ -51,7 +51,7 @@ public class RicercaVariazioneModel extends GenericBilancioModel {
 	private String descrizioneVariazione;
 	private TipoVariazione tipoVariazione;
 	private String tipoVariazioneHidden;
-	private StatoOperativoVariazioneDiBilancio statoVariazione;
+	private StatoOperativoVariazioneBilancio statoVariazione;
 	
 	private AttoAmministrativo attoAmministrativo;
 	private Integer uidProvvedimento;
@@ -209,7 +209,7 @@ public class RicercaVariazioneModel extends GenericBilancioModel {
 	/**
 	 * @return the statoVariazione
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoVariazione() {
+	public StatoOperativoVariazioneBilancio getStatoVariazione() {
 		return statoVariazione;
 	}
 
@@ -218,7 +218,7 @@ public class RicercaVariazioneModel extends GenericBilancioModel {
 	/**
 	 * @param statoVariazione the statoVariazione to set
 	 */
-	public void setStatoVariazione(StatoOperativoVariazioneDiBilancio statoVariazione) {
+	public void setStatoVariazione(StatoOperativoVariazioneBilancio statoVariazione) {
 		this.statoVariazione = statoVariazione;
 	}
 
@@ -429,10 +429,11 @@ public class RicercaVariazioneModel extends GenericBilancioModel {
 	
 	/**
 	 * Crea una request per il servizio di {@link RicercaVariazioneBilancio} a partire dal Model.
+	 * @param limitaRicerca 
 	 * 
 	 * @return la request creata
 	 */
-	public RicercaVariazioneBilancio creaRequestRicercaVariazioneBilancio() {
+	public RicercaVariazioneBilancio creaRequestRicercaVariazioneBilancio(boolean limitaRicerca) {
 		RicercaVariazioneBilancio request = new RicercaVariazioneBilancio();
 		
 		request.setDataOra(new Date());
@@ -455,6 +456,8 @@ public class RicercaVariazioneModel extends GenericBilancioModel {
 			attoAmministrativoDaInjettare.setUid(uidProvvedimento);
 			request.setAttoAmministrativo(attoAmministrativoDaInjettare);
 		}
+		//SIAC-8771-REGP
+		request.setLimitaRisultatiDefinitiveODecentrate(limitaRicerca);
 			
 		request.setParametriPaginazione(creaParametriPaginazione());
 		

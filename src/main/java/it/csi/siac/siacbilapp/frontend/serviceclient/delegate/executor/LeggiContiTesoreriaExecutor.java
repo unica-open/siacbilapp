@@ -5,7 +5,7 @@
 package it.csi.siac.siacbilapp.frontend.serviceclient.delegate.executor;
 
 import it.csi.siac.siacbilapp.frontend.serviceclient.delegate.cache.ServiceExecutor;
-import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 
@@ -18,20 +18,15 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaRespon
  */
 public class LeggiContiTesoreriaExecutor implements ServiceExecutor<LeggiContiTesoreria, LeggiContiTesoreriaResponse> {
 
-	private final PreDocumentoSpesaService preDocumentoSpesaService;
+	private final ContoTesoreriaService contoTesoreriaService;
 	
-	/**
-	 * Costruttore di injezione.
-	 * 
-	 * @param preDocumentoSpesaService il servizio da injettare
-	 */
-	public LeggiContiTesoreriaExecutor(PreDocumentoSpesaService preDocumentoSpesaService) {
-		this.preDocumentoSpesaService = preDocumentoSpesaService;
+	public LeggiContiTesoreriaExecutor(ContoTesoreriaService contoTesoreriaService) {
+		this.contoTesoreriaService = contoTesoreriaService;
 	}
 	
 	@Override
 	public LeggiContiTesoreriaResponse executeService(LeggiContiTesoreria req) {
-		return preDocumentoSpesaService.leggiContiTesoreria(req);
+		return contoTesoreriaService.leggiContiTesoreria(req);
 	}
 	
 }

@@ -7,7 +7,7 @@ package it.csi.siac.siacbasegengsaapp.frontend.ui.action.primanotaintegrata;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegrata.RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxModel;
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -25,7 +25,7 @@ import it.csi.siac.siacgenser.frontend.webservice.msg.OttieniEntitaCollegatePrim
  * @version 1.0.0 - 20/10/2016
  * @param <M> la tipizzazione del model
  */
-public abstract class RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxAction<M extends RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxModel> extends GenericRisultatiRicercaAjaxAction<ElementoMovimentoConsultazionePrimaNotaIntegrata<?>, M, Entita, OttieniEntitaCollegatePrimaNota, OttieniEntitaCollegatePrimaNotaResponse> {
+public abstract class RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxAction<M extends RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxModel> extends PagedDataTableAjaxAction<ElementoMovimentoConsultazionePrimaNotaIntegrata<?>, M, Entita, OttieniEntitaCollegatePrimaNota, OttieniEntitaCollegatePrimaNotaResponse> {
 
 	/** Per la serializzazione */
 	private static final long serialVersionUID = 2085403225367653701L;
@@ -42,12 +42,12 @@ public abstract class RisultatiRicercaDatiFinanziariPrimaNotaIntegrataBaseAjaxAc
 	}
 
 	@Override
-	protected ElementoMovimentoConsultazionePrimaNotaIntegrata<?> ottieniIstanza(Entita e) throws FrontEndBusinessException {
+	protected ElementoMovimentoConsultazionePrimaNotaIntegrata<?> getInstance(Entita e) throws FrontEndBusinessException {
 		return ElementoMovimentoConsultazionePrimaNotaIntegrataFactory.getInstance(e);
 	}
 
 	@Override
-	protected OttieniEntitaCollegatePrimaNotaResponse ottieniResponse(OttieniEntitaCollegatePrimaNota request) {
+	protected OttieniEntitaCollegatePrimaNotaResponse getResponse(OttieniEntitaCollegatePrimaNota request) {
 		return primaNotaService.ottieniEntitaCollegatePrimaNota(request);
 	}
 

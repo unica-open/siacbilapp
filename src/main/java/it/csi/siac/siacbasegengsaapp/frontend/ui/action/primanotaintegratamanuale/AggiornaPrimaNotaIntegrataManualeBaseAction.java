@@ -14,7 +14,7 @@ import it.csi.siac.siacbasegengsaapp.frontend.ui.model.primanotaintegratamanuale
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLibera;
 import it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.primanotalibera.ElementoScritturaPrimaNotaLiberaFactory;
 import it.csi.siac.siacbilapp.frontend.ui.util.BilConstants;
-import it.csi.siac.siacbilapp.frontend.ui.util.ReflectionUtil;
+import it.csi.siac.siaccommon.util.ReflectionUtil;
 import it.csi.siac.siacbilapp.frontend.ui.util.comparator.ComparatorUtils;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
 import it.csi.siac.siaccorser.model.Entita;
@@ -175,7 +175,7 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseAction<M extends Aggi
 		// Controllo gli errori
 		if(res.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMsg = createErrorInServiceInvocationString(req, res);
+			String errorMsg = createErrorInServiceInvocationString(RicercaDettaglioPrimaNota.class, res);
 			log.info(methodName, errorMsg);
 			addErrori(res);
 			throw new WebServiceInvocationFailureException(errorMsg);
@@ -262,7 +262,7 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseAction<M extends Aggi
 		if(res.hasErrori()) {
 			log.info(methodName, "Errori nella ricerca dell'accertamento");
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaAccertamentoPerChiaveOttimizzato.class, res));
 		}
 		if(res.getAccertamento() == null) {
 			log.info(methodName, "Accertamento non presente");
@@ -273,7 +273,7 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseAction<M extends Aggi
 		}
 		model.setAccertamento(res.getAccertamento());
 		model.setAnnoMovimentoGestione(Integer.valueOf(res.getAccertamento().getAnnoMovimento()));
-		model.setNumeroMovimentoGestione(Integer.valueOf(res.getAccertamento().getNumero().intValue()));
+		model.setNumeroMovimentoGestione(Integer.valueOf(res.getAccertamento().getNumeroBigDecimal().intValue()));
 		if(accertamento instanceof SubAccertamento) {
 			// Cerca sub
 			SubAccertamento sa = ComparatorUtils.findByNumeroMovimentoGestione(res.getAccertamento().getElencoSubAccertamenti(), (SubAccertamento) accertamento);
@@ -286,7 +286,7 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseAction<M extends Aggi
 				addErrore(errore);
 				throw new WebServiceInvocationFailureException(errore.getTesto());
 			}
-			model.setNumeroSubmovimentoGestione(Integer.valueOf(sa.getNumero().intValue()));
+			model.setNumeroSubmovimentoGestione(Integer.valueOf(sa.getNumeroBigDecimal().intValue()));
 			model.setSubAccertamento(sa);
 		}
 	}
@@ -304,7 +304,7 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseAction<M extends Aggi
 		if(res.hasErrori()) {
 			log.info(methodName, "Errori nella ricerca dell'impegno");
 			addErrori(res);
-			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(req, res));
+			throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, res));
 		}
 		if(res.getImpegno() == null) {
 			log.info(methodName, "Impegno non presente");
@@ -315,7 +315,7 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseAction<M extends Aggi
 		}
 		model.setImpegno(res.getImpegno());
 		model.setAnnoMovimentoGestione(Integer.valueOf(res.getImpegno().getAnnoMovimento()));
-		model.setNumeroMovimentoGestione(Integer.valueOf(res.getImpegno().getNumero().intValue()));
+		model.setNumeroMovimentoGestione(Integer.valueOf(res.getImpegno().getNumeroBigDecimal().intValue()));
 		if(impegno instanceof SubImpegno) {
 			// Cerca sub
 			SubImpegno si = ComparatorUtils.findByNumeroMovimentoGestione(res.getImpegno().getElencoSubImpegni(), (SubImpegno) impegno);
@@ -328,7 +328,7 @@ public abstract class AggiornaPrimaNotaIntegrataManualeBaseAction<M extends Aggi
 				addErrore(errore);
 				throw new WebServiceInvocationFailureException(errore.getTesto());
 			}
-			model.setNumeroSubmovimentoGestione(Integer.valueOf(si.getNumero().intValue()));
+			model.setNumeroSubmovimentoGestione(Integer.valueOf(si.getNumeroBigDecimal().intValue()));
 			model.setSubImpegno(si);
 		}
 	}

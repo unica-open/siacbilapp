@@ -35,8 +35,9 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="success" type="customMessagesJSON" />
 			<result name="input" type="customMessagesJSON" />
 		</action>
+		<!-- SIAC-7763 si passa il type a "redirectAction" da "chain" -->
 		<action name="inserisciRendicontoAnticipoSpeseCassaEconomale_restituzioneTotale" class="inserisciRendicontoAnticipoSpeseCassaEconomaleGiustificativiAction" method="restituzioneTotale">
-			<result name="success" type="chain">inserisciRendicontoAnticipoSpeseCassaEconomale_completeStep1</result>
+			<result name="success" type="redirectAction">inserisciRendicontoAnticipoSpeseCassaEconomale_completeStep1</result>
 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpese/rendiconto/step1.jsp</result>
 		</action>
 		<action name="inserisciRendicontoAnticipoSpeseCassaEconomale_annullaStep1" class="inserisciRendicontoAnticipoSpeseCassaEconomaleAction" method="annullaStep1">
@@ -127,7 +128,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<result name="input" type="customMessagesJSON" />
 		</action>
 		<action name="aggiornaRendicontoAnticipoSpeseCassaEconomale_restituzioneTotale" class="aggiornaRendicontoAnticipoSpeseCassaEconomaleGiustificativiAction" method="restituzioneTotale">
-			<result name="success" type="chain">aggiornaRendicontoAnticipoSpeseCassaEconomale_completeStep1</result>
+			<result name="success" type="redirectAction">aggiornaRendicontoAnticipoSpeseCassaEconomale_completeStep1</result>
 			<result name="input">/jsp/cassaEconomale/richieste/anticipoSpese/rendiconto/step1.jsp</result>
 		</action>
 		<action name="aggiornaRendicontoAnticipoSpeseCassaEconomale_annullaStep1" class="aggiornaRendicontoAnticipoSpeseCassaEconomaleAction" method="annullaStep1">

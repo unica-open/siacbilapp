@@ -5,6 +5,7 @@
 package it.csi.siac.siacfin2app.frontend.ui.model.predocumento;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,13 +17,16 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaPreDocumentoEntrat
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaImputazioniContabiliPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaImputazioniContabiliVariatePreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.DefiniscePreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.CausaleEntrata;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzato;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.ric.RicercaAccertamentoK;
 
 /**
@@ -55,6 +59,14 @@ public class RisultatiRicercaPreDocumentoEntrataModel extends RisultatiRicercaPr
 	// SIAC-5041
 	private boolean modificaAccertamentoDisponibile;
 
+	//SIAC-6780
+	private boolean completaDefinisciAbilitato;
+	private ProvvisorioDiCassa provvisorioCassa;
+	private boolean fromRiepilogoCompletaDefinisci = Boolean.FALSE;
+
+	//SIAC-7423
+	private List<ContoTesoreria> listaContoTesoreria = new ArrayList<ContoTesoreria>();
+	
 	/** Costruttore vuoto di default */
 	public RisultatiRicercaPreDocumentoEntrataModel() {
 		super();
@@ -202,6 +214,78 @@ public class RisultatiRicercaPreDocumentoEntrataModel extends RisultatiRicercaPr
 	}
 
 	/**
+	 * @return the completaDefinisciAbilitato
+	 */
+	public boolean isCompletaDefinisciAbilitato() {
+		return completaDefinisciAbilitato;
+	}
+
+	/**
+	 * @param completaDefinisciAbilitato the completaDefinisciAbilitato to set
+	 */
+	public void setCompletaDefinisciAbilitato(boolean completaDefinisciAbilitato) {
+		this.completaDefinisciAbilitato = completaDefinisciAbilitato;
+	}
+
+	/**
+	 * @return the provvisorioCassa
+	 */
+	public ProvvisorioDiCassa getProvvisorioCassa() {
+		return provvisorioCassa;
+	}
+
+	/**
+	 * @param provvisorioCassa the provvisorioCassa to set
+	 */
+	public void setProvvisorioCassa(ProvvisorioDiCassa provvisorioCassa) {
+		this.provvisorioCassa = provvisorioCassa;
+	}
+
+	/**
+	 * @return the fromRieilogoCompletaDefinisci
+	 */
+	public boolean isFromRiepilogoCompletaDefinisci() {
+		return fromRiepilogoCompletaDefinisci;
+	}
+
+	/**
+	 * @param fromRieilogoCompletaDefinisci the fromRieilogoCompletaDefinisci to set
+	 */
+	public void setFromRiepilogoCompletaDefinisci(boolean fromRiepilogoCompletaDefinisci) {
+		this.fromRiepilogoCompletaDefinisci = fromRiepilogoCompletaDefinisci;
+	}
+	
+	/**
+	 * @return the listaContoTesoreria
+	 */
+	public List<ContoTesoreria> getListaContoTesoreria() {
+		return listaContoTesoreria;
+	}
+
+	/**
+	 * @param listaContoTesoreria the listaContoTesoreria to set
+	 */
+	public void setListaContoTesoreria(List<ContoTesoreria> listaContoTesoreria) {
+		this.listaContoTesoreria = listaContoTesoreria;
+	}
+
+	/**
+	 * Crea una request per il servizio di {@link LeggiContiTesoreria} a partire
+	 * dal model.
+	 * 
+	 * @return la request creata
+	 */
+	public LeggiContiTesoreria creaRequestLeggiContiTesoreria() {
+		LeggiContiTesoreria request = new LeggiContiTesoreria();
+
+		request.setDataOra(new Date());
+		request.setEnte(getEnte());
+		request.setRichiedente(getRichiedente());
+
+		return request;
+	}
+
+	/**
 	 * @return the riepilogoImputazioniContabili
 	 */
 	public String getRiepilogoImputazioniContabili() {
@@ -220,7 +304,9 @@ public class RisultatiRicercaPreDocumentoEntrataModel extends RisultatiRicercaPr
 	 * @return the spanClassOperazioni
 	 */
 	public String getSpanClassOperazioni() {
-		int j = Math.max(1, booleanToInt(getInserisciAbilitato()) + booleanToInt(getAssociaAbilitato()) + booleanToInt(getDefinisciAbilitato()) + booleanToInt(getDataTrasmissioneAbilitato()));
+		//SIAC-6780
+		//aggiungo isCompletaDefinisciAbilitato | ne inserisco due per ottenre un impostazione della paginazione migliore
+		int j = Math.max(1, booleanToInt(getInserisciAbilitato()) + booleanToInt(isCompletaDefinisciAbilitato()) + booleanToInt(isCompletaDefinisciAbilitato()) + booleanToInt(getAssociaAbilitato()) + booleanToInt(getDefinisciAbilitato()) + booleanToInt(getDataTrasmissioneAbilitato()));			
 		return "span" + (12 / j);
 	}
 	
@@ -307,6 +393,9 @@ public class RisultatiRicercaPreDocumentoEntrataModel extends RisultatiRicercaPr
 		request.setAttoAmministrativo(getAttoAmministrativo());
 		request.setGestisciModificaImportoAccertamento(forzaDisponibilitaAccertamento);
 		
+		//SIAC-7423
+		request.setProvvisorioCassa(getProvvisorioCassa());
+		
 		return request;
 	}
 	
@@ -351,7 +440,7 @@ public class RisultatiRicercaPreDocumentoEntrataModel extends RisultatiRicercaPr
 		RicercaAccertamentoPerChiaveOttimizzato request = creaPaginazioneRequest(RicercaAccertamentoPerChiaveOttimizzato.class);
 		
 		request.setEnte(getEnte());
-		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null);
+		request.setCaricaSub(getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null);
 		request.setSubPaginati(true);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliElencoSubTuttiConSoloGliIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
@@ -361,8 +450,8 @@ public class RisultatiRicercaPreDocumentoEntrataModel extends RisultatiRicercaPr
 		RicercaAccertamentoK pRicercaAccertamentoK = new RicercaAccertamentoK();
 		pRicercaAccertamentoK.setAnnoEsercizio(getAnnoEsercizioInt());
 		pRicercaAccertamentoK.setAnnoAccertamento(getMovimentoGestione().getAnnoMovimento());
-		pRicercaAccertamentoK.setNumeroAccertamento(getMovimentoGestione().getNumero());
-		pRicercaAccertamentoK.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumero() != null) ? getSubMovimentoGestione().getNumero() : null);
+		pRicercaAccertamentoK.setNumeroAccertamento(getMovimentoGestione().getNumeroBigDecimal());
+		pRicercaAccertamentoK.setNumeroSubDaCercare((getSubMovimentoGestione() != null && getSubMovimentoGestione().getNumeroBigDecimal() != null) ? getSubMovimentoGestione().getNumeroBigDecimal() : null);
 		request.setpRicercaAccertamentoK(pRicercaAccertamentoK);
 		
 		return request;

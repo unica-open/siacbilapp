@@ -12,10 +12,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccespapp.frontend.ui.util.wrappers.variazionecespite.ElementoVariazioneCespite;
 import it.csi.siac.siaccespser.model.StatoVariazioneCespite;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * The Class RisultatiRicercaVariazioneCespiteAjaxAction.
@@ -51,7 +51,7 @@ public class RisultatiRicercaVariazioneCespiteAjaxAction extends BaseRisultatiRi
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoVariazioneCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
+	protected void handleAzioniConsentite(ElementoVariazioneCespite instance, boolean daRientro, boolean isAggiornaAbilitato, boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		List<AzioneConsentita> listaAzioniConsentite = sessionHandler.getAzioniConsentite();
 		StringBuilder azioniBuilder = new StringBuilder();
 		
@@ -74,7 +74,7 @@ public class RisultatiRicercaVariazioneCespiteAjaxAction extends BaseRisultatiRi
 	 * @return se l'aggiornamento sia consentito
 	 */
 	private boolean isConsentitoAggiornamento(ElementoVariazioneCespite instance, List<AzioneConsentita> listaAzioniConsentite) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.VARIAZIONE_CESPITI_AGGIORNA, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.VARIAZIONE_CESPITI_AGGIORNA, listaAzioniConsentite);
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class RisultatiRicercaVariazioneCespiteAjaxAction extends BaseRisultatiRi
 	 * @return se l'eliminazione sia consentita
 	 */
 	private boolean isConsentitoEliminazione(ElementoVariazioneCespite instance, List<AzioneConsentita> listaAzioniConsentite) {
-		return AzioniConsentiteFactory.isConsentito(AzioniConsentite.VARIAZIONE_CESPITI_ELIMINA, listaAzioniConsentite);
+		return AzioniConsentiteFactory.isConsentito(AzioneConsentitaEnum.VARIAZIONE_CESPITI_ELIMINA, listaAzioniConsentite);
 	}
 	
 	/**

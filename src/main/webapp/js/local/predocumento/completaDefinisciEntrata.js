@@ -64,9 +64,26 @@
                $('#importoPredisposizioniIncomplete').val(formatMoney(data.importoPreDocumentiIncompleti));
                $('#importoPredisposizioniAnnullateDefinite').val(formatMoney(data.importoPreDocumentiAnnullatiDefiniti));
                $('#importoPredisposizioniComplete').val(formatMoney(data.importoPreDocumentiCompleti));
+
+               //SIAC-6780
+               $('#numeroPredisposizioniNoCassaTotale').val(data.numeroPreDocumentiNoCassaTotale);
+               $('#numeroPredisposizioniNoCassaIncomplete').val(data.numeroPreDocumentiNoCassaIncompleti);
+               $('#numeroPredisposizioniNoCassaAnnullateDefinite').val(data.numeroPreDocumentiNoCassaAnnullatiDefiniti);
+               $('#numeroPredisposizioniNoCassaComplete').val(data.numeroPreDocumentiNoCassaCompleti);
+               
+               $('#importoPredisposizioniNoCassaTotale').val(formatMoney(data.importoPreDocumentiNoCassaTotale));
+               $('#importoPredisposizioniNoCassaIncomplete').val(formatMoney(data.importoPreDocumentiNoCassaIncompleti));
+               $('#importoPredisposizioniNoCassaAnnullateDefinite').val(formatMoney(data.importoPreDocumentiNoCassaAnnullatiDefiniti));
+               $('#importoPredisposizioniNoCassaComplete').val(formatMoney(data.importoPreDocumentiNoCassaCompleti));
+               //
                $divTotali.slideDown()
            })
            .always($fieldsetRicerca.overlay.bind($fieldsetRicerca, 'hide'));
+    }
+
+    function changeFormAction(){
+        $('#completaDefinisciForm').attr('action','completaDefinisciPreDocumentoEntrata_completaDefinisci.do');
+        $('#completaDefinisciForm').submit();
     }
     
     // Implementazione
@@ -75,10 +92,11 @@
         var idSoggetto;
 
         $('#tipoCausale').substituteHandler('change', PreDocumento.caricaListaCausaleEntrata);
-        $('#pulsanteCercaTotali').substituteHandler('click', caricaTotali);
 
         $document.substituteHandler('struttureAmministrativeCaricate', caricaSAC);
         $document.substituteHandler('selezionataStrutturaAmministrativaContabile', loadDataPerSAC);
+
+        $('#pulsanteCercaTotali').substituteHandler('click', caricaTotali);
 
         // Impegno
         $('#pulsanteCompilazioneGuidataMovimentoGestione').substituteHandler('click', PreDocumento.apriModaleAccertamento);
@@ -91,11 +109,18 @@
         // Atto Amministrativo
         idProvvedimento = Provvedimento.inizializzazione(Ztree, {}, 'AttoAmministrativo');
         Provvedimento.bindApriModaleAttoAmministrativo(idProvvedimento);
+
+        // Provvisorio
+        $('#HIDDEN_TipoProvvisorioCassa').val('E');
+        ProvvisorioDiCassa.inizializzazione('#pulsanteCompilazioneGuidataProvvisorioCassa','#HIDEEN_TipoProvvisorioCassa','#annoProvvisorioCassa','#numeroProvvisorioCassa','#HIDDEN_CausaleProvvisorioCassa');
+        $('#pulsanteCompilazioneGuidataProvvisorioCassa').substituteHandler('click', PreDocumento.apriModaleProvvisorio);
+
         // Workaround per Struts2
         if($sacUid.val() === '') {
             $sacUid.val(0);
         }
 
+        //SIAC-6780
         $('form').on('reset', PreDocumento.puliziaReset);
     }
 }(jQuery);

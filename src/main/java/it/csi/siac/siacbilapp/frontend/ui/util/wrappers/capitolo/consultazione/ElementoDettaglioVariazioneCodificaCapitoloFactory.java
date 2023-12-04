@@ -51,6 +51,7 @@ public final class ElementoDettaglioVariazioneCodificaCapitoloFactory {
 	
 		VariazioneCodificaCapitolo variazione = dati.getVariazioneCodificaCapitolo();
 		result.setNumeroVariazione(variazione.getNumero());
+		result.setUid(variazione.getUid());
 		
 		if(variazione.getAttoAmministrativo()==null){
 			result.setProvvedimentoVariazione("");

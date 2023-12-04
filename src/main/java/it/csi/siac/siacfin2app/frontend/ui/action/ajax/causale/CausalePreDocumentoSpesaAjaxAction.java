@@ -87,7 +87,7 @@ public class CausalePreDocumentoSpesaAjaxAction extends GenericBilancioAction<Ca
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.debug(methodName, createErrorInServiceInvocationString(request, response));
+			log.debug(methodName, createErrorInServiceInvocationString(RicercaDettaglioCausaleSpesa.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

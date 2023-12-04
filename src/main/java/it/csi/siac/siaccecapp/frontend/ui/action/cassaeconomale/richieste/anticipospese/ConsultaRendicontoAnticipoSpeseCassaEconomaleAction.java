@@ -6,7 +6,7 @@ package it.csi.siac.siaccecapp.frontend.ui.action.cassaeconomale.richieste.antic
 
 import java.util.List;
 
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,6 @@ import org.springframework.web.context.WebApplicationContext;
 import it.csi.siac.siacbilapp.frontend.ui.action.GenericBilancioAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.GenericFrontEndMessagesException;
 import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.azioni.AzioniConsentiteFactory;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccecapp.frontend.ui.model.cassaeconomale.richieste.anticipospese.ConsultaRendicontoAnticipoSpeseCassaEconomaleModel;
 import it.csi.siac.siaccecser.frontend.webservice.RichiestaEconomaleService;
 import it.csi.siac.siaccecser.frontend.webservice.msg.RicercaDettaglioRendicontoRichiesta;
@@ -23,6 +22,7 @@ import it.csi.siac.siaccecser.frontend.webservice.msg.RicercaDettaglioRendiconto
 import it.csi.siac.siaccecser.model.RendicontoRichiesta;
 import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Classe di action per la consultazione del rendiconto dell'anticipo spese.
@@ -56,7 +56,7 @@ public class ConsultaRendicontoAnticipoSpeseCassaEconomaleAction extends Generic
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioRendicontoRichiesta.class, response));
 			addErrori(response);
 			return INPUT;
 		}
@@ -71,7 +71,7 @@ public class ConsultaRendicontoAnticipoSpeseCassaEconomaleAction extends Generic
 	protected void checkCasoDUsoApplicabile() {
 		List<AzioneConsentita> azioniConsentite = sessionHandler.getAzioniConsentite();
 		
-		boolean consentito = AzioniConsentiteFactory.isConsentitoAll(azioniConsentite, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_CONSULTA_RENDICONTO, AzioniConsentite.CASSA_ECONOMALE_ANTICIPO_SPESE_ABILITA);
+		boolean consentito = AzioniConsentiteFactory.isConsentitoAll(azioniConsentite, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_CONSULTA_RENDICONTO, AzioneConsentitaEnum.CASSA_ECONOMALE_ANTICIPO_SPESE_ABILITA);
 		if(!consentito) {
 			throw new GenericFrontEndMessagesException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("non si dispone dei permessi necessari per l'esecuzione").getTesto(),
 					GenericFrontEndMessagesException.Level.ERROR);

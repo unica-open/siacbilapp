@@ -18,6 +18,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareD
 import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrataModelDetail;
+import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
@@ -44,6 +45,9 @@ public class RicercaDocumentoEntrataModel extends RicercaDocumentoModel {
 	
 	private List<SubdocumentoEntrata> listaSubDocRicerca = new ArrayList<SubdocumentoEntrata>();
 	
+	//SIAC-6780
+		private PreDocumentoEntrata predocumento;
+	
 	/** Costruttore vuoto di default */
 	public RicercaDocumentoEntrataModel() {
 		setTitolo("Ricerca Documento Entrata");
@@ -59,14 +63,12 @@ public class RicercaDocumentoEntrataModel extends RicercaDocumentoModel {
 		return documento;
 	}
 
-
 	/**
 	 * @param documento the documento to set
 	 */
 	public void setDocumento(DocumentoEntrata documento) {
 		this.documento = documento;
 	}
-
 
 	/**
 	 * @return the accertamento
@@ -95,8 +97,21 @@ public class RicercaDocumentoEntrataModel extends RicercaDocumentoModel {
 	public void setListaSubDocRicerca(List<SubdocumentoEntrata> listaSubDocRicerca) {
 		this.listaSubDocRicerca = listaSubDocRicerca;
 	}
-
 	
+	/**
+	 * @return the predocumento
+	 */
+	public PreDocumentoEntrata getPredocumento() {
+		return predocumento;
+	}
+
+	/**
+	 * @param predocumento the predocumento to set
+	 */
+	public void setPredocumento(PreDocumentoEntrata predocumento) {
+		this.predocumento = predocumento;
+	}
+
 	/**
 	 * Crea una request per il servizio di Ricerca Sintetica Modulare Documento Entrata
 	 * 
@@ -122,6 +137,10 @@ public class RicercaDocumentoEntrataModel extends RicercaDocumentoModel {
 			request.setElencoDocumenti(getElencoDocumenti());
 		}
 		
+		if(getPredocumento() != null && StringUtils.isNotBlank(getPredocumento().getNumero())) {
+			request.setPreDocumentoEntrata(getPredocumento());
+		}
+		
 		request.setParametriPaginazione(creaParametriPaginazione());
 		request.setDocumentoEntrataModelDetails(
 				DocumentoEntrataModelDetail.Sogg,
@@ -141,7 +160,7 @@ public class RicercaDocumentoEntrataModel extends RicercaDocumentoModel {
 		if(accertamento != null) {
 			RicercaAccertamentoK parametroRicercaAccertamentoK = new RicercaAccertamentoK();
 			parametroRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-			parametroRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+			parametroRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 			parametroRicercaAccertamentoK.setAnnoEsercizio(getAnnoEsercizioInt());
 			request.setpRicercaAccertamentoK(parametroRicercaAccertamentoK);
 		}
@@ -201,8 +220,8 @@ public class RicercaDocumentoEntrataModel extends RicercaDocumentoModel {
 		if(getAccertamento().getAnnoMovimento() != 0) {
 			subComponents.add(getAccertamento().getAnnoMovimento() + "");
 		}
-		if(getAccertamento().getNumero() != null) {
-			subComponents.add(getAccertamento().getNumero().toPlainString());
+		if(getAccertamento().getNumeroBigDecimal() != null) {
+			subComponents.add(getAccertamento().getNumeroBigDecimal().toPlainString());
 		}
 		
 		components.add("Movimento: " + StringUtils.join(subComponents, "/"));

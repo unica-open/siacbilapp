@@ -209,7 +209,7 @@ public class GenericDocumentoIvaEntrataModel extends GenericDocumentoIvaModel {
 		if(accertamento != null) {
 			RicercaAccertamentoK parametroRicercaAccertamentoK = new RicercaAccertamentoK();
 			parametroRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-			parametroRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+			parametroRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 			parametroRicercaAccertamentoK.setAnnoEsercizio(getAnnoEsercizioInt());
 			request.setpRicercaAccertamentoK(parametroRicercaAccertamentoK);
 		}

@@ -35,7 +35,7 @@ public abstract class RisultatiRicercaValidazionePrimaNotaIntegrataBaseAjaxActio
 	}
 
 	@Override
-	protected RicercaSinteticaPrimaNotaIntegrataValidabileResponse ottieniResponse(RicercaSinteticaPrimaNotaIntegrataValidabile req) {
+	protected RicercaSinteticaPrimaNotaIntegrataValidabileResponse getResponse(RicercaSinteticaPrimaNotaIntegrataValidabile req) {
 		return primaNotaService.ricercaSinteticaPrimaNotaIntegrataValidabile(req);
 	}
 

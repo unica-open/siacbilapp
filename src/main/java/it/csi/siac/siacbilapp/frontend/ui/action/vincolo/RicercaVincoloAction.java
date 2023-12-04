@@ -7,7 +7,7 @@ package it.csi.siac.siacbilapp.frontend.ui.action.vincolo;
 import java.util.List;
 
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.softwareforge.struts2.breadcrumb.BreadCrumb;
+import xyz.timedrain.arianna.plugin.BreadCrumb;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -23,7 +23,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVincoloResponse;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.Vincolo;
 import it.csi.siac.siaccommonapp.util.exception.ApplicationException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -44,6 +44,8 @@ public class RicercaVincoloAction extends GenericVincoloAction<RicercaVincoloMod
 		super.prepare();
 		// SIAC-5076: caricamento Genere Vincolo
 		caricaGenereVincolo();
+		//SIAC-7129
+		caricaRisorsaVincolata();
 	}
 	
 	@Override
@@ -112,7 +114,7 @@ public class RicercaVincoloAction extends GenericVincoloAction<RicercaVincoloMod
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(RicercaDettaglioVincolo.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -154,7 +156,9 @@ public class RicercaVincoloAction extends GenericVincoloAction<RicercaVincoloMod
 			checkStringaValorizzata(vincolo.getDescrizione(), "Descrizione") ||
 			checkCampoValorizzato(vincolo.getFlagTrasferimentiVincolati(), "Trasferimenti Vincolati") ||
 			// SIAC-5076
-			checkPresenzaIdEntita(vincolo.getGenereVincolo());
+			checkPresenzaIdEntita(vincolo.getGenereVincolo()) ||
+			// SIAC-7192
+			checkPresenzaIdEntita(vincolo.getRisorsaVincolata());
 		
 		if(!formValido) {
 			addErrore(ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());

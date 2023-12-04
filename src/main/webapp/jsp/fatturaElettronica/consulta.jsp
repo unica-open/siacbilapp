@@ -61,6 +61,11 @@ SPDX-License-Identifier: EUPL-1.2
 												<dfn>Note</dfn>
 												<dl><s:property value="fatturaFEL.note" />&nbsp;</dl>
 											</li>
+											<li>
+												<!-- task-173 -->
+												<dfn>Lotto SDI</dfn>
+												<dl><s:property value="fatturaFEL.documentoSpesa.siopeIdentificativoLottoSdi" />&nbsp;</dl>
+											</li>
 										</ul>
 									</div>
 									<div class="boxOrInRight">
@@ -145,8 +150,8 @@ SPDX-License-Identifier: EUPL-1.2
 									</div>
 								</div>
 								<div class="boxOrSpan2">
-									<div class="boxOrInLeft">
-										<p>Dati Ritenute</p>
+									<div class="boxOrInLeft">&nbsp;
+										<!-- p>Dati Ritenute</p>
 										<ul class="htmlelt">
 											<li>
 												<dfn>Tipo ritenuta</dfn>
@@ -160,7 +165,7 @@ SPDX-License-Identifier: EUPL-1.2
 												<dfn>Importo ritenuta</dfn>
 												<dl><s:property value="fatturaFEL.importoRitenuta" />&nbsp;</dl>
 											</li>
-										</ul>
+										</ul-->
 									</div>
 									<div class="boxOrInRight">
 										<p>Dati relativi al bollo</p>
@@ -178,6 +183,52 @@ SPDX-License-Identifier: EUPL-1.2
 								</div>
 								<div class="clear"></div>
 								<br/>
+								<!-- SIAC-7557 -->
+								<div id="datiRitenutaDiv" class="step-pane active">
+									<div class="accordion">
+										<div class="accordion-group">
+											<div class="accordion-heading">
+												<a data-target="#datiRitenutaCollapse" data-parent="#datiRitenutaDiv" data-toggle="collapse" class="accordion-toggle collapsed">
+													Elenco dati ritenuta<span class="icon">&nbsp;</span>
+												</a>
+											</div>
+											<div class="accordion-body collapse" id="datiRitenutaCollapse">
+												<div class="accordion-inner">
+													<table class="table table-hover tab_left" id="datiRitenutaTable">
+														<thead>
+															<tr>
+																<th>Tipo</th>
+																<th class="tab_Right">Aliquota</th>
+																<th class="tab_Right">importo</th>
+															</tr>
+														</thead>
+														<tbody>
+															<s:iterator value="fatturaFEL.ritenute" var="rb">
+																<tr>
+																	<td><s:property value="#rb.tipo" /></td>
+																	<td class="tab_Right"><s:property value="#rb.aliquota" /></td>
+																	<td class="tab_Right"><s:property value="#rb.importo" /></td>
+																</tr>
+															</s:iterator>
+														</tbody>
+														<tfoot>
+															<tr>
+																<th>Totale</th>
+																<th class="tab_Right"></th>
+																<th class="tab_Right"><s:property value="totaleImportoRitenuta" /></th>
+															</tr>
+														</tfoot>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<!-- FINE SIAC-7557 -->
+								
+								
+								
 								<div id="fattureCollegateDiv" class="step-pane active">
 									<div class="accordion">
 										<div class="accordion-group">
@@ -274,7 +325,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}fatturaElettronica/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/fatturaElettronica/consulta.js"></script>
 	
 </body>
 </html>

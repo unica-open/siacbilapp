@@ -57,6 +57,7 @@ var PreDocumento = (function($) {
     exports.impostaDatiCausaleEntrata = impostaDatiCausaleEntrata;
     exports.impostaTypeahead = impostaTypeahead;
     exports.calculateProvincia = calculateProvincia;
+    exports.apriModaleProvvisorio = apriModaleProvvisorio;
 
     /**
      * Imposta la tabella delle sedi secondarie del soggetto.
@@ -397,6 +398,16 @@ var PreDocumento = (function($) {
     }
 
     /**
+     * Apre il modale del provvisorio e copia il valore del codice.
+     *
+     * @param e (Event) l'evento scatenante
+     */
+    function apriModaleProvvisorio(e) {
+        e.preventDefault();
+        $('#modaleRicercaProvvisorioDiCassa').modal('show');
+    }
+
+    /**
      * Imposta il periodo della competenza per il preDocumento.
      */
     function impostaPeriodoCompetenza() {
@@ -543,7 +554,7 @@ var PreDocumento = (function($) {
                     .val('');
 
         // Pulisco gli span
-        $('.datiRIFCapitolo, .datiRIFImpegno, .datiRIFSoggetto, .datiRIFProvvedimento').html('');
+        $('.datiRIFCapitolo, .datiRIFImpegno, .datiRIFSoggetto, .datiRIFProvvedimento, .datiRIFProvvisorioCassa').html('');
 
         // Ripristino i campi readonly
         $('.imputazioniContabiliCapitolo, .imputazioniContabiliMovimentoGestion, .imputazioniContabiliSoggetto, .imputazioniContabiliProvvedimento')

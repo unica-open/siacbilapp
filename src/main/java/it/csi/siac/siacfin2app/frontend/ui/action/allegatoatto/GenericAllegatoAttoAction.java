@@ -24,14 +24,20 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
 import it.csi.siac.siaccommonapp.util.exception.ParamValidationException;
 import it.csi.siac.siaccommonapp.util.exception.WebServiceInvocationFailureException;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2app.frontend.ui.model.allegatoatto.GenericAllegatoAttoModel;
 import it.csi.siac.siacfin2ser.frontend.webservice.AllegatoAttoService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaElencoResponse;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.StatoOperativoElencoDocumenti;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.frontend.webservice.GenericService;
+import it.csi.siac.siacfinser.frontend.webservice.msg.Liste;
+import it.csi.siac.siacfinser.frontend.webservice.msg.ListeResponse;
+import it.csi.siac.siacfinser.model.codifiche.TipiLista;
 
 /**
  * Classe di Action generica per l'allegato atto.
@@ -64,6 +70,10 @@ public class GenericAllegatoAttoAction<M extends GenericAllegatoAttoModel> exten
 	/** Serviz&icirc; del provvedimento */
 	@Autowired protected transient ProvvedimentoService provvedimentoService;
 	
+	//SIAC-7766
+	/** Serviz&icirc; generico */
+	@Autowired private transient GenericService genericService;
+	
 	/**
 	 * Controlla la presenza dell'atto amministrativo e la sua unicit&agrave;.
 	 */
@@ -80,7 +90,7 @@ public class GenericAllegatoAttoAction<M extends GenericAllegatoAttoModel> exten
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMessage = createErrorInServiceInvocationString(request, response);
+			String errorMessage = createErrorInServiceInvocationString(RicercaProvvedimento.class, response);
 			log.info(methodName, errorMessage);
 			addErrori(response);
 			throw new ParamValidationException(errorMessage);
@@ -111,7 +121,7 @@ public class GenericAllegatoAttoAction<M extends GenericAllegatoAttoModel> exten
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMessage = createErrorInServiceInvocationString(request, response);
+			String errorMessage = createErrorInServiceInvocationString(RicercaProvvedimento.class, response);
 			log.info(methodName, errorMessage);
 			addErrori(response);
 			throw new ParamValidationException(errorMessage);
@@ -138,7 +148,7 @@ public class GenericAllegatoAttoAction<M extends GenericAllegatoAttoModel> exten
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			String errorMessage = createErrorInServiceInvocationString(request, response);
+			String errorMessage = createErrorInServiceInvocationString(RicercaElenco.class, response);
 			log.info(methodName, errorMessage);
 			addErrori(response);
 			throw new ParamValidationException(errorMessage);
@@ -208,5 +218,37 @@ public class GenericAllegatoAttoAction<M extends GenericAllegatoAttoModel> exten
 		}
 	}
 	
+	//SIAC-7766 
+	//si porta metodo seguente da AggiornaAllegatoAttoBaseAcion
+	/**
+	 * Carica la lista del conto tesoreria
+	 * @throws WebServiceInvocationFailureException in caso di errori nella chiamata al servizio
+	 */
+	protected void caricamentoListaContoTesoreria() throws WebServiceInvocationFailureException {
+		List<ContoTesoreria> listaInSessione = sessionHandler.getParametro(BilSessionParameter.LISTA_CONTO_TESORERIA);
+		if(listaInSessione == null) {
+		
+			Liste req = model.creaRequestListe(TipiLista.CONTO_TESORERIA);
+			logServiceRequest(req);
+			ListeResponse res = genericService.liste(req);
+			logServiceResponse(res);
+			// Controllo gli errori
+			if(res.hasErrori()) {
+				//si sono verificati degli errori: esco.
+				addErrori(res);
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(Liste.class, res));
+			}
+			
+			listaInSessione = getListaContoTesoreriaByCodificaFin(res.getContoTesoreria());
+			sessionHandler.setParametro(BilSessionParameter.LISTA_CONTO_TESORERIA, listaInSessione);
+		}
+		model.setListaContoTesoreria(listaInSessione);
+	}
+	
+	//task-14
+	public boolean abilitaChecklist() {
+		return Boolean.TRUE.equals(Boolean.parseBoolean(getParametroConfigurazioneEnte(
+				ParametroConfigurazioneEnteEnum.ALLEGATO_ATTO_INVIA_ABILITA_CHECKLIST)));
+	}
 }
 

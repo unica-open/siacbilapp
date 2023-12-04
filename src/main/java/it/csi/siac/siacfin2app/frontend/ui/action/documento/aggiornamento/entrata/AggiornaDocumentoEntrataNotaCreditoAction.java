@@ -127,7 +127,7 @@ public class AggiornaDocumentoEntrataNotaCreditoAction extends AggiornaDocumento
 
 		if (response.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(InserisceNotaCreditoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -173,7 +173,7 @@ public class AggiornaDocumentoEntrataNotaCreditoAction extends AggiornaDocumento
 
 		if (response.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AnnullaNotaCreditoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -222,7 +222,7 @@ public class AggiornaDocumentoEntrataNotaCreditoAction extends AggiornaDocumento
 
 		if (response.hasErrori()) {
 			// Errore nell'invocazione del servizio
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaNotaCreditoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -326,7 +326,7 @@ public class AggiornaDocumentoEntrataNotaCreditoAction extends AggiornaDocumento
 
 		if (response.hasErrori()) {
 			// Errore di validazione
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaImportiQuoteDocumentoEntrata.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -545,7 +545,7 @@ public class AggiornaDocumentoEntrataNotaCreditoAction extends AggiornaDocumento
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaRelazioneDocumenti.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}
@@ -577,7 +577,7 @@ public class AggiornaDocumentoEntrataNotaCreditoAction extends AggiornaDocumento
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AggiornaRelazioneDocumenti.class, response));
 			addErrori(response);
 			return SUCCESS;
 		}

@@ -4,9 +4,9 @@ SPDX-License-Identifier: EUPL-1.2
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
-<s:set name="docId">${param.docId}</s:set>
-<s:set name="docName">${param.docName}</s:set>
-<s:set name="docDisabled">${param.docDisabled}</s:set>
+<s:set var="docId">${param.docId}</s:set>
+<s:set var="docName">${param.docName}</s:set>
+<s:set var="docDisabled">${param.docDisabled}</s:set>
 <div aria-hidden="false" aria-labelledby="msgAnnullaLabel" role="dialog" tabindex="-1" class="modal hide fade" id="modaleDocumentoIntracomunitario${param.docId}">
 	<div class="modal-body">
 		<div class="alert alert-info alert-persistent">

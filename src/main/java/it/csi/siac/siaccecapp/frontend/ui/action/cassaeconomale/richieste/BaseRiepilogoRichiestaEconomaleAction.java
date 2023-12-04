@@ -23,7 +23,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOtt
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzatoResponse;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 
 /**
  * Classe base di action per tutte le funzionalit&agrave; richiedenti il riepilogo della richiesta economale
@@ -51,7 +50,7 @@ public class BaseRiepilogoRichiestaEconomaleAction<M extends BaseRiepilogoRichie
 		final String methodName = "checkMovimentoGestione";
 		checkNotNull(movimentoGestione, "Impegno", true);
 		checkCondition(movimentoGestione.getAnnoMovimento() != 0, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Anno impegno"));
-		checkCondition(movimentoGestione.getNumero() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero impegno"));
+		checkCondition(movimentoGestione.getNumeroBigDecimal() != null, ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("Numero impegno"));
 		
 		if(hasErrori()) {
 			// Se ho errori, esco subito
@@ -59,7 +58,7 @@ public class BaseRiepilogoRichiestaEconomaleAction<M extends BaseRiepilogoRichie
 		}
 		
 		// La chiave logica del movimento
-		final String chiaveMovimentoGestione = movimentoGestione.getAnnoMovimento() + "/" + movimentoGestione.getNumero();
+		final String chiaveMovimentoGestione = movimentoGestione.getAnnoMovimento() + "/" + movimentoGestione.getNumeroBigDecimal();
 		
 		Impegno impegno;
 		List<SubImpegno> subImp;
@@ -82,11 +81,11 @@ public class BaseRiepilogoRichiestaEconomaleAction<M extends BaseRiepilogoRichie
 		String sulStr = "sull'impegno";
 		String delStr = "dell'impegno";
 		
-		checkCondition(subImp.isEmpty() || (subMovimentoGestione != null && subMovimentoGestione.getNumero() != null), ErroreFin.IMPEGNO_CON_SUBIMPEGNI.getErrore(), true);
+		checkCondition(subImp.isEmpty() || (subMovimentoGestione != null && subMovimentoGestione.getNumeroBigDecimal() != null), ErroreFin.IMPEGNO_CON_SUBIMPEGNI.getErrore(), true);
 		
-		if(subMovimentoGestione != null && subMovimentoGestione.getNumero() != null && impegno.getElencoSubImpegni() != null) {
+		if(subMovimentoGestione != null && subMovimentoGestione.getNumeroBigDecimal() != null && impegno.getElencoSubImpegni() != null) {
 			// La chiave logica del submovimento
-			final String chiaveSubMovimentoGestione = chiaveMovimentoGestione + "-" + subMovimentoGestione.getNumero();
+			final String chiaveSubMovimentoGestione = chiaveMovimentoGestione + "-" + subMovimentoGestione.getNumeroBigDecimal();
 			
 			log.debug(methodName, "Ricerca del subimpegno");
 			SubImpegno subImpegno = ComparatorUtils.findByNumeroMovimentoGestione(impegno.getElencoSubImpegni(), subMovimentoGestione);
@@ -112,7 +111,7 @@ public class BaseRiepilogoRichiestaEconomaleAction<M extends BaseRiepilogoRichie
 	 */
 	protected RicercaImpegnoPerChiaveOttimizzatoResponse ottieniImpegnoDaServizio(Impegno movimentoGestione) throws WebServiceInvocationFailureException {
 		final String methodName = "ottieniImpegnoDaServizio";
-		final String chiaveMovimentoGestione = movimentoGestione.getAnnoMovimento() + "/" + movimentoGestione.getNumero();
+		final String chiaveMovimentoGestione = movimentoGestione.getAnnoMovimento() + "/" + movimentoGestione.getNumeroBigDecimal();
 		
 //		Impegno impegno = sessionHandler.getParametro(BilSessionParameter.IMPEGNO);
 		
@@ -123,7 +122,7 @@ public class BaseRiepilogoRichiestaEconomaleAction<M extends BaseRiepilogoRichie
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				String msg = createErrorInServiceInvocationString(request, response);
+				String msg = createErrorInServiceInvocationString(RicercaImpegnoPerChiaveOttimizzato.class, response);
 				addErrori(response);
 				
 				throw new WebServiceInvocationFailureException(msg);
@@ -205,16 +204,6 @@ public class BaseRiepilogoRichiestaEconomaleAction<M extends BaseRiepilogoRichie
 	private void inizializzazioneListe(Impegno impegno) {
 		if(impegno.getElencoSubImpegni() == null) {
 			impegno.setElencoSubImpegni(new ArrayList<SubImpegno>());
-		}
-		// Inizializzazione mutui
-		if(impegno.getListaVociMutuo() == null) {
-			impegno.setListaVociMutuo(new ArrayList<VoceMutuo>());
-		}
-		// Inizializzazione mutui sui subimpegni
-		for(SubImpegno si : impegno.getElencoSubImpegni()) {
-			if(si.getListaVociMutuo() == null) {
-				si.setListaVociMutuo(new ArrayList<VoceMutuo>());
-			}
 		}
 	}
 	

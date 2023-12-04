@@ -15,7 +15,7 @@ import it.csi.siac.siacbilapp.frontend.ui.util.wrappers.anagcomp.ElementoCompone
  * @version 1.0.0 15/set/2014
  *
  */
-public class RisultatiRicercaComponenteCapitoloAjaxModel extends GenericRisultatiRicercaAjaxModel<ElementoComponenteCapitolo> {
+public class RisultatiRicercaComponenteCapitoloAjaxModel extends PagedDataTableAjaxModel<ElementoComponenteCapitolo> {
 	
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -4029533272809633835L;

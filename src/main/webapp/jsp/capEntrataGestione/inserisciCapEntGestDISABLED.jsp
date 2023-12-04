@@ -78,8 +78,9 @@ SPDX-License-Identifier: EUPL-1.2
 												<s:textarea rows="5" cols="15" id="titolo_adv" disabled="true" cssClass="span10" name="capitoloEntrataGestione.descrizioneArticolo" />
 											</div>
 										</div>
+										<!-- task-230 -->
 										<div class="control-group">
-											<label for="Titolo" class="control-label">Titolo 1 *</label>
+											<label for="Titolo" class="control-label">Titolo *</label>
 											<div class="controls">
 												<s:select list="listaTitoloEntrata" id="titoloEntrata" cssClass="span10" disabled="true" name="titoloEntrata.uid"
 													headerKey="0" headerValue="" listKey="uid" listValue="%{codice + '-' + descrizione}" />
@@ -162,6 +163,23 @@ SPDX-License-Identifier: EUPL-1.2
 												<s:checkbox id="flagImpegnabile" name="capitoloEntrataGestione.flagImpegnabile" disabled="true" data-editabile="false" />
 											</div>
 										</div>
+										<!-- SIAC-7858 CM 19/05/2021 Inizio -->
+										<div class="control-group">
+											<label for="flagEntrataDubbiaEsigFCDE" class="control-label">Capitolo pertinente per il calcolo FCDE</label>
+											<div class="controls">
+												<span class="al">
+													<label class="radio inline" >
+														<input type="radio" disabled="true" value="true" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==true}'>checked="checked"</s:if>>Si
+													</label>
+												</span>
+												<span class="al">
+													<label class="radio inline" style="margin-left: 15px;">
+														<input type="radio" disabled="true" value="false" name="flagEntrataDubbiaEsigFCDE" <s:if test='%{(capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==null)||(capitoloEntrataGestione.flagEntrataDubbiaEsigFCDE==false)}'>checked="checked"</s:if>>No
+													</label>
+												</span>
+											</div>
+										</div>
+										<!-- SIAC-7858 CM 19/05/2021 Fine -->
 										<div class="control-group <s:if test="!flagAccertatoPerCassaVisibile">hide</s:if>">
 											<label for="flagAccertatoPerCassa" class="control-label">Accertato per cassa</label>
 											<div class="controls">
@@ -238,7 +256,7 @@ SPDX-License-Identifier: EUPL-1.2
 															</div>
 														</div>
 														<%-- Classificatori Generici --%>
-														<s:iterator var="idx" begin="1" end="%{numeroClassificatoriGenerici}">
+														<s:iterator var="idx" begin="36" end="%{lastIndexClassificatoriGenerici}">
 															<s:if test="%{#attr['labelClassificatoreGenerico' + #idx] != null}">
 																<div class="control-group">
 																	<label for="classificatoreGenerico<s:property value="%{#idx}"/>" class="control-label">
@@ -348,10 +366,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- Caricamento del footer --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}capitolo/ricercaSIOPE.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitolo.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/capitoloEntrata.js"></script>
-	<script type="text/javascript" src="${jspath}capitoloEntrataGestione/inserisci.js"></script>
-	<script type="text/javascript" src="${jspath}attoDiLegge/attoDiLegge.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaSIOPE.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitolo.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/capitoloEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitoloEntrataGestione/inserisci.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/attoDiLegge/attoDiLegge.js"></script>
 </body>
 </html>

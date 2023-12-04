@@ -109,7 +109,7 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpeseCassaEconomale
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(request, response));
+				throw new WebServiceInvocationFailureException(createErrorInServiceInvocationString(RicercaSoggettoPerChiave.class, response));
 			}
 			if(response.getSoggetto() == null) {
 				String errorMsg = "Nessun soggetto corrispondente alla matricola " + codiceSoggetto + " trovato";
@@ -153,8 +153,14 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpeseCassaEconomale
 		RendicontoRichiesta rendicontoRichiesta = new RendicontoRichiesta();
 		rendicontoRichiesta.setRichiestaEconomale(model.getRichiestaEconomaleCopia());
 		
+		//SIAC-7763 mantengo la descrizione poiche' richiesta
 		// Pulisco la descrizione
-		rendicontoRichiesta.getRichiestaEconomale().setDescrizioneDellaRichiesta(null);
+//		rendicontoRichiesta.getRichiestaEconomale().setDescrizioneDellaRichiesta(null);
+		RendicontoRichiesta rendiconto = model.getRendicontoRichiestaCopia() != null ? 
+				model.getRendicontoRichiestaCopia() : model.getRendicontoRichiesta();
+				
+		// passo l'uid del rendiconto
+		rendicontoRichiesta.setUid(rendiconto.getUid());
 		
 		// Pulisco i campi
 		model.setRendicontoRichiesta(rendicontoRichiesta);
@@ -263,7 +269,7 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpeseCassaEconomale
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaTipoGiustificativo.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaTipoGiustificativo = response.getTipiGiustificativi();
@@ -301,7 +307,7 @@ public abstract class BaseInserisciAggiornaRendicontoAnticipoSpeseCassaEconomale
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
 				addErrori(response);
-				String errorMsg = createErrorInServiceInvocationString(request, response);
+				String errorMsg = createErrorInServiceInvocationString(RicercaValuta.class, response);
 				throw new WebServiceInvocationFailureException(errorMsg);
 			}
 			listaValuta = response.getListaValuta();

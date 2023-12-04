@@ -8,9 +8,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.struts2.dispatcher.StreamResult;
+import javax.servlet.http.Cookie;
+
+import org.apache.struts2.result.StreamResult;
+import org.apache.struts2.interceptor.CookieProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 
@@ -41,9 +46,10 @@ import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
  * @version 1.0.0 - 29/02/2016
  *
  */
-public abstract class RicercaEntitaConsultabileBaseAjaxAction<M extends RicercaEntitaConsultabileBaseAjaxModel, REQ extends ServiceRequest, RES extends ServiceResponse> extends GenericBilancioAction<M> {
+public abstract class RicercaEntitaConsultabileBaseAjaxAction<M extends RicercaEntitaConsultabileBaseAjaxModel, REQ extends ServiceRequest, RES extends ServiceResponse> extends GenericBilancioAction<M>
+		//SIAC-8222
+		implements CookieProvider {
 	
-
 	/** Per la serializzazione */
 	private static final long serialVersionUID = -2009647350994898300L;
 	
@@ -350,17 +356,14 @@ public abstract class RicercaEntitaConsultabileBaseAjaxAction<M extends RicercaE
 	}
 
 	@Override
-	protected void logServiceResponse(ServiceResponse res){
+	public void logServiceResponse(ServiceResponse res){
 		log.logXmlTypeObject(res, "Service Response param");
 	}
 	
 	@Override
-	protected void logServiceRequest(ServiceRequest req){
+	public void logServiceRequest(ServiceRequest req){
 		log.logXmlTypeObject(req, "Service Request param");
 	}
-	
-	
-	
 	
 	/**
 	 *  Chiama il servizio per il download dei risultati di ricerca
@@ -408,6 +411,12 @@ public abstract class RicercaEntitaConsultabileBaseAjaxAction<M extends RicercaE
 		InputStream inputStream = new ByteArrayInputStream(excel);
 		model.setInputStream(inputStream);
 		
+		//SIAC-8222
+		Set<Cookie> cookies = new HashSet<Cookie>();
+		cookies.add(createPrintCookie());
+		model.setCookies(cookies);
+		//
+		
 		return SUCCESS;
 	}
 	
@@ -422,6 +431,9 @@ public abstract class RicercaEntitaConsultabileBaseAjaxAction<M extends RicercaE
 		/** Per la serializzazione */
 		private static final long serialVersionUID = -6442717248516202406L;
 
+		/** SIAC-8222 */
+		private Set<Cookie> cookies;
+		
 		/** Costruttore vuoto di default */
 		public EntitaConsultabileStreamResult() {
 			this.contentType = "${contentType}";
@@ -430,5 +442,22 @@ public abstract class RicercaEntitaConsultabileBaseAjaxAction<M extends RicercaE
 			this.contentDisposition = "filename=\"${fileName}\"";
 			this.bufferSize = 1024;
 		}
+		
+		/**
+		 * SIAC-8222
+		 * @return the cookie
+		 */
+		public Set<Cookie> getCookies() {
+			return cookies;
+		}
+
+		/**
+		 * SIAC-8222
+		 * @param cookie the cookie to set
+		 */
+		public void setCookies(Set<Cookie> cookies) {
+			this.cookies = cookies;
+		}
+
 	}
 }

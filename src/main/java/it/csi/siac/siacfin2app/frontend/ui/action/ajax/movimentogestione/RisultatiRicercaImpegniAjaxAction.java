@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -31,7 +31,7 @@ import it.csi.siac.siacfinser.model.Impegno;
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaImpegniAjaxAction extends GenericRisultatiRicercaAjaxAction<Impegno, 
+public class RisultatiRicercaImpegniAjaxAction extends PagedDataTableAjaxAction<Impegno, 
 	RisultatiRicercaImpegnoAjaxModel, Impegno, RicercaSinteticaImpegniSubImpegni, RicercaSinteticaImpegniSubimpegniResponse> {
 	
 	/** Per la serializzazione */
@@ -59,12 +59,12 @@ public class RisultatiRicercaImpegniAjaxAction extends GenericRisultatiRicercaAj
 	
 	
 	@Override
-	protected Impegno ottieniIstanza(Impegno e) throws FrontEndBusinessException {
+	protected Impegno getInstance(Impegno e) throws FrontEndBusinessException {
 		return e;
 	}
 
 	@Override
-	protected RicercaSinteticaImpegniSubimpegniResponse ottieniResponse(RicercaSinteticaImpegniSubImpegni request) {
+	protected RicercaSinteticaImpegniSubimpegniResponse getResponse(RicercaSinteticaImpegniSubImpegni request) {
 		return movimentoGestioneService.ricercaSinteticaImpegniSubimpegni(request);
 	}
 

@@ -6,6 +6,9 @@ package it.csi.siac.siacbasegengsaapp.frontend.ui.util.wrapper.registrazionemovf
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
+
+import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilapp.frontend.ui.util.format.FormatUtils;
 import it.csi.siac.siaccecser.model.RendicontoRichiesta;
 import it.csi.siac.siaccecser.model.RichiestaEconomale;
@@ -76,6 +79,46 @@ public final class RegistrazioneMovFinMovimentoCollegatoHelper {
 		return getNumeroMovimentoFromRegistrazione(registrazioneMovimentoFin, null);
 	}
 	
+	public static String getNumeroAttoFromRegistrazione(RegistrazioneMovFin registrazioneMovimentoFin) {
+		return getNumeroAttoFromRegistrazione(registrazioneMovimentoFin, null);
+	}
+	
+
+	private static String getNumeroAttoFromRegistrazione(RegistrazioneMovFin registrazioneMovimentoFin, PrimaNota primaNota) {
+		if(registrazioneMovimentoFin == null) {
+			// Se non ho la registrazione, esco
+			return "";
+		}
+		
+		Entita entita = registrazioneMovimentoFin.getMovimento();
+		
+		if(entita instanceof Subdocumento) {
+			Subdocumento<?, ?> subdocumento = (Subdocumento<?, ?>)entita;
+			return calcolaNumeroAttoPerEntita(subdocumento.getAttoAmministrativo());
+		}
+		if(entita instanceof Liquidazione) {
+			return calcolaNumeroAttoPerEntita(((Liquidazione)entita).getAttoAmministrativoLiquidazione());
+		}
+		return "";
+	}
+
+	private static String calcolaNumeroAttoPerEntita(AttoAmministrativo atto) {
+		if(atto == null) {
+			return "";
+		}
+		return new StringBuilder()
+				.append("<a data-original-title=\"Oggetto\" href=\"#\" data-trigger=\"hover\" rel=\"popover\" data-content=\"")
+				.append(FormatUtils.formatHtmlAttributeString(atto.getOggetto()))
+				.append("\" data-html=\"true\">")
+				.append(atto.getAnno())
+				.append(" / ")
+				.append(atto.getNumero())
+				.append(" / ")
+				.append(atto.getTipoAtto() != null ? StringUtils.defaultIfBlank(atto.getTipoAtto().getCodice(), "N.D.") : "")
+				.append(" / ")
+				.append(atto.getStrutturaAmmContabile() != null ? StringUtils.defaultIfBlank(atto.getStrutturaAmmContabile().getCodice(), "N.D.") : "")
+				.toString();
+	}
 
 	/**
 	 * Ottiene il numero del movimento a partire dalla registrazione
@@ -148,11 +191,11 @@ public final class RegistrazioneMovFinMovimentoCollegatoHelper {
 			Impegno impegno = mod.getImpegno();
 			SubImpegno subimpegno = mod.getSubImpegno();
 			if(impegno != null){
-				numero = impegno.getNumero();
+				numero = impegno.getNumeroBigDecimal();
 				anno = impegno.getAnnoMovimento();
 			}else if(subimpegno != null){
 				numero = subimpegno.getNumeroImpegnoPadre();
-				numeroSub = subimpegno.getNumero();
+				numeroSub = subimpegno.getNumeroBigDecimal();
 				anno = subimpegno.getAnnoImpegnoPadre();
 			}
 		}
@@ -163,11 +206,11 @@ public final class RegistrazioneMovFinMovimentoCollegatoHelper {
 			Accertamento accertamento = mod.getAccertamento();
 			SubAccertamento subaccertamento = mod.getSubAccertamento();
 			if(accertamento != null){
-				numero = accertamento.getNumero();
+				numero = accertamento.getNumeroBigDecimal();
 				anno = accertamento.getAnnoMovimento();
 			}else if(subaccertamento != null){
 				numero = subaccertamento.getNumeroAccertamentoPadre();
-				numeroSub = subaccertamento.getNumero();
+				numeroSub = subaccertamento.getNumeroBigDecimal();
 				anno = subaccertamento.getAnnoAccertamentoPadre();
 			}
 		}
@@ -208,7 +251,7 @@ public final class RegistrazioneMovFinMovimentoCollegatoHelper {
 			.append("\" data-html=\"true\">")
 			.append(movimentoGestione.getAnnoMovimento());
 		
-		BigDecimal numero = movimentoGestione.getNumero();
+		BigDecimal numero = movimentoGestione.getNumeroBigDecimal();
 		BigDecimal numeroSub = null;
 		String terminal = "";
 		
@@ -217,14 +260,14 @@ public final class RegistrazioneMovFinMovimentoCollegatoHelper {
 			
 			if(movimentoGestione instanceof SubImpegno) {
 				numero = ((SubImpegno) movimentoGestione).getNumeroImpegnoPadre();
-				numeroSub = movimentoGestione.getNumero();
+				numeroSub = movimentoGestione.getNumeroBigDecimal();
 			}
 		} else if(movimentoGestione instanceof Accertamento) {
 			terminal = " (acc)";
 			
 			if(movimentoGestione instanceof SubAccertamento) {
 				numero = ((SubAccertamento) movimentoGestione).getNumeroAccertamentoPadre();
-				numeroSub = movimentoGestione.getNumero();
+				numeroSub = movimentoGestione.getNumeroBigDecimal();
 			}
 		}
 		
@@ -347,7 +390,7 @@ public final class RegistrazioneMovFinMovimentoCollegatoHelper {
 			.append("\" data-html=\"true\">")
 			.append(richiestaEconomale.getImpegno().getAnnoMovimento())
 			.append(" / ")
-			.append(richiestaEconomale.getImpegno().getNumero() != null ? richiestaEconomale.getImpegno().getNumero().toPlainString() : "")
+			.append(richiestaEconomale.getImpegno().getNumeroBigDecimal() != null ? richiestaEconomale.getImpegno().getNumeroBigDecimal().toPlainString() : "")
 			.toString();
 	}
 	
@@ -369,7 +412,7 @@ public final class RegistrazioneMovFinMovimentoCollegatoHelper {
 			.append("\" data-html=\"true\">")
 			.append(rendicontoRichiesta.getImpegno().getAnnoMovimento())
 			.append(" / ")
-			.append(rendicontoRichiesta.getImpegno().getNumero() != null ? rendicontoRichiesta.getImpegno().getNumero().toPlainString() : "")
+			.append(rendicontoRichiesta.getImpegno().getNumeroBigDecimal() != null ? rendicontoRichiesta.getImpegno().getNumeroBigDecimal().toPlainString() : "")
 			.toString();
 	}
 	

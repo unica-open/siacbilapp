@@ -134,7 +134,7 @@ public abstract class RisultatiRicercaRegistrazioneMovFinBaseAction<M extends Ri
 		// Controllo gli errori
 		if(response.hasErrori()) {
 			//si sono verificati degli errori: esco.
-			log.info(methodName, createErrorInServiceInvocationString(request, response));
+			log.info(methodName, createErrorInServiceInvocationString(AssegnaContoEPRegistrazioneMovFin.class, response));
 			addErrori(response);
 			return INPUT;
 		}

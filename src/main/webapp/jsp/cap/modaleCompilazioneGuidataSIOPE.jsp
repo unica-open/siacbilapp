@@ -5,8 +5,8 @@ SPDX-License-Identifier: EUPL-1.2
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<s:set name="ricercaUrl"><c:out value="${param.ricercaUrl}"/></s:set>
-<s:set name="ajaxUrl"><c:out value="${param.ajaxUrl}"/></s:set>
+<s:set var="ricercaUrl"><c:out value="${param.ricercaUrl}"/></s:set>
+<s:set var="ajaxUrl"><c:out value="${param.ajaxUrl}"/></s:set>
 <div id="modaleCompilazioneSIOPE" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modaleCompilazioneSIOPELabel" aria-hidden="true">
 	<div class="row-fluid">
 		<div class="modal-header" id="modaleCompilazioneSIOPELabel">

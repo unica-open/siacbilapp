@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.GenericRisultatiRicercaAjaxAction;
+import it.csi.siac.siacbilapp.frontend.ui.action.ajax.generic.PagedDataTableAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.exception.FrontEndBusinessException;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -29,7 +29,7 @@ import it.csi.siac.siacgsaapp.frontend.ui.util.wrappers.conciliazione.ElementoCo
  */
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-public class RisultatiRicercaConciliazionePerCapitoloAjaxAction extends GenericRisultatiRicercaAjaxAction<ElementoConciliazionePerCapitolo, RisultatiRicercaConciliazionePerCapitoloAjaxModel,
+public class RisultatiRicercaConciliazionePerCapitoloAjaxAction extends PagedDataTableAjaxAction<ElementoConciliazionePerCapitolo, RisultatiRicercaConciliazionePerCapitoloAjaxModel,
 		ConciliazionePerCapitolo, RicercaSinteticaConciliazionePerCapitolo, RicercaSinteticaConciliazionePerCapitoloResponse> {
 
 	/** Per la serializzazione */
@@ -64,7 +64,7 @@ public class RisultatiRicercaConciliazionePerCapitoloAjaxAction extends GenericR
 	}
 
 	@Override
-	protected RicercaSinteticaConciliazionePerCapitoloResponse ottieniResponse(RicercaSinteticaConciliazionePerCapitolo request) {
+	protected RicercaSinteticaConciliazionePerCapitoloResponse getResponse(RicercaSinteticaConciliazionePerCapitolo request) {
 		return conciliazioneService.ricercaSinteticaConciliazionePerCapitolo(request);
 	}
 
@@ -74,7 +74,7 @@ public class RisultatiRicercaConciliazionePerCapitoloAjaxAction extends GenericR
 	}
 	
 	@Override
-	protected void gestisciAzioniConsentite(ElementoConciliazionePerCapitolo instance, boolean daRientro, boolean isAggiornaAbilitato,
+	protected void handleAzioniConsentite(ElementoConciliazionePerCapitolo instance, boolean daRientro, boolean isAggiornaAbilitato,
 			boolean isAnnullaAbilitato, boolean isConsultaAbilitato, boolean isEliminaAbilitato) {
 		
 		String azioni = new StringBuilder(AZIONI_CONSENTITE_BEGIN)
@@ -86,7 +86,7 @@ public class RisultatiRicercaConciliazionePerCapitoloAjaxAction extends GenericR
 	}
 
 	@Override
-	protected ElementoConciliazionePerCapitolo ottieniIstanza(ConciliazionePerCapitolo e) throws FrontEndBusinessException {
+	protected ElementoConciliazionePerCapitolo getInstance(ConciliazionePerCapitolo e) throws FrontEndBusinessException {
 		return new ElementoConciliazionePerCapitolo(e);
 	}
 	

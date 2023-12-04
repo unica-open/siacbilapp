@@ -94,7 +94,7 @@
         $("#categoriaCapitolo").change();
 
         // Lego le azioni
-        $("#missione").on("change", CapitoloUscita.caricaProgramma.bind(null, false));
+        $("#missione").on("change", CapitoloUscita.gestisciChangeMissione.bind(null, false));
         $("#programma").on("change", CapitoloUscita.caricaCofogTitolo.bind(null, false));
         $("#titoloSpesa").on("change", CapitoloUscita.caricaMacroaggregato);
         $macroaggregato.on("change", Capitolo.caricaPianoDeiConti.bind(null, $macroaggregato, false, true));

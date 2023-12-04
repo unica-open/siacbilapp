@@ -127,11 +127,6 @@ var Documento = (function($, doc) {
             // Eventuali errori
             if(impostaDatiNegliAlert(data.errori, doc.alertErrori)) {
                 array = data.errori;
-                for(index = 0; index < array.length; index++) {
-                    if(array[index].codice === "FIN_ERR_0269"){
-                        $("#mutuoMovimentoGestione").val("");
-                    }
-                }
                 return;
             }
             // Eventuale messaggi: carico la richiesta all'utente
@@ -163,12 +158,7 @@ var Documento = (function($, doc) {
         if(impostaDatiNegliAlert(data.errori, doc.alertErrori)) {
             impostaDatiNegliAlert(data.messaggi, doc.alertMessaggi, undefined, false);
             var array = data.errori;
-            var index;
-            for(index = 0; index < array.length; index++) {
-                if(array[index].codice === "FIN_ERR_0269"){
-                    $("#mutuoMovimentoGestione").val("");
-                }
-            }
+
             return;
         }
         
@@ -228,12 +218,7 @@ var Documento = (function($, doc) {
             if(impostaDatiNegliAlert(data.errori, doc.alertErrori)) {
                // impostaDatiNegliAlert(data.messaggi, doc.alertMessaggi, undefined, true);
                 var array = data.errori;
-                var index;
-                for(index = 0; index < array.length; index++) {
-                    if(array[index].codice === "FIN_ERR_0269"){
-                        $("#mutuoMovimentoGestione").val("");
-                    }
-                }
+
                 return;
             }
 
@@ -267,12 +252,7 @@ var Documento = (function($, doc) {
         if(impostaDatiNegliAlert(data.errori, doc.alertErrori)) {
             impostaDatiNegliAlert(data.messaggi, doc.alertMessaggi, undefined, false);
             var array = data.errori;
-            var index;
-            for(index = 0; index < array.length; index++) {
-                if(array[index].codice === "FIN_ERR_0269"){
-                    $("#mutuoMovimentoGestione").val("");
-                }
-            }
+
             return;
         }
 
@@ -418,52 +398,7 @@ var Documento = (function($, doc) {
         };        
         $("#tabellaImpegniModale").dataTable(options);
     }
-
-    /**
-     * Imposta la tabella dei mutui.
-     */
-    function impostaMutuiNellaTabella(lista) {
-        var opts = {
-            bServerSide: false,
-            bPaginate: false,
-            bLengthChange: false,
-            iDisplayLength: 5,
-            bSort: false,
-            bInfo: true,
-            bAutoWidth: true,
-            bFilter: false,
-            bProcessing: true,
-            bDestroy: true,
-            aaData: lista,
-            oLanguage: {
-                sInfo: "_START_ - _END_ di _MAX_ risultati",
-                sInfoEmpty: "0 risultati",
-                sProcessing: "Attendere prego...",
-                sZeroRecords : "Non sono presenti mutui associati",
-                oPaginate: {
-                    sFirst: "inizio",
-                    sLast: "fine",
-                    sNext: "succ.",
-                    sPrevious: "prec.",
-                    sEmptyTable: "Nessun mutuo disponibile"
-                }
-            },
-            aoColumnDefs : [
-                {aTargets: [0], mData: function(source) {
-                    return "<input type='radio' name='radio_mutuo_modale_impegno' />";
-                }, fnCreatedCell: function(nTd, sData, oData) {
-                    $("input", nTd).data("originalMutuo", oData);
-                }},
-                {aTargets: [1], mData: defaultPerDataTable('numeroMutuo')},
-                {aTargets: [2], mData: defaultPerDataTable('descrizioneMutuo')},
-                {aTargets: [3], mData: defaultPerDataTable('istitutoMutuante.denominazione')},
-                {aTargets: [4], mData: defaultPerDataTable('importoAttualeVoceMutuo', 0, formatMoney), fnCreatedCell: tabRight},
-                {aTargets: [5], mData: defaultPerDataTable('importoDisponibileLiquidareVoceMutuo', 0, formatMoney), fnCreatedCell: tabRight}
-            ]
-        };
-        $("#tabellaMutuiModale").dataTable(opts);
-    }
-
+    
     function impostaImpegnoNellaTabella(impegno) {
         var capitolo = "";
         var provvedimento = "";
@@ -918,16 +853,14 @@ var Documento = (function($, doc) {
                 	impostaCampoNote();
                 }
 
-                $("#divMutui, #divImpegniTrovati").on("shown hidden", function(e) {
+                $("#divImpegniTrovati").on("shown hidden", function(e) {
                     e.stopPropagation();
                 });
 
                 $("#pulsanteRicercaImpegnoModale").on("click", ricercaImpegno);
                 collapse.on("change", "input[name='radio_modale_impegno']", function() {
                     var subimpegno = $(this).data("originalSubImpegno");
-                    var div = $("#divMutui").overlay("show");
-                    impostaMutuiNellaTabella(subimpegno && subimpegno.listaVociMutuo || []);
-                    div.overlay("hide");
+
                 });
                 $("#annoMovimentoMovimentoGestione, #numeroMovimentoGestione, #numeroSubmovimento").substituteHandler("change", ricercaImpegnoPerChiaveOttimizzatoOnChange);
                 $("#annoMovimentoMovimentoGestione, #numeroMovimentoGestione").on("change", valutaVisualizzazioneDatiSospensione);
@@ -960,16 +893,24 @@ var Documento = (function($, doc) {
                 });
 
                 $(".soloNumeri", collapse).allowedChars({numeric: true});
+                
+                 $(".trim").on('paste', function(event) { 
+                    var text = (event.originalEvent.clipboardData || window.clipboardData).getData("text");
+                    $(this).val(text.trim());
+                	event.preventDefault();
+                });
                 $(".decimale", collapse).gestioneDeiDecimali();
 
                 currentDataScadenza = $("#dataScadenzaSubdocumento").val();
                 $("#flagRilevanteIvaSubdocumento").substituteHandler("click", gestioneClickFlagIva);
                 $("#dataScadenzaSubdocumento").substituteHandler("change changeDate", gestioneDataScadenzaDopoSospensione);
 
+                
                 Provvedimento.inizializzazione(Ztree, {}, "_QUOTE");
                 ProvvedimentoInserimento.inizializzazione('modaleInserimentoProvvedimento', '_QUOTE', ZTreeDocumento);
                 
-                
+                //SIAC-8280
+                StrutturaAmministrativaContabile.inizializzaZtreeStrutturaAmministrativaContabile("_QUOTE_SD", $('#HIDDEN_StrutturaAmministrativoContabileUid_QUOTE'));
                 
                 ProvvisorioDiCassa.inizializzazione("#pulsanteCompilazioneGuidataProvvisorioCassaSubdocumento", "", "#annoProvvisorioCassaSubdocumento", "#numeroProvvisorioCassaSubdocumento",
                     "#causaleProvvisorioCassaSubdocumento");
@@ -1176,6 +1117,7 @@ var Documento = (function($, doc) {
      */
     function ricercaImpegno() {
         var anno = $("#annoImpegnoModale").val();
+        //task-232
         var numero = $("#numeroImpegnoModale").val();
         var annoProvv = $("#annoProvvedimento_modaleImpegno").val();
         var numeroProvv = $("#numeroProvvedimento_modaleImpegno").val();
@@ -1258,7 +1200,7 @@ var Documento = (function($, doc) {
             // prendo i valori inseriti per effettuare la ricerca e le valorizzo con l'impegno scelto dall'utente 
             $("#annoImpegnoModale").val(impegno.annoMovimento);
             $("#numeroImpegnoModale").val(impegno.numero);
-            // chiamo la ricercaImpegnoPerChiave per ottenere i dati dei subimpegni e mutui
+            // chiamo la ricercaImpegnoPerChiave per ottenere i dati dei subimpegni
             ricercaImpegnoPerChiaveOttimizzato();
             return;
         }
@@ -1345,7 +1287,6 @@ var Documento = (function($, doc) {
             }
             impostaImpegnoNellaTabella(data.impegno);
             impostaSubimpegniPaginatiNellaTabella(data.impegno);
-            impostaMutuiNellaTabella(data.impegno.listaVociMutuo);
             impostaEApriCollapseImpegniTrovati(data.impegno);
         }).always(spinner.removeClass.bind(spinner, "activated"));
     }
@@ -1377,8 +1318,6 @@ var Documento = (function($, doc) {
         var numeroImpegno;
         var cigImpegno;
         var cupImpegno;
-        var checkedMutuo;
-        var mutuo = "";
         var flagRilevanteIva;
         var numeroSubimpegno;
         var siopeAssenzaMotivazione;
@@ -1399,13 +1338,10 @@ var Documento = (function($, doc) {
         numeroSubimpegno = !!subimpegno ? subimpegno.numero : "";
         cigImpegno = subimpegno ? subimpegno.cig : impegno.cig;
         cupImpegno = subimpegno ? subimpegno.cup : impegno.cup;
-        checkedMutuo = $("input[name='radio_mutuo_modale_impegno']:checked");
+
         flagRilevanteIva = $("#hidden_flagRilevanteIva").val();
         siopeAssenzaMotivazione = subimpegno ? subimpegno.siopeAssenzaMotivazione : impegno.siopeAssenzaMotivazione;
 
-        if(checkedMutuo.length) {
-            mutuo = checkedMutuo.data("originalMutuo").numeroMutuo;
-        }
         str = ": " + annoImpegno + " / " + numeroImpegno;
         if(subimpegno) {
             str += " - " + numeroSubimpegno;
@@ -1417,7 +1353,7 @@ var Documento = (function($, doc) {
         $("#numeroSubmovimento").val(numeroSubimpegno);
         $("#cigMovimentoGestione").val(subimpegno ? subimpegno.cig : cigImpegno);
         $("#cupMovimentoGestione").val(subimpegno ? subimpegno.cup : cupImpegno);
-        $("#mutuoMovimentoGestione").val(mutuo);
+
         $('#siopeAssenzaMotivazione').val(siopeAssenzaMotivazione ? siopeAssenzaMotivazione.uid : 0);
 
         $("#SPAN_impegnoH4").html(str);
@@ -1448,7 +1384,8 @@ var Documento = (function($, doc) {
     	var obj = {};
     	obj['subimpegno'] = {};
         obj['impegno.annoMovimento'] = fieldAnno.val();
-        obj['impegno.numero'] = fieldNumero.val();
+        //task-232
+        obj['impegno.numero'] = fieldNumero.val().trim();
         
         if(!numeroSub){
         	obj["caricaSub"] = false;
@@ -1631,7 +1568,11 @@ var Documento = (function($, doc) {
 
         // Apro il modale
         $("#modaleImpegno").modal("show");
-        
+        //SIAC-7859 -- workaround -- non trovo "chi" allarga il fieldset pertanto ne forzo il comportamento
+        if(typeof $('ITQ') !== undefined){
+        	$("fieldset#FIELDSET_modaleImpegno > div.control-group").addClass('adaptNoOverflow');
+        }
+        //
         
     }
 

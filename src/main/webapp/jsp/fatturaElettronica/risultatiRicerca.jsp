@@ -43,10 +43,11 @@ SPDX-License-Identifier: EUPL-1.2
 								</table>
 							</fieldset>
 						</div>
+						<%-- SIAC-7571 --%>
+						<s:include value="/jsp/include/modaleConfermaProsecuzioneSuAzione.jsp" />
 					</div>
 					<p class="margin-medium">
 						<s:include value="/jsp/include/indietro.jsp" />
-						
 					</p>
 				</s:form>
 				<s:include value="/jsp/soggetto/selezionaSoggetto_modale.jsp" />
@@ -57,8 +58,8 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}fatturaElettronica/risultatiRicerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/fatturaElettronica/risultatiRicerca.js"></script>
 	
 </body>
 </html>

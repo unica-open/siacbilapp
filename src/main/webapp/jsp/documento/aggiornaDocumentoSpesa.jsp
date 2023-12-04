@@ -88,29 +88,35 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}documento/ztree.js"></script>
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_new.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/inserisci_modale.js"></script>
-	<script type="text/javascript" src="${jspath}provvisorioDiCassa/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/ztree.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/inserisci_modale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvisorioDiCassa/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaImpegnoOttimizzato.js"></script>
 	
-	<script type="text/javascript" src="${jspath}documento/aggiornaSpesa.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaSpesaAggiornamento.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaSpesaQuote.js"></script>
-	<script type="text/javascript" src="${jspath}documento/aggiornaSpesaDatiIva.js"></script>
+	<%-- SIAC-8237 --%>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztreeSAC.js"></script>
+	<%-- SIAC-8134 si rende indipendente lo script dalla sezione dei documenti --%>
+	<script type="text/javascript" src="/siacbilapp/js/local/strutturaAmministrativaContabile/strutturaAmministrativoContabile.js"></script>
+	<%-- SIAC-8237 --%>
+	
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaSpesa.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaSpesaAggiornamento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaSpesaQuote.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaSpesaDatiIva.js"></script>
 	<s:if test="flagRitenuteAccessibile">
-		<script type="text/javascript" src="${jspath}documento/aggiornaSpesaRitenute.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaSpesaRitenute.js"></script>
 	</s:if>
 	<s:if test="flagPenaleAltroAccessibile">
-		<script type="text/javascript" src="${jspath}documento/aggiornaSpesaPenaleAltro.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaSpesaPenaleAltro.js"></script>
 	</s:if>
 	<s:if test="flagNoteCreditoAccessibile">
-		<script type="text/javascript" src="${jspath}documento/aggiornaSpesaNoteCredito.js"></script>
-		<script type="text/javascript" src="${jspath}documento/include/ricercaSpesaNoteCredito_Modale.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documento/aggiornaSpesaNoteCredito.js"></script>
+		<script type="text/javascript" src="/siacbilapp/js/local/documento/include/ricercaSpesaNoteCredito_Modale.js"></script>
 	</s:if>
-	
+
 </body>
 </html>

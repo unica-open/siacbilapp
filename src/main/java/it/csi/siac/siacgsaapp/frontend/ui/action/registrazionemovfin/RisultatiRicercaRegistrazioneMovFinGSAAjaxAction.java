@@ -10,7 +10,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import it.csi.siac.siacbasegengsaapp.frontend.ui.action.registrazionemovfin.RisultatiRicercaRegistrazioneMovFinBaseAjaxAction;
 import it.csi.siac.siacbilapp.frontend.ui.handler.session.BilSessionParameter;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 
 /**
  * Action per i risultati di ricerca delle registrazioniMovFin per il modulo GSA.
@@ -39,17 +39,17 @@ public class RisultatiRicercaRegistrazioneMovFinGSAAjaxAction extends RisultatiR
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestionePrimaNotaIntegrata() {
-		return AzioniConsentite.PRIMA_NOTA_INTEGRATA_GESTISCI_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestionePrimaNotaIntegrata() {
+		return AzioneConsentitaEnum.PRIMA_NOTA_INTEGRATA_GESTISCI_GSA;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaGestioneRegistrazioneMovFin() {
-		return AzioniConsentite.REGISTRAZIONE_MOV_FIN_GESTISCI_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaGestioneRegistrazioneMovFin() {
+		return AzioneConsentitaEnum.REGISTRAZIONE_MOV_FIN_GESTISCI_GSA;
 	}
 
 	@Override
-	protected AzioniConsentite getAzioneConsentitaRicercaMovFin() {
-		return AzioniConsentite.REGISTRAZIONE_MOV_FIN_RICERCA_GSA;
+	protected AzioneConsentitaEnum getAzioneConsentitaRicercaMovFin() {
+		return AzioneConsentitaEnum.REGISTRAZIONE_MOV_FIN_RICERCA_GSA;
 	}
 }

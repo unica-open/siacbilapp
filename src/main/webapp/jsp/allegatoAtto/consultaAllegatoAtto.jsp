@@ -173,12 +173,12 @@ SPDX-License-Identifier: EUPL-1.2
 															<td><s:property value="%{#eda.anno}" /></td>
 															<td><s:property value="%{#eda.numero}" /></td>
 															<td>
-																<a data-original-title="Stato" href="#" data-trigger="hover" rel="popover" data-content="<s:property value='%{#eda.statoOperativoElencoDocumenti.descrizione}'/>">
+																<a data-original-title="Stato" href="#" data-trigger="hover" data-toggle="popover" data-content="<s:property value='%{#eda.statoOperativoElencoDocumenti.descrizione}'/>">
 																	<s:property value='%{#eda.statoOperativoElencoDocumenti.codice}'/>
 																</a>
 															</td>
 															<td>
-																<a data-original-title="Fonte dati" href="#" data-trigger="hover" rel="popover" data-content="<s:property value='%{#eda.sysEsterno}'/>">
+																<a data-original-title="Fonte dati" href="#" data-trigger="hover" data-toggle="popover" data-content="<s:property value='%{#eda.sysEsterno}'/>">
 																	<s:property value='%{#eda.annoSysEsterno}'/>
 																</a>
 															</td>
@@ -264,10 +264,10 @@ SPDX-License-Identifier: EUPL-1.2
 	<s:include value="/jsp/include/javascript.jsp" />
 	
 	<!-- SIAC-6243: FIN - consulta allegato atto -->
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/gestioneElenco.js"></script>
-	<script type="text/javascript" src="${jspath}allegatoAtto/consulta.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.new2.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/gestioneElenco.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/allegatoAtto/consulta.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.new2.js"></script>
 
 
 </body>

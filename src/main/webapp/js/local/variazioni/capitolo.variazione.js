@@ -86,6 +86,25 @@ var CapitoloInVariazione = (function(capVarImp){
         }
     }
     
+	 /**
+     * Imposta il valore presente nella variazione di competenza anche come variazione della cassa, nel caso in cui
+     * la variazione degli importi di cassa sia possibile.
+     */
+    function impostaValoreCassaSeApplicabileBUTTON(suffix){
+
+    	var innerSuffix = suffix || '';
+        var inputCompetenza = $("#competenzaVariazioneAnno0" + innerSuffix).val() || "0,00";
+        var inputCassa = $("#cassaVariazione" + innerSuffix);
+        var inputResiduo = $("#residuoVariazione" + innerSuffix).val() || "0,00";
+
+        if(!inputCassa.attr("disabled")) {
+            var sum = new BigNumber(parseLocalNum(inputCompetenza))
+				.add(new BigNumber(parseLocalNum(inputResiduo)));
+            inputCassa.val(formatMoney(sum));
+        }
+        
+    }
+    
     /**
      * Imposta i dati nella tabella, relativamente all'indice selezionato.
      *
@@ -299,15 +318,14 @@ var CapitoloInVariazione = (function(capVarImp){
      				return;
      			}
      			pulisciCampiNuovaComponente("Modale");
-     			$("#button_registraVariazioneModale").removeAttr('disabled');
-     			$('#linkCollapseComponentiModale').removeAttr("disabled");
      			
      	    	impostaTabellaComponentiInVariazione(data.specificaImporti.componentiCapitoloDettaglio,  'Modale', false);
      	    	
      	    	$('[id^="competenzaVariazioneAnno"][id$="Modale"]').attr('disabled', true);
      	    	$('#listaTipoComponenteModale').substituteHandler('change', gestisciEditabilitaImportiNuovaComponenteByTipoSelezionato.bind(undefined, 'Modale'));
      	        $('#button_salvaNuovaComponenteModale').substituteHandler('click', inserisciNuovaComponente.bind(undefined, false, 'Modale'));
-     	        
+     	        $("#button_registraVariazioneModale").removeAttr('disabled');
+    			$('#linkCollapseComponentiModale').removeAttr("disabled");
      	        containerComponenti.overlay('hide');
      		});
      }
@@ -548,6 +566,14 @@ var CapitoloInVariazione = (function(capVarImp){
         });
     }
     
+    function gestisciAperturaDivComponentiModale(){
+        $('#divComponentiInVariazioneModale').slideDown().promise().always(function() {
+    		$('#divComponentiInVariazioneModale').overlay({rebind: true, loader: true, usePosition: true});
+    		$('#divComponentiInVariazioneModale').overlay($('#linkCollapseComponentiModale').attr('disabled')? 'show' : 'hide');
+    	});
+    }
+    
+    
     /**
      * Imposta il totale degli importi della variazione.
      */
@@ -559,6 +585,8 @@ var CapitoloInVariazione = (function(capVarImp){
         var $modale=$("#editStanziamenti");
         //SIAC-6881
         var abilitaGestioneComponenti = oggettoOriginale && oggettoOriginale.tipoCapitolo && (oggettoOriginale.tipoCapitolo._name === 'CAPITOLO_USCITA_PREVISIONE' || oggettoOriginale.tipoCapitolo._name==='CAPITOLO_USCITA_GESTIONE');
+        
+         
         
         // Pulisco il form
         $("#editStanziamenti fieldset :input").not("[data-maintain]").val("");
@@ -573,6 +601,26 @@ var CapitoloInVariazione = (function(capVarImp){
         
         $("#titoloModaleVariazioneStanziamenti").html("Modifica Stanziamenti Capitolo " + oggettoOriginale.numeroCapitolo + " / " + oggettoOriginale.numeroArticolo);
 
+		//SIAC-8003
+		var cassa = $("#cassaVariazioneNuovoDettaglio");
+		var cassaModale = $("#cassaVariazioneModale");
+		//task-275
+		if(oggettoOriginale.codiceCategoriaCapitolo != null){
+	 	    if(oggettoOriginale.codiceCategoriaCapitolo.match(/FPV.*/) || oggettoOriginale.codiceCategoriaCapitolo === "AAM" || oggettoOriginale.codiceCategoriaCapitolo === "DAM"){
+				cassa.attr("disabled", "disabled");
+				cassaModale.attr("disabled", "disabled");
+				$("#applicaQuoadraturaCassaStanzResModale").attr("disabled", "disabled");
+			}else{
+				cassa.removeAttr("disabled", "disabled");
+				cassaModale.removeAttr("disabled", "disabled");
+				$("#applicaQuoadraturaCassaStanzResModale").removeAttr("disabled", "disabled");
+			}
+		}else{
+			cassa.removeAttr("disabled", "disabled");
+			cassaModale.removeAttr("disabled", "disabled");
+			$("#applicaQuoadraturaCassaStanzResModale").removeAttr("disabled", "disabled");
+		}
+		
         pulsanteSalvataggio.substituteHandler("click", aggiornaCapitoliNellaVariazione.bind(undefined, oggettoOriginale, abilitaGestioneComponenti));
         
         if(!abilitaGestioneComponenti){
@@ -584,9 +632,8 @@ var CapitoloInVariazione = (function(capVarImp){
         pulsanteSalvataggio.attr("disabled", true);
         $('#linkCollapseComponentiModale').attr("disabled", true);
         
-    	$('#divComponentiInVariazioneModale').slideDown().promise().then(function() {
-    		$('#divComponentiInVariazioneModale').overlay('show');
-    	});
+        gestisciAperturaDivComponentiModale();
+        var divComponentiModale = $('#divComponentiInVariazioneModale');
     	//chiudo tutti i collapse
     	$modale.modal('show')
     		.find('.gestisci-collapse')
@@ -1198,6 +1245,18 @@ var CapitoloInVariazione = (function(capVarImp){
 
             impostaImportiCapitolo(abilitaGestioneComponenti, wrapTipoCapitoloApplicazione, capitolo, listaImporti, tabellaStanziamenti);
             
+            //SIAC-8003
+			var cassa = $("#cassaVariazioneNuovoDettaglio");
+			var cassaModale = $("#cassaVariazioneModale");
+			//task-275
+ 	     	if(capitolo.categoriaCapitolo.codice.match(/FPV.*/) || capitolo.categoriaCapitolo.codice === "AAM" || capitolo.categoriaCapitolo.codice === "DAM"){
+				cassa.attr("disabled", "disabled");
+				cassaModale.attr("disabled", "disabled");
+		  	}else{
+				cassa.removeAttr("disabled", "disabled");
+				cassaModale.removeAttr("disabled", "disabled");
+		  	}
+            
             urlRegistraImporti = abilitaGestioneComponenti? 'aggiungiCapitoliConComponentiNellaVariazione_aggiornamento.do' : 'aggiungiCapitoliNellaVariazione_aggiornamento.do';
             
             // Pulisco i campi degli importi
@@ -1393,8 +1452,11 @@ var CapitoloInVariazione = (function(capVarImp){
    }	
     
     function init(){
-    	$("#competenzaVariazioneAnno0NuovoDettaglio").off("blur").on("blur", impostaValoreCassaSeApplicabile.bind(undefined, 'NuovoDettaglio')).gestioneDeiDecimali();
-    	$("#competenzaVariazioneAnno0Modale").off("blur").on("blur", impostaValoreCassaSeApplicabile.bind(undefined,"Modale")).gestioneDeiDecimali();
+        //SIAC-8262
+    	// $("#competenzaVariazioneAnno0NuovoDettaglio").off("blur").on("blur", impostaValoreCassaSeApplicabile.bind(undefined, 'NuovoDettaglio')).gestioneDeiDecimali();
+    	$("#applicaQuoadraturaCassaStanzResNuovoDettaglio").on("click", impostaValoreCassaSeApplicabileBUTTON.bind(undefined, 'NuovoDettaglio')).gestioneDeiDecimali();
+		$("#applicaQuoadraturaCassaStanzResModale").on("click", impostaValoreCassaSeApplicabileBUTTON.bind(undefined, 'Modale')).gestioneDeiDecimali();
+    	//$("#competenzaVariazioneAnno0Modale").off("blur").on("blur", impostaValoreCassaSeApplicabile.bind(undefined,"Modale")).gestioneDeiDecimali();
     	//carico i capitoli legati alla variazione (se ce ne sono)
         leggiCapitoliNellaVariazione();
 
@@ -1407,6 +1469,10 @@ var CapitoloInVariazione = (function(capVarImp){
         
         $('.gestisci-collapse').off('click').eventPreventDefault('click', apriEChiudiCollapse);
 
+        $('#button_chiudiRegistraVariazioneModale').substituteHandler("click", function(){
+        	$('#divComponentiInVariazioneModale').hide();
+        	$("#editStanziamenti").modal('hide');
+        });
 
 
         //SIAC-6884

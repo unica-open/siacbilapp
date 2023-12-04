@@ -55,7 +55,7 @@ public class RicercaEventoByTipoEventoBaseAction <M extends RicercaEventoByTipoE
 			// Controllo gli errori
 			if(response.hasErrori()) {
 				//si sono verificati degli errori: esco.
-				log.debug(methodName, createErrorInServiceInvocationString(request, response));
+				log.debug(methodName, createErrorInServiceInvocationString(RicercaEventiPerTipo.class, response));
 				addErrori(response);
 				return SUCCESS;
 			}

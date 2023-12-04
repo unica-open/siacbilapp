@@ -85,7 +85,7 @@ SPDX-License-Identifier: EUPL-1.2
 								<div class="control-group">
 									<label for="causaleEntrata" class="control-label">Causale</label>
 									<div class="controls">
-										<s:select list="listaCausaleEntrata" name="causaleEntrata.uid" cssClass="span8" headerKey="0" headerValue="" data-overlay=""
+										<s:select list="listaCausaleEntrata" name="causaleEntrata.uid" cssClass="span9" headerKey="0" headerValue="" data-overlay=""
 											listKey="uid" listValue="%{codice + '-' + descrizione}" disabled="%{tipoCausale == null || tipoCausale.uid == 0}" id="causaleEntrata" />
 										<label class="radio inline">
 											<div class="checkbox">
@@ -426,14 +426,14 @@ SPDX-License-Identifier: EUPL-1.2
 	<%-- MODALE USCITA GESTIONE --%>
 	<s:include value="/jsp/include/footer.jsp" />
 	<s:include value="/jsp/include/javascript.jsp" />
-	<script type="text/javascript" src="${jspath}codiceFiscale.js"></script>
-	<script type="text/javascript" src="${jspath}capitolo/ricercaCapitoloModale.js"></script>
-	<script type="text/javascript" src="${jspath}soggetto/ricerca.js"></script>
-	<script type="text/javascript" src="${jspath}movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
-	<script type="text/javascript" src="${jspath}ztree/ztree_new.js"></script>
-	<script type="text/javascript" src="${jspath}provvedimento/ricerca_modale_new.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/predocumento.js"></script>
-	<script type="text/javascript" src="${jspath}predocumento/ricercaEntrata.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/codiceFiscale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/capitolo/ricercaCapitoloModale.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/soggetto/ricerca.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/movimentoGestione/ricercaAccertamentoOttimizzato.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/ztree/ztree_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/provvedimento/ricerca_modale_new.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/predocumento.js"></script>
+	<script type="text/javascript" src="/siacbilapp/js/local/predocumento/ricercaEntrata.js"></script>
 
 </body>
 </html>

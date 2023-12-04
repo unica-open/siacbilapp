@@ -154,6 +154,31 @@ var CapitoloUscita = (function() {
             $("#titoloSpesa").val("").attr("disabled", "disabled");
         }
     }
+    exports.gestisciRisorsaAccantonata = function(saltaGestioneFlagImpegnabile){
+    	var codiceMissione = $('#missione option:selected').data('codice');
+    	var selectRisorsaAccantonata = $('#risorsaAccantonata');
+    	var containerRisorsaAccantonata =$('#containerRisorsaAccantonata'); 
+    	
+    	if(!saltaGestioneFlagImpegnabile){
+			Capitolo.gestioneFlagImpegnabile();
+		}
+    	
+    	if(!codiceMissione || codiceMissione != '20'){
+    		selectRisorsaAccantonata.val(0);
+    		containerRisorsaAccantonata.slideUp();
+    		selectRisorsaAccantonata.attr('disabled', true);
+    		return;
+    	}
+    	containerRisorsaAccantonata.slideDown();
+    	selectRisorsaAccantonata.removeAttr('disabled');
+    	
+    	if(saltaGestioneFlagImpegnabile){
+    		$("#flagImpegnabile").attr("disabled", true);
+    	}
+    	
+    	
+    }
+    
     /**
      * Carica i dati nella select del Programma da chiamata AJAX.
      * 
@@ -165,6 +190,7 @@ var CapitoloUscita = (function() {
 		// Pulisco i campi
 		pulisciDisabilitaCampi(useDefaultTitoloSpesa);
 		var selectProgramma = $("#programma").overlay("show");
+		
 		return $.postJSON("ajax/programmaAjax.do", {
 			"id" : idMissione
 		}).then(function(data) {
@@ -175,7 +201,7 @@ var CapitoloUscita = (function() {
 			/* La select in cui dovranno essere posti i dati */
 			var selectProgramma = $("#programma");
 			var titoloSpesa = $("#titoloSpesa");
-			var macroaggregato = $("#macroaggregato");
+			var macroaggregato = $("#macroaggregato"); 
 			/*
 			 * La select per il classificatore Cofog. Serve per un controllo
 			 * sulla disabilitazione
@@ -184,6 +210,9 @@ var CapitoloUscita = (function() {
 
 			/* Pulisci l'eventuale lista presente */
 			selectProgramma.find('option').remove().end();
+			
+			//task-55
+			exports.capitoloDaNonInserire(useDefaultTitoloSpesa);
 
 			// Se vi sono degli errori, esco subito
 			if (errori.length > 0) {
@@ -205,11 +234,33 @@ var CapitoloUscita = (function() {
 			if (macroaggregato.attr("disabled") !== "disabled") {
 				macroaggregato.attr("disabled", "disabled").off("click");
 			}
-
 			caricaSelectCodifiche(selectProgramma, listaProgramma).change();
+		
 		}).always(selectProgramma.overlay.bind(selectProgramma, "hide"));
+		
 	};
 
+	//task-55
+	exports.capitoloDaNonInserire = function (useDefaultTitoloSpesa) {
+		var codiceMissione = $('#missione option:selected').data('codice');
+    	var capitoloDaNonInserire =$('#containerFlagCapitoloDaNonInserireA1'); 
+    	
+    	if(!codiceMissione || codiceMissione != '20'){
+    		capitoloDaNonInserire.slideUp();
+    		return;
+    	}
+    	capitoloDaNonInserire.slideDown();
+	};
+	
+	exports.gestisciChangeMissione = function(useDefaultTitoloSpesa){
+    	//SIAC-7192
+    	exports.gestisciRisorsaAccantonata();
+    	
+    	exports.caricaProgramma(useDefaultTitoloSpesa);
+    	
+    	//task-55
+		exports.capitoloDaNonInserire(useDefaultTitoloSpesa);
+    }
     /**
 	 * Carica i dati nella select del Cofog da chiamata AJAX.
 	 * 
